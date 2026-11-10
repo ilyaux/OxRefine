@@ -1,8 +1,6 @@
 use crate::{err, grel, grel::Value, Result};
 use std::{
-    collections::{HashMap, HashSet},
-    fs::File,
-    io::Read,
+    collections::HashMap,
     path::Path,
     sync::Arc,
 };
@@ -201,57 +199,9 @@ impl Table {
         }
     }
 
-    /// CSV/TSV import as OpenRefine does it by default: every cell a string, empty cells null.
+    /// CSV/TSV import with OpenRefine's default options: every cell a string, empty cells null.
     pub fn read_csv(path: &Path) -> Result<Table> {
-        let mut head = vec![0u8; 1 << 16];
-        let n = File::open(path)
-            .and_then(|mut f| f.read(&mut head))
-            .map_err(|e| format!("{}: {e}", path.display()))?;
-        let first = head[..n].split(|&b| b == b'\n').next().unwrap_or_default();
-        let delim = if path.extension().is_some_and(|e| e.eq_ignore_ascii_case("tsv")) {
-            b'\t'
-        } else {
-            // most frequent candidate in the header line; ties go to ',' (max_by_key keeps the last)
-            *[b'|', b';', b'\t', b','].iter().max_by_key(|d| first.iter().filter(|b| b == d).count()).unwrap()
-        };
-        let mut rdr = csv::ReaderBuilder::new()
-            .delimiter(delim)
-            .flexible(true)
-            .has_headers(false)
-            .from_path(path)
-            .map_err(err)?;
-        let mut rec = csv::ByteRecord::new();
-        let mut names: Vec<String> = vec![];
-        if rdr.read_byte_record(&mut rec).map_err(err)? {
-            names = rec.iter().map(|f| String::from_utf8_lossy(f).trim_start_matches('\u{feff}').trim().to_string()).collect();
-        }
-        let mut cols: Vec<(Interner, Vec<u32>)> = names.iter().map(|_| Default::default()).collect();
-        let mut rows = 0;
-        while rdr.read_byte_record(&mut rec).map_err(err)? {
-            for (i, f) in rec.iter().enumerate() {
-                if i == cols.len() {
-                    let mut b = Interner::default();
-                    let null = b.intern(Value::Null);
-                    cols.push((b, vec![null; rows]));
-                }
-                let (b, codes) = &mut cols[i];
-                codes.push(if f.is_empty() { b.intern(Value::Null) } else { b.intern_str(&String::from_utf8_lossy(f)) });
-            }
-            for (b, codes) in &mut cols[rec.len()..] {
-                codes.push(b.intern(Value::Null));
-            }
-            rows += 1;
-        }
-        names.resize(cols.len(), String::new());
-        let names = dedupe(names);
-        Ok(Table {
-            key: names.first().cloned(),
-            names,
-            columns: cols.into_iter().map(|(b, codes)| Arc::new(Column { dict: b.finish(), codes })).collect(),
-            rows,
-            starred: Arc::new(vec![false; rows]),
-            flagged: Arc::new(vec![false; rows]),
-        })
+        crate::import::import(path, None, &crate::import::ImportOptions::default())
     }
 
     pub fn write_csv(&self, path: &Path, rows: &[u32]) -> Result<()> {
@@ -271,21 +221,4 @@ impl Table {
         }
         w.flush().map_err(err)
     }
-}
-
-fn dedupe(names: Vec<String>) -> Vec<String> {
-    let mut seen = HashSet::new();
-    names
-        .into_iter()
-        .enumerate()
-        .map(|(i, n)| {
-            let base = if n.is_empty() { format!("Column {}", i + 1) } else { n };
-            let (mut name, mut k) = (base.clone(), 2);
-            while !seen.insert(name.clone()) {
-                name = format!("{base} {k}");
-                k += 1;
-            }
-            name
-        })
-        .collect()
 }

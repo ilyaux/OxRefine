@@ -1,10 +1,10 @@
-use ox_core::{dispatch, ops::Op, Project};
+use ox_core::{dispatch, ops::Op, store::Store, Project, Session};
 use serde_json::{json, Value};
 use std::time::Instant;
 
 const USAGE: &str = "usage:
   ox apply <history.json> <input.csv> -o <output.csv>   replay an OpenRefine operation history headlessly
-  ox serve [input.csv] [--port 3030]                     JSON API for the web UI (ui/: npm run dev)";
+  ox serve [file] [--port 3030] [--data DIR]             JSON API for the web UI (ui/: npm run dev); projects are saved in DIR";
 
 fn main() {
     if let Err(e) = run() {
@@ -45,15 +45,19 @@ fn ms(t: Instant) -> f64 {
 }
 
 fn serve(args: &[&str]) -> Result<(), String> {
-    let (mut file, mut port) = (None, 3030u16);
+    let (mut file, mut port, mut data) = (None, 3030u16, Store::default_root());
     let mut it = args.iter();
     while let Some(&a) = it.next() {
         match a {
             "--port" => port = it.next().and_then(|p| p.parse().ok()).ok_or("--port needs a number")?,
+            "--data" => data = it.next().ok_or("--data needs a folder")?.into(),
             f => file = Some(f),
         }
     }
-    let mut slot = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    let mut slot = Session::with_store(Store::open(&data)?);
+    // a file named on the command line opens without being added to the project library
+    slot.project = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    eprintln!("projects are saved in {}", data.display());
     let server = tiny_http::Server::http(("127.0.0.1", port)).map_err(|e| e.to_string())?;
     let host_ok = [format!("127.0.0.1:{port}"), format!("localhost:{port}")];
     eprintln!("OxRefine API on http://127.0.0.1:{port}/api/<command>");

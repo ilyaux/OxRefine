@@ -1,0 +1,4 @@
+# Cases whose OxRefine result differs from OpenRefine 3.10.1, each with the reason.
+# The conformance test fails when one of these starts passing, so remove lines as they get fixed.
+ods first sheet  # deliberate: OpenRefine adds one empty row from the repeated filler row LibreOffice writes at the end of a sheet; we drop it
+ods second sheet  # deliberate: same trailing filler row

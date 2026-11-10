@@ -1,4 +1,4 @@
-use ox_core::{cluster, dispatch, Project};
+use ox_core::{cluster, dispatch, Session};
 use serde_json::json;
 
 #[test]
@@ -8,7 +8,7 @@ fn recipe_facets_cluster_history() {
     let csv = dir.join("in.csv");
     std::fs::write(&csv, "\u{feff}name;city;city\n  alice smith ;New York\nBOB;new york ;x\nCarol;New-York\n;Boston\n").unwrap();
 
-    let mut slot: Option<Project> = None;
+    let mut slot = Session::default();
     let mut call = |cmd: &str, args: serde_json::Value| dispatch(&mut slot, cmd, args).unwrap()["data"].clone();
 
     let s = call("open", json!({ "path": csv }));
@@ -27,8 +27,8 @@ fn recipe_facets_cluster_history() {
         {"op": "core/column-removal", "columnName": "city 2"},
     ]}));
     let rows = call("rows", json!({ "start": 0, "limit": 10 }));
-    assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"]]));
-    assert_eq!(rows["rows"][3], json!([3, [null, "Boston", "boston"]]), "facet-excluded row untouched; empty cells are null");
+    assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"], false, false]));
+    assert_eq!(rows["rows"][3], json!([3, [null, "Boston", "boston"], false, false]), "facet-excluded row untouched; empty cells are null");
 
     // ngram clusters all three spellings; fingerprint misses New-York (punctuation is removed, not split)
     let c = call("cluster", json!({ "column": "city", "method": "ngram-fingerprint" }));
@@ -58,7 +58,7 @@ fn typed_cells_row_context_and_on_error() {
     std::fs::create_dir_all(&dir).unwrap();
     let csv = dir.join("in.csv");
     std::fs::write(&csv, "qty,price,note\n3,2.5,a\n10,,b\nx,4,c\n").unwrap();
-    let mut slot: Option<Project> = None;
+    let mut slot = Session::default();
     let mut call = |cmd: &str, args: serde_json::Value| dispatch(&mut slot, cmd, args).unwrap()["data"].clone();
     call("open", json!({ "path": csv }));
     let t = |col: &str, expr: &str, on_error: &str| json!({ "op": {"op": "core/text-transform", "columnName": col, "expression": expr, "onError": on_error} });
@@ -80,4 +80,40 @@ fn typed_cells_row_context_and_on_error() {
     // rowIndex makes the expression run per row, not once per distinct value
     call("apply", t("note", "rowIndex + 1", "keep-original"));
     assert_eq!(call("rows", json!({ "limit": 10 }))["rows"][2][1][2], json!("3"));
+}
+
+#[test]
+fn projects_are_saved_and_reopened() {
+    let home = std::env::temp_dir().join(format!("oxrefine-store-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&home);
+    let csv = home.join("in.csv");
+    std::fs::create_dir_all(&home).unwrap();
+    std::fs::write(&csv, "name,n\n alice ,1\nbob,2\n").unwrap();
+    let store = ox_core::store::Store::open(&home).unwrap();
+    let call = |s: &mut Session, cmd: &str, args: serde_json::Value| dispatch(s, cmd, args).unwrap()["data"].clone();
+
+    let mut s = Session::with_store(store.clone());
+    let id = call(&mut s, "open", json!({ "path": csv, "name": "People" }))["id"].as_str().unwrap().to_string();
+    call(&mut s, "apply", json!({ "op": {"op": "core/text-transform", "columnName": "name", "expression": "value.trim()"} }));
+    call(&mut s, "apply", json!({ "op": {"op": "core/text-transform", "columnName": "n", "expression": "value.toNumber() * 10"} }));
+    call(&mut s, "goto", json!({ "index": 1 }));
+    drop(s);
+
+    // a new session (an app restart) sees the project and its history, cursor included
+    let mut s = Session::with_store(store.clone());
+    let list = call(&mut s, "projects", json!({}));
+    assert_eq!(list[0]["name"], "People");
+    let p = call(&mut s, "open_project", json!({ "id": id }));
+    assert_eq!(p["history"].as_array().unwrap().len(), 2);
+    assert_eq!(p["cursor"], 1);
+    assert_eq!(call(&mut s, "rows", json!({ "limit": 1 }))["rows"][0][1], json!(["alice", "1"]));
+    call(&mut s, "goto", json!({ "index": 2 }));
+    assert_eq!(call(&mut s, "rows", json!({ "limit": 1 }))["rows"][0][1], json!(["alice", "10"]), "redo works after reopening");
+
+    call(&mut s, "rename_project", json!({ "id": id, "name": "Renamed" }));
+    assert_eq!(call(&mut s, "projects", json!({}))[0]["name"], "Renamed");
+    assert!(dispatch(&mut s, "delete_project", json!({ "id": "../../etc" })).is_err(), "ids can't escape the store");
+    call(&mut s, "delete_project", json!({ "id": id }));
+    assert_eq!(call(&mut s, "projects", json!({})), json!([]));
+    let _ = std::fs::remove_dir_all(&home);
 }

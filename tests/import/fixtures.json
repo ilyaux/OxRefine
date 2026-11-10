@@ -1,0 +1,1789 @@
+{
+ "openrefine": "3.10.1",
+ "cases": [
+  {
+   "name": "semicolons, BOM, quoted newline",
+   "file": "semi.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ";",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city",
+    "note",
+    "Column 4"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": "has ; inside"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": "two\nlines"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Boston"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Dan"
+     },
+     {
+      "v": "Paris"
+     },
+     {
+      "v": "x"
+     },
+     {
+      "v": "extra"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "semicolons no blank rows",
+   "file": "semi.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ";",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": false,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city",
+    "note",
+    "Column 4"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": "has ; inside"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": "two\nlines"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Boston"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Dan"
+     },
+     {
+      "v": "Paris"
+     },
+     {
+      "v": "x"
+     },
+     {
+      "v": "extra"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "semicolons blanks as empty strings",
+   "file": "semi.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ";",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city",
+    "note",
+    "Column 4"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": "has ; inside"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": "two\nlines"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Boston"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Dan"
+     },
+     {
+      "v": "Paris"
+     },
+     {
+      "v": "x"
+     },
+     {
+      "v": "extra"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "two header lines",
+   "file": "semi.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ";",
+    "ignoreLines": -1,
+    "headerLines": 2,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name Alice",
+    "city Zürich",
+    "note has ; inside",
+    "Column 4"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": "two\nlines"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Boston"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Dan"
+     },
+     {
+      "v": "Paris"
+     },
+     {
+      "v": "x"
+     },
+     {
+      "v": "extra"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "tsv",
+   "file": "tabbed.tsv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": "\t",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "id",
+    "name",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "7.5"
+     }
+    ],
+    [
+     {
+      "v": "2"
+     },
+     {
+      "v": "  Bob  "
+     },
+     null
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "quoted"
+     },
+     {
+      "v": "12"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "tsv trim strings",
+   "file": "tabbed.tsv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": "\t",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": true
+   },
+   "columns": [
+    "id",
+    "name",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "7.5"
+     }
+    ],
+    [
+     {
+      "v": "2"
+     },
+     {
+      "v": "Bob"
+     },
+     null
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "quoted"
+     },
+     {
+      "v": "12"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "ignore, skip and limit",
+   "file": "messy.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": 2,
+    "headerLines": 1,
+    "skipDataLines": 1,
+    "limit": 3,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "id",
+    "name",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "10"
+     }
+    ],
+    [
+     {
+      "v": "2"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "20"
+     }
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "30"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "no header line",
+   "file": "messy.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": 3,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "Column 1",
+    "Column 2",
+    "Column 3"
+   ],
+   "rows": [
+    [
+     {
+      "v": "--"
+     },
+     {
+      "v": "--"
+     },
+     {
+      "v": "--"
+     }
+    ],
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "10"
+     }
+    ],
+    [
+     {
+      "v": "2"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "20"
+     }
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "30"
+     }
+    ],
+    [
+     {
+      "v": "4"
+     },
+     {
+      "v": "Dan"
+     },
+     {
+      "v": "40"
+     }
+    ],
+    [
+     {
+      "v": "5"
+     },
+     {
+      "v": "Eve"
+     },
+     {
+      "v": "50"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "guess cell types",
+   "file": "numbers.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": true,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g"
+   ],
+   "rows": [
+    [
+     {
+      "v": 12
+     },
+     {
+      "v": 1.5
+     },
+     {
+      "v": 1000
+     },
+     {
+      "v": 7
+     },
+     {
+      "v": "true"
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 5
+     }
+    ],
+    [
+     {
+      "v": -3
+     },
+     {
+      "v": 0.1
+     },
+     {
+      "v": "abc"
+     },
+     null,
+     {
+      "v": "FALSE"
+     },
+     {
+      "v": "15/01/2024"
+     },
+     {
+      "v": "1 000"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "guess types and trim",
+   "file": "numbers.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": true,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": true
+   },
+   "columns": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g"
+   ],
+   "rows": [
+    [
+     {
+      "v": 12
+     },
+     {
+      "v": 1.5
+     },
+     {
+      "v": 1000
+     },
+     {
+      "v": 7
+     },
+     {
+      "v": "true"
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 5
+     }
+    ],
+    [
+     {
+      "v": -3
+     },
+     {
+      "v": 0.1
+     },
+     {
+      "v": "abc"
+     },
+     null,
+     {
+      "v": "FALSE"
+     },
+     {
+      "v": "15/01/2024"
+     },
+     {
+      "v": "1 000"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "quotes processed",
+   "file": "quotes.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "a",
+    "b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "x, y"
+     },
+     {
+      "v": "he said \"hi\""
+     }
+    ],
+    [
+     {
+      "v": "plain"
+     },
+     {
+      "v": "open\n"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "quotes as text",
+   "file": "quotes.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": false,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "a",
+    "b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "\"x, y\""
+     },
+     {
+      "v": "\"he said \"hi\"\""
+     }
+    ],
+    [
+     {
+      "v": "plain"
+     },
+     {
+      "v": "\"open\n"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "latin-1 encoding",
+   "file": "latin1.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "ISO-8859-1",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "José"
+     },
+     {
+      "v": "Málaga"
+     }
+    ],
+    [
+     {
+      "v": "René"
+     },
+     {
+      "v": "Orléans"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xlsx first sheet",
+   "file": "sheets.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.xlsx#0",
+      "fileNameAndSheetIndex": "sheets.xlsx#0",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "name",
+    "age",
+    "score",
+    "joined",
+    "active",
+    "note"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice Smith"
+     },
+     {
+      "v": 34
+     },
+     {
+      "v": 7.25
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 1
+     },
+     {
+      "v": " padded "
+     }
+    ],
+    [
+     {
+      "v": "Bob Jones"
+     },
+     {
+      "v": 51
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": "2023-12-31"
+     },
+     {
+      "v": 0
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "n/a"
+     },
+     {
+      "v": 41.25
+     },
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "1,234.5"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xlsx second sheet",
+   "file": "sheets.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.xlsx#1",
+      "fileNameAndSheetIndex": "sheets.xlsx#1",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "city",
+    "population"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 421878
+     }
+    ],
+    [
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": 804237.5
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xlsx both sheets",
+   "file": "sheets.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.xlsx#0",
+      "fileNameAndSheetIndex": "sheets.xlsx#0",
+      "rows": 100,
+      "selected": true
+     },
+     {
+      "name": "sheets.xlsx#1",
+      "fileNameAndSheetIndex": "sheets.xlsx#1",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "name",
+    "age",
+    "score",
+    "joined",
+    "active",
+    "note",
+    "city",
+    "population"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice Smith"
+     },
+     {
+      "v": 34
+     },
+     {
+      "v": 7.25
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 1
+     },
+     {
+      "v": " padded "
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Bob Jones"
+     },
+     {
+      "v": 51
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": "2023-12-31"
+     },
+     {
+      "v": 0
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "n/a"
+     },
+     {
+      "v": 41.25
+     },
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "1,234.5"
+     },
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 421878
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": 804237.5
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xlsx no header",
+   "file": "sheets.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "headerLines": 0,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.xlsx#1",
+      "fileNameAndSheetIndex": "sheets.xlsx#1",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "Column 1",
+    "Column 2"
+   ],
+   "rows": [
+    [
+     {
+      "v": "city"
+     },
+     {
+      "v": "population"
+     }
+    ],
+    [
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 421878
+     }
+    ],
+    [
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": 804237.5
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xlsx no blank rows",
+   "file": "sheets.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": false,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.xlsx#0",
+      "fileNameAndSheetIndex": "sheets.xlsx#0",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "name",
+    "age",
+    "score",
+    "joined",
+    "active",
+    "note"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice Smith"
+     },
+     {
+      "v": 34
+     },
+     {
+      "v": 7.25
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 1
+     },
+     {
+      "v": " padded "
+     }
+    ],
+    [
+     {
+      "v": "Bob Jones"
+     },
+     {
+      "v": 51
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": "2023-12-31"
+     },
+     {
+      "v": 0
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "n/a"
+     },
+     {
+      "v": 41.25
+     },
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "1,234.5"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "ods first sheet",
+   "file": "sheets.ods",
+   "format": "text/xml/ods",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.ods#0",
+      "fileNameAndSheetIndex": "sheets.ods#0",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "name",
+    "age",
+    "score",
+    "joined",
+    "active",
+    "note"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice Smith"
+     },
+     {
+      "v": 34
+     },
+     {
+      "v": 7.25
+     },
+     {
+      "v": "2024-01-15T00:00:00Z",
+      "t": "date"
+     },
+     {
+      "v": 1
+     },
+     {
+      "v": " padded "
+     }
+    ],
+    [
+     {
+      "v": "Bob Jones"
+     },
+     {
+      "v": 51
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": "2023-12-31T00:00:00Z",
+      "t": "date"
+     },
+     {
+      "v": 0
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "n/a"
+     },
+     {
+      "v": 41.25
+     },
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "1,234.5"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "ods second sheet",
+   "file": "sheets.ods",
+   "format": "text/xml/ods",
+   "options": {
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "sheets": [
+     {
+      "name": "sheets.ods#1",
+      "fileNameAndSheetIndex": "sheets.ods#1",
+      "rows": 100,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "city",
+    "population"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 421878
+     }
+    ],
+    [
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": 804237.5
+     }
+    ],
+    [
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "json array of objects",
+   "file": "people.json",
+   "format": "text/json",
+   "options": {
+    "recordPath": [
+     "_",
+     "_"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false
+   },
+   "columns": [
+    "_ - id",
+    "_ - name",
+    "_ - score",
+    "_ - active",
+    "_ - note",
+    "_ - extra",
+    "_ - address - city",
+    "_ - address - zip",
+    "_ - tags - tags"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": 7.5
+     },
+     {
+      "v": true
+     },
+     {},
+     null,
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": "8001"
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": false
+     },
+     {
+      "v": ""
+     },
+     null,
+     {
+      "v": "Kraków"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": 3
+     },
+     {
+      "v": " Carol "
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "only here"
+     },
+     {
+      "v": "Boston"
+     },
+     {
+      "v": "02101"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "json guess and trim",
+   "file": "people.json",
+   "format": "text/json",
+   "options": {
+    "recordPath": [
+     "_",
+     "_"
+    ],
+    "limit": -1,
+    "trimStrings": true,
+    "guessCellValueTypes": true,
+    "storeEmptyStrings": true,
+    "includeFileSources": false
+   },
+   "columns": [
+    "_ - id",
+    "_ - name",
+    "_ - score",
+    "_ - active",
+    "_ - note",
+    "_ - extra",
+    "_ - address - city",
+    "_ - address - zip",
+    "_ - tags - tags"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": 7.5
+     },
+     {
+      "v": true
+     },
+     {},
+     null,
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 8001
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": false
+     },
+     {
+      "v": ""
+     },
+     null,
+     {
+      "v": "Kraków"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": 3
+     },
+     {
+      "v": "Carol"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "only here"
+     },
+     {
+      "v": "Boston"
+     },
+     {
+      "v": 2101
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "json limit",
+   "file": "people.json",
+   "format": "text/json",
+   "options": {
+    "recordPath": [
+     "_",
+     "_"
+    ],
+    "limit": 2,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false
+   },
+   "columns": [
+    "_ - id",
+    "_ - name",
+    "_ - score",
+    "_ - active",
+    "_ - note",
+    "_ - tags - tags",
+    "_ - address - city",
+    "_ - address - zip"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": 7.5
+     },
+     {
+      "v": true
+     },
+     {},
+     {
+      "v": "a"
+     },
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": "8001"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": false
+     },
+     {
+      "v": ""
+     },
+     null,
+     {
+      "v": "Kraków"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "json nested record path",
+   "file": "nested.json",
+   "format": "text/json",
+   "options": {
+    "recordPath": [
+     "_",
+     "data",
+     "items",
+     "_"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false
+   },
+   "columns": [
+    "_ - sku",
+    "_ - price",
+    "_ - qty",
+    "_ - discontinued"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A-1"
+     },
+     {
+      "v": 9.99
+     },
+     {
+      "v": 3
+     },
+     null
+    ],
+    [
+     {
+      "v": "B-2"
+     },
+     {
+      "v": 15
+     },
+     {
+      "v": 0
+     },
+     {
+      "v": true
+     }
+    ]
+   ]
+  }
+ ]
+}

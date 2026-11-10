@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core"
 import { open, save } from "@tauri-apps/plugin-dialog"
 
 export type Summary = {
+  id: string | null
   name: string
   columns: string[]
   rows: number
@@ -57,7 +58,12 @@ export async function call<T = unknown>(cmd: string, args: object = {}): Promise
 export async function pickFile(kind: "open-csv" | "save-csv" | "save-json"): Promise<string | null | undefined> {
   if (!isTauri) return undefined
   if (kind === "open-csv") {
-    const p = await open({ filters: [{ name: "Delimited text", extensions: ["csv", "tsv", "txt"] }] })
+    const p = await open({
+      filters: [
+        { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson"] },
+        { name: "All files", extensions: ["*"] },
+      ],
+    })
     return typeof p === "string" ? p : null
   }
   const ext = kind === "save-csv" ? "csv" : "json"

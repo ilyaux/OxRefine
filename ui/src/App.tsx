@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DownloadIcon, FileUpIcon, FolderOpenIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
+import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, pickFile, type Engine, type Facet, type FacetData, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
+import { Home } from "@/Home"
+import { ImportDialog } from "@/ImportDialog"
 import { Facets, History } from "@/Sidebar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,7 +16,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -36,6 +37,7 @@ export function App() {
   const [total, setTotal] = useState(0)
   const [lastMs, setLastMs] = useState<{ what: string; ms: number } | null>(null)
   const [modal, setModal] = useState<Modal>(null)
+  const [importPath, setImportPath] = useState<string | null>(null)
 
   const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
   const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
@@ -65,10 +67,22 @@ export function App() {
     if (p) return then(p).catch(fail)
     if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
   }
-  const openFile = () =>
-    withPath("open-csv", "Open CSV / TSV", async (path) => {
-      setFacets([])
-      await run("import", "open", { path })
+  const openFile = () => withPath("open-csv", "Import a file", async (path) => setImportPath(path))
+  const openProject = (id: string) => {
+    setFacets([])
+    run("open", "open_project", { id }).catch(fail)
+  }
+  const goHome = () => call("close").then(() => setSummary(null), fail)
+  const renameProject = (p: { id: string; name: string }, done: () => void) =>
+    setModal({
+      kind: "ask",
+      title: `Rename “${p.name}”`,
+      label: "Project name",
+      initial: p.name,
+      onSubmit: async (v) => {
+        await call("rename_project", { id: p.id, name: v.trim() }).catch(fail)
+        done()
+      },
     })
   const exportCsv = () =>
     withPath("save-csv", "Export matching rows as CSV", async (path) => {
@@ -169,6 +183,12 @@ export function App() {
           <TableIcon />
           <span className="font-semibold">OxRefine</span>
           {summary && (
+            <Button variant="ghost" size="sm" onClick={goHome}>
+              <HouseIcon data-icon="inline-start" />
+              Projects
+            </Button>
+          )}
+          {summary && (
             <>
               <Separator orientation="vertical" className="mx-1 h-5" />
               <span className="truncate text-sm">{summary.name}</span>
@@ -227,7 +247,7 @@ export function App() {
             </DropdownMenu>
             <Button onClick={openFile}>
               <FolderOpenIcon data-icon="inline-start" />
-              Open
+              Import
             </Button>
           </div>
         </header>
@@ -255,23 +275,7 @@ export function App() {
             </main>
           </div>
         ) : (
-          <Empty className="flex-1">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <TableIcon />
-              </EmptyMedia>
-              <EmptyTitle>Open a dataset</EmptyTitle>
-              <EmptyDescription>
-                CSV or TSV, any size your RAM allows. Facet, cluster, and transform millions of rows interactively.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button onClick={openFile}>
-                <FolderOpenIcon data-icon="inline-start" />
-                Open file
-              </Button>
-            </EmptyContent>
-          </Empty>
+          <Home onImport={openFile} onOpen={openProject} onRename={renameProject} onError={fail} />
         )}
 
         <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">
@@ -295,6 +299,17 @@ export function App() {
       </div>
 
       {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+      {importPath && (
+        <ImportDialog
+          path={importPath}
+          onClose={() => setImportPath(null)}
+          onCreate={async (args) => {
+            await run("import", "open", args)
+            setFacets([])
+            setImportPath(null)
+          }}
+        />
+      )}
       {(modal?.kind === "transform" || modal?.kind === "add") && summary && (
         <TransformDialog
           column={modal.column}

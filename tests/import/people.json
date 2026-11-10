@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Alice",
+    "tags": [
+      "a",
+      "b"
+    ],
+    "address": {
+      "city": "Zürich",
+      "zip": "8001"
+    },
+    "score": 7.5,
+    "active": true,
+    "note": null
+  },
+  {
+    "id": 2,
+    "name": "Bob",
+    "tags": [],
+    "address": {
+      "city": "Kraków"
+    },
+    "score": 3,
+    "active": false,
+    "note": ""
+  },
+  {
+    "id": 3,
+    "name": " Carol ",
+    "address": {
+      "city": "Boston",
+      "zip": "02101"
+    },
+    "extra": "only here"
+  }
+]

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
+  xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+  xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+  xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"
+  xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"
+  xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2"
+  office:version="1.2" office:mimetype="application/vnd.oasis.opendocument.spreadsheet">
+ <office:automatic-styles>
+  <number:date-style style:name="N1"><number:year number:style="long"/><number:text>-</number:text><number:month number:style="long"/><number:text>-</number:text><number:day number:style="long"/></number:date-style>
+  <style:style style:name="ce1" style:family="table-cell" style:data-style-name="N1"/>
+ </office:automatic-styles>
+ <office:body>
+  <office:spreadsheet>
+   <table:table table:name="People">
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>name</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>age</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>score</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>joined</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>active</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>note</text:p></table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>Alice Smith</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="34"><text:p>34</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="7.25"><text:p>7.25</text:p></table:table-cell>
+     <table:table-cell table:style-name="ce1" office:value-type="date" office:date-value="2024-01-15"><text:p>2024-01-15</text:p></table:table-cell>
+     <table:table-cell office:value-type="boolean" office:boolean-value="true"><text:p>TRUE</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p> padded </text:p></table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>Bob Jones</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="51"><text:p>51</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="3"><text:p>3</text:p></table:table-cell>
+     <table:table-cell table:style-name="ce1" office:value-type="date" office:date-value="2023-12-31"><text:p>2023-12-31</text:p></table:table-cell>
+     <table:table-cell office:value-type="boolean" office:boolean-value="false"><text:p>FALSE</text:p></table:table-cell>
+     <table:table-cell/>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell/><table:table-cell/><table:table-cell/><table:table-cell/><table:table-cell/><table:table-cell/>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>Carol</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>n/a</text:p></table:table-cell>
+     <table:table-cell table:formula="of:=[.B2]+[.C2]" office:value-type="float" office:value="41.25"><text:p>41.25</text:p></table:table-cell>
+     <table:table-cell/>
+     <table:table-cell office:value-type="boolean" office:boolean-value="true"><text:p>TRUE</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>1,234.5</text:p></table:table-cell>
+    </table:table-row>
+   </table:table>
+   <table:table table:name="Cities">
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>city</text:p></table:table-cell>
+     <table:table-cell office:value-type="string"><text:p>population</text:p></table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>Zürich</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="421878"><text:p>421878</text:p></table:table-cell>
+    </table:table-row>
+    <table:table-row>
+     <table:table-cell office:value-type="string"><text:p>Kraków</text:p></table:table-cell>
+     <table:table-cell office:value-type="float" office:value="804237.5"><text:p>804237.5</text:p></table:table-cell>
+    </table:table-row>
+   </table:table>
+  </office:spreadsheet>
+ </office:body>
+</office:document>
