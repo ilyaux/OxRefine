@@ -1,0 +1,3 @@
+# Cases whose OxRefine result still differs from OpenRefine 3.10.1. Each line: case name  # reason.
+# The conformance test fails when one of these starts passing, so remove lines as they get fixed.
+sort score blanks first  # OpenRefine puts row 0 (score 10) before the blank rows when blankPosition=0; looks like a comparator bug in OpenRefine, not emulated

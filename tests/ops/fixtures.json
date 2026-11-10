@@ -1,0 +1,12703 @@
+{
+ "openrefine": "3.10.1",
+ "corpus": "id,name,tags,city,score,joined,note\n1,Alice Smith,red|green,New York,10,2024-01-15,first\n,,blue,new york,,2024-02-01,\n2,bob jones,green,Boston,7.5,2023-12-31,\n3,Carol King,,boston ,12,,dup\n3,Carol King,,boston ,12,,dup\n,,red|blue|green,Chicago,x,2024-03-10,\n4,Dan  Brown,blue,  Chicago,3,not a date,last\n5,,red,,0,2024-01-15,\n6,Eve Adams,green|red,New-York,-2,2022-06-30,\"quoted, comma\"\n",
+ "cases": [
+  {
+   "name": "column-move to front",
+   "ops": [
+    {
+     "op": "core/column-move",
+     "columnName": "city",
+     "index": 0
+    }
+   ],
+   "columns": [
+    "city",
+    "id",
+    "name",
+    "tags",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "New York"
+      },
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "new york"
+      },
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "boston "
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "boston "
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Chicago"
+      },
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-move to end",
+   "ops": [
+    {
+     "op": "core/column-move",
+     "columnName": "id",
+     "index": 6
+    }
+   ],
+   "columns": [
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note",
+    "id"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      },
+      {
+       "v": "1"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null,
+      {
+       "v": "2"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      },
+      {
+       "v": "4"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null,
+      {
+       "v": "5"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      },
+      {
+       "v": "6"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-move-left",
+   "ops": [
+    {
+     "op": "core/column-move-left",
+     "columnName": "city"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "city",
+    "tags",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      {
+       "v": "blue"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "boston "
+      },
+      null,
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "boston "
+      },
+      null,
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-move-right",
+   "ops": [
+    {
+     "op": "core/column-move-right",
+     "columnName": "city"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "score",
+    "city",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      {
+       "v": "new york"
+      },
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "12"
+      },
+      {
+       "v": "boston "
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "12"
+      },
+      {
+       "v": "boston "
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "0"
+      },
+      null,
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-move-first",
+   "ops": [
+    {
+     "op": "core/column-move-first",
+     "columnName": "note"
+    }
+   ],
+   "columns": [
+    "note",
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "first"
+      },
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "last"
+      },
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "quoted, comma"
+      },
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-move-last",
+   "ops": [
+    {
+     "op": "core/column-move-last",
+     "columnName": "id"
+    }
+   ],
+   "columns": [
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note",
+    "id"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      },
+      {
+       "v": "1"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null,
+      {
+       "v": "2"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      },
+      {
+       "v": "3"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      },
+      {
+       "v": "4"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null,
+      {
+       "v": "5"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      },
+      {
+       "v": "6"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-reorder subset",
+   "ops": [
+    {
+     "op": "core/column-reorder",
+     "columnNames": [
+      "name",
+      "id",
+      "score"
+     ]
+    }
+   ],
+   "columns": [
+    "name",
+    "id",
+    "score"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "1"
+      },
+      {
+       "v": "10"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "2"
+      },
+      {
+       "v": "7.5"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "12"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "12"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "x"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "4"
+      },
+      {
+       "v": "3"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "5"
+      },
+      {
+       "v": "0"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "6"
+      },
+      {
+       "v": "-2"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-multi-removal",
+   "ops": [
+    {
+     "op": "core/column-multi-removal",
+     "columnNames": [
+      "tags",
+      "note"
+     ]
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "city",
+    "score",
+    "joined"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "rename then transform",
+   "ops": [
+    {
+     "op": "core/column-rename",
+     "oldColumnName": "name",
+     "newColumnName": "full name"
+    },
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "full name",
+     "expression": "grel:value.toUppercase()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "full name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "ALICE SMITH"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "BOB JONES"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "CAROL KING"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "CAROL KING"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "DAN  BROWN"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "EVE ADAMS"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "toNumber keep-original",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 10
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": 7.5
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": 3
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": 0
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": -2
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "toNumber set-to-blank",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "set-to-blank",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 10
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": 7.5
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {},
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": 3
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": 0
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": -2
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "toDate store-error",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "joined",
+     "expression": "grel:value.toDate()",
+     "onError": "store-error",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15T00:00:00Z",
+       "t": "date"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      {
+       "e": "Unable to parse as date"
+      },
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      {
+       "e": "Unable to parse as date"
+      },
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "e": "Unable to convert to date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30T00:00:00Z",
+       "t": "date"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "transform reads other cells",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "note",
+     "expression": "grel:cells['name'].value + ' @ ' + cells['city'].value",
+     "onError": "set-to-blank",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "Alice Smith @ New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      {
+       "v": "bob jones @ Boston"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "Carol King @ boston "
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "Carol King @ boston "
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "Dan  Brown @   Chicago"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "Eve Adams @ New-York"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "transform in facet only",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "york",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "expression": "grel:value.trim().toTitlecase()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "New York"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-york"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "transform record mode facet",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "chicago",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "record-based"
+     },
+     "columnName": "tags",
+     "expression": "grel:value.toUppercase()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "RED|BLUE|GREEN"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "BLUE"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "column-addition per row",
+   "ops": [
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "score",
+     "newColumnName": "double",
+     "columnInsertIndex": 5,
+     "expression": "grel:value.toNumber() * 2",
+     "onError": "set-to-blank"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "double",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": 20
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": 15
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      {
+       "v": 24
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      {
+       "v": 24
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      null,
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": 6
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": 0
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": -4
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "mass-edit with blank",
+   "ops": [
+    {
+     "op": "core/mass-edit",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "expression": "value",
+     "edits": [
+      {
+       "from": [
+        "new york",
+        "New-York"
+       ],
+       "fromBlank": false,
+       "fromError": false,
+       "to": "New York"
+      },
+      {
+       "from": [],
+       "fromBlank": true,
+       "fromError": false,
+       "to": "(none)"
+      }
+     ]
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "New York"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "(none)"
+      },
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split tags guess types",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "tags",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "separator",
+     "separator": "|",
+     "regex": false,
+     "maxColumns": 0
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags 1",
+    "tags 2",
+    "tags 3",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "green"
+      },
+      null,
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      null,
+      null,
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split keep original no guess",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "tags",
+     "guessCellType": false,
+     "removeOriginalColumn": false,
+     "mode": "separator",
+     "separator": "|",
+     "regex": false,
+     "maxColumns": 0
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "tags 1",
+    "tags 2",
+    "tags 3",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "green"
+      },
+      null,
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "green"
+      },
+      null,
+      null,
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "red"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split max columns",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "tags",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "separator",
+     "separator": "|",
+     "regex": false,
+     "maxColumns": 2
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags 1",
+    "tags 2",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      null,
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      null,
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split name regex",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "separator",
+     "separator": "\\s+",
+     "regex": true,
+     "maxColumns": 0
+    }
+   ],
+   "columns": [
+    "id",
+    "name 1",
+    "name 2",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice"
+      },
+      {
+       "v": "Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob"
+      },
+      {
+       "v": "jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol"
+      },
+      {
+       "v": "King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol"
+      },
+      {
+       "v": "King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan"
+      },
+      {
+       "v": "Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve"
+      },
+      {
+       "v": "Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split score numbers",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "separator",
+     "separator": ".",
+     "regex": false,
+     "maxColumns": 0
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score 1",
+    "score 2",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 10
+      },
+      null,
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": 7
+      },
+      {
+       "v": 5
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      null,
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": 3
+      },
+      null,
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": 0
+      },
+      null,
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": -2
+      },
+      null,
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split joined by lengths",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "joined",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "lengths",
+     "separator": "|",
+     "regex": false,
+     "maxColumns": 0,
+     "fieldLengths": [
+      4,
+      1,
+      2
+     ]
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined 1",
+    "joined 2",
+    "joined 3",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": 2024
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 1
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": 2024
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 2
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": 2023
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 12
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": 2024
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 3
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not "
+      },
+      {
+       "v": "a"
+      },
+      {
+       "v": " d"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": 2024
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 1
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": 2022
+      },
+      {
+       "v": "-"
+      },
+      {
+       "v": 6
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "split only matching rows",
+   "ops": [
+    {
+     "op": "core/column-split",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "list",
+        "name": "city",
+        "columnName": "city",
+        "expression": "value",
+        "omitBlank": false,
+        "omitError": false,
+        "selection": [
+         {
+          "v": {
+           "v": "Chicago",
+           "l": "Chicago"
+          }
+         }
+        ],
+        "selectBlank": false,
+        "selectError": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "columnName": "tags",
+     "guessCellType": true,
+     "removeOriginalColumn": true,
+     "mode": "separator",
+     "separator": "|",
+     "regex": false,
+     "maxColumns": 0
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags 1",
+    "tags 2",
+    "tags 3",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      null,
+      null,
+      null,
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "multivalued split",
+   "ops": [
+    {
+     "op": "core/multivalued-cell-split",
+     "columnName": "tags",
+     "keyColumnName": "id",
+     "mode": "separator",
+     "separator": "|",
+     "regex": false
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "green"
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "green"
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "multivalued split regex",
+   "ops": [
+    {
+     "op": "core/multivalued-cell-split",
+     "columnName": "name",
+     "keyColumnName": "id",
+     "mode": "separator",
+     "separator": "\\s+",
+     "regex": true
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Smith"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "jones"
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "King"
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "King"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Brown"
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Adams"
+      },
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "multivalued join",
+   "ops": [
+    {
+     "op": "core/multivalued-cell-join",
+     "columnName": "tags",
+     "keyColumnName": "id",
+     "separator": ";"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green;blue"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "multivalued split then join",
+   "ops": [
+    {
+     "op": "core/multivalued-cell-split",
+     "columnName": "tags",
+     "keyColumnName": "id",
+     "mode": "separator",
+     "separator": "|",
+     "regex": false
+    },
+    {
+     "op": "core/multivalued-cell-join",
+     "columnName": "tags",
+     "keyColumnName": "id",
+     "separator": ","
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red,green,blue"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "red,blue,green"
+      },
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green,red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "multivalued join city",
+   "ops": [
+    {
+     "op": "core/multivalued-cell-join",
+     "columnName": "city",
+     "keyColumnName": "id",
+     "separator": " + "
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York + new york"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      null,
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston  + Chicago"
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      null,
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fill-down id",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "id"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fill-down name",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fill-down in facet",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "york",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "columnName": "score"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fill-down record mode",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "record-based"
+     },
+     "columnName": "name"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "blank-down city",
+   "ops": [
+    {
+     "op": "core/blank-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      null,
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "blank-down name",
+   "ops": [
+    {
+     "op": "core/blank-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      null,
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fill then blank down",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "id"
+    },
+    {
+     "op": "core/blank-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "id"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-removal facet",
+   "ops": [
+    {
+     "op": "core/row-removal",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "york",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-removal list facet blank",
+   "ops": [
+    {
+     "op": "core/row-removal",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "list",
+        "name": "note",
+        "columnName": "note",
+        "expression": "value",
+        "omitBlank": false,
+        "omitError": false,
+        "selection": [],
+        "selectBlank": true,
+        "selectError": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-keep-matched",
+   "ops": [
+    {
+     "op": "core/row-keep-matched",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "tags",
+        "columnName": "tags",
+        "query": "green",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-removal record mode",
+   "ops": [
+    {
+     "op": "core/row-removal",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "tags",
+        "columnName": "tags",
+        "query": "blue",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "record-based"
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-star facet",
+   "ops": [
+    {
+     "op": "core/row-star",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "boston",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "starred": true
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": true,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": true,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": true,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-flag then unflag",
+   "ops": [
+    {
+     "op": "core/row-flag",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "flagged": true
+    },
+    {
+     "op": "core/row-flag",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "list",
+        "name": "id",
+        "columnName": "id",
+        "expression": "value",
+        "omitBlank": false,
+        "omitError": false,
+        "selection": [
+         {
+          "v": {
+           "v": "3",
+           "l": "3"
+          }
+         }
+        ],
+        "selectBlank": false,
+        "selectError": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "flagged": false
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-duplicate-removal id",
+   "ops": [
+    {
+     "op": "core/row-duplicate-removal",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "criteria": [
+      "id"
+     ]
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "row-duplicate-removal name city",
+   "ops": [
+    {
+     "op": "core/row-duplicate-removal",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "criteria": [
+      "name",
+      "city"
+     ]
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort score as number",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort score as number reversed",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": true,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort score blanks first",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": false,
+        "blankPosition": 0,
+        "errorPosition": 2
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort name as text",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "name",
+        "valueType": "string",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1,
+        "caseSensitive": false
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort name case-sensitive",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "name",
+        "valueType": "string",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1,
+        "caseSensitive": true
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort joined as date",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "joined",
+     "expression": "grel:value.toDate()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    },
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "joined",
+        "valueType": "date",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30T00:00:00Z",
+       "t": "date"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15T00:00:00Z",
+       "t": "date"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10T00:00:00Z",
+       "t": "date"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort typed numbers",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    },
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": true,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 10
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": 7.5
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": 3
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": 0
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": -2
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sort two criteria",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "city",
+        "valueType": "string",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1,
+        "caseSensitive": false
+       },
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": true,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "cleanup recipe",
+   "ops": [
+    {
+     "op": "core/fill-down",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "id"
+    },
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "expression": "grel:value.replace(/\\s+/, ' ').trim().toTitlecase()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    },
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "expression": "grel:value.trim()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    },
+    {
+     "op": "core/mass-edit",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "expression": "value",
+     "edits": [
+      {
+       "from": [
+        "new york",
+        "New-York"
+       ],
+       "fromBlank": false,
+       "fromError": false,
+       "to": "New York"
+      }
+     ]
+    },
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "set-to-blank",
+     "repeat": false,
+     "repeatCount": 10
+    },
+    {
+     "op": "core/row-duplicate-removal",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "criteria": [
+      "id",
+      "name"
+     ]
+    },
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "score",
+        "valueType": "number",
+        "reverse": true,
+        "blankPosition": 2,
+        "errorPosition": 1
+       }
+      ]
+     }
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston"
+      },
+      {
+       "v": 12
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 10
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "Bob Jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": 7.5
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": 3
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": 0
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": -2
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "New York"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {},
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    }
+   ]
+  }
+ ]
+}

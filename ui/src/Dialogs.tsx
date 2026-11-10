@@ -290,6 +290,51 @@ export function ClusterDialog({
   )
 }
 
+export function SortDialog({ column, onApply, onClose }: { column: string; onApply: (op: Op) => Promise<void>; onClose: () => void }) {
+  const [type, setType] = useState("string")
+  const [order, setOrder] = useState("asc")
+  const apply = () =>
+    onApply({
+      op: "core/row-reorder",
+      mode: "row-based",
+      sorting: {
+        criteria: [{ column, valueType: type, reverse: order === "desc", blankPosition: 2, errorPosition: 1, ...(type === "string" ? { caseSensitive: false } : {}) }],
+      },
+    }).then(onClose)
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Sort rows by “{column}”</DialogTitle>
+          <DialogDescription>Reorders the rows for good and records the step in history. Blank and unparseable values go last.</DialogDescription>
+        </DialogHeader>
+        <FieldGroup>
+          <Field>
+            <FieldLabel>Sort values as</FieldLabel>
+            <ToggleGroup variant="outline" value={[type]} onValueChange={(v) => v[0] && setType(v[0])}>
+              <ToggleGroupItem value="string">Text</ToggleGroupItem>
+              <ToggleGroupItem value="number">Numbers</ToggleGroupItem>
+              <ToggleGroupItem value="date">Dates</ToggleGroupItem>
+              <ToggleGroupItem value="boolean">Booleans</ToggleGroupItem>
+            </ToggleGroup>
+          </Field>
+          <Field>
+            <FieldLabel>Order</FieldLabel>
+            <ToggleGroup variant="outline" value={[order]} onValueChange={(v) => v[0] && setOrder(v[0])}>
+              <ToggleGroupItem value="asc">Ascending</ToggleGroupItem>
+              <ToggleGroupItem value="desc">Descending</ToggleGroupItem>
+            </ToggleGroup>
+          </Field>
+        </FieldGroup>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+          <Button onClick={apply}>Sort</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
 export function AskDialog({
   title,
   label,

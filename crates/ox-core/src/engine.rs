@@ -104,10 +104,8 @@ fn compile(t: &Table, f: &Facet) -> Result<Option<(usize, Vec<bool>)>> {
 }
 
 /// Row indices passing every facet except `skip` (list-facet counts ignore their own facet).
+/// In records mode a record passes when each facet matches at least one of its rows, and then all its rows pass.
 pub fn filter(t: &Table, cfg: &EngineConfig, skip: Option<usize>) -> Result<Vec<u32>> {
-    if cfg.mode == "record-based" {
-        return Err("records mode is not supported yet; switch to rows".into());
-    }
     let mut active = vec![];
     for (i, f) in cfg.facets.iter().enumerate() {
         if Some(i) != skip {
@@ -115,7 +113,20 @@ pub fn filter(t: &Table, cfg: &EngineConfig, skip: Option<usize>) -> Result<Vec<
         }
     }
     let cols: Vec<_> = active.iter().map(|(ci, ok)| (&t.columns[*ci].codes, ok)).collect();
-    Ok((0..t.rows as u32).filter(|&r| cols.iter().all(|(codes, ok)| ok[codes[r as usize] as usize])).collect())
+    if cfg.mode != "record-based" {
+        return Ok((0..t.rows as u32).filter(|&r| cols.iter().all(|(codes, ok)| ok[codes[r as usize] as usize])).collect());
+    }
+    let starts = t.record_starts(t.key_index());
+    let mut out = vec![];
+    let mut r = 0;
+    while r < t.rows {
+        let end = (r + 1..t.rows).find(|&k| starts[k]).unwrap_or(t.rows);
+        if cols.iter().all(|(codes, ok)| (r..end).any(|k| ok[codes[k] as usize])) {
+            out.extend(r as u32..end as u32);
+        }
+        r = end;
+    }
+    Ok(out)
 }
 
 /// Row mask that operations apply to; None when nothing is filtered out.

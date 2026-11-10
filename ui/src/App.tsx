@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, pickFile, type Engine, type Facet, type FacetData, type Op, type Summary } from "@/api"
-import { AskDialog, ClusterDialog, TransformDialog } from "@/Dialogs"
+import { AskDialog, ClusterDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Facets, History } from "@/Sidebar"
 import { Badge } from "@/components/ui/badge"
@@ -11,16 +11,18 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
 
 type Modal =
-  | { kind: "transform" | "add" | "cluster"; column: string }
+  | { kind: "transform" | "add" | "cluster" | "sort"; column: string }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; onSubmit: (v: string) => Promise<void> }
   | null
 
@@ -29,12 +31,13 @@ const fail = (e: unknown) => void toast.add({ title: "Something went wrong", des
 export function App() {
   const [summary, setSummary] = useState<Summary | null>(null)
   const [facets, setFacets] = useState<Facet[]>([])
+  const [mode, setMode] = useState<Engine["mode"]>("row-based")
   const [facetData, setFacetData] = useState<FacetData[]>([])
   const [total, setTotal] = useState(0)
   const [lastMs, setLastMs] = useState<{ what: string; ms: number } | null>(null)
   const [modal, setModal] = useState<Modal>(null)
 
-  const engine: Engine = useMemo(() => ({ facets, mode: "row-based" }), [facets])
+  const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
   const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
 
   const run = useCallback(async (what: string, cmd: string, args: object = {}) => {
@@ -111,6 +114,27 @@ export function App() {
     else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
     else if (a.kind === "add-column") setModal({ kind: "add", column: c })
     else if (a.kind === "remove") apply({ op: "core/column-removal", columnName: c }).catch(() => {})
+    else if (a.kind === "fill-down" || a.kind === "blank-down") apply({ op: `core/${a.kind}`, engineConfig: engine, columnName: c }).catch(() => {})
+    else if (a.kind === "dedupe") apply({ op: "core/row-duplicate-removal", engineConfig: engine, criteria: [c] }).catch(() => {})
+    else if (a.kind === "sort") setModal({ kind: "sort", column: c })
+    else if (a.kind.startsWith("move-")) apply({ op: `core/column-${a.kind}`, columnName: c }).catch(() => {})
+    else if (a.kind === "mv-split" || a.kind === "mv-join" || a.kind === "split") {
+      const what = { "mv-split": "Split multi-valued cells", "mv-join": "Join multi-valued cells", split: "Split into several columns" }[a.kind]
+      setModal({
+        kind: "ask",
+        title: `${what} in “${c}”`,
+        label: a.kind === "mv-join" ? "Join with" : "Separator",
+        initial: a.kind === "mv-join" ? ", " : ",",
+        onSubmit: (sep) =>
+          apply(
+            a.kind === "split"
+              ? { op: "core/column-split", engineConfig: engine, columnName: c, guessCellType: true, removeOriginalColumn: true, mode: "separator", separator: sep, regex: false, maxColumns: 0 }
+              : a.kind === "mv-split"
+                ? { op: "core/multivalued-cell-split", columnName: c, keyColumnName: summary!.columns[0], mode: "separator", separator: sep, regex: false }
+                : { op: "core/multivalued-cell-join", columnName: c, keyColumnName: summary!.columns[0], separator: sep }
+          ).catch(() => {}),
+      })
+    }
     else if (a.kind === "rename")
       setModal({
         kind: "ask",
@@ -166,6 +190,24 @@ export function App() {
             >
               <Redo2Icon />
             </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" disabled={!summary} />}>Rows</DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: true }).catch(() => {})}>Star matching rows</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: false }).catch(() => {})}>Unstar matching rows</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: true }).catch(() => {})}>Flag matching rows</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: false }).catch(() => {})}>Unflag matching rows</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={() => apply({ op: "core/row-keep-matched", engineConfig: engine }).catch(() => {})}>Keep only matching rows</DropdownMenuItem>
+                  <DropdownMenuItem variant="destructive" onClick={() => apply({ op: "core/row-removal", engineConfig: engine }).catch(() => {})}>
+                    Remove matching rows
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="outline" disabled={!summary} onClick={applyRecipe}>
               <FileUpIcon data-icon="inline-start" />
               Apply recipe
@@ -234,9 +276,15 @@ export function App() {
 
         <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">
           {summary && (
-            <span className="tabular-nums">
-              {total.toLocaleString()} of {summary.rows.toLocaleString()} rows match
-            </span>
+            <>
+              <ToggleGroup size="sm" variant="outline" value={[mode]} onValueChange={(v) => v[0] && setMode(v[0] as Engine["mode"])} aria-label="Show rows or records">
+                <ToggleGroupItem value="row-based">Rows</ToggleGroupItem>
+                <ToggleGroupItem value="record-based">Records</ToggleGroupItem>
+              </ToggleGroup>
+              <span className="tabular-nums">
+                {total.toLocaleString()} of {summary.rows.toLocaleString()} rows match
+              </span>
+            </>
           )}
           {lastMs && (
             <span className="ml-auto tabular-nums">
@@ -257,6 +305,7 @@ export function App() {
           onClose={() => setModal(null)}
         />
       )}
+      {modal?.kind === "sort" && <SortDialog column={modal.column} onApply={apply} onClose={() => setModal(null)} />}
       {modal?.kind === "cluster" && (
         <ClusterDialog column={modal.column} engine={engine} onApply={apply} onClose={() => setModal(null)} />
       )}

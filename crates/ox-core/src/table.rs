@@ -99,6 +99,25 @@ impl Column {
         Column { dict: b.finish(), codes }
     }
 
+    /// Rows in a new order; `None` makes an empty (null) row. The dictionary is shared, not rebuilt.
+    pub fn pick(&self, rows: &[Option<u32>]) -> Column {
+        let mut dict = self.dict.clone();
+        let null = match dict.iter().position(Value::is_null) {
+            Some(i) => i as u32,
+            None => {
+                dict.push(Value::Null);
+                (dict.len() - 1) as u32
+            }
+        };
+        Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect() }
+    }
+
+    pub fn from_values(values: impl IntoIterator<Item = Value>) -> Column {
+        let mut b = Interner::default();
+        let codes = values.into_iter().map(|v| b.intern(v)).collect();
+        Column { dict: b.finish(), codes }
+    }
+
     /// Like `map`, but `f(row, value)` runs for every selected row (expressions reading other cells).
     pub fn map_rows(&self, sel: Option<&[bool]>, blank_others: bool, mut f: impl FnMut(usize, &Value) -> Value) -> Column {
         let mut b = Interner::default();
@@ -124,6 +143,10 @@ pub struct Table {
     pub names: Vec<String>,
     pub columns: Vec<Arc<Column>>,
     pub rows: usize,
+    pub starred: Arc<Vec<bool>>,
+    pub flagged: Arc<Vec<bool>>,
+    /// Records key column (OpenRefine's keyCellIndex): the first column at import, followed through renames.
+    pub key: Option<String>,
 }
 
 /// One row as GREL sees it (`cells`, `row`, `rowIndex`).
@@ -152,6 +175,30 @@ impl Table {
 
     pub fn row(&self, row: usize) -> RowRef<'_> {
         RowRef { table: self, row }
+    }
+
+    /// Column that delimits records: a non-blank key cell starts a new record.
+    pub fn key_index(&self) -> usize {
+        self.key.as_ref().and_then(|k| self.names.iter().position(|n| n == k)).unwrap_or(0)
+    }
+
+    /// For each row, whether it starts a record (row 0 always does) by the given key column.
+    pub fn record_starts(&self, key: usize) -> Vec<bool> {
+        let Some(col) = self.columns.get(key) else { return vec![true; self.rows] };
+        (0..self.rows).map(|r| r == 0 || !col.get(r).is_blank()).collect()
+    }
+
+    /// The table with rows picked/reordered; `None` inserts an empty, unstarred row.
+    pub fn pick_rows(&self, rows: &[Option<u32>]) -> Table {
+        let flag = |f: &Vec<bool>| Arc::new(rows.iter().map(|r| r.is_some_and(|r| f[r as usize])).collect::<Vec<_>>());
+        Table {
+            names: self.names.clone(),
+            columns: self.columns.iter().map(|c| Arc::new(c.pick(rows))).collect(),
+            rows: rows.len(),
+            starred: flag(&self.starred),
+            flagged: flag(&self.flagged),
+            key: self.key.clone(),
+        }
     }
 
     /// CSV/TSV import as OpenRefine does it by default: every cell a string, empty cells null.
@@ -196,10 +243,14 @@ impl Table {
             rows += 1;
         }
         names.resize(cols.len(), String::new());
+        let names = dedupe(names);
         Ok(Table {
-            names: dedupe(names),
+            key: names.first().cloned(),
+            names,
             columns: cols.into_iter().map(|(b, codes)| Arc::new(Column { dict: b.finish(), codes })).collect(),
             rows,
+            starred: Arc::new(vec![false; rows]),
+            flagged: Arc::new(vec![false; rows]),
         })
     }
 

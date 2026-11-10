@@ -129,7 +129,10 @@ fn run(slot: &mut Option<Project>, cmd: &str, a: Args) -> Result<Value> {
             let page: Vec<_> = rows[a.start.min(rows.len())..]
                 .iter()
                 .take(a.limit.min(1000))
-                .map(|&r| json!([r, t.columns.iter().map(|c| cell_json(c.get(r as usize))).collect::<Vec<_>>()]))
+                .map(|&r| {
+                    let r = r as usize;
+                    json!([r, t.columns.iter().map(|c| cell_json(c.get(r))).collect::<Vec<_>>(), t.starred[r], t.flagged[r]])
+                })
                 .collect();
             json!({ "total": rows.len(), "rows": page })
         }

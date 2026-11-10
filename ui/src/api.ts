@@ -28,7 +28,7 @@ export type TextFacet = {
   invert: boolean
 }
 export type Facet = ListFacet | TextFacet
-export type Engine = { facets: Facet[]; mode: "row-based" }
+export type Engine = { facets: Facet[]; mode: "row-based" | "record-based" }
 export type FacetData = { distinct: number; choices: [string, number][] } | null
 export type Op = { op: string } & Record<string, unknown>
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useVirtualizer } from "@tanstack/react-virtual"
-import { ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon, FlagIcon, StarIcon } from "lucide-react"
 import { call, type Engine } from "@/api"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-type Row = [number, string[]]
+type Row = [number, (string | null)[], boolean, boolean]
 const BLOCK = 200
 const ROW_H = 33
 // ponytail: native scroll height caps near ~1M rows at 33px (browser max element height);
@@ -33,7 +33,13 @@ export const COMMON: [string, string][] = [
 ]
 
 export type ColumnAction =
-  | { kind: "facet" | "text-filter" | "transform" | "add-column" | "cluster" | "rename" | "remove"; column: string }
+  | {
+      kind:
+        | "facet" | "text-filter" | "transform" | "add-column" | "cluster" | "rename" | "remove"
+        | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
+        | "move-first" | "move-left" | "move-right" | "move-last"
+      column: string
+    }
   | { kind: "common"; column: string; expression: string }
 
 export function Grid({
@@ -122,10 +128,14 @@ export function Grid({
             return (
               <TableRow key={it.index} style={{ height: ROW_H }}>
                 <TableCell className="text-right font-mono text-xs text-muted-foreground tabular-nums">
-                  {row ? row[0] + 1 : ""}
+                  <span className="inline-flex items-center gap-1">
+                    {row?.[2] && <StarIcon aria-label="Starred" className="size-3 fill-current" />}
+                    {row?.[3] && <FlagIcon aria-label="Flagged" className="size-3 fill-current" />}
+                    {row ? row[0] + 1 : ""}
+                  </span>
                 </TableCell>
                 {columns.map((c, i) => (
-                  <TableCell key={c} className="max-w-xs truncate" title={row?.[1][i]}>
+                  <TableCell key={c} className="max-w-xs truncate" title={row?.[1][i] ?? undefined}>
                     {row?.[1][i]}
                   </TableCell>
                 ))}
@@ -169,13 +179,35 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuItem onClick={act("transform")}>Transform…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("fill-down")}>Fill down</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("blank-down")}>Blank down</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("mv-split")}>Split multi-valued cells…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("mv-join")}>Join multi-valued cells…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("cluster")}>Cluster and edit…</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuLabel>Edit column</DropdownMenuLabel>
+          <DropdownMenuItem onClick={act("split")}>Split into several columns…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("add-column")}>Add column based on this…</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Move column</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={act("move-first")}>To the beginning</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("move-left")}>Left</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("move-right")}>Right</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("move-last")}>To the end</DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <DropdownMenuItem onClick={act("rename")}>Rename…</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Rows</DropdownMenuLabel>
+          <DropdownMenuItem onClick={act("sort")}>Sort rows by this column…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("dedupe")}>Remove duplicate rows by this column</DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onClick={act("remove")}>
             Remove column
           </DropdownMenuItem>
