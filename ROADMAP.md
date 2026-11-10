@@ -1,13 +1,13 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 25 of 102 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 102 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 45 | 13 |
+| v0.2 | 45 | 21 |
 | v0.5 | 31 | 2 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
@@ -33,8 +33,8 @@ OpenRefine's data model: typed cells, records, persistent projects.
 
 - [x] **Typed cells** · v0.2 · P0 · L. String, number, boolean, date, null and error cells (OpenRefine's Cell model) while keeping dictionary encoding; toNumber/toDate and type guessing on import. _OpenRefine: Cell, guessCellValueTypes_
 - [x] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
-- [ ] **Records mode** · v0.2 · P1 · L. Rows grouped into records by the key column; record-based engineConfig, record-aware facets and ops. _OpenRefine: mode: record-based_
-- [ ] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
+- [~] **Records mode** · v0.2 · P1 · L. Rows grouped into records by the key column; record-based engineConfig, record-aware facets and ops. _OpenRefine: mode: record-based_
+- [x] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
 - [ ] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
 - [ ] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
 - [ ] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
@@ -75,13 +75,13 @@ Every exporter OpenRefine ships.
 
 All 37 OpenRefine operations, same JSON, same results.
 
-- [ ] **Column move, reorder, multi-removal** · v0.2 · P0 · S. column-move(-left/-right/-first/-last), column-reorder, column-multi-removal. _OpenRefine: column-move*, column-reorder, column-multi-removal_
-- [ ] **Split column** · v0.2 · P0 · M. By separator, regex or field lengths; guess types; remove original. _OpenRefine: column-split_
-- [ ] **Split / join multi-valued cells** · v0.2 · P0 · M. Explode cells into rows of a record and back. _OpenRefine: multivalued-cell-split, multivalued-cell-join_
-- [ ] **Fill down / blank down** · v0.2 · P0 · S. Row- and record-aware. _OpenRefine: fill-down, blank-down_
+- [x] **Column move, reorder, multi-removal** · v0.2 · P0 · S. column-move(-left/-right/-first/-last), column-reorder, column-multi-removal. _OpenRefine: column-move*, column-reorder, column-multi-removal_
+- [x] **Split column** · v0.2 · P0 · M. By separator, regex or field lengths; guess types; remove original. _OpenRefine: column-split_
+- [x] **Split / join multi-valued cells** · v0.2 · P0 · M. Explode cells into rows of a record and back. _OpenRefine: multivalued-cell-split, multivalued-cell-join_
+- [x] **Fill down / blank down** · v0.2 · P0 · S. Row- and record-aware. _OpenRefine: fill-down, blank-down_
 - [ ] **Transpose and key-value columnize** · v0.5 · P1 · L. Columns into rows, rows into columns, key/value pairs into columns. _OpenRefine: transpose-columns-into-rows, transpose-rows-into-columns, key-value-columnize_
-- [ ] **Row operations** · v0.2 · P0 · M. Remove matching rows, keep matched, add rows, remove duplicates by key columns. _OpenRefine: row-removal, row-keep-matched, row-addition, row-duplicate-removal_
-- [ ] **Sort and reorder rows permanently** · v0.2 · P0 · M. Multi-column sort criteria by type, then make it permanent. _OpenRefine: row-reorder_
+- [x] **Row operations** · v0.2 · P0 · M. Remove matching rows, keep matched, add rows, remove duplicates by key columns. _OpenRefine: row-removal, row-keep-matched, row-addition, row-duplicate-removal_
+- [x] **Sort and reorder rows permanently** · v0.2 · P0 · M. Multi-column sort criteria by type, then make it permanent. _OpenRefine: row-reorder_
 - [ ] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
 - [ ] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
 - [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
@@ -140,7 +140,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [ ] **Home: projects and create project** · v0.2 · P0 · M. Recent projects, import sources, drag-and-drop files. _OpenRefine: index page_
 - [ ] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
 - [ ] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
-- [ ] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
+- [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
 - [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
 - [ ] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
 - [ ] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
@@ -150,7 +150,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 
 Prove parity automatically against real OpenRefine.
 
-- [ ] **Operation conformance suite** · v0.2 · P0 · L. Run every operation through OpenRefine's API and ours on the same corpus and diff outputs cell by cell (extends compare.mjs). _OpenRefine: benchmarks/compare.mjs_
+- [x] **Operation conformance suite** · v0.2 · P0 · L. Run every operation through OpenRefine's API and ours on the same corpus and diff outputs cell by cell (extends compare.mjs). _OpenRefine: benchmarks/compare.mjs_
 - [x] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
 - [ ] **Messy-data test corpus** · v0.2 · P0 · M. Real-world files: encodings, ragged rows, embedded newlines, huge cells, mixed types. _OpenRefine: tests/_
 - [ ] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
