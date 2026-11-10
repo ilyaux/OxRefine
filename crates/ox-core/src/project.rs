@@ -150,13 +150,16 @@ fn run(slot: &mut Option<Project>, cmd: &str, a: Args) -> Result<Value> {
             json!(cluster::cluster(&vc, &a.method, if a.n == 0 { 2 } else { a.n })?)
         }
         "preview" => {
-            let e = grel::parse(&a.expression)?;
+            let e = grel::compile(&a.expression)?;
             let rows = p.rows(&a.engine)?;
             let t = p.table();
             let col = &t.columns[t.col(&a.column)?];
             let pairs = rows.iter().take(a.limit.clamp(1, 100)).map(|&r| {
                 let v = col.get(r as usize);
-                json!([v, e.eval(v)])
+                json!([v, match e.eval(if v.is_empty() { grel::Value::Null } else { grel::Value::Str(v.into()) }, &grel::NoRow) {
+                    grel::Value::Error(m) => format!("Error: {m}"),
+                    out => out.display(),
+                }])
             });
             json!(pairs.collect::<Vec<_>>())
         }

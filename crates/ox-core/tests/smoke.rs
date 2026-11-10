@@ -48,6 +48,6 @@ fn recipe_facets_cluster_history() {
     assert_eq!(call("rows", json!({ "limit": 1 }))["rows"][0][1][0], "Alice Smith", "undo back to step 1");
     assert_eq!(call("export_recipe", json!({})).as_array().unwrap().len(), 1);
 
-    let bad = dispatch(&mut slot, "preview", json!({ "column": "name", "expression": "value.split(',')" }));
-    assert!(bad.unwrap_err().contains("unsupported function `split`"));
+    let bad = dispatch(&mut slot, "preview", json!({ "column": "name", "expression": "value.nope()" }));
+    assert!(bad.unwrap_err().contains("Unknown function nope"));
 }

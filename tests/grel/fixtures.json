@@ -1,0 +1,7909 @@
+{
+ "openrefine": "3.10.1",
+ "generated": "2026-11-10",
+ "columns": [
+  "v",
+  "w"
+ ],
+ "inputs": [
+  [
+   " hello world ",
+   "x"
+  ],
+  [
+   "Hello World",
+   "y"
+  ],
+  [
+   "3",
+   "4"
+  ],
+  [
+   "2.50",
+   ""
+  ],
+  [
+   "-17",
+   "z"
+  ],
+  [
+   "",
+   "w"
+  ],
+  [
+   "New York, NY",
+   "q"
+  ],
+  [
+   "café Ünïcödé",
+   "7"
+  ],
+  [
+   "2024-03-15",
+   "a,b"
+  ],
+  [
+   "2024-03-15T10:20:30Z",
+   "1"
+  ],
+  [
+   "<p>Hello <b>World</b></p>",
+   "x"
+  ],
+  [
+   "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+   "x"
+  ],
+  [
+   "a,b,,c",
+   "x"
+  ],
+  [
+   "true",
+   "x"
+  ],
+  [
+   "1e3",
+   "x"
+  ],
+  [
+   "  multiple   spaces\there  ",
+   "x"
+  ],
+  [
+   "ALL CAPS sentence. second one!",
+   "x"
+  ],
+  [
+   "https://example.com/path?q=1&r=two#frag",
+   "x"
+  ],
+  [
+   "0042",
+   "x"
+  ],
+  [
+   "1,234.56",
+   "x"
+  ],
+  [
+   "aGVsbG8gd29ybGQ=",
+   "x"
+  ],
+  [
+   "O'Neil McDonald-Smith",
+   "x"
+  ]
+ ],
+ "cases": [
+  {
+   "expr": "value",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    null,
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "cell.value",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    null,
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "row.index",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21"
+   ]
+  },
+  {
+   "expr": "rowIndex",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21"
+   ]
+  },
+  {
+   "expr": "cells['w'].value",
+   "rows": "all",
+   "results": [
+    "x",
+    "y",
+    "4",
+    null,
+    "z",
+    "w",
+    "q",
+    "7",
+    "a,b",
+    "1",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x"
+   ]
+  },
+  {
+   "expr": "cells.w.value",
+   "rows": "all",
+   "results": [
+    "x",
+    "y",
+    "4",
+    null,
+    "z",
+    "w",
+    "q",
+    "7",
+    "a,b",
+    "1",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x"
+   ]
+  },
+  {
+   "expr": "cells['w'].value + value",
+   "rows": "all",
+   "results": [
+    "x hello world ",
+    "yHello World",
+    "43",
+    null,
+    "z-17",
+    null,
+    "qNew York, NY",
+    "7café Ünïcödé",
+    "a,b2024-03-15",
+    "12024-03-15T10:20:30Z",
+    "x<p>Hello <b>World</b></p>",
+    "x{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "xa,b,,c",
+    "xtrue",
+    "x1e3",
+    "x  multiple   spaces\there  ",
+    "xALL CAPS sentence. second one!",
+    "xhttps://example.com/path?q=1&r=two#frag",
+    "x0042",
+    "x1,234.56",
+    "xaGVsbG8gd29ybGQ=",
+    "xO'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.trim()",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "trim expects a string"
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "multiple   spaces\there",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.strip()",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "strip expects a string"
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "multiple   spaces\there",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "trim(value)",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "trim expects a string"
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "multiple   spaces\there",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.toUppercase()",
+   "rows": "all",
+   "results": [
+    " HELLO WORLD ",
+    "HELLO WORLD",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "toUppercase expects a string"
+    },
+    "NEW YORK, NY",
+    "CAFÉ ÜNÏCÖDÉ",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<P>HELLO <B>WORLD</B></P>",
+    "{\"A\": 1, \"B\": [1, 2, {\"C\": \"X\"}]}",
+    "A,B,,C",
+    "TRUE",
+    "1E3",
+    "  MULTIPLE   SPACES\tHERE  ",
+    "ALL CAPS SENTENCE. SECOND ONE!",
+    "HTTPS://EXAMPLE.COM/PATH?Q=1&R=TWO#FRAG",
+    "0042",
+    "1,234.56",
+    "AGVSBG8GD29YBGQ=",
+    "O'NEIL MCDONALD-SMITH"
+   ]
+  },
+  {
+   "expr": "value.toLowercase()",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "hello world",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "toLowercase expects a string"
+    },
+    "new york, ny",
+    "café ünïcödé",
+    "2024-03-15",
+    "2024-03-15t10:20:30z",
+    "<p>hello <b>world</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "all caps sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "agvsbg8gd29ybgq=",
+    "o'neil mcdonald-smith"
+   ]
+  },
+  {
+   "expr": "value.toTitlecase()",
+   "rows": "all",
+   "results": [
+    " Hello World ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "toTitlecase expects one or two strings"
+    },
+    "New York, Ny",
+    "Café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15t10:20:30z",
+    "<p>hello <b>world</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "A,b,,c",
+    "True",
+    "1e3",
+    "  Multiple   Spaces\tHere  ",
+    "All Caps Sentence. Second One!",
+    "Https://example.Com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "Agvsbg8gd29ybgq=",
+    "O'neil Mcdonald-smith"
+   ]
+  },
+  {
+   "expr": "value.length()",
+   "rows": "all",
+   "results": [
+    "13",
+    "11",
+    "1",
+    "4",
+    "3",
+    {
+     "message": "length expects an array or a string"
+    },
+    "12",
+    "12",
+    "10",
+    "20",
+    "25",
+    "33",
+    "6",
+    "4",
+    "3",
+    "26",
+    "30",
+    "39",
+    "4",
+    "8",
+    "16",
+    "21"
+   ]
+  },
+  {
+   "expr": "length(value)",
+   "rows": "all",
+   "results": [
+    "13",
+    "11",
+    "1",
+    "4",
+    "3",
+    {
+     "message": "length expects an array or a string"
+    },
+    "12",
+    "12",
+    "10",
+    "20",
+    "25",
+    "33",
+    "6",
+    "4",
+    "3",
+    "26",
+    "30",
+    "39",
+    "4",
+    "8",
+    "16",
+    "21"
+   ]
+  },
+  {
+   "expr": "value.trim().length()",
+   "rows": "all",
+   "results": [
+    "11",
+    "11",
+    "1",
+    "4",
+    "3",
+    {
+     "message": "trim expects a string"
+    },
+    "12",
+    "12",
+    "10",
+    "20",
+    "25",
+    "33",
+    "6",
+    "4",
+    "3",
+    "22",
+    "30",
+    "39",
+    "4",
+    "8",
+    "16",
+    "21"
+   ]
+  },
+  {
+   "expr": "value.toString()",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "toString(value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "type(value)",
+   "rows": "all",
+   "results": [
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "undefined",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string",
+    "string"
+   ]
+  },
+  {
+   "expr": "value + '!'",
+   "rows": "all",
+   "results": [
+    " hello world !",
+    "Hello World!",
+    "3!",
+    "2.50!",
+    "-17!",
+    null,
+    "New York, NY!",
+    "café Ünïcödé!",
+    "2024-03-15!",
+    "2024-03-15T10:20:30Z!",
+    "<p>Hello <b>World</b></p>!",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}!",
+    "a,b,,c!",
+    "true!",
+    "1e3!",
+    "  multiple   spaces\there  !",
+    "ALL CAPS sentence. second one!!",
+    "https://example.com/path?q=1&r=two#frag!",
+    "0042!",
+    "1,234.56!",
+    "aGVsbG8gd29ybGQ=!",
+    "O'Neil McDonald-Smith!"
+   ]
+  },
+  {
+   "expr": "value + 1",
+   "rows": "all",
+   "results": [
+    " hello world 1",
+    "Hello World1",
+    "31",
+    "2.501",
+    "-171",
+    null,
+    "New York, NY1",
+    "café Ünïcödé1",
+    "2024-03-151",
+    "2024-03-15T10:20:30Z1",
+    "<p>Hello <b>World</b></p>1",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}1",
+    "a,b,,c1",
+    "true1",
+    "1e31",
+    "  multiple   spaces\there  1",
+    "ALL CAPS sentence. second one!1",
+    "https://example.com/path?q=1&r=two#frag1",
+    "00421",
+    "1,234.561",
+    "aGVsbG8gd29ybGQ=1",
+    "O'Neil McDonald-Smith1"
+   ]
+  },
+  {
+   "expr": "value == '3'",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "value != null",
+   "rows": "all",
+   "results": [
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true"
+   ]
+  },
+  {
+   "expr": "value == null",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "isBlank(value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "isNonBlank(value)",
+   "rows": "all",
+   "results": [
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true"
+   ]
+  },
+  {
+   "expr": "isNull(value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "isNotNull(value)",
+   "rows": "all",
+   "results": [
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true"
+   ]
+  },
+  {
+   "expr": "isEmptyString(value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "isNumeric(value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    {
+     "message": "java.lang.NullPointerException"
+    },
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "!isBlank(value)",
+   "rows": "all",
+   "parseError": "Parsing error at offset 0: Missing number, string, identifier, regex, or parenthesized expression"
+  },
+  {
+   "expr": "value.chomp('!')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    null,
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.contains('o')",
+   "rows": "all",
+   "results": [
+    "true",
+    "true",
+    "false",
+    "false",
+    "false",
+    null,
+    "true",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "true",
+    "false",
+    "false",
+    "false",
+    "true"
+   ]
+  },
+  {
+   "expr": "value.contains(/[0-9]/)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "true",
+    "true",
+    null,
+    "false",
+    "false",
+    "true",
+    "true",
+    "false",
+    "true",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false"
+   ]
+  },
+  {
+   "expr": "value.startsWith('H')",
+   "rows": "all",
+   "results": [
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    {
+     "message": "startsWith expects two strings"
+    },
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "value.endsWith('d')",
+   "rows": "all",
+   "results": [
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    {
+     "message": "endsWith expects two strings"
+    },
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "value.indexOf('o')",
+   "rows": "all",
+   "results": [
+    "5",
+    "4",
+    "-1",
+    "-1",
+    "-1",
+    {
+     "message": "indexOf expects two strings"
+    },
+    "5",
+    "-1",
+    "-1",
+    "-1",
+    "7",
+    "-1",
+    "-1",
+    "-1",
+    "-1",
+    "-1",
+    "22",
+    "17",
+    "-1",
+    "-1",
+    "-1",
+    "10"
+   ]
+  },
+  {
+   "expr": "value.lastIndexOf('o')",
+   "rows": "all",
+   "results": [
+    "8",
+    "7",
+    "-1",
+    "-1",
+    "-1",
+    {
+     "message": "lastIndexOf expects two strings"
+    },
+    "5",
+    "-1",
+    "-1",
+    "-1",
+    "13",
+    "-1",
+    "-1",
+    "-1",
+    "-1",
+    "-1",
+    "26",
+    "33",
+    "-1",
+    "-1",
+    "-1",
+    "10"
+   ]
+  },
+  {
+   "expr": "value.replace('o', '0')",
+   "rows": "all",
+   "results": [
+    " hell0 w0rld ",
+    "Hell0 W0rld",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "replace expects three strings, or one string, one regex, and one string"
+    },
+    "New Y0rk, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hell0 <b>W0rld</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. sec0nd 0ne!",
+    "https://example.c0m/path?q=1&r=tw0#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McD0nald-Smith"
+   ]
+  },
+  {
+   "expr": "value.replace(/\\s+/, ' ')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "replace expects three strings, or one string, one regex, and one string"
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    " multiple spaces here ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.replace(/(\\w+)/, '<$1>')",
+   "rows": "all",
+   "results": [
+    " <hello> <world> ",
+    "<Hello> <World>",
+    "<3>",
+    "<2>.<50>",
+    "-<17>",
+    {
+     "message": "replace expects three strings, or one string, one regex, and one string"
+    },
+    "<New> <York>, <NY>",
+    "<caf>é Ü<n>ï<c>ö<d>é",
+    "<2024>-<03>-<15>",
+    "<2024>-<03>-<15T10>:<20>:<30Z>",
+    "<<p>><Hello> <<b>><World></<b>></<p>>",
+    "{\"<a>\": <1>, \"<b>\": [<1>, <2>, {\"<c>\": \"<x>\"}]}",
+    "<a>,<b>,,<c>",
+    "<true>",
+    "<1e3>",
+    "  <multiple>   <spaces>\t<here>  ",
+    "<ALL> <CAPS> <sentence>. <second> <one>!",
+    "<https>://<example>.<com>/<path>?<q>=<1>&<r>=<two>#<frag>",
+    "<0042>",
+    "<1>,<234>.<56>",
+    "<aGVsbG8gd29ybGQ>=",
+    "<O>'<Neil> <McDonald>-<Smith>"
+   ]
+  },
+  {
+   "expr": "value.replace(/[aeiou]/, '')",
+   "rows": "all",
+   "results": [
+    " hll wrld ",
+    "Hll Wrld",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "replace expects three strings, or one string, one regex, and one string"
+    },
+    "Nw Yrk, NY",
+    "cfé Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hll <b>Wrld</b></p>",
+    "{\"\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    ",b,,c",
+    "tr",
+    "13",
+    "  mltpl   spcs\thr  ",
+    "ALL CAPS sntnc. scnd n!",
+    "https://xmpl.cm/pth?q=1&r=tw#frg",
+    "0042",
+    "1,234.56",
+    "GVsbG8gd29ybGQ=",
+    "O'Nl McDnld-Smth"
+   ]
+  },
+  {
+   "expr": "value.replaceChars('aeiou', 'AEIOU')",
+   "rows": "all",
+   "results": [
+    " hEllO wOrld ",
+    "HEllO WOrld",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "replaceChars expects three strings"
+    },
+    "NEw YOrk, NY",
+    "cAfé Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>HEllO <b>WOrld</b></p>",
+    "{\"A\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "A,b,,c",
+    "trUE",
+    "1E3",
+    "  mUltIplE   spAcEs\thErE  ",
+    "ALL CAPS sEntEncE. sEcOnd OnE!",
+    "https://ExAmplE.cOm/pAth?q=1&r=twO#frAg",
+    "0042",
+    "1,234.56",
+    "AGVsbG8gd29ybGQ=",
+    "O'NEIl McDOnAld-SmIth"
+   ]
+  },
+  {
+   "expr": "value.replaceEach(['a', 'e'], ['4', '3'])",
+   "rows": "all",
+   "results": [
+    " h3llo world ",
+    "H3llo World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "replaceEach expects three arguments: a string, an array of strings to replace and an array of replacement strings."
+    },
+    "N3w York, NY",
+    "c4fé Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>H3llo <b>World</b></p>",
+    "{\"4\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "4,b,,c",
+    "tru3",
+    "133",
+    "  multipl3   sp4c3s\th3r3  ",
+    "ALL CAPS s3nt3nc3. s3cond on3!",
+    "https://3x4mpl3.com/p4th?q=1&r=two#fr4g",
+    "0042",
+    "1,234.56",
+    "4GVsbG8gd29ybGQ=",
+    "O'N3il McDon4ld-Smith"
+   ]
+  },
+  {
+   "expr": "value.split(',')",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split(' ')",
+   "rows": "all",
+   "results": [
+    "[ \"hello\", \"world\" ]",
+    "[ \"Hello\", \"World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New\", \"York,\", \"NY\" ]",
+    "[ \"café\", \"Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello\", \"<b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\":\", \"1,\", \"\\\"b\\\":\", \"[1,\", \"2,\", \"{\\\"c\\\":\", \"\\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple\", \"spaces\\there\" ]",
+    "[ \"ALL\", \"CAPS\", \"sentence.\", \"second\", \"one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1,234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil\", \"McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split(/\\s+/)",
+   "rows": "all",
+   "results": [
+    "[ \"hello\", \"world\" ]",
+    "[ \"Hello\", \"World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New\", \"York,\", \"NY\" ]",
+    "[ \"café\", \"Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello\", \"<b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\":\", \"1,\", \"\\\"b\\\":\", \"[1,\", \"2,\", \"{\\\"c\\\":\", \"\\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple\", \"spaces\", \"here\" ]",
+    "[ \"ALL\", \"CAPS\", \"sentence.\", \"second\", \"one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1,234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil\", \"McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split(',', true)",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", \"\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split('')",
+   "rows": "all",
+   "results": [
+    "[ \"hello\", \"world\" ]",
+    "[ \"Hello\", \"World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New\", \"York,\", \"NY\" ]",
+    "[ \"café\", \"Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello\", \"<b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\":\", \"1,\", \"\\\"b\\\":\", \"[1,\", \"2,\", \"{\\\"c\\\":\", \"\\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple\", \"spaces\", \"here\" ]",
+    "[ \"ALL\", \"CAPS\", \"sentence.\", \"second\", \"one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1,234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil\", \"McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.smartSplit(',')",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "java.lang.NullPointerException"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", null, \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.smartSplit()",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "java.lang.NullPointerException"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", null, \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\", \"here  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.splitByCharType()",
+   "rows": "all",
+   "results": [
+    "[ \" \", \"hello\", \" \", \"world\", \" \" ]",
+    "[ \"H\", \"ello\", \" \", \"W\", \"orld\" ]",
+    "[ \"3\" ]",
+    "[ \"2\", \".\", \"50\" ]",
+    "[ \"-\", \"17\" ]",
+    {
+     "message": "splitByCharType expects two strings"
+    },
+    "[ \"N\", \"ew\", \" \", \"Y\", \"ork\", \",\", \" \", \"NY\" ]",
+    "[ \"café\", \" \", \"Ü\", \"nïcödé\" ]",
+    "[ \"2024\", \"-\", \"03\", \"-\", \"15\" ]",
+    "[ \"2024\", \"-\", \"03\", \"-\", \"15\", \"T\", \"10\", \":\", \"20\", \":\", \"30\", \"Z\" ]",
+    "[ \"<\", \"p\", \">\", \"H\", \"ello\", \" \", \"<\", \"b\", \">\", \"W\", \"orld\", \"<\", \"/\", \"b\", \"><\", \"/\", \"p\", \">\" ]",
+    "[ \"{\", \"\\\"\", \"a\", \"\\\":\", \" \", \"1\", \",\", \" \", \"\\\"\", \"b\", \"\\\":\", \" \", \"[\", \"1\", \",\", \" \", \"2\", \",\", \" \", \"{\", \"\\\"\", \"c\", \"\\\":\", \" \", \"\\\"\", \"x\", \"\\\"\", \"}]}\" ]",
+    "[ \"a\", \",\", \"b\", \",,\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1\", \"e\", \"3\" ]",
+    "[ \"  \", \"multiple\", \"   \", \"spaces\", \"\\t\", \"here\", \"  \" ]",
+    "[ \"ALL\", \" \", \"CAPS\", \" \", \"sentence\", \".\", \" \", \"second\", \" \", \"one\", \"!\" ]",
+    "[ \"https\", \"://\", \"example\", \".\", \"com\", \"/\", \"path\", \"?\", \"q\", \"=\", \"1\", \"&\", \"r\", \"=\", \"two\", \"#\", \"frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \",\", \"234\", \".\", \"56\" ]",
+    "[ \"a\", \"GV\", \"sb\", \"G\", \"8\", \"gd\", \"29\", \"yb\", \"GQ\", \"=\" ]",
+    "[ \"O\", \"'\", \"N\", \"eil\", \" \", \"M\", \"c\", \"D\", \"onald\", \"-\", \"S\", \"mith\" ]"
+   ]
+  },
+  {
+   "expr": "value.splitByLengths(2, 3)",
+   "rows": "all",
+   "results": [
+    "[ \" h\", \"ell\" ]",
+    "[ \"He\", \"llo\" ]",
+    "[ \"3\", \"\" ]",
+    "[ \"2.\", \"50\" ]",
+    "[ \"-1\", \"7\" ]",
+    {
+     "message": "splitByLengths expects one string and at least one number"
+    },
+    "[ \"Ne\", \"w Y\" ]",
+    "[ \"ca\", \"fé \" ]",
+    "[ \"20\", \"24-\" ]",
+    "[ \"20\", \"24-\" ]",
+    "[ \"<p\", \">He\" ]",
+    "[ \"{\\\"\", \"a\\\":\" ]",
+    "[ \"a,\", \"b,,\" ]",
+    "[ \"tr\", \"ue\" ]",
+    "[ \"1e\", \"3\" ]",
+    "[ \"  \", \"mul\" ]",
+    "[ \"AL\", \"L C\" ]",
+    "[ \"ht\", \"tps\" ]",
+    "[ \"00\", \"42\" ]",
+    "[ \"1,\", \"234\" ]",
+    "[ \"aG\", \"Vsb\" ]",
+    "[ \"O'\", \"Nei\" ]"
+   ]
+  },
+  {
+   "expr": "value.partition('o')",
+   "rows": "all",
+   "results": [
+    "[ \" hell\", \"o\", \" world \" ]",
+    "[ \"Hell\", \"o\", \" World\" ]",
+    "[ \"3\", \"\", \"\" ]",
+    "[ \"2.50\", \"\", \"\" ]",
+    "[ \"-17\", \"\", \"\" ]",
+    null,
+    "[ \"New Y\", \"o\", \"rk, NY\" ]",
+    "[ \"café Ünïcödé\", \"\", \"\" ]",
+    "[ \"2024-03-15\", \"\", \"\" ]",
+    "[ \"2024-03-15T10:20:30Z\", \"\", \"\" ]",
+    "[ \"<p>Hell\", \"o\", \" <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1, \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}\", \"\", \"\" ]",
+    "[ \"a,b,,c\", \"\", \"\" ]",
+    "[ \"true\", \"\", \"\" ]",
+    "[ \"1e3\", \"\", \"\" ]",
+    "[ \"  multiple   spaces\\there  \", \"\", \"\" ]",
+    "[ \"ALL CAPS sentence. sec\", \"o\", \"nd one!\" ]",
+    "[ \"https://example.c\", \"o\", \"m/path?q=1&r=two#frag\" ]",
+    "[ \"0042\", \"\", \"\" ]",
+    "[ \"1,234.56\", \"\", \"\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\", \"\", \"\" ]",
+    "[ \"O'Neil McD\", \"o\", \"nald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.rpartition('o')",
+   "rows": "all",
+   "results": [
+    "[ \" hello w\", \"o\", \"rld \" ]",
+    "[ \"Hello W\", \"o\", \"rld\" ]",
+    "[ \"3\", \"\", \"\" ]",
+    "[ \"2.50\", \"\", \"\" ]",
+    "[ \"-17\", \"\", \"\" ]",
+    null,
+    "[ \"New Y\", \"o\", \"rk, NY\" ]",
+    "[ \"café Ünïcödé\", \"\", \"\" ]",
+    "[ \"2024-03-15\", \"\", \"\" ]",
+    "[ \"2024-03-15T10:20:30Z\", \"\", \"\" ]",
+    "[ \"<p>Hello <b>W\", \"o\", \"rld</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1, \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}\", \"\", \"\" ]",
+    "[ \"a,b,,c\", \"\", \"\" ]",
+    "[ \"true\", \"\", \"\" ]",
+    "[ \"1e3\", \"\", \"\" ]",
+    "[ \"  multiple   spaces\\there  \", \"\", \"\" ]",
+    "[ \"ALL CAPS sentence. second \", \"o\", \"ne!\" ]",
+    "[ \"https://example.com/path?q=1&r=tw\", \"o\", \"#frag\" ]",
+    "[ \"0042\", \"\", \"\" ]",
+    "[ \"1,234.56\", \"\", \"\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\", \"\", \"\" ]",
+    "[ \"O'Neil McD\", \"o\", \"nald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.partition(/\\d/)",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \", \"\", \"\" ]",
+    "[ \"Hello World\", \"\", \"\" ]",
+    "[ \"\", \"3\", \"\" ]",
+    "[ \"\", \"2\", \".50\" ]",
+    "[ \"-\", \"1\", \"7\" ]",
+    null,
+    "[ \"New York, NY\", \"\", \"\" ]",
+    "[ \"café Ünïcödé\", \"\", \"\" ]",
+    "[ \"\", \"2\", \"024-03-15\" ]",
+    "[ \"\", \"2\", \"024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\", \"\", \"\" ]",
+    "[ \"{\\\"a\\\": \", \"1\", \", \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\", \"\", \"\" ]",
+    "[ \"true\", \"\", \"\" ]",
+    "[ \"\", \"1\", \"e3\" ]",
+    "[ \"  multiple   spaces\\there  \", \"\", \"\" ]",
+    "[ \"ALL CAPS sentence. second one!\", \"\", \"\" ]",
+    "[ \"https://example.com/path?q=\", \"1\", \"&r=two#frag\" ]",
+    "[ \"\", \"0\", \"042\" ]",
+    "[ \"\", \"1\", \",234.56\" ]",
+    "[ \"aGVsbG\", \"8\", \"gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\", \"\", \"\" ]"
+   ]
+  },
+  {
+   "expr": "value.substring(1)",
+   "rows": "all",
+   "results": [
+    "hello world ",
+    "ello World",
+    "",
+    ".50",
+    "17",
+    null,
+    "ew York, NY",
+    "afé Ünïcödé",
+    "024-03-15",
+    "024-03-15T10:20:30Z",
+    "p>Hello <b>World</b></p>",
+    "\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    ",b,,c",
+    "rue",
+    "e3",
+    " multiple   spaces\there  ",
+    "LL CAPS sentence. second one!",
+    "ttps://example.com/path?q=1&r=two#frag",
+    "042",
+    ",234.56",
+    "GVsbG8gd29ybGQ=",
+    "'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.substring(1, 3)",
+   "rows": "all",
+   "results": [
+    "he",
+    "el",
+    "",
+    ".5",
+    "17",
+    null,
+    "ew",
+    "af",
+    "02",
+    "02",
+    "p>",
+    "\"a",
+    ",b",
+    "ru",
+    "e3",
+    " m",
+    "LL",
+    "tt",
+    "04",
+    ",2",
+    "GV",
+    "'N"
+   ]
+  },
+  {
+   "expr": "value.slice(-3)",
+   "rows": "all",
+   "results": [
+    "ld ",
+    "rld",
+    "3",
+    ".50",
+    "-17",
+    null,
+    " NY",
+    "ödé",
+    "-15",
+    "30Z",
+    "/p>",
+    "}]}",
+    ",,c",
+    "rue",
+    "1e3",
+    "e  ",
+    "ne!",
+    "rag",
+    "042",
+    ".56",
+    "GQ=",
+    "ith"
+   ]
+  },
+  {
+   "expr": "value.slice(1, -1)",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "ello Worl",
+    "",
+    ".5",
+    "1",
+    null,
+    "ew York, N",
+    "afé Ünïcöd",
+    "024-03-1",
+    "024-03-15T10:20:30",
+    "p>Hello <b>World</b></p",
+    "\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]",
+    ",b,,",
+    "ru",
+    "e",
+    " multiple   spaces\there ",
+    "LL CAPS sentence. second one",
+    "ttps://example.com/path?q=1&r=two#fra",
+    "04",
+    ",234.5",
+    "GVsbG8gd29ybGQ",
+    "'Neil McDonald-Smit"
+   ]
+  },
+  {
+   "expr": "value[1]",
+   "rows": "all",
+   "results": [
+    "h",
+    "e",
+    {
+     "message": "java.lang.StringIndexOutOfBoundsException: begin 1, end 2, length 1"
+    },
+    ".",
+    "1",
+    null,
+    "e",
+    "a",
+    "0",
+    "0",
+    "p",
+    "\"",
+    ",",
+    "r",
+    "e",
+    " ",
+    "L",
+    "t",
+    "0",
+    ",",
+    "G",
+    "'"
+   ]
+  },
+  {
+   "expr": "value[1, 3]",
+   "rows": "all",
+   "results": [
+    "he",
+    "el",
+    "",
+    ".5",
+    "17",
+    null,
+    "ew",
+    "af",
+    "02",
+    "02",
+    "p>",
+    "\"a",
+    ",b",
+    "ru",
+    "e3",
+    " m",
+    "LL",
+    "tt",
+    "04",
+    ",2",
+    "GV",
+    "'N"
+   ]
+  },
+  {
+   "expr": "value[-2]",
+   "rows": "all",
+   "results": [
+    "d",
+    "l",
+    "3",
+    "5",
+    "1",
+    null,
+    "N",
+    "d",
+    "1",
+    "0",
+    "p",
+    "]",
+    ",",
+    "u",
+    "e",
+    " ",
+    "e",
+    "a",
+    "4",
+    "5",
+    "Q",
+    "t"
+   ]
+  },
+  {
+   "expr": "value.find(/[aeiou]/)",
+   "rows": "all",
+   "results": [
+    "[ \"e\", \"o\", \"o\" ]",
+    "[ \"e\", \"o\", \"o\" ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[ \"e\", \"o\" ]",
+    "[ \"a\" ]",
+    "[  ]",
+    "[  ]",
+    "[ \"e\", \"o\", \"o\" ]",
+    "[ \"a\" ]",
+    "[ \"a\" ]",
+    "[ \"u\", \"e\" ]",
+    "[ \"e\" ]",
+    "[ \"u\", \"i\", \"e\", \"a\", \"e\", \"e\", \"e\" ]",
+    "[ \"e\", \"e\", \"e\", \"e\", \"o\", \"o\", \"e\" ]",
+    "[ \"e\", \"a\", \"e\", \"o\", \"a\", \"o\", \"a\" ]",
+    "[  ]",
+    "[  ]",
+    "[ \"a\" ]",
+    "[ \"e\", \"i\", \"o\", \"a\", \"i\" ]"
+   ]
+  },
+  {
+   "expr": "value.find(/\\d+/)",
+   "rows": "all",
+   "results": [
+    "[  ]",
+    "[  ]",
+    "[ \"3\" ]",
+    "[ \"2\", \"50\" ]",
+    "[ \"17\" ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[ \"2024\", \"03\", \"15\" ]",
+    "[ \"2024\", \"03\", \"15\", \"10\", \"20\", \"30\" ]",
+    "[  ]",
+    "[ \"1\", \"1\", \"2\" ]",
+    "[  ]",
+    "[  ]",
+    "[ \"1\", \"3\" ]",
+    "[  ]",
+    "[  ]",
+    "[ \"1\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234\", \"56\" ]",
+    "[ \"8\", \"29\" ]",
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "value.match(/(\\d+)/)",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    "[ \"3\" ]",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    "[ \"0042\" ]",
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "value.match(/.*?(\\w+).*/)",
+   "rows": "all",
+   "results": [
+    "[ \"hello\" ]",
+    "[ \"Hello\" ]",
+    "[ \"3\" ]",
+    "[ \"2\" ]",
+    "[ \"17\" ]",
+    null,
+    "[ \"New\" ]",
+    "[ \"caf\" ]",
+    "[ \"2024\" ]",
+    "[ \"2024\" ]",
+    "[ \"p\" ]",
+    "[ \"a\" ]",
+    "[ \"a\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple\" ]",
+    "[ \"ALL\" ]",
+    "[ \"https\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\" ]",
+    "[ \"aGVsbG8gd29ybGQ\" ]",
+    "[ \"O\" ]"
+   ]
+  },
+  {
+   "expr": "value.match(/(\\w+) (\\w+)/)",
+   "rows": "all",
+   "results": [
+    null,
+    "[ \"Hello\", \"World\" ]",
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "value.ngram(2)",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    null,
+    "[ \"New York,\", \"York, NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1,\", \"1, \\\"b\\\":\", \"\\\"b\\\": [1,\", \"[1, 2,\", \"2, {\\\"c\\\":\", \"{\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple spaces\", \"spaces here\" ]",
+    "[ \"ALL CAPS\", \"CAPS sentence.\", \"sentence. second\", \"second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1,234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.fingerprint()",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "hello world",
+    "3",
+    "250",
+    "17",
+    null,
+    "new ny york",
+    "cafe unicode",
+    "20240315",
+    "20240315t102030z",
+    "<b>world<b><p> <p>hello",
+    "1 2 a b c x",
+    "abc",
+    "true",
+    "1e3",
+    "here multiple spaces",
+    "all caps one second sentence",
+    "httpsexamplecompathq=1r=twofrag",
+    "0042",
+    "123456",
+    "agvsbg8gd29ybgq=",
+    "mcdonaldsmith oneil"
+   ]
+  },
+  {
+   "expr": "value.ngramFingerprint()",
+   "rows": "all",
+   "results": [
+    "dehlorw",
+    "dehlorw",
+    "3",
+    "025",
+    "17",
+    null,
+    "eknorwy",
+    "acdefinou",
+    "012345",
+    "012345tz",
+    "<>bdehloprw",
+    "12abcx",
+    "abc",
+    "ertu",
+    "13e",
+    "acehilmprstu",
+    "acdelnopst",
+    "1=acefghlmopqrstwx",
+    "024",
+    "123456",
+    "289=abdgqsvy",
+    "acdehilmnost"
+   ]
+  },
+  {
+   "expr": "value.ngramFingerprint(3)",
+   "rows": "all",
+   "results": [
+    "ellhellloloworloworldwor",
+    "ellhellloloworloworldwor",
+    "",
+    "250",
+    "",
+    null,
+    "ewyknyneworkrknwyoyor",
+    "afecafcodeunfeuiconicodeuni",
+    "024031202240315403",
+    "02002403003110215t20220324030z3154035t1t10",
+    "<b><p>><p>he>wob><b>wd<bellhelld<llolo<o<borlp>hrldwor",
+    "12c1b12cxa1bb12",
+    "abc",
+    "ruetru",
+    "1e3",
+    "acecesereeshespheripllesltimulpacpleshespatipult",
+    "allapscapcescondonecoencenteselcallcncendonteondonepsssecsensseten",
+    "1r==1r=twampathcomecoexafrahq=httlecmpamplofromppatplepseq=1r=tragsexthqtpsttptwowofxam",
+    "004042",
+    "123234345456",
+    "29y8gd9ybagvbg8bgqd29g8ggd2gq=gvssbgvsbybg",
+    "aldcdodondsmeililmithldslmcmcdmitnalneionaonesmi"
+   ]
+  },
+  {
+   "expr": "value.phonetic('metaphone3')",
+   "rows": "all",
+   "results": [
+    "LRLT",
+    "HLRLT",
+    "",
+    "",
+    "",
+    {
+     "message": "phonetic expects at least one argument"
+    },
+    "NRKN",
+    "KFNKT",
+    "",
+    "TS",
+    "PLPRLTPP",
+    "PKKS",
+    "APK",
+    "TR",
+    "",
+    "MLTPLSPS",
+    "ALKPSSNT",
+    "TPSKSMPL",
+    "",
+    "",
+    "AKFSPKKT",
+    "ANLMKTNL"
+   ]
+  },
+  {
+   "expr": "value.phonetic('doublemetaphone')",
+   "rows": "all",
+   "results": [
+    "HLRLT",
+    "HLRLT",
+    "",
+    "",
+    "",
+    {
+     "message": "phonetic expects at least one argument"
+    },
+    "NRKN",
+    "KFNKT",
+    "",
+    "TS",
+    "PLPRLTPP",
+    "PKKS",
+    "APK",
+    "TR",
+    "",
+    "MLTPLSPSSR",
+    "ALKPSSNTNSSKNTN",
+    "TPSKSMPLKMP0KRTFRK",
+    "",
+    "",
+    "AKFSPKKTPKK",
+    "ANLMKTNLTSM0"
+   ]
+  },
+  {
+   "expr": "value.phonetic('metaphone')",
+   "rows": "all",
+   "results": [
+    "HLWRLT",
+    "HLWRLT",
+    "3",
+    "",
+    "",
+    {
+     "message": "phonetic expects at least one argument"
+    },
+    "NYRKN",
+    "KFNKT",
+    "",
+    "TS",
+    "PHLBWRLTBP",
+    "BKKS",
+    "ABK",
+    "TR",
+    "",
+    "MLTPLSPSSHR",
+    "ALKPSSNTNSSKNTN",
+    "TPSKSMPLKMP0KRTWFRK",
+    "",
+    "",
+    "AKFSBKKTBKK",
+    "ONLMKTNLTSM0"
+   ]
+  },
+  {
+   "expr": "value.phonetic('soundex')",
+   "rows": "all",
+   "results": [
+    "H464",
+    "H464",
+    "",
+    "",
+    "",
+    {
+     "message": "phonetic expects at least one argument"
+    },
+    "N625",
+    {
+     "message": "java.lang.IllegalArgumentException: The character is not mapped: É (index=136)"
+    },
+    "",
+    "T200",
+    "P416",
+    "A120",
+    "A120",
+    "T600",
+    "E000",
+    "M431",
+    "A421",
+    "H312",
+    "",
+    "",
+    "A212",
+    "O545"
+   ]
+  },
+  {
+   "expr": "value.phonetic('cologne')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic expects at least one argument"
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    },
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    }
+   ]
+  },
+  {
+   "expr": "value.unicode()",
+   "rows": "all",
+   "results": [
+    "[ 32, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 32 ]",
+    "[ 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100 ]",
+    "[ 51 ]",
+    "[ 50, 46, 53, 48 ]",
+    "[ 45, 49, 55 ]",
+    null,
+    "[ 78, 101, 119, 32, 89, 111, 114, 107, 44, 32, 78, 89 ]",
+    "[ 99, 97, 102, 233, 32, 220, 110, 239, 99, 246, 100, 233 ]",
+    "[ 50, 48, 50, 52, 45, 48, 51, 45, 49, 53 ]",
+    "[ 50, 48, 50, 52, 45, 48, 51, 45, 49, 53, 84, 49, 48, 58, 50, 48, 58, 51, 48, 90 ]",
+    "[ 60, 112, 62, 72, 101, 108, 108, 111, 32, 60, 98, 62, 87, 111, 114, 108, 100, 60, 47, 98, 62, 60, 47, 112, 62 ]",
+    "[ 123, 34, 97, 34, 58, 32, 49, 44, 32, 34, 98, 34, 58, 32, 91, 49, 44, 32, 50, 44, 32, 123, 34, 99, 34, 58, 32, 34, 120, 34, 125, 93, 125 ]",
+    "[ 97, 44, 98, 44, 44, 99 ]",
+    "[ 116, 114, 117, 101 ]",
+    "[ 49, 101, 51 ]",
+    "[ 32, 32, 109, 117, 108, 116, 105, 112, 108, 101, 32, 32, 32, 115, 112, 97, 99, 101, 115, 9, 104, 101, 114, 101, 32, 32 ]",
+    "[ 65, 76, 76, 32, 67, 65, 80, 83, 32, 115, 101, 110, 116, 101, 110, 99, 101, 46, 32, 115, 101, 99, 111, 110, 100, 32, 111, 110, 101, 33 ]",
+    "[ 104, 116, 116, 112, 115, 58, 47, 47, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109, 47, 112, 97, 116, 104, 63, 113, 61, 49, 38, 114, 61, 116, 119, 111, 35, 102, 114, 97, 103 ]",
+    "[ 48, 48, 52, 50 ]",
+    "[ 49, 44, 50, 51, 52, 46, 53, 54 ]",
+    "[ 97, 71, 86, 115, 98, 71, 56, 103, 100, 50, 57, 121, 98, 71, 81, 61 ]",
+    "[ 79, 39, 78, 101, 105, 108, 32, 77, 99, 68, 111, 110, 97, 108, 100, 45, 83, 109, 105, 116, 104 ]"
+   ]
+  },
+  {
+   "expr": "value.unicodeType()",
+   "rows": "all",
+   "results": [
+    "[ \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\" ]",
+    "[ \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\" ]",
+    "[ \"decimal digit number\" ]",
+    "[ \"decimal digit number\", \"other punctuation\", \"decimal digit number\", \"decimal digit number\" ]",
+    "[ \"dash punctuation\", \"decimal digit number\", \"decimal digit number\" ]",
+    null,
+    "[ \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"space separator\", \"uppercase letter\", \"uppercase letter\" ]",
+    "[ \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\" ]",
+    "[ \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"dash punctuation\", \"decimal digit number\", \"decimal digit number\", \"dash punctuation\", \"decimal digit number\", \"decimal digit number\" ]",
+    "[ \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"dash punctuation\", \"decimal digit number\", \"decimal digit number\", \"dash punctuation\", \"decimal digit number\", \"decimal digit number\", \"uppercase letter\", \"decimal digit number\", \"decimal digit number\", \"other punctuation\", \"decimal digit number\", \"decimal digit number\", \"other punctuation\", \"decimal digit number\", \"decimal digit number\", \"uppercase letter\" ]",
+    "[ \"math symbol\", \"lowercase letter\", \"math symbol\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"math symbol\", \"lowercase letter\", \"math symbol\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"math symbol\", \"other punctuation\", \"lowercase letter\", \"math symbol\", \"math symbol\", \"other punctuation\", \"lowercase letter\", \"math symbol\" ]",
+    "[ \"start punctuation\", \"other punctuation\", \"lowercase letter\", \"other punctuation\", \"other punctuation\", \"space separator\", \"decimal digit number\", \"other punctuation\", \"space separator\", \"other punctuation\", \"lowercase letter\", \"other punctuation\", \"other punctuation\", \"space separator\", \"start punctuation\", \"decimal digit number\", \"other punctuation\", \"space separator\", \"decimal digit number\", \"other punctuation\", \"space separator\", \"start punctuation\", \"other punctuation\", \"lowercase letter\", \"other punctuation\", \"other punctuation\", \"space separator\", \"other punctuation\", \"lowercase letter\", \"other punctuation\", \"end punctuation\", \"end punctuation\", \"end punctuation\" ]",
+    "[ \"lowercase letter\", \"other punctuation\", \"lowercase letter\", \"other punctuation\", \"other punctuation\", \"lowercase letter\" ]",
+    "[ \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\" ]",
+    "[ \"decimal digit number\", \"lowercase letter\", \"decimal digit number\" ]",
+    "[ \"space separator\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"space separator\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"control\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"space separator\" ]",
+    "[ \"uppercase letter\", \"uppercase letter\", \"uppercase letter\", \"space separator\", \"uppercase letter\", \"uppercase letter\", \"uppercase letter\", \"uppercase letter\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\" ]",
+    "[ \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"other punctuation\", \"other punctuation\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"lowercase letter\", \"math symbol\", \"decimal digit number\", \"other punctuation\", \"lowercase letter\", \"math symbol\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"other punctuation\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\" ]",
+    "[ \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"decimal digit number\" ]",
+    "[ \"decimal digit number\", \"other punctuation\", \"decimal digit number\", \"decimal digit number\", \"decimal digit number\", \"other punctuation\", \"decimal digit number\", \"decimal digit number\" ]",
+    "[ \"lowercase letter\", \"uppercase letter\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"uppercase letter\", \"decimal digit number\", \"lowercase letter\", \"lowercase letter\", \"decimal digit number\", \"decimal digit number\", \"lowercase letter\", \"lowercase letter\", \"uppercase letter\", \"uppercase letter\", \"math symbol\" ]",
+    "[ \"uppercase letter\", \"other punctuation\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"space separator\", \"uppercase letter\", \"lowercase letter\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"dash punctuation\", \"uppercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\", \"lowercase letter\" ]"
+   ]
+  },
+  {
+   "expr": "value.escape('html')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New York, NY",
+    "caf&eacute; &Uuml;n&iuml;c&ouml;d&eacute;",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "&lt;p&gt;Hello &lt;b&gt;World&lt;/b&gt;&lt;/p&gt;",
+    "{&quot;a&quot;: 1, &quot;b&quot;: [1, 2, {&quot;c&quot;: &quot;x&quot;}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&amp;r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.escape('xml')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "&lt;p&gt;Hello &lt;b&gt;World&lt;/b&gt;&lt;/p&gt;",
+    "{&quot;a&quot;: 1, &quot;b&quot;: [1, 2, {&quot;c&quot;: &quot;x&quot;}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&amp;r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O&apos;Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.escape('csv')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "\"New York, NY\"",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "\"{\"\"a\"\": 1, \"\"b\"\": [1, 2, {\"\"c\"\": \"\"x\"\"}]}\"",
+    "\"a,b,,c\"",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "\"1,234.56\"",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.escape('url')",
+   "rows": "all",
+   "results": [
+    "+hello+world+",
+    "Hello+World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New+York%2C+NY",
+    "caf%C3%A9+%C3%9Cn%C3%AFc%C3%B6d%C3%A9",
+    "2024-03-15",
+    "2024-03-15T10%3A20%3A30Z",
+    "%3Cp%3EHello+%3Cb%3EWorld%3C%2Fb%3E%3C%2Fp%3E",
+    "%7B%22a%22%3A+1%2C+%22b%22%3A+%5B1%2C+2%2C+%7B%22c%22%3A+%22x%22%7D%5D%7D",
+    "a%2Cb%2C%2Cc",
+    "true",
+    "1e3",
+    "++multiple+++spaces%09here++",
+    "ALL+CAPS+sentence.+second+one%21",
+    "https%3A%2F%2Fexample.com%2Fpath%3Fq%3D1%26r%3Dtwo%23frag",
+    "0042",
+    "1%2C234.56",
+    "aGVsbG8gd29ybGQ%3D",
+    "O%27Neil+McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.escape('javascript')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "",
+    "New York, NY",
+    "caf\\u00E9 \\u00DCn\\u00EFc\\u00F6d\\u00E9",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World<\\/b><\\/p>",
+    "{\\\"a\\\": 1, \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\\there  ",
+    "ALL CAPS sentence. second one!",
+    "https:\\/\\/example.com\\/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O\\'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.unescape('html')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    null,
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.unescape('url')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    null,
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.encode('base64')",
+   "rows": "all",
+   "results": [
+    "IGhlbGxvIHdvcmxkIA==",
+    "SGVsbG8gV29ybGQ=",
+    "Mw==",
+    "Mi41MA==",
+    "LTE3",
+    {
+     "message": "encode expects two arguments: a string and an encoding"
+    },
+    "TmV3IFlvcmssIE5Z",
+    "Y2Fmw6kgw5xuw69jw7Zkw6k=",
+    "MjAyNC0wMy0xNQ==",
+    "MjAyNC0wMy0xNVQxMDoyMDozMFo=",
+    "PHA+SGVsbG8gPGI+V29ybGQ8L2I+PC9wPg==",
+    "eyJhIjogMSwgImIiOiBbMSwgMiwgeyJjIjogIngifV19",
+    "YSxiLCxj",
+    "dHJ1ZQ==",
+    "MWUz",
+    "ICBtdWx0aXBsZSAgIHNwYWNlcwloZXJlICA=",
+    "QUxMIENBUFMgc2VudGVuY2UuIHNlY29uZCBvbmUh",
+    "aHR0cHM6Ly9leGFtcGxlLmNvbS9wYXRoP3E9MSZyPXR3byNmcmFn",
+    "MDA0Mg==",
+    "MSwyMzQuNTY=",
+    "YUdWc2JHOGdkMjl5YkdRPQ==",
+    "TydOZWlsIE1jRG9uYWxkLVNtaXRo"
+   ]
+  },
+  {
+   "expr": "value.decode('base64')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Invalid input length 13"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: 0x20"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Invalid input length 1"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: ."
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: -"
+    },
+    {
+     "message": "decode expects two arguments: a string and an encoding"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: 0x20"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: 0xe9"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: -"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: -"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Invalid input length 25"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Invalid input length 33"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: ,"
+    },
+    "���",
+    "��",
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: 0x20"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: 0x20"
+    },
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: :"
+    },
+    "�N6",
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Unrecognized character: ,"
+    },
+    "hello world",
+    {
+     "message": "java.lang.IllegalArgumentException: com.google.common.io.BaseEncoding$DecodingException: Invalid input length 21"
+    }
+   ]
+  },
+  {
+   "expr": "value.md5()",
+   "rows": "all",
+   "results": [
+    "c9708cb9a6b8d820eda83547a218f384",
+    "b10a8db164e0754105b7a99be72e3fe5",
+    "eccbc87e4b5ce2fe28308fd9f2a7baf3",
+    "73cdf608d1ee898d0b5ef68f1869a851",
+    "7ab4babdd6b87640e9ccccf7055324cb",
+    {
+     "message": "md5 expects a string"
+    },
+    "fefa0a20ec8703b4288a34cb4b7a68ce",
+    "e4621328c37281f2b896aa6abee13937",
+    "038ad75cd48825ca66ee8f10d561c4f9",
+    "ed1f767cbc5ddeffd92ffda48dc779d9",
+    "e9ea837e9452de2daaf6654c89fc3749",
+    "f1975d5eedf9341c9f91c67c85db6666",
+    "e25525e3d41f57be29ab0ecf3365ba14",
+    "b326b5062b2f0e69046810717534cb09",
+    "8d9e78ee05f0247b1e9399c06976bda7",
+    "0cef30f5dd36c3f4c1feb8060268dd4b",
+    "1a2cabd59a8349a3fcb2aad88e45fa5c",
+    "1d8a59af286a63250d91357868df0728",
+    "c2e38e55597ae43748ae552b614f5317",
+    "8f8c59a516231128f36a61ba2b3dd47b",
+    "bef52dc1307a739dccaf74f068dbc8df",
+    "872bbc663380a0a6bb49f9a6cf22ccab"
+   ]
+  },
+  {
+   "expr": "value.sha1()",
+   "rows": "all",
+   "results": [
+    "bf49354df46839978e39dcb01038e5e9c90f60c0",
+    "0a4d55a8d778e5022fab701977c5d840bbc486d0",
+    "77de68daecd823babbb58edb1c8e14d7106e83bb",
+    "2625d0dd824aa1efab8faa0798ac1d94f3bacc80",
+    "6b979d97a529a16aced6c9cc59375fa4fe3962e7",
+    {
+     "message": "sha1 expects a string"
+    },
+    "adf0df6832438ba3e6c57dfbdcbf5e0439ada74d",
+    "81d056c4d36de29ec7a69c8f5fc6ced765f1340f",
+    "9dddab85b88c08481681dce9950a299abe8bdff8",
+    "28345f3a0adff8fbeacde1e8e150e2b9b7e4894b",
+    "801e7ec8cf5f37116755d2ba1f38b30289bd56b9",
+    "fdfa242e0319b344160d6852b9ec429cfde43379",
+    "bbe0c2e8d1839efe6e48f831e936872f821292e7",
+    "5ffe533b830f08a0326348a9160afafc8ada44db",
+    "216a5c26b629e481b542da1bc0afa0282583c0e8",
+    "c817a11c245225b7fa20db92ab3a937418208309",
+    "905f3e0487011c3e7954df5ef8b5393294017c35",
+    "efee7210b3f799ba555a4bf435b970abc630d60e",
+    "24fb6bc944cfe84acb9eec9f5a4c332c059725b1",
+    "cffd2d0199a99fd0e0c071601e19c1a7139e9d6b",
+    "6fb7c3abfa471bc35fe45ddf7b42b69eed31730d",
+    "9607c8cd8c5fdeb7e5cf9ab43c6df098e1f9456a"
+   ]
+  },
+  {
+   "expr": "value.detectLanguage()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage expects a string"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    },
+    {
+     "message": "detectLanguage: language detection failed"
+    }
+   ]
+  },
+  {
+   "expr": "value.reinterpret('utf-8')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "reinterpret expects string to reinterpret with a given target encoding and optional source encoding."
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.toNumber()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "2.5",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "toNumber(value)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "2.5",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() + 1",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "4",
+    "3.5",
+    "-16",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1001",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "43",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() * 2",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "6",
+    "5",
+    "-34",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "2000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "84",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() / 4",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "0",
+    "0.625",
+    "-4",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "250",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "10",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() % 3",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "0",
+    "2.5",
+    "-2",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "0",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() > 2",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    "true",
+    "false",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber() >= 3",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    "false",
+    "false",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "true",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber().round()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "3",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber().floor()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "2",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toNumber().ceil()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "3",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "abs(value.toNumber())",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "2.5",
+    "17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "type(value.toNumber())",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "number",
+    "number",
+    "number",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "number",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "number",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "isError(value.toNumber())",
+   "rows": "all",
+   "results": [
+    "true",
+    "true",
+    "false",
+    "false",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true"
+   ]
+  },
+  {
+   "expr": "value.toNumber().toString()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "3",
+    "2.5",
+    "-17",
+    {
+     "message": "toNumber expects one non-null argument"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "1000.0",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    "42",
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 2024-03-15T00:00:00Z]",
+    "[date 2024-03-15T10:20:30Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 0042-01-01T00:00:00Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate('yyyy-MM-dd')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 2024-03-15T00:00:00Z]",
+    "[date 2024-03-15T00:00:00Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 0042-01-01T00:00:00Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().toString('yyyy/MM/dd')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "2024/03/15",
+    "2024/03/15",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "0042/01/01",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().datePart('year')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "2024",
+    "2024",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "42",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().datePart('month')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "3",
+    "3",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "1",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().datePart('weekday')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "FRIDAY",
+    "FRIDAY",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "WEDNESDAY",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().datePart('hours')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "0",
+    "10",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "0",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.toDate().inc(1, 'day')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 2024-03-16T00:00:00Z]",
+    "[date 2024-03-16T10:20:30Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "[date 0042-01-02T00:00:00Z]",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "diff(value.toDate(), '2024-01-01'.toDate(), 'days')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to parse as date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "74",
+    "74",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    "-723910",
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    },
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseJson()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\" hello world \"; line: 1, column: 7]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'Hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Hello World\"; line: 1, column: 6]"
+    },
+    "3",
+    "2.5",
+    "-17",
+    null,
+    {
+     "message": "parseJson failed: Unrecognized token 'New': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"New York, NY\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'café': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"café Ünïcödé\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15T10:20:30Z\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('<' (code 60)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"<p>Hello <b>World</b></p>\"; line: 1, column: 1]"
+    },
+    "{\"a\":1,\"b\":[1,2,{\"c\":\"x\"}]}",
+    {
+     "message": "parseJson failed: Unrecognized token 'a': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"a,b,,c\"; line: 1, column: 2]"
+    },
+    "true",
+    "1000.0",
+    {
+     "message": "parseJson failed: Unrecognized token 'multiple': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"  multiple   spaces\\u0009here  \"; line: 1, column: 11]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'ALL': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"ALL CAPS sentence. second one!\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'https': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"https://example.com/path?q=1&r=two#frag\"; line: 1, column: 6]"
+    },
+    {
+     "message": "parseJson failed: Invalid numeric value: Leading zeroes not allowed\n at [Source: (String)\"0042\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character (',' (code 44)): Expected space separating root-level values\n at [Source: (String)\"1,234.56\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'aGVsbG8gd29ybGQ': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"aGVsbG8gd29ybGQ=\"; line: 1, column: 16]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'O': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"O'Neil McDonald-Smith\"; line: 1, column: 2]"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseJson().a",
+   "rows": "all",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\" hello world \"; line: 1, column: 7]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'Hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Hello World\"; line: 1, column: 6]"
+    },
+    null,
+    null,
+    null,
+    null,
+    {
+     "message": "parseJson failed: Unrecognized token 'New': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"New York, NY\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'café': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"café Ünïcödé\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15T10:20:30Z\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('<' (code 60)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"<p>Hello <b>World</b></p>\"; line: 1, column: 1]"
+    },
+    "1",
+    {
+     "message": "parseJson failed: Unrecognized token 'a': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"a,b,,c\"; line: 1, column: 2]"
+    },
+    null,
+    null,
+    {
+     "message": "parseJson failed: Unrecognized token 'multiple': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"  multiple   spaces\\u0009here  \"; line: 1, column: 11]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'ALL': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"ALL CAPS sentence. second one!\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'https': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"https://example.com/path?q=1&r=two#frag\"; line: 1, column: 6]"
+    },
+    {
+     "message": "parseJson failed: Invalid numeric value: Leading zeroes not allowed\n at [Source: (String)\"0042\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character (',' (code 44)): Expected space separating root-level values\n at [Source: (String)\"1,234.56\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'aGVsbG8gd29ybGQ': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"aGVsbG8gd29ybGQ=\"; line: 1, column: 16]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'O': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"O'Neil McDonald-Smith\"; line: 1, column: 2]"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseJson()['b'][2].c",
+   "rows": "all",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\" hello world \"; line: 1, column: 7]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'Hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Hello World\"; line: 1, column: 6]"
+    },
+    null,
+    null,
+    null,
+    null,
+    {
+     "message": "parseJson failed: Unrecognized token 'New': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"New York, NY\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'café': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"café Ünïcödé\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15T10:20:30Z\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('<' (code 60)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"<p>Hello <b>World</b></p>\"; line: 1, column: 1]"
+    },
+    "x",
+    {
+     "message": "parseJson failed: Unrecognized token 'a': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"a,b,,c\"; line: 1, column: 2]"
+    },
+    null,
+    null,
+    {
+     "message": "parseJson failed: Unrecognized token 'multiple': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"  multiple   spaces\\u0009here  \"; line: 1, column: 11]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'ALL': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"ALL CAPS sentence. second one!\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'https': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"https://example.com/path?q=1&r=two#frag\"; line: 1, column: 6]"
+    },
+    {
+     "message": "parseJson failed: Invalid numeric value: Leading zeroes not allowed\n at [Source: (String)\"0042\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character (',' (code 44)): Expected space separating root-level values\n at [Source: (String)\"1,234.56\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'aGVsbG8gd29ybGQ': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"aGVsbG8gd29ybGQ=\"; line: 1, column: 16]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'O': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"O'Neil McDonald-Smith\"; line: 1, column: 2]"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseJson().b.length()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\" hello world \"; line: 1, column: 7]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'Hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Hello World\"; line: 1, column: 6]"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'New': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"New York, NY\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'café': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"café Ünïcödé\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15T10:20:30Z\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('<' (code 60)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"<p>Hello <b>World</b></p>\"; line: 1, column: 1]"
+    },
+    "3",
+    {
+     "message": "parseJson failed: Unrecognized token 'a': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"a,b,,c\"; line: 1, column: 2]"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "length expects an array or a string"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'multiple': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"  multiple   spaces\\u0009here  \"; line: 1, column: 11]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'ALL': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"ALL CAPS sentence. second one!\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'https': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"https://example.com/path?q=1&r=two#frag\"; line: 1, column: 6]"
+    },
+    {
+     "message": "parseJson failed: Invalid numeric value: Leading zeroes not allowed\n at [Source: (String)\"0042\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character (',' (code 44)): Expected space separating root-level values\n at [Source: (String)\"1,234.56\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'aGVsbG8gd29ybGQ': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"aGVsbG8gd29ybGQ=\"; line: 1, column: 16]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'O': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"O'Neil McDonald-Smith\"; line: 1, column: 2]"
+    }
+   ]
+  },
+  {
+   "expr": "hasField(value.parseJson(), 'a')",
+   "rows": "all",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\" hello world \"; line: 1, column: 7]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'Hello': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"Hello World\"; line: 1, column: 6]"
+    },
+    "false",
+    "false",
+    "false",
+    "false",
+    {
+     "message": "parseJson failed: Unrecognized token 'New': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"New York, NY\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'café': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"café Ünïcödé\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('-' (code 45)): Expected space separating root-level values\n at [Source: (String)\"2024-03-15T10:20:30Z\"; line: 1, column: 5]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character ('<' (code 60)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"<p>Hello <b>World</b></p>\"; line: 1, column: 1]"
+    },
+    "true",
+    {
+     "message": "parseJson failed: Unrecognized token 'a': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"a,b,,c\"; line: 1, column: 2]"
+    },
+    "false",
+    "false",
+    {
+     "message": "parseJson failed: Unrecognized token 'multiple': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"  multiple   spaces\\u0009here  \"; line: 1, column: 11]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'ALL': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"ALL CAPS sentence. second one!\"; line: 1, column: 4]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'https': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"https://example.com/path?q=1&r=two#frag\"; line: 1, column: 6]"
+    },
+    {
+     "message": "parseJson failed: Invalid numeric value: Leading zeroes not allowed\n at [Source: (String)\"0042\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unexpected character (',' (code 44)): Expected space separating root-level values\n at [Source: (String)\"1,234.56\"; line: 1, column: 2]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'aGVsbG8gd29ybGQ': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"aGVsbG8gd29ybGQ=\"; line: 1, column: 16]"
+    },
+    {
+     "message": "parseJson failed: Unrecognized token 'O': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"O'Neil McDonald-Smith\"; line: 1, column: 2]"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseHtml().select('b')[0].htmlText()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "parseHtml expects a single string as an argument"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "World",
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseHtml().select('p')[0].ownText()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "parseHtml expects a single string as an argument"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "Hello",
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseHtml().htmlText()",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "parseHtml expects a single string as an argument"
+    },
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "Hello World",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "multiple spaces here",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.parseUri()",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Invalid URI  hello world "
+    },
+    {
+     "message": "Invalid URI Hello World"
+    },
+    {
+     "message": "Invalid URI 3"
+    },
+    {
+     "message": "Invalid URI 2.50"
+    },
+    {
+     "message": "Invalid URI -17"
+    },
+    {
+     "message": "parseUri expects a string"
+    },
+    {
+     "message": "Invalid URI New York, NY"
+    },
+    {
+     "message": "Invalid URI café Ünïcödé"
+    },
+    {
+     "message": "Invalid URI 2024-03-15"
+    },
+    {
+     "message": "Invalid URI 2024-03-15T10:20:30Z"
+    },
+    {
+     "message": "Invalid URI <p>Hello <b>World</b></p>"
+    },
+    {
+     "message": "Invalid URI {\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}"
+    },
+    {
+     "message": "Invalid URI a,b,,c"
+    },
+    {
+     "message": "Invalid URI true"
+    },
+    {
+     "message": "Invalid URI 1e3"
+    },
+    {
+     "message": "Invalid URI   multiple   spaces\there  "
+    },
+    {
+     "message": "Invalid URI ALL CAPS sentence. second one!"
+    },
+    "{\"scheme\":\"https\",\"host\":\"example.com\",\"port\":-1,\"path\":\"/path\",\"query\":\"q=1&r=two\",\"authority\":\"example.com\",\"fragment\":\"frag\",\"query_params\":{}}",
+    {
+     "message": "Invalid URI 0042"
+    },
+    {
+     "message": "Invalid URI 1,234.56"
+    },
+    {
+     "message": "Invalid URI aGVsbG8gd29ybGQ="
+    },
+    {
+     "message": "Invalid URI O'Neil McDonald-Smith"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseUri().host",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Invalid URI  hello world "
+    },
+    {
+     "message": "Invalid URI Hello World"
+    },
+    {
+     "message": "Invalid URI 3"
+    },
+    {
+     "message": "Invalid URI 2.50"
+    },
+    {
+     "message": "Invalid URI -17"
+    },
+    {
+     "message": "parseUri expects a string"
+    },
+    {
+     "message": "Invalid URI New York, NY"
+    },
+    {
+     "message": "Invalid URI café Ünïcödé"
+    },
+    {
+     "message": "Invalid URI 2024-03-15"
+    },
+    {
+     "message": "Invalid URI 2024-03-15T10:20:30Z"
+    },
+    {
+     "message": "Invalid URI <p>Hello <b>World</b></p>"
+    },
+    {
+     "message": "Invalid URI {\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}"
+    },
+    {
+     "message": "Invalid URI a,b,,c"
+    },
+    {
+     "message": "Invalid URI true"
+    },
+    {
+     "message": "Invalid URI 1e3"
+    },
+    {
+     "message": "Invalid URI   multiple   spaces\there  "
+    },
+    {
+     "message": "Invalid URI ALL CAPS sentence. second one!"
+    },
+    "example.com",
+    {
+     "message": "Invalid URI 0042"
+    },
+    {
+     "message": "Invalid URI 1,234.56"
+    },
+    {
+     "message": "Invalid URI aGVsbG8gd29ybGQ="
+    },
+    {
+     "message": "Invalid URI O'Neil McDonald-Smith"
+    }
+   ]
+  },
+  {
+   "expr": "value.parseUri().path",
+   "rows": "all",
+   "results": [
+    {
+     "message": "Invalid URI  hello world "
+    },
+    {
+     "message": "Invalid URI Hello World"
+    },
+    {
+     "message": "Invalid URI 3"
+    },
+    {
+     "message": "Invalid URI 2.50"
+    },
+    {
+     "message": "Invalid URI -17"
+    },
+    {
+     "message": "parseUri expects a string"
+    },
+    {
+     "message": "Invalid URI New York, NY"
+    },
+    {
+     "message": "Invalid URI café Ünïcödé"
+    },
+    {
+     "message": "Invalid URI 2024-03-15"
+    },
+    {
+     "message": "Invalid URI 2024-03-15T10:20:30Z"
+    },
+    {
+     "message": "Invalid URI <p>Hello <b>World</b></p>"
+    },
+    {
+     "message": "Invalid URI {\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}"
+    },
+    {
+     "message": "Invalid URI a,b,,c"
+    },
+    {
+     "message": "Invalid URI true"
+    },
+    {
+     "message": "Invalid URI 1e3"
+    },
+    {
+     "message": "Invalid URI   multiple   spaces\there  "
+    },
+    {
+     "message": "Invalid URI ALL CAPS sentence. second one!"
+    },
+    "/path",
+    {
+     "message": "Invalid URI 0042"
+    },
+    {
+     "message": "Invalid URI 1,234.56"
+    },
+    {
+     "message": "Invalid URI aGVsbG8gd29ybGQ="
+    },
+    {
+     "message": "Invalid URI O'Neil McDonald-Smith"
+    }
+   ]
+  },
+  {
+   "expr": "jsonize(value)",
+   "rows": "all",
+   "results": [
+    "\" hello world \"",
+    "\"Hello World\"",
+    "\"3\"",
+    "\"2.50\"",
+    "\"-17\"",
+    "null",
+    "\"New York, NY\"",
+    "\"café Ünïcödé\"",
+    "\"2024-03-15\"",
+    "\"2024-03-15T10:20:30Z\"",
+    "\"<p>Hello <b>World</b></p>\"",
+    "\"{\\\"a\\\": 1, \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}\"",
+    "\"a,b,,c\"",
+    "\"true\"",
+    "\"1e3\"",
+    "\"  multiple   spaces\\there  \"",
+    "\"ALL CAPS sentence. second one!\"",
+    "\"https://example.com/path?q=1&r=two#frag\"",
+    "\"0042\"",
+    "\"1,234.56\"",
+    "\"aGVsbG8gd29ybGQ=\"",
+    "\"O'Neil McDonald-Smith\""
+   ]
+  },
+  {
+   "expr": "coalesce(value, 'default')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "default",
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "if(isBlank(value), 'empty', value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    "empty",
+    "New York, NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "if(value.length() > 5, 'long', 'short')",
+   "rows": "all",
+   "results": [
+    "long",
+    "long",
+    "short",
+    "short",
+    "short",
+    {
+     "message": "length expects an array or a string"
+    },
+    "long",
+    "long",
+    "long",
+    "long",
+    "long",
+    "long",
+    "long",
+    "short",
+    "short",
+    "long",
+    "long",
+    "long",
+    "short",
+    "long",
+    "long",
+    "long"
+   ]
+  },
+  {
+   "expr": "with(value.split(','), a, a.length())",
+   "rows": "all",
+   "results": [
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "2",
+    "1",
+    "1",
+    "1",
+    "1",
+    "4",
+    "3",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "2",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "expr": "forEach(value.split(','), v, v.trim())",
+   "rows": "all",
+   "results": [
+    "[ \"hello world\" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New York\", \"NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \"\\\"b\\\": [1\", \"2\", \"{\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"multiple   spaces\\there\" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "forEach(value.split(' '), w, w.length())",
+   "rows": "all",
+   "results": [
+    "[ 5, 5 ]",
+    "[ 5, 5 ]",
+    "[ 1 ]",
+    "[ 4 ]",
+    "[ 3 ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ 3, 5, 2 ]",
+    "[ 4, 7 ]",
+    "[ 10 ]",
+    "[ 20 ]",
+    "[ 8, 16 ]",
+    "[ 5, 2, 4, 3, 2, 5, 6 ]",
+    "[ 6 ]",
+    "[ 4 ]",
+    "[ 3 ]",
+    "[ 8, 11 ]",
+    "[ 3, 4, 9, 6, 4 ]",
+    "[ 39 ]",
+    "[ 4 ]",
+    "[ 8 ]",
+    "[ 16 ]",
+    "[ 6, 14 ]"
+   ]
+  },
+  {
+   "expr": "filter(value.split(','), v, v != '')",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "forEachIndex(value.split(','), i, v, i + ':' + v)",
+   "rows": "all",
+   "results": [
+    "[ \"0: hello world \" ]",
+    "[ \"0:Hello World\" ]",
+    "[ \"0:3\" ]",
+    "[ \"0:2.50\" ]",
+    "[ \"0:-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"0:New York\", \"1: NY\" ]",
+    "[ \"0:café Ünïcödé\" ]",
+    "[ \"0:2024-03-15\" ]",
+    "[ \"0:2024-03-15T10:20:30Z\" ]",
+    "[ \"0:<p>Hello <b>World</b></p>\" ]",
+    "[ \"0:{\\\"a\\\": 1\", \"1: \\\"b\\\": [1\", \"2: 2\", \"3: {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"0:a\", \"1:b\", \"2:c\" ]",
+    "[ \"0:true\" ]",
+    "[ \"0:1e3\" ]",
+    "[ \"0:  multiple   spaces\\there  \" ]",
+    "[ \"0:ALL CAPS sentence. second one!\" ]",
+    "[ \"0:https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0:0042\" ]",
+    "[ \"0:1\", \"1:234.56\" ]",
+    "[ \"0:aGVsbG8gd29ybGQ=\" ]",
+    "[ \"0:O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "forNonBlank(value, v, v.toUppercase(), 'BLANK')",
+   "rows": "all",
+   "results": [
+    " HELLO WORLD ",
+    "HELLO WORLD",
+    "3",
+    "2.50",
+    "-17",
+    "BLANK",
+    "NEW YORK, NY",
+    "CAFÉ ÜNÏCÖDÉ",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<P>HELLO <B>WORLD</B></P>",
+    "{\"A\": 1, \"B\": [1, 2, {\"C\": \"X\"}]}",
+    "A,B,,C",
+    "TRUE",
+    "1E3",
+    "  MULTIPLE   SPACES\tHERE  ",
+    "ALL CAPS SENTENCE. SECOND ONE!",
+    "HTTPS://EXAMPLE.COM/PATH?Q=1&R=TWO#FRAG",
+    "0042",
+    "1,234.56",
+    "AGVSBG8GD29YBGQ=",
+    "O'NEIL MCDONALD-SMITH"
+   ]
+  },
+  {
+   "expr": "value.split(',').join('|')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "New York| NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1| \"b\": [1| 2| {\"c\": \"x\"}]}",
+    "a|b|c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1|234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.split('').reverse().join('')",
+   "rows": "all",
+   "results": [
+    "worldhello",
+    "WorldHello",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "NYYork,New",
+    "Ünïcödécafé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<b>World</b></p><p>Hello",
+    "\"x\"}]}{\"c\":2,[1,\"b\":1,{\"a\":",
+    "a,b,,c",
+    "true",
+    "1e3",
+    "herespacesmultiple",
+    "one!secondsentence.CAPSALL",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1,234.56",
+    "aGVsbG8gd29ybGQ=",
+    "McDonald-SmithO'Neil"
+   ]
+  },
+  {
+   "expr": "value.split(',').sort()",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \" NY\", \"New York\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\", \"{\\\"a\\\": 1\" ]",
+    "[ \"a\", \"b\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split(',').uniques()",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \"New York\", \" NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1\", \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a\", \"b\", \"c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1\", \"234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "value.split(',').length()",
+   "rows": "all",
+   "results": [
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "2",
+    "1",
+    "1",
+    "1",
+    "1",
+    "4",
+    "3",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "2",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "expr": "inArray(value.split(','), 'b')",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "value.split(',')[0]",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "New York",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    "{\"a\": 1",
+    "a",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "1",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.split(',')[-1]",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "Hello World",
+    "3",
+    "2.50",
+    "-17",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    " NY",
+    "café Ünïcödé",
+    "2024-03-15",
+    "2024-03-15T10:20:30Z",
+    "<p>Hello <b>World</b></p>",
+    " {\"c\": \"x\"}]}",
+    "c",
+    "true",
+    "1e3",
+    "  multiple   spaces\there  ",
+    "ALL CAPS sentence. second one!",
+    "https://example.com/path?q=1&r=two#frag",
+    "0042",
+    "234.56",
+    "aGVsbG8gd29ybGQ=",
+    "O'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "value.split(',').slice(1)",
+   "rows": "all",
+   "results": [
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    {
+     "message": "split expects three strings, or one string, one regex, followed by an optional boolean"
+    },
+    "[ \" NY\" ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[ \" \\\"b\\\": [1\", \" 2\", \" {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"b\", \"c\" ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[  ]",
+    "[ \"234.56\" ]",
+    "[  ]",
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "value.toUppercase().fingerprint()",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "hello world",
+    "3",
+    "250",
+    "17",
+    {
+     "message": "toUppercase expects a string"
+    },
+    "new ny york",
+    "cafe unicode",
+    "20240315",
+    "20240315t102030z",
+    "<b>world<b><p> <p>hello",
+    "1 2 a b c x",
+    "abc",
+    "true",
+    "1e3",
+    "here multiple spaces",
+    "all caps one second sentence",
+    "httpsexamplecompathq=1r=twofrag",
+    "0042",
+    "123456",
+    "agvsbg8gd29ybgq=",
+    "mcdonaldsmith oneil"
+   ]
+  },
+  {
+   "expr": "value.trim() == value",
+   "rows": "all",
+   "results": [
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    {
+     "message": "trim expects a string"
+    },
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "false",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true",
+    "true"
+   ]
+  },
+  {
+   "expr": "1 + 2",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "7 / 2",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "7.0 / 2",
+   "rows": "first",
+   "results": [
+    "3.5"
+   ]
+  },
+  {
+   "expr": "7 / 2.0",
+   "rows": "first",
+   "results": [
+    "3.5"
+   ]
+  },
+  {
+   "expr": "7 % 3",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "-7 % 3",
+   "rows": "first",
+   "results": [
+    "-1"
+   ]
+  },
+  {
+   "expr": "2 * 3.5",
+   "rows": "first",
+   "results": [
+    "7"
+   ]
+  },
+  {
+   "expr": "1 / 0",
+   "rows": "first",
+   "results": [
+    "Infinity"
+   ]
+  },
+  {
+   "expr": "0 / 0",
+   "rows": "first",
+   "results": [
+    "NaN"
+   ]
+  },
+  {
+   "expr": "-1 / 0",
+   "rows": "first",
+   "results": [
+    "-Infinity"
+   ]
+  },
+  {
+   "expr": "1.0 / 3",
+   "rows": "first",
+   "results": [
+    "0.3333333333333333"
+   ]
+  },
+  {
+   "expr": "10 / 3 * 3",
+   "rows": "first",
+   "results": [
+    "9"
+   ]
+  },
+  {
+   "expr": "0.1 + 0.2",
+   "rows": "first",
+   "results": [
+    "0.30000000000000004"
+   ]
+  },
+  {
+   "expr": "1e3",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "1.5e-3",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "expr": "100000000000",
+   "rows": "first",
+   "results": [
+    "100000000000"
+   ]
+  },
+  {
+   "expr": "12345678901234567",
+   "rows": "first",
+   "results": [
+    "12345678901234567"
+   ]
+  },
+  {
+   "expr": "10000000000000000000",
+   "rows": "first",
+   "results": [
+    "-8446744073709551616"
+   ]
+  },
+  {
+   "expr": "3.0",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "2.50",
+   "rows": "first",
+   "results": [
+    "2.5"
+   ]
+  },
+  {
+   "expr": "-0.0",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "-5",
+   "rows": "first",
+   "results": [
+    "-5"
+   ]
+  },
+  {
+   "expr": "--5",
+   "rows": "first",
+   "parseError": "Parsing error at offset 1: Bad negative number"
+  },
+  {
+   "expr": "- 5",
+   "rows": "first",
+   "results": [
+    "-5"
+   ]
+  },
+  {
+   "expr": "'a' + 'b'",
+   "rows": "first",
+   "results": [
+    "ab"
+   ]
+  },
+  {
+   "expr": "'a' + 1",
+   "rows": "first",
+   "results": [
+    "a1"
+   ]
+  },
+  {
+   "expr": "1 + 'a'",
+   "rows": "first",
+   "results": [
+    "1a"
+   ]
+  },
+  {
+   "expr": "1 + 2 + 'a'",
+   "rows": "first",
+   "results": [
+    "3a"
+   ]
+  },
+  {
+   "expr": "'a' + 1 + 2",
+   "rows": "first",
+   "results": [
+    "a12"
+   ]
+  },
+  {
+   "expr": "null + 1",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "null + 'a'",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'a' * 2",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'3' * 2",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'3' + 2",
+   "rows": "first",
+   "results": [
+    "32"
+   ]
+  },
+  {
+   "expr": "true",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "false",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "null",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "true && false",
+   "rows": "first",
+   "parseError": "Parsing error at offset 5: Unknown function or control named&"
+  },
+  {
+   "expr": "true || false",
+   "rows": "first",
+   "parseError": "Parsing error at offset 5: Unknown function or control named|"
+  },
+  {
+   "expr": "!true",
+   "rows": "first",
+   "parseError": "Parsing error at offset 0: Missing number, string, identifier, regex, or parenthesized expression"
+  },
+  {
+   "expr": "!null",
+   "rows": "first",
+   "parseError": "Parsing error at offset 0: Missing number, string, identifier, regex, or parenthesized expression"
+  },
+  {
+   "expr": "1 == 1",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "1 == 1.0",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "'1' == 1",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "1 != 2",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "1 < 2",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "'a' < 'b'",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "'10' > '9'",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "10 > 9",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "null == null",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "[1, 2] == [1, 2]",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "1 < 'a'",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "(1 + 2) * 3",
+   "rows": "first",
+   "results": [
+    "9"
+   ]
+  },
+  {
+   "expr": "1 + 2 * 3",
+   "rows": "first",
+   "results": [
+    "7"
+   ]
+  },
+  {
+   "expr": "2 * (3 + 4) - 1",
+   "rows": "first",
+   "results": [
+    "13"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3]",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3 ]"
+   ]
+  },
+  {
+   "expr": "[]",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "[1, [2, 3]]",
+   "rows": "first",
+   "results": [
+    "[ 1, [ 2, 3 ] ]"
+   ]
+  },
+  {
+   "expr": "['a', null, true]",
+   "rows": "first",
+   "results": [
+    "[ \"a\", null, true ]"
+   ]
+  },
+  {
+   "expr": "[1, 2.5, 'x']",
+   "rows": "first",
+   "results": [
+    "[ 1, 2.5, \"x\" ]"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3].length()",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "[3, 1, 2].sort()",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3 ]"
+   ]
+  },
+  {
+   "expr": "['b', 'a', 'C'].sort()",
+   "rows": "first",
+   "results": [
+    "[ \"C\", \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3].reverse()",
+   "rows": "first",
+   "results": [
+    "[ 3, 2, 1 ]"
+   ]
+  },
+  {
+   "expr": "[1, 1, 2].uniques()",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3].join(',')",
+   "rows": "first",
+   "results": [
+    "1,2,3"
+   ]
+  },
+  {
+   "expr": "['a', 'b'].join('')",
+   "rows": "first",
+   "results": [
+    "ab"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3][1]",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3][-1]",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3][5]",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3"
+    }
+   ]
+  },
+  {
+   "expr": "[1, 2, 3].slice(1)",
+   "rows": "first",
+   "results": [
+    "[ 2, 3 ]"
+   ]
+  },
+  {
+   "expr": "[1, 2, 3].slice(0, 2)",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "expr": "inArray([1, 2], 2)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "inArray expects a string"
+    }
+   ]
+  },
+  {
+   "expr": "inArray(['a'], 'b')",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "length([1, 2])",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "sum([1, 2, 3])",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "expr": "sum([1.5, 2])",
+   "rows": "first",
+   "results": [
+    "3.5"
+   ]
+  },
+  {
+   "expr": "max(1, 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "min(1, 2)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "max(1.5, 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "abs(-3)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "abs(-3.5)",
+   "rows": "first",
+   "results": [
+    "3.5"
+   ]
+  },
+  {
+   "expr": "round(2.5)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "round(3.5)",
+   "rows": "first",
+   "results": [
+    "4"
+   ]
+  },
+  {
+   "expr": "round(-2.5)",
+   "rows": "first",
+   "results": [
+    "-2"
+   ]
+  },
+  {
+   "expr": "round(2.567)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "floor(2.7)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "ceil(2.1)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "floor(-2.5)",
+   "rows": "first",
+   "results": [
+    "-3"
+   ]
+  },
+  {
+   "expr": "mod(7, 3)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "mod(-7, 3)",
+   "rows": "first",
+   "results": [
+    "-1"
+   ]
+  },
+  {
+   "expr": "pow(2, 10)",
+   "rows": "first",
+   "results": [
+    "1024"
+   ]
+  },
+  {
+   "expr": "pow(2, 0.5)",
+   "rows": "first",
+   "results": [
+    "1.4142135623730951"
+   ]
+  },
+  {
+   "expr": "pow(2, -1)",
+   "rows": "first",
+   "results": [
+    "0.5"
+   ]
+  },
+  {
+   "expr": "exp(1)",
+   "rows": "first",
+   "results": [
+    "2.718281828459045"
+   ]
+  },
+  {
+   "expr": "ln(10)",
+   "rows": "first",
+   "results": [
+    "2.302585092994046"
+   ]
+  },
+  {
+   "expr": "log(100)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "fact(5)",
+   "rows": "first",
+   "results": [
+    "120"
+   ]
+  },
+  {
+   "expr": "fact(20)",
+   "rows": "first",
+   "results": [
+    "2432902008176640000"
+   ]
+  },
+  {
+   "expr": "fact(21)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArithmeticException: Integer overflow computing factorial"
+    }
+   ]
+  },
+  {
+   "expr": "factn(10, 3)",
+   "rows": "first",
+   "results": [
+    "280"
+   ]
+  },
+  {
+   "expr": "combin(5, 2)",
+   "rows": "first",
+   "results": [
+    "10"
+   ]
+  },
+  {
+   "expr": "gcd(12, 18)",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "expr": "lcm(4, 6)",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "expr": "multinomial(2, 3)",
+   "rows": "first",
+   "results": [
+    "10"
+   ]
+  },
+  {
+   "expr": "quotient(7, 2)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "even(3)",
+   "rows": "first",
+   "results": [
+    "4"
+   ]
+  },
+  {
+   "expr": "odd(2)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "degrees(3.141592653589793)",
+   "rows": "first",
+   "results": [
+    "180"
+   ]
+  },
+  {
+   "expr": "radians(180)",
+   "rows": "first",
+   "results": [
+    "3.141592653589793"
+   ]
+  },
+  {
+   "expr": "sin(0)",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "cos(0)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "tan(1)",
+   "rows": "first",
+   "results": [
+    "1.5574077246549023"
+   ]
+  },
+  {
+   "expr": "asin(1)",
+   "rows": "first",
+   "results": [
+    "1.5707963267948966"
+   ]
+  },
+  {
+   "expr": "acos(1)",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "atan(1)",
+   "rows": "first",
+   "results": [
+    "0.7853981633974483"
+   ]
+  },
+  {
+   "expr": "atan2(1, 1)",
+   "rows": "first",
+   "results": [
+    "0.7853981633974483"
+   ]
+  },
+  {
+   "expr": "sinh(1)",
+   "rows": "first",
+   "results": [
+    "1.1752011936438014"
+   ]
+  },
+  {
+   "expr": "cosh(1)",
+   "rows": "first",
+   "results": [
+    "1.543080634815244"
+   ]
+  },
+  {
+   "expr": "tanh(1)",
+   "rows": "first",
+   "results": [
+    "0.7615941559557649"
+   ]
+  },
+  {
+   "expr": "and(true, false)",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "or(true, false)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "not(true)",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "xor(true, false)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "and(true, true, true)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "type(1)",
+   "rows": "first",
+   "results": [
+    "number"
+   ]
+  },
+  {
+   "expr": "type(1.5)",
+   "rows": "first",
+   "results": [
+    "number"
+   ]
+  },
+  {
+   "expr": "type('a')",
+   "rows": "first",
+   "results": [
+    "string"
+   ]
+  },
+  {
+   "expr": "type([1])",
+   "rows": "first",
+   "results": [
+    "array"
+   ]
+  },
+  {
+   "expr": "type(null)",
+   "rows": "first",
+   "results": [
+    "undefined"
+   ]
+  },
+  {
+   "expr": "type(true)",
+   "rows": "first",
+   "results": [
+    "boolean"
+   ]
+  },
+  {
+   "expr": "type(1 / 0)",
+   "rows": "first",
+   "results": [
+    "number"
+   ]
+  },
+  {
+   "expr": "type('2024-01-01'.toDate())",
+   "rows": "first",
+   "results": [
+    "date"
+   ]
+  },
+  {
+   "expr": "toNumber('12')",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "expr": "toNumber('12.5')",
+   "rows": "first",
+   "results": [
+    "12.5"
+   ]
+  },
+  {
+   "expr": "toNumber('1e3')",
+   "rows": "first",
+   "results": [
+    "1000"
+   ]
+  },
+  {
+   "expr": "toNumber('abc')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "toNumber(' 12 ')",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "expr": "toNumber('0x1F')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "toNumber('1,234')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "toNumber('-0')",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "toNumber('12.0')",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "expr": "toNumber(12)",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "expr": "toNumber(true)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Unable to parse as number"
+    }
+   ]
+  },
+  {
+   "expr": "toString(1)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "toString(1.0)",
+   "rows": "first",
+   "results": [
+    "1.0"
+   ]
+  },
+  {
+   "expr": "toString(1.5)",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "expr": "toString(1e21)",
+   "rows": "first",
+   "parseError": "Parsing error at offset 10: Missing )"
+  },
+  {
+   "expr": "toString(123456789.0)",
+   "rows": "first",
+   "results": [
+    "1.23456789E8"
+   ]
+  },
+  {
+   "expr": "toString(0.000001)",
+   "rows": "first",
+   "results": [
+    "1.0E-6"
+   ]
+  },
+  {
+   "expr": "toString(1e-7)",
+   "rows": "first",
+   "parseError": "Parsing error at offset 10: Missing )"
+  },
+  {
+   "expr": "toString([1, 2])",
+   "rows": "first",
+   "results": [
+    "[1, 2]"
+   ]
+  },
+  {
+   "expr": "toString(true)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "toString(null)",
+   "rows": "first",
+   "results": [
+    ""
+   ]
+  },
+  {
+   "expr": "1e21",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "123456789.0",
+   "rows": "first",
+   "results": [
+    "123456789"
+   ]
+  },
+  {
+   "expr": "0.000001",
+   "rows": "first",
+   "results": [
+    "1.0E-6"
+   ]
+  },
+  {
+   "expr": "1e-7",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "1.0 * 100000000000000000000",
+   "rows": "first",
+   "results": [
+    "7766279631452241920"
+   ]
+  },
+  {
+   "expr": "2.5 * 4",
+   "rows": "first",
+   "results": [
+    "10"
+   ]
+  },
+  {
+   "expr": "'abc'.substring(1)",
+   "rows": "first",
+   "results": [
+    "bc"
+   ]
+  },
+  {
+   "expr": "'abc'[5]",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.StringIndexOutOfBoundsException: begin 3, end 4, length 3"
+    }
+   ]
+  },
+  {
+   "expr": "'abc'[1, 10]",
+   "rows": "first",
+   "results": [
+    "bc"
+   ]
+  },
+  {
+   "expr": "'abc'.slice(-10)",
+   "rows": "first",
+   "results": [
+    "abc"
+   ]
+  },
+  {
+   "expr": "'a,b,c'.split(',')",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\", \"c\" ]"
+   ]
+  },
+  {
+   "expr": "'a b'.split(' ').length()",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "range(5)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 2, 3, 4 ]"
+   ]
+  },
+  {
+   "expr": "range(1, 5)",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3, 4 ]"
+   ]
+  },
+  {
+   "expr": "range(1, 10, 3)",
+   "rows": "first",
+   "results": [
+    "[ 1, 4, 7 ]"
+   ]
+  },
+  {
+   "expr": "range(5, 1, -1)",
+   "rows": "first",
+   "results": [
+    "[ 5, 4, 3, 2 ]"
+   ]
+  },
+  {
+   "expr": "'x'.length()",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "'hello world'.toTitlecase()",
+   "rows": "first",
+   "results": [
+    "Hello World"
+   ]
+  },
+  {
+   "expr": "'hELLO wORLD'.toTitlecase()",
+   "rows": "first",
+   "results": [
+    "Hello World"
+   ]
+  },
+  {
+   "expr": "'o\\'neil mcdonald-smith'.toTitlecase()",
+   "rows": "first",
+   "results": [
+    "O'neil Mcdonald-smith"
+   ]
+  },
+  {
+   "expr": "'  x  '.trim()",
+   "rows": "first",
+   "results": [
+    "x"
+   ]
+  },
+  {
+   "expr": "'a\\tb'.split('\\t')",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "expr": "'a\\nb'.length()",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "'single \"quoted\"'",
+   "rows": "first",
+   "results": [
+    "single \"quoted\""
+   ]
+  },
+  {
+   "expr": "\"esc\\\"aped\"",
+   "rows": "first",
+   "results": [
+    "esc\"aped"
+   ]
+  },
+  {
+   "expr": "'\\\\'",
+   "rows": "first",
+   "results": [
+    "\\"
+   ]
+  },
+  {
+   "expr": "'\\u0041'",
+   "rows": "first",
+   "results": [
+    "u0041"
+   ]
+  },
+  {
+   "expr": "'Ünïcödé'.fingerprint()",
+   "rows": "first",
+   "results": [
+    "unicode"
+   ]
+  },
+  {
+   "expr": "'Ünïcödé'.unicode()",
+   "rows": "first",
+   "results": [
+    "[ 220, 110, 239, 99, 246, 100, 233 ]"
+   ]
+  },
+  {
+   "expr": "'Straße'.toUppercase()",
+   "rows": "first",
+   "results": [
+    "STRASSE"
+   ]
+  },
+  {
+   "expr": "'ß'.toUppercase()",
+   "rows": "first",
+   "results": [
+    "SS"
+   ]
+  },
+  {
+   "expr": "'ΑΒΓ'.toLowercase()",
+   "rows": "first",
+   "results": [
+    "αβγ"
+   ]
+  },
+  {
+   "expr": "'abc'.match(/b/)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'abc'.match(/(b)/)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'abc'.match(/(a)(b)(c)/)",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\", \"c\" ]"
+   ]
+  },
+  {
+   "expr": "'abc'.match(/(x)/)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'ABC'.match(/(b)/i)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "expr": "'abcabc'.indexOf('c')",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "'abcabc'.lastIndexOf('c')",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "expr": "'abc'.contains('d')",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "'Hello World'.find(/o/)",
+   "rows": "first",
+   "results": [
+    "[ \"o\", \"o\" ]"
+   ]
+  },
+  {
+   "expr": "'Hello World'.find(/[A-Z]/)",
+   "rows": "first",
+   "results": [
+    "[ \"H\", \"W\" ]"
+   ]
+  },
+  {
+   "expr": "'a1b22c333'.find(/\\d+/)",
+   "rows": "first",
+   "results": [
+    "[ \"1\", \"22\", \"333\" ]"
+   ]
+  },
+  {
+   "expr": "'abc'.replaceChars('abc', 'xyz')",
+   "rows": "first",
+   "results": [
+    "xyz"
+   ]
+  },
+  {
+   "expr": "'aaa'.replace('a', 'b')",
+   "rows": "first",
+   "results": [
+    "bbb"
+   ]
+  },
+  {
+   "expr": "'a.b.c'.replace('.', '-')",
+   "rows": "first",
+   "results": [
+    "a-b-c"
+   ]
+  },
+  {
+   "expr": "'a.b.c'.replace(/\\./, '-')",
+   "rows": "first",
+   "results": [
+    "a-b-c"
+   ]
+  },
+  {
+   "expr": "'abc'.replaceEach(['a', 'b'], ['1', '2'])",
+   "rows": "first",
+   "results": [
+    "12c"
+   ]
+  },
+  {
+   "expr": "'abc'.chomp('c')",
+   "rows": "first",
+   "results": [
+    "ab"
+   ]
+  },
+  {
+   "expr": "'abc'.chomp('x')",
+   "rows": "first",
+   "results": [
+    "abc"
+   ]
+  },
+  {
+   "expr": "'the quick brown fox'.partition('quick')",
+   "rows": "first",
+   "results": [
+    "[ \"the \", \"quick\", \" brown fox\" ]"
+   ]
+  },
+  {
+   "expr": "'the quick brown fox'.rpartition('o')",
+   "rows": "first",
+   "results": [
+    "[ \"the quick brown f\", \"o\", \"x\" ]"
+   ]
+  },
+  {
+   "expr": "'the quick brown fox'.partition('zzz')",
+   "rows": "first",
+   "results": [
+    "[ \"the quick brown fox\", \"\", \"\" ]"
+   ]
+  },
+  {
+   "expr": "'a, b, c'.smartSplit(',')",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \" b\", \" c\" ]"
+   ]
+  },
+  {
+   "expr": "'\"a,b\",c'.smartSplit(',')",
+   "rows": "first",
+   "results": [
+    "[ \"a,b\", \"c\" ]"
+   ]
+  },
+  {
+   "expr": "'a b\\tc'.smartSplit()",
+   "rows": "first",
+   "results": [
+    "[ \"a b\", \"c\" ]"
+   ]
+  },
+  {
+   "expr": "'abc123DEF  !?'.splitByCharType()",
+   "rows": "first",
+   "results": [
+    "[ \"abc\", \"123\", \"DEF\", \"  \", \"!?\" ]"
+   ]
+  },
+  {
+   "expr": "'abcdef'.splitByLengths(1, 2, 3)",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"bc\", \"def\" ]"
+   ]
+  },
+  {
+   "expr": "'abcdef'.splitByLengths(4, 4)",
+   "rows": "first",
+   "results": [
+    "[ \"abcd\", \"ef\" ]"
+   ]
+  },
+  {
+   "expr": "'hello world'.ngram(1)",
+   "rows": "first",
+   "results": [
+    "[ \"hello\", \"world\" ]"
+   ]
+  },
+  {
+   "expr": "'hello world'.ngram(2)",
+   "rows": "first",
+   "results": [
+    "[ \"hello world\" ]"
+   ]
+  },
+  {
+   "expr": "'hello'.ngramFingerprint(2)",
+   "rows": "first",
+   "results": [
+    "elhelllo"
+   ]
+  },
+  {
+   "expr": "'one two three'.ngram(5)",
+   "rows": "first",
+   "results": [
+    "[ \"one two three\" ]"
+   ]
+  },
+  {
+   "expr": "'Thompson'.phonetic('metaphone3')",
+   "rows": "first",
+   "results": [
+    "TMPSN"
+   ]
+  },
+  {
+   "expr": "'Smith'.phonetic('soundex')",
+   "rows": "first",
+   "results": [
+    "S530"
+   ]
+  },
+  {
+   "expr": "'Müller'.phonetic('cologne')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "phonetic does not know how to handle the 'cologne' encoding."
+    }
+   ]
+  },
+  {
+   "expr": "'Smith'.phonetic('doublemetaphone')",
+   "rows": "first",
+   "results": [
+    "SM0"
+   ]
+  },
+  {
+   "expr": "'Knight'.phonetic('metaphone')",
+   "rows": "first",
+   "results": [
+    "NT"
+   ]
+  },
+  {
+   "expr": "'Tymczak'.phonetic('soundex')",
+   "rows": "first",
+   "results": [
+    "T522"
+   ]
+  },
+  {
+   "expr": "'Pfister'.phonetic('soundex')",
+   "rows": "first",
+   "results": [
+    "P236"
+   ]
+  },
+  {
+   "expr": "levenshteinDistance('kitten', 'sitting')",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "'kitten'.levenshteinDistance('kitten')",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "'hello'.md5()",
+   "rows": "first",
+   "results": [
+    "5d41402abc4b2a76b9719d911017c592"
+   ]
+  },
+  {
+   "expr": "'hello'.sha1()",
+   "rows": "first",
+   "results": [
+    "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
+   ]
+  },
+  {
+   "expr": "'aGVsbG8='.decode('base64')",
+   "rows": "first",
+   "results": [
+    "hello"
+   ]
+  },
+  {
+   "expr": "'hello'.encode('base64')",
+   "rows": "first",
+   "results": [
+    "aGVsbG8="
+   ]
+  },
+  {
+   "expr": "'a b&c=d/é'.escape('url')",
+   "rows": "first",
+   "results": [
+    "a+b%26c%3Dd%2F%C3%A9"
+   ]
+  },
+  {
+   "expr": "'a%20b%C3%A9'.unescape('url')",
+   "rows": "first",
+   "results": [
+    "a bé"
+   ]
+  },
+  {
+   "expr": "'<a href=\"x\">&</a>'.escape('html')",
+   "rows": "first",
+   "results": [
+    "&lt;a href=&quot;x&quot;&gt;&amp;&lt;/a&gt;"
+   ]
+  },
+  {
+   "expr": "'&lt;a&gt; &amp; &eacute; &#39; &#x41;'.unescape('html')",
+   "rows": "first",
+   "results": [
+    "<a> & é ' A"
+   ]
+  },
+  {
+   "expr": "'\"x\\'\\n'.escape('javascript')",
+   "rows": "first",
+   "results": [
+    "\\\"x\\'\\n"
+   ]
+  },
+  {
+   "expr": "'a,b\"c'.escape('csv')",
+   "rows": "first",
+   "results": [
+    "\"a,b\"\"c\""
+   ]
+  },
+  {
+   "expr": "'<x>&'.escape('xml')",
+   "rows": "first",
+   "results": [
+    "&lt;x&gt;&amp;"
+   ]
+  },
+  {
+   "expr": "'This is plain English text about cleaning data.'.detectLanguage()",
+   "rows": "first",
+   "results": [
+    "en"
+   ]
+  },
+  {
+   "expr": "'Это русский текст о чистке данных.'.detectLanguage()",
+   "rows": "first",
+   "results": [
+    "ru"
+   ]
+  },
+  {
+   "expr": "'https://u:p@ex.com:8080/a/b?x=1&y=2#f'.parseUri()",
+   "rows": "first",
+   "results": [
+    "{\"scheme\":\"https\",\"host\":\"ex.com\",\"port\":8080,\"path\":\"/a/b\",\"query\":\"x=1&y=2\",\"authority\":\"u:p@ex.com:8080\",\"fragment\":\"f\",\"query_params\":{}}"
+   ]
+  },
+  {
+   "expr": "'https://ex.com/a?x=1&x=2'.parseUri().query_params",
+   "rows": "first",
+   "results": [
+    "{}"
+   ]
+  },
+  {
+   "expr": "'<div><p class=\"c\">Hi <i>there</i></p></div>'.parseHtml().select('p.c')[0].htmlText()",
+   "rows": "first",
+   "results": [
+    "Hi there"
+   ]
+  },
+  {
+   "expr": "'<div><p class=\"c\">Hi <i>there</i></p></div>'.parseHtml().select('p')[0].htmlAttr('class')",
+   "rows": "first",
+   "results": [
+    "c"
+   ]
+  },
+  {
+   "expr": "'<div><p class=\"c\">Hi <i>there</i></p></div>'.parseHtml().select('p')[0].innerHtml()",
+   "rows": "first",
+   "results": [
+    "Hi <i>there</i>"
+   ]
+  },
+  {
+   "expr": "'<div><p class=\"c\">Hi <i>there</i></p></div>'.parseHtml().select('p')[0].ownText()",
+   "rows": "first",
+   "results": [
+    "Hi"
+   ]
+  },
+  {
+   "expr": "'<div><p>a</p><p>b</p></div>'.parseHtml().select('p').length()",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "'<r><i a=\"1\">x</i><i a=\"2\">y</i></r>'.parseXml().select('i')[1].xmlText()",
+   "rows": "first",
+   "results": [
+    "y"
+   ]
+  },
+  {
+   "expr": "'<r><i a=\"1\">x</i></r>'.parseXml().select('i')[0].xmlAttr('a')",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "'<r><i>x<b>y</b></i></r>'.parseXml().select('i')[0].innerXml()",
+   "rows": "first",
+   "results": [
+    "<b>y</b>"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate()",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().toString('yyyy-MM-dd')",
+   "rows": "first",
+   "results": [
+    "2024-01-15"
+   ]
+  },
+  {
+   "expr": "'15/01/2024'.toDate('dd/MM/yyyy')",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'January 15, 2024'.toDate()",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15T10:00:00Z'.toDate()",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T10:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15 10:00'.toDate()",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T10:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15T10:00:00+02:00'.toDate()",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T10:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'not a date'.toDate()",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Unable to convert to date"
+    }
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().datePart('weekday')",
+   "rows": "first",
+   "results": [
+    "MONDAY"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().datePart('month')",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().datePart('day')",
+   "rows": "first",
+   "results": [
+    "15"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().datePart('year')",
+   "rows": "first",
+   "results": [
+    "2024"
+   ]
+  },
+  {
+   "expr": "'2024-01-15T10:20:30Z'.toDate().datePart('hours')",
+   "rows": "first",
+   "results": [
+    "10"
+   ]
+  },
+  {
+   "expr": "'2024-01-15T10:20:30Z'.toDate().datePart('minutes')",
+   "rows": "first",
+   "results": [
+    "20"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().inc(1, 'month')",
+   "rows": "first",
+   "results": [
+    "[date 2024-02-15T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-31'.toDate().inc(1, 'month')",
+   "rows": "first",
+   "results": [
+    "[date 2024-02-29T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().inc(-1, 'year')",
+   "rows": "first",
+   "results": [
+    "[date 2023-01-15T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().inc(2, 'hours')",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T02:00:00Z]"
+   ]
+  },
+  {
+   "expr": "diff('2024-01-15'.toDate(), '2024-01-01'.toDate(), 'days')",
+   "rows": "first",
+   "results": [
+    "14"
+   ]
+  },
+  {
+   "expr": "diff('2024-01-15'.toDate(), '2024-01-01'.toDate(), 'weeks')",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "diff('2024-01-15'.toDate(), '2024-01-01'.toDate(), 'hours')",
+   "rows": "first",
+   "results": [
+    "336"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().toString('EEE, d MMM yyyy')",
+   "rows": "first",
+   "results": [
+    "Mon, 15 Jan 2024"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate().toString('MMMM')",
+   "rows": "first",
+   "results": [
+    "January"
+   ]
+  },
+  {
+   "expr": "'2024-01-15T10:20:30Z'.toDate().toString('HH:mm:ss')",
+   "rows": "first",
+   "results": [
+    "10:20:30"
+   ]
+  },
+  {
+   "expr": "timeSinceUnixEpochToDate(0)",
+   "rows": "first",
+   "results": [
+    "[date 1970-01-01T00:00:00Z]"
+   ]
+  },
+  {
+   "expr": "timeSinceUnixEpochToDate(1705312800, 'second')",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T10:00:00Z]"
+   ]
+  },
+  {
+   "expr": "timeSinceUnixEpochToDate(1705312800000, 'millisecond')",
+   "rows": "first",
+   "results": [
+    "[date 2024-01-15T10:00:00Z]"
+   ]
+  },
+  {
+   "expr": "'2024-01-15'.toDate() < '2024-02-01'.toDate()",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "toString('2024-01-15'.toDate())",
+   "rows": "first",
+   "results": [
+    "2024-01-15T00:00:00Z"
+   ]
+  },
+  {
+   "expr": "with('abc', x, x.length())",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "forRange(0, 5, 1, i, i * i)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 4, 9, 16 ]"
+   ]
+  },
+  {
+   "expr": "forRange(0, 5, 2, i, i)",
+   "rows": "first",
+   "results": [
+    "[ 0, 2, 4 ]"
+   ]
+  },
+  {
+   "expr": "forEach([1, 2, 3], x, x * 2)",
+   "rows": "first",
+   "results": [
+    "[ 2, 4, 6 ]"
+   ]
+  },
+  {
+   "expr": "filter([1, 2, 3, 4], x, x % 2 == 0)",
+   "rows": "first",
+   "results": [
+    "[ 2, 4 ]"
+   ]
+  },
+  {
+   "expr": "forEachIndex(['a', 'b'], i, v, i + v)",
+   "rows": "first",
+   "results": [
+    "[ \"0a\", \"1b\" ]"
+   ]
+  },
+  {
+   "expr": "if(true, 1, 2)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "if(null, 1, 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "if('x', 1, 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "if(0, 1, 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "if(false, 1)",
+   "rows": "first",
+   "parseError": "Parsing error at offset 12: if expects three arguments"
+  },
+  {
+   "expr": "isBlank('')",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isBlank(' ')",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "isNull(null)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isEmptyString('')",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isNonBlank('a')",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isNumeric('12')",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isNumeric(12)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "isError(1 / 0)",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "isError(toNumber('x'))",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "expr": "coalesce(null, null, 'c')",
+   "rows": "first",
+   "results": [
+    "c"
+   ]
+  },
+  {
+   "expr": "coalesce(null)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "coalesce expects at least two arguments"
+    }
+   ]
+  },
+  {
+   "expr": "'{\"a\":{\"b\":[10,20]}}'.parseJson().a.b[1]",
+   "rows": "first",
+   "results": [
+    "20"
+   ]
+  },
+  {
+   "expr": "'[1,2,3]'.parseJson().length()",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "expr": "'{\"a\":1}'.parseJson().toString()",
+   "rows": "first",
+   "results": [
+    "{\"a\":1}"
+   ]
+  },
+  {
+   "expr": "'{\"a\":1}'.parseJson()",
+   "rows": "first",
+   "results": [
+    "{\"a\":1}"
+   ]
+  },
+  {
+   "expr": "'[1, \"x\", null, true, 2.5]'.parseJson()",
+   "rows": "first",
+   "results": [
+    "[1,\"x\",null,true,2.5]"
+   ]
+  },
+  {
+   "expr": "'not json'.parseJson()",
+   "rows": "first",
+   "results": [
+    {
+     "message": "parseJson failed: Unrecognized token 'not': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')\n at [Source: (String)\"not json\"; line: 1, column: 4]"
+    }
+   ]
+  },
+  {
+   "expr": "jsonize('a\"b')",
+   "rows": "first",
+   "results": [
+    "\"a\\\"b\""
+   ]
+  },
+  {
+   "expr": "jsonize([1, 'a'])",
+   "rows": "first",
+   "results": [
+    "[ 1, \"a\" ]"
+   ]
+  },
+  {
+   "expr": "jsonize(null)",
+   "rows": "first",
+   "results": [
+    "null"
+   ]
+  },
+  {
+   "expr": "jsonize(1.5)",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "expr": "jsonize('{\"a\":1}'.parseJson())",
+   "rows": "first",
+   "results": [
+    "{\r\n  \"a\" : 1\r\n}"
+   ]
+  },
+  {
+   "expr": "'{\"a\":{\"b\":1}}'.parseJson().get('a')",
+   "rows": "first",
+   "results": [
+    "{\"b\":1}"
+   ]
+  },
+  {
+   "expr": "get([1, 2, 3], 1)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "expr": "get('abc', 1)",
+   "rows": "first",
+   "results": [
+    "b"
+   ]
+  },
+  {
+   "expr": "get('abc', 0, 2)",
+   "rows": "first",
+   "results": [
+    "ab"
+   ]
+  },
+  {
+   "expr": "hasField('{\"a\":1}'.parseJson(), 'b')",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "expr": "value.foo()",
+   "rows": "first",
+   "parseError": "Parsing error at offset 10: Unknown function foo"
+  },
+  {
+   "expr": "1 +",
+   "rows": "first",
+   "parseError": "Parsing error at offset 3: Expecting something more at end of expression"
+  },
+  {
+   "expr": "(1",
+   "rows": "first",
+   "parseError": "Parsing error at offset 2: Missing )"
+  },
+  {
+   "expr": "'unterminated",
+   "rows": "first",
+   "parseError": "Parsing error at offset 0: Missing number, string, identifier, regex, or parenthesized expression"
+  },
+  {
+   "expr": "value.(",
+   "rows": "first",
+   "parseError": "Parsing error at offset 6: Missing function name"
+  },
+  {
+   "expr": "{'a': 1}",
+   "rows": "first",
+   "parseError": "Parsing error at offset 0: Missing number, string, identifier, regex, or parenthesized expression"
+  },
+  {
+   "expr": "foo(1)",
+   "rows": "first",
+   "parseError": "Parsing error at offset 3: Unknown function or control named foo"
+  },
+  {
+   "expr": "value..trim()",
+   "rows": "first",
+   "parseError": "Parsing error at offset 6: Missing function name"
+  }
+ ]
+}

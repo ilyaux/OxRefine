@@ -1,13 +1,13 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 10 of 102 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 11 of 102 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 45 | 0 |
+| v0.2 | 45 | 1 |
 | v0.5 | 31 | 0 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
@@ -31,8 +31,8 @@ Prove the engine model and the benchmark story.
 
 OpenRefine's data model: typed cells, records, persistent projects.
 
-- [ ] **Typed cells** · v0.2 · P0 · L. String, number, boolean, date, null and error cells (OpenRefine's Cell model) while keeping dictionary encoding; toNumber/toDate and type guessing on import. _OpenRefine: Cell, guessCellValueTypes_
-- [ ] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
+- [~] **Typed cells** · v0.2 · P0 · L. String, number, boolean, date, null and error cells (OpenRefine's Cell model) while keeping dictionary encoding; toNumber/toDate and type guessing on import. _OpenRefine: Cell, guessCellValueTypes_
+- [~] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
 - [ ] **Records mode** · v0.2 · P1 · L. Rows grouped into records by the key column; record-based engineConfig, record-aware facets and ops. _OpenRefine: mode: record-based_
 - [ ] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
 - [ ] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
@@ -91,7 +91,7 @@ All 37 OpenRefine operations, same JSON, same results.
 
 The full expression language: ~130 functions, controls, errors and coercion.
 
-- [ ] **Full GREL parser and evaluator** · v0.2 · P0 · L. Operators, literals, arrays, function and method syntax, variables value/cell/cells/row/record/rowIndex. _OpenRefine: grel Parser, Evaluable_
+- [~] **Full GREL parser and evaluator** · v0.2 · P0 · L. Operators, literals, arrays, function and method syntax, variables value/cell/cells/row/record/rowIndex. _OpenRefine: grel Parser, Evaluable_
 - [ ] **String functions (39)** · v0.2 · P0 · L. split, smartSplit, partition, match, find, replaceChars, replaceEach, escape/unescape, encode/decode, phonetic, diff, unicode, detectLanguage and the rest. _OpenRefine: expr/functions/strings_
 - [ ] **Array functions (7)** · v0.2 · P0 · S. join, sort, reverse, uniques, inArray, zip, argsToArray. _OpenRefine: expr/functions/arrays_
 - [ ] **Math functions (38)** · v0.5 · P1 · M. round, floor, ceil, mod, pow, log, trig, combin, fact, gcd/lcm, sum, min/max, randomNumber. _OpenRefine: expr/functions/math_
@@ -151,7 +151,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 Prove parity automatically against real OpenRefine.
 
 - [ ] **Operation conformance suite** · v0.2 · P0 · L. Run every operation through OpenRefine's API and ours on the same corpus and diff outputs cell by cell (extends compare.mjs). _OpenRefine: benchmarks/compare.mjs_
-- [ ] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
+- [~] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
 - [ ] **Messy-data test corpus** · v0.2 · P0 · M. Real-world files: encodings, ragged rows, embedded newlines, huge cells, mixed types. _OpenRefine: tests/_
 - [ ] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
 - [ ] **CI on Windows, macOS, Linux** · v0.2 · P0 · S. GitHub Actions: build, tests, UI typecheck, conformance on a small corpus. _OpenRefine: new_
@@ -169,7 +169,7 @@ Keep the 10x lead as features land; close the import gap.
 
 Installers, docs and a public launch.
 
-- [ ] **Public repository** · v0.2 · P0 · S. git init, license (MIT/Apache-2.0), contributing guide, issue templates; credit OpenRefine (BSD-3). _OpenRefine: new_
+- [x] **Public repository** · v0.2 · P0 · S. git init, license (MIT/Apache-2.0), contributing guide, issue templates; credit OpenRefine (BSD-3). _OpenRefine: new_
 - [ ] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
 - [ ] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
 - [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* so existing clients and scripts work unchanged. _OpenRefine: openrefine-client_

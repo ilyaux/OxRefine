@@ -1,34 +1,34 @@
-//! Key-collision clustering (OpenRefine's fingerprint and n-gram fingerprint keyers).
-use crate::Result;
+//! Key-collision clustering with OpenRefine's fingerprint and n-gram fingerprint keyers.
+use crate::{grel::funcs, Result};
 use std::{cmp::Reverse, collections::HashMap};
 use unicode_normalization::{char::is_combining_mark, UnicodeNormalization};
 
-fn asciify(s: &str) -> String {
-    s.nfd().filter(|c| !is_combining_mark(*c)).collect()
-}
-
-fn keep(c: char) -> bool {
-    !c.is_ascii_punctuation() && !c.is_control()
-}
-
-pub fn fingerprint(s: &str) -> String {
-    let s: String = asciify(&s.trim().to_lowercase()).chars().filter(|&c| keep(c)).collect();
-    let mut t: Vec<&str> = s.split_whitespace().collect();
-    t.sort_unstable();
-    t.dedup();
-    t.join(" ")
-}
-
-pub fn ngram_fingerprint(s: &str, n: usize) -> String {
-    let c: Vec<char> = asciify(&s.to_lowercase()).chars().filter(|&c| keep(c) && !c.is_whitespace()).collect();
-    if c.len() <= n {
-        return c.into_iter().collect();
+/// Fold accents and common ligatures to ASCII, like OpenRefine's asciify.
+pub fn asciify(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.nfd().filter(|c| !is_combining_mark(*c)) {
+        match c {
+            'ß' => out.push_str("ss"),
+            'æ' => out.push_str("ae"),
+            'Æ' => out.push_str("AE"),
+            'œ' => out.push_str("oe"),
+            'Œ' => out.push_str("OE"),
+            'ø' => out.push('o'),
+            'Ø' => out.push('O'),
+            'đ' => out.push('d'),
+            'Đ' => out.push('D'),
+            'ł' => out.push('l'),
+            'Ł' => out.push('L'),
+            'þ' => out.push_str("th"),
+            'Þ' => out.push_str("TH"),
+            'ı' => out.push('i'),
+            _ => out.push(c),
+        }
     }
-    let mut g: Vec<String> = c.windows(n).map(|w| w.iter().collect()).collect();
-    g.sort_unstable();
-    g.dedup();
-    g.concat()
+    out
 }
+
+pub use funcs::{fingerprint, ngram_fingerprint};
 
 /// Groups of distinct values sharing a key, biggest groups first; each group is
 /// ordered by count, so the first value is the suggested merge target.

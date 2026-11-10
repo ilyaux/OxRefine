@@ -84,6 +84,18 @@ fn ten() -> u32 {
     10
 }
 
+// ponytail: string bridge until columns hold typed values (model-typed)
+struct Text(grel::Program);
+impl Text {
+    fn eval(&self, v: &str) -> String {
+        let input = if v.is_empty() { grel::Value::Null } else { grel::Value::Str(v.into()) };
+        match self.0.eval(input, &grel::NoRow) {
+            grel::Value::Error(_) => v.to_string(),
+            out => out.display(),
+        }
+    }
+}
+
 fn describe(d: &mut String, f: impl FnOnce() -> String) {
     if d.is_empty() {
         *d = f();
@@ -105,7 +117,7 @@ impl Op {
         let mut out = t.clone();
         match self {
             Op::TextTransform { description, engine_config, column_name, expression, repeat, repeat_count, .. } => {
-                let e = grel::parse(expression)?;
+                let e = Text(grel::compile(expression)?);
                 let ci = t.col(column_name)?;
                 let sel = engine::mask(t, engine_config)?;
                 let times = if *repeat { (*repeat_count).max(1) } else { 1 };
@@ -142,7 +154,7 @@ impl Op {
                 if t.col(new_column_name).is_ok() {
                     return Err(format!("column '{new_column_name}' already exists"));
                 }
-                let e = grel::parse(expression)?;
+                let e = Text(grel::compile(expression)?);
                 let base = t.col(base_column_name)?;
                 let sel = engine::mask(t, engine_config)?;
                 let at = (*column_insert_index).min(t.names.len());
