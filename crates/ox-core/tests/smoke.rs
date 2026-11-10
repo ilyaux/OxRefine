@@ -41,7 +41,7 @@ fn recipe_facets_cluster_history() {
         "edits": [{"from": ["new york ", "New-York"], "fromBlank": false, "fromError": false, "to": "New York"}]}}));
     let f = call("facets", json!({ "engine": {"facets": [{"type": "list", "columnName": "city", "selection": []},
         {"type": "text", "columnName": "name", "query": "o"}]} }));
-    assert_eq!(f[0]["choices"], json!([["New York", 2]]), "list counts respect the text facet (BOB, CAROL)");
+    assert_eq!(f[0]["choices"], json!([["New York", 2, "New York"]]), "list counts respect the text facet (BOB, CAROL)");
 
     let s = call("goto", json!({ "index": 1 }));
     assert_eq!(s["history"].as_array().unwrap().len(), 5);

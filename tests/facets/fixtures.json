@@ -1,0 +1,2018 @@
+{
+ "openrefine": "3.10.1",
+ "cases": [
+  {
+   "name": "list city counts",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value",
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "New York",
+        "l": "New York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "boston ",
+        "l": "boston "
+       },
+       "c": 2,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Chicago",
+        "l": "Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "  Chicago",
+        "l": "  Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "New-York",
+        "l": "New-York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new york",
+        "l": "new york"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Boston",
+        "l": "Boston"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "list selection with text facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "Boston",
+         "l": "Boston"
+        }
+       },
+       {
+        "v": {
+         "v": "boston ",
+         "l": "boston "
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "a",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "New York",
+        "l": "New York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "boston ",
+        "l": "boston "
+       },
+       "c": 2,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "  Chicago",
+        "l": "  Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "New-York",
+        "l": "New-York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Boston",
+        "l": "Boston"
+       },
+       "c": 0,
+       "s": true
+      }
+     ]
+    },
+    {
+     "name": "name",
+     "query": "a",
+     "columnName": "name",
+     "caseSensitive": false,
+     "mode": "text",
+     "invert": false
+    }
+   ],
+   "matching": [
+    3,
+    4
+   ],
+   "filtered": 2
+  },
+  {
+   "name": "list on expression",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value.toLowercase().trim()",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "new york",
+         "l": "new york"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value.toLowercase().trim()",
+     "invert": false,
+     "errorChoice": {
+      "s": false,
+      "c": 1
+     },
+     "choices": [
+      {
+       "v": {
+        "v": "boston",
+        "l": "boston"
+       },
+       "c": 3,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new-york",
+        "l": "new-york"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new york",
+        "l": "new york"
+       },
+       "c": 2,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "chicago",
+        "l": "chicago"
+       },
+       "c": 2,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1
+   ],
+   "filtered": 2
+  },
+  {
+   "name": "list inverted",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "Chicago",
+         "l": "Chicago"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value",
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
+     "invert": true,
+     "choices": [
+      {
+       "v": {
+        "v": "New York",
+        "l": "New York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "boston ",
+        "l": "boston "
+       },
+       "c": 2,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Chicago",
+        "l": "Chicago"
+       },
+       "c": 1,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "  Chicago",
+        "l": "  Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "New-York",
+        "l": "New-York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new york",
+        "l": "new york"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Boston",
+        "l": "Boston"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    8
+   ],
+   "filtered": 8
+  },
+  {
+   "name": "list blank selected",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "note",
+      "columnName": "note",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": true,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "note",
+     "columnName": "note",
+     "expression": "value",
+     "blankChoice": {
+      "s": true,
+      "c": 4
+     },
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "last",
+        "l": "last"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "quoted, comma",
+        "l": "quoted, comma"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "first",
+        "l": "first"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "dup",
+        "l": "dup"
+       },
+       "c": 2,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    1,
+    2,
+    5,
+    7
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "word facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "tags",
+      "columnName": "tags",
+      "expression": "value.split('|')",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "red",
+         "l": "red"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "tags",
+     "columnName": "tags",
+     "expression": "value.split('|')",
+     "invert": false,
+     "errorChoice": {
+      "s": false,
+      "c": 2
+     },
+     "choices": [
+      {
+       "v": {
+        "v": "red",
+        "l": "red"
+       },
+       "c": 4,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "green",
+        "l": "green"
+       },
+       "c": 4,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "blue",
+        "l": "blue"
+       },
+       "c": 3,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    5,
+    7,
+    8
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "text length facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "name",
+      "columnName": "name",
+      "expression": "value.length()",
+      "from": 9,
+      "to": 12,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 6,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 3,
+     "numericCount": 6,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 3,
+     "name": "name",
+     "columnName": "name",
+     "from": 9,
+     "max": 11.02,
+     "min": 9,
+     "expression": "value.length()",
+     "to": 11.02,
+     "baseBins": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02,
+     "bins": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "numeric facet on text",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value.toNumber()",
+      "from": 0,
+      "to": 10,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 7,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 2,
+     "numericCount": 7,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 2,
+     "name": "score",
+     "columnName": "score",
+     "from": 0,
+     "max": 13,
+     "min": -2,
+     "expression": "value.toNumber()",
+     "to": 10,
+     "baseBins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "step": 1,
+     "bins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ]
+    }
+   ],
+   "matching": [
+    1,
+    2,
+    5,
+    6,
+    7
+   ],
+   "filtered": 5
+  },
+  {
+   "name": "numeric facet no blanks or errors",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value.toNumber()",
+      "from": 0,
+      "to": 10,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": false,
+      "selectError": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 7,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 2,
+     "numericCount": 7,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 2,
+     "name": "score",
+     "columnName": "score",
+     "from": 0,
+     "max": 13,
+     "min": -2,
+     "expression": "value.toNumber()",
+     "to": 10,
+     "baseBins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "step": 1,
+     "bins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ]
+    }
+   ],
+   "matching": [
+    2,
+    6,
+    7
+   ],
+   "filtered": 3
+  },
+  {
+   "name": "numeric facet only non-numeric",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value",
+      "from": -100,
+      "to": 100,
+      "selectNumeric": false,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 0,
+     "baseNonNumericCount": 8,
+     "baseBlankCount": 1,
+     "baseErrorCount": 0,
+     "numericCount": 0,
+     "nonNumericCount": 8,
+     "blankCount": 1,
+     "errorCount": 0,
+     "name": "score",
+     "columnName": "score",
+     "error": "No numeric value present.",
+     "expression": "value"
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "numeric facet typed column",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value",
+      "from": 3,
+      "to": 12,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 7,
+     "baseNonNumericCount": 1,
+     "baseBlankCount": 1,
+     "baseErrorCount": 0,
+     "numericCount": 7,
+     "nonNumericCount": 1,
+     "blankCount": 1,
+     "errorCount": 0,
+     "name": "score",
+     "columnName": "score",
+     "from": 3,
+     "max": 13,
+     "min": -2,
+     "expression": "value",
+     "to": 12,
+     "baseBins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "step": 1,
+     "bins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    5,
+    6
+   ],
+   "filtered": 5
+  },
+  {
+   "name": "numeric facet typed, full range",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value",
+      "from": -2,
+      "to": 13,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 7,
+     "baseNonNumericCount": 1,
+     "baseBlankCount": 1,
+     "baseErrorCount": 0,
+     "numericCount": 7,
+     "nonNumericCount": 1,
+     "blankCount": 1,
+     "errorCount": 0,
+     "name": "score",
+     "columnName": "score",
+     "from": -2,
+     "max": 13,
+     "min": -2,
+     "expression": "value",
+     "to": 13,
+     "baseBins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ],
+     "step": 1,
+     "bins": [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      0,
+      2
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "list on numbers",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "score",
+     "expression": "grel:value.toNumber()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "score",
+      "columnName": "score",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "score",
+     "columnName": "score",
+     "expression": "value",
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": 0,
+        "l": "0"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 12,
+        "l": "12"
+       },
+       "c": 2,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 3,
+        "l": "3"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": -2,
+        "l": "-2"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "x",
+        "l": "x"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 7.5,
+        "l": "7.5"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 10,
+        "l": "10"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "duplicates facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "name",
+      "columnName": "name",
+      "expression": "facetCount(value, 'value', 'name') > 1",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "name",
+     "columnName": "name",
+     "expression": "facetCount(value, 'value', 'name') > 1",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 4,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 5,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    1,
+    3,
+    4,
+    5,
+    7
+   ],
+   "filtered": 5
+  },
+  {
+   "name": "blank facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "note",
+      "columnName": "note",
+      "expression": "isBlank(value)",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "note",
+     "columnName": "note",
+     "expression": "isBlank(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 5,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 4,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    1,
+    2,
+    5,
+    7
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "error facet",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "joined",
+     "expression": "grel:value.toDate()",
+     "onError": "store-error",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "joined",
+      "columnName": "joined",
+      "expression": "isError(value)",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "joined",
+     "columnName": "joined",
+     "expression": "isError(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 6,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 3,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    3,
+    4,
+    6
+   ],
+   "filtered": 3
+  },
+  {
+   "name": "date choices",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "joined",
+     "expression": "grel:value.toDate()",
+     "onError": "store-error",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "joined",
+      "columnName": "joined",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "joined",
+     "columnName": "joined",
+     "expression": "value",
+     "invert": false,
+     "errorChoice": {
+      "s": false,
+      "c": 3
+     },
+     "choices": [
+      {
+       "v": {
+        "v": "2023-12-31T00:00:00Z",
+        "l": "2023-12-31T00:00:00Z"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "2024-03-10T00:00:00Z",
+        "l": "2024-03-10T00:00:00Z"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "2022-06-30T00:00:00Z",
+        "l": "2022-06-30T00:00:00Z"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "2024-02-01T00:00:00Z",
+        "l": "2024-02-01T00:00:00Z"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "2024-01-15T00:00:00Z",
+        "l": "2024-01-15T00:00:00Z"
+       },
+       "c": 2,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "star facet",
+   "ops": [
+    {
+     "op": "core/row-star",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "city",
+        "columnName": "city",
+        "query": "york",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "starred": true
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "id",
+      "columnName": "id",
+      "expression": "row.starred",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "id",
+     "columnName": "id",
+     "expression": "row.starred",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 3,
+       "s": true
+      },
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 6,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    8
+   ],
+   "filtered": 3
+  },
+  {
+   "name": "flag facet",
+   "ops": [
+    {
+     "op": "core/row-flag",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "list",
+        "name": "id",
+        "columnName": "id",
+        "expression": "value",
+        "omitBlank": false,
+        "omitError": false,
+        "selection": [
+         {
+          "v": {
+           "v": "3",
+           "l": "3"
+          }
+         }
+        ],
+        "selectBlank": false,
+        "selectError": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "flagged": true
+    }
+   ],
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "id",
+      "columnName": "id",
+      "expression": "row.flagged",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "id",
+     "columnName": "id",
+     "expression": "row.flagged",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 7,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 2,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "text facet regex case-sensitive",
+   "engine": {
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "^[A-Z]\\w+ [A-Z]",
+      "mode": "regex",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "name",
+     "query": "^[A-Z]\\w+ [A-Z]",
+     "columnName": "name",
+     "caseSensitive": true,
+     "mode": "regex",
+     "invert": false
+    }
+   ],
+   "matching": [
+    0,
+    3,
+    4,
+    8
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "records: list counts and filter",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "tags",
+      "columnName": "tags",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "blue",
+         "l": "blue"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "name": "tags",
+     "columnName": "tags",
+     "expression": "value",
+     "blankChoice": {
+      "s": false,
+      "c": 2
+     },
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "red",
+        "l": "red"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "red|green",
+        "l": "red|green"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "green",
+        "l": "green"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "blue",
+        "l": "blue"
+       },
+       "c": 2,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "red|blue|green",
+        "l": "red|blue|green"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "green|red",
+        "l": "green|red"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    6
+   ],
+   "filtered": 2
+  },
+  {
+   "name": "records: two facets",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "Chicago",
+         "l": "Chicago"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "text",
+      "name": "tags",
+      "columnName": "tags",
+      "query": "red",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value",
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "New York",
+        "l": "New York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "boston ",
+        "l": "boston "
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Chicago",
+        "l": "Chicago"
+       },
+       "c": 1,
+       "s": true
+      },
+      {
+       "v": {
+        "v": "New-York",
+        "l": "New-York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new york",
+        "l": "new york"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    },
+    {
+     "name": "tags",
+     "query": "red",
+     "columnName": "tags",
+     "caseSensitive": false,
+     "mode": "text",
+     "invert": false
+    }
+   ],
+   "matching": [
+    4,
+    5
+   ],
+   "filtered": 1
+  }
+ ]
+}

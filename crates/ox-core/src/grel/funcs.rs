@@ -775,7 +775,8 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("not expects a boolean"),
         },
         // ponytail: cross() and facetCount() need the project (other columns' value index); wire through Row later
-        "cross" | "facetCount" => fail!("{name} is not supported yet"),
+        "facetCount" => fail!("facetCount needs a project"),
+        "cross" => fail!("cross is not supported yet"),
         _ => fail!("Unknown function {name}"),
     }
 }

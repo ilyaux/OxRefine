@@ -11,6 +11,16 @@ pub trait Row {
     fn index(&self) -> usize;
     fn columns(&self) -> Vec<String>;
     fn cell(&self, column: &str) -> Option<Value>;
+    fn starred(&self) -> bool {
+        false
+    }
+    fn flagged(&self) -> bool {
+        false
+    }
+    /// facetCount(choice, expression, column); only rows inside a project can answer it.
+    fn facet_count(&self, _choice: &Value, _expression: &str, _column: &str) -> Value {
+        Value::err("facetCount needs a project")
+    }
 }
 
 /// No row context (constant expressions, per-distinct-value evaluation).
@@ -58,8 +68,8 @@ fn var(name: &str, env: &Env) -> Value {
         "row" => Obj(vec![
             ("index".into(), Int(env.row.index() as i64)),
             ("cells".into(), cells(env)),
-            ("starred".into(), Bool(false)),
-            ("flagged".into(), Bool(false)),
+            ("starred".into(), Bool(env.row.starred())),
+            ("flagged".into(), Bool(env.row.flagged())),
         ]),
         _ => Null,
     }
@@ -111,6 +121,16 @@ pub fn eval(e: &Expr, env: &mut Env) -> Value {
             operator(op, &a, &b)
         }
         Expr::Call(name, args) if funcs::is_control(name) => control(name, args, env),
+        Expr::Call(name, args) if name == "facetCount" => {
+            let vals: Vec<Value> = args.iter().map(|x| eval(x, env)).collect();
+            if let Some(err) = vals.iter().find(|v| v.is_error()) {
+                return err.clone();
+            }
+            match vals.as_slice() {
+                [choice, Str(expr), Str(column)] => env.row.facet_count(choice, expr, column),
+                _ => Value::err("facetCount expects a choice value, an expression and a column name"),
+            }
+        }
         Expr::Call(name, args) => {
             let vals: Vec<Value> = args.iter().map(|x| eval(x, env)).collect();
             if let Some(err) = vals.iter().find(|v| v.is_error()) {

@@ -254,10 +254,11 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let rows = p.rows(&a.engine)?;
             let t = p.table();
             let col = &t.columns[t.col(&a.column)?];
+            let ctx = engine::Ctx::default();
             // [before, after] as the expression dialog shows them: null, text, or {"error": message}
             let pairs = rows.iter().take(a.limit.clamp(1, 100)).map(|&r| {
                 let v = col.get(r as usize);
-                let out = match e.eval(v.clone(), &t.row(r as usize)) {
+                let out = match e.eval(v.clone(), &t.row_ctx(r as usize, &ctx)) {
                     grel::Value::Error(m) => json!({ "error": m }),
                     out => json!(out.render()),
                 };

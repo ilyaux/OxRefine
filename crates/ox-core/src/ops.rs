@@ -254,7 +254,8 @@ fn eval_column(t: &Table, ci: usize, sel: Option<&[bool]>, new_column: bool, p: 
     let col = &t.columns[ci];
     let fallback = |v: &Value| if new_column && on_error != "keep-original" { Value::Null } else { v.clone() };
     if p.uses_row() {
-        col.map_rows(sel, new_column, |r, v| run(p, v, &fallback(v), &t.row(r), on_error, times))
+        let ctx = crate::engine::Ctx::default();
+        col.map_rows(sel, new_column, |r, v| run(p, v, &fallback(v), &t.row_ctx(r, &ctx), on_error, times))
     } else {
         col.map(sel, new_column, |v| run(p, v, &fallback(v), &grel::NoRow, on_error, times))
     }

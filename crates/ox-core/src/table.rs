@@ -151,6 +151,7 @@ pub struct Table {
 pub struct RowRef<'a> {
     pub table: &'a Table,
     pub row: usize,
+    pub ctx: Option<&'a crate::engine::Ctx>,
 }
 
 impl grel::Row for RowRef<'_> {
@@ -164,6 +165,18 @@ impl grel::Row for RowRef<'_> {
         let ci = self.table.names.iter().position(|n| n == column)?;
         Some(self.table.columns[ci].get(self.row).clone())
     }
+    fn starred(&self) -> bool {
+        self.table.starred[self.row]
+    }
+    fn flagged(&self) -> bool {
+        self.table.flagged[self.row]
+    }
+    fn facet_count(&self, choice: &Value, expression: &str, column: &str) -> Value {
+        match self.ctx {
+            Some(ctx) => ctx.facet_count(self.table, choice, expression, column),
+            None => Value::err("facetCount needs a project"),
+        }
+    }
 }
 
 impl Table {
@@ -172,7 +185,12 @@ impl Table {
     }
 
     pub fn row(&self, row: usize) -> RowRef<'_> {
-        RowRef { table: self, row }
+        RowRef { table: self, row, ctx: None }
+    }
+
+    /// A row that can also answer facetCount(), with results shared through `ctx`.
+    pub fn row_ctx<'a>(&'a self, row: usize, ctx: &'a crate::engine::Ctx) -> RowRef<'a> {
+        RowRef { table: self, row, ctx: Some(ctx) }
     }
 
     /// Column that delimits records: a non-blank key cell starts a new record.

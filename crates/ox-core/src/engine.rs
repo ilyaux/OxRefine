@@ -1,9 +1,19 @@
-//! Row filtering with OpenRefine's `engineConfig` JSON (list + text facets, row mode).
-use crate::{err, table::Table, Result};
+//! Facets and row filtering with OpenRefine's `engineConfig` JSON: list facets on any GREL expression,
+//! text facets, numeric range facets, rows and records modes, and facetCount().
+//! Behaviour is pinned to OpenRefine 3.10.1 by tests/facets_conformance.rs.
+use crate::{
+    err,
+    grel::{self, value::fmt_date, value::render_num, Value},
+    table::Table,
+    Result,
+};
 use regex::RegexBuilder;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use std::collections::HashSet;
+use serde_json::{json, Value as J};
+use std::{
+    cell::RefCell,
+    collections::{HashMap, HashSet},
+};
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(default)]
@@ -33,6 +43,8 @@ pub enum Facet {
         #[serde(default)]
         select_blank: bool,
         #[serde(default)]
+        select_error: bool,
+        #[serde(default)]
         invert: bool,
     },
     #[serde(rename = "text", rename_all = "camelCase")]
@@ -49,6 +61,24 @@ pub enum Facet {
         #[serde(default)]
         invert: bool,
     },
+    #[serde(rename = "range", rename_all = "camelCase")]
+    Range {
+        #[serde(default)]
+        name: String,
+        column_name: String,
+        #[serde(default = "value")]
+        expression: String,
+        from: f64,
+        to: f64,
+        #[serde(default = "yes")]
+        select_numeric: bool,
+        #[serde(default = "yes")]
+        select_non_numeric: bool,
+        #[serde(default = "yes")]
+        select_blank: bool,
+        #[serde(default = "yes")]
+        select_error: bool,
+    },
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -58,7 +88,7 @@ pub struct Choice {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct ChoiceValue {
-    pub v: Value,
+    pub v: J,
     #[serde(default)]
     pub l: String,
 }
@@ -69,64 +99,255 @@ pub(crate) fn value() -> String {
 fn text() -> String {
     "text".into()
 }
+fn yes() -> bool {
+    true
+}
 
-/// (column index, pass flag per dict code), or None when the facet selects nothing.
-fn compile(t: &Table, f: &Facet) -> Result<Option<(usize, Vec<bool>)>> {
+// ---------------------------------------------------------------- what an expression yields per row
+
+/// One facet item: a value (by its text key), a blank or an error. Arrays give several items.
+#[derive(Clone, PartialEq)]
+enum Item {
+    Blank,
+    Error,
+    Val { key: String, json: J, num: Option<f64> },
+}
+
+/// The text a choice is known by: what OpenRefine shows for it.
+fn key_of(v: &Value) -> String {
+    match v {
+        Value::Str(s) => s.clone(),
+        Value::Int(i) => i.to_string(),
+        Value::Num(n) => render_num(*n),
+        Value::Date(d) => fmt_date(d),
+        v => v.display(),
+    }
+}
+
+fn json_key(j: &J) -> String {
+    match j {
+        J::String(s) => s.clone(),
+        J::Number(n) => n.as_i64().map_or_else(|| render_num(n.as_f64().unwrap_or(f64::NAN)), |i| i.to_string()),
+        J::Bool(b) => b.to_string(),
+        J::Null => String::new(),
+        other => other.to_string(),
+    }
+}
+
+fn items_of(v: Value) -> Vec<Item> {
+    let one = |v: Value| -> Item {
+        match v {
+            Value::Error(_) => Item::Error,
+            v if v.is_blank() => Item::Blank,
+            v => {
+                let num = match &v {
+                    Value::Int(_) | Value::Num(_) => v.as_f64(),
+                    Value::Json(j) if j.is_number() => j.as_f64(),
+                    _ => None,
+                };
+                let json = match &v {
+                    Value::Str(s) => json!(s),
+                    Value::Int(i) => json!(i),
+                    Value::Num(n) => json!(n),
+                    Value::Bool(b) => json!(b),
+                    Value::Json(j) => (**j).clone(),
+                    v => json!(key_of(v)),
+                };
+                Item::Val { key: key_of(&v), json, num }
+            }
+        }
+    };
+    match v {
+        Value::Array(a) => dedupe(a.into_iter().map(one)),
+        Value::Json(j) if j.is_array() => dedupe(j.as_array().unwrap().iter().cloned().map(|x| one(grel::value::from_json(x)))),
+        v => vec![one(v)],
+    }
+}
+
+/// A row counts once per distinct item, however often it repeats in an array.
+fn dedupe(items: impl Iterator<Item = Item>) -> Vec<Item> {
+    let mut out: Vec<Item> = vec![];
+    for i in items {
+        if !out.contains(&i) {
+            out.push(i);
+        }
+    }
+    out
+}
+
+/// Per-request state: facetCount() results, computed once per (expression, column).
+#[derive(Default)]
+pub struct Ctx {
+    counts: RefCell<HashMap<(String, String), std::result::Result<HashMap<String, i64>, String>>>,
+}
+
+const BLANK_KEY: &str = "\u{0}blank";
+
+impl Ctx {
+    /// facetCount(choice, expression, column): rows of `column` whose expression gives `choice`.
+    pub fn facet_count(&self, t: &Table, choice: &Value, expr: &str, column: &str) -> Value {
+        let k = (expr.to_string(), column.to_string());
+        if !self.counts.borrow().contains_key(&k) {
+            let computed = (|| -> std::result::Result<HashMap<String, i64>, String> {
+                let ev = Evaluated::new(t, column, expr, None)?;
+                let mut m: HashMap<String, i64> = HashMap::new();
+                for r in 0..t.rows {
+                    for it in ev.of(t, r) {
+                        match it {
+                            Item::Val { key, .. } => *m.entry(key.clone()).or_default() += 1,
+                            Item::Blank => *m.entry(BLANK_KEY.into()).or_default() += 1,
+                            Item::Error => {}
+                        }
+                    }
+                }
+                Ok(m)
+            })();
+            self.counts.borrow_mut().insert(k.clone(), computed);
+        }
+        let counts = self.counts.borrow();
+        match &counts[&k] {
+            Err(e) => Value::err(e.clone()),
+            Ok(m) => {
+                let key = match items_of(choice.clone()).first() {
+                    Some(Item::Val { key, .. }) => key.clone(),
+                    _ => BLANK_KEY.into(),
+                };
+                Value::Int(m.get(&key).copied().unwrap_or(0))
+            }
+        }
+    }
+}
+
+/// A facet expression evaluated over a column: per distinct value when it only reads `value`, else per row.
+struct Evaluated {
+    col: usize,
+    per_code: bool,
+    items: Vec<Vec<Item>>,
+}
+
+impl Evaluated {
+    fn new(t: &Table, column: &str, expr: &str, ctx: Option<&Ctx>) -> Result<Evaluated> {
+        let col = t.col(column)?;
+        let c = &t.columns[col];
+        if expr.trim() == "value" || expr.trim() == "grel:value" {
+            return Ok(Evaluated { col, per_code: true, items: c.dict.iter().cloned().map(items_of).collect() });
+        }
+        let p = grel::compile(expr)?;
+        if !p.uses_row() {
+            return Ok(Evaluated { col, per_code: true, items: c.dict.iter().map(|v| items_of(p.eval(v.clone(), &grel::NoRow))).collect() });
+        }
+        let owned = Ctx::default();
+        let ctx = ctx.unwrap_or(&owned);
+        let items = (0..t.rows).map(|r| items_of(p.eval(c.get(r).clone(), &t.row_ctx(r, ctx)))).collect();
+        Ok(Evaluated { col, per_code: false, items })
+    }
+    fn of<'a>(&'a self, t: &Table, r: usize) -> &'a [Item] {
+        if self.per_code { &self.items[t.columns[self.col].codes[r] as usize] } else { &self.items[r] }
+    }
+}
+
+// ---------------------------------------------------------------- filtering
+
+/// Pass flag per dict code (cheap) or per row.
+enum Pass {
+    Code(usize, Vec<bool>),
+    Row(Vec<bool>),
+}
+
+impl Pass {
+    fn ok(&self, t: &Table, r: usize) -> bool {
+        match self {
+            Pass::Code(c, ok) => ok[t.columns[*c].codes[r] as usize],
+            Pass::Row(ok) => ok[r],
+        }
+    }
+    fn from_items(t: &Table, ev: &Evaluated, f: impl Fn(&[Item]) -> bool) -> Pass {
+        if ev.per_code {
+            Pass::Code(ev.col, ev.items.iter().map(|i| f(i)).collect())
+        } else {
+            Pass::Row((0..t.rows).map(|r| f(ev.of(t, r))).collect())
+        }
+    }
+}
+
+fn range_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
+    let [numeric, non_numeric, blank, error] = flags;
+    match it {
+        Item::Val { num: Some(n), .. } => numeric && *n >= from && *n < to,
+        Item::Val { .. } => non_numeric,
+        Item::Blank => blank,
+        Item::Error => error,
+    }
+}
+
+/// The facet as a row filter, or None when it lets every row through.
+fn compile(t: &Table, f: &Facet, ctx: &Ctx) -> Result<Option<Pass>> {
     match f {
-        Facet::List { column_name, expression, selection, select_blank, invert, .. } => {
-            if selection.is_empty() && !select_blank {
+        Facet::List { column_name, expression, selection, select_blank, select_error, invert, .. } => {
+            if selection.is_empty() && !select_blank && !select_error {
                 return Ok(None);
             }
-            if expression != "value" {
-                return Err(format!("list facet expression `{expression}` is not supported (only `value`)"));
-            }
-            let ci = t.col(column_name)?;
-            let set: HashSet<String> = selection
-                .iter()
-                .map(|c| match &c.v.v {
-                    Value::String(s) => s.clone(),
-                    v => v.to_string(),
-                })
-                .collect();
-            let ok = t.columns[ci].dict.iter().map(|v| (set.contains(&v.display()) || (*select_blank && v.is_blank())) != *invert);
-            Ok(Some((ci, ok.collect())))
+            let ev = Evaluated::new(t, column_name, expression, Some(ctx))?;
+            let set: HashSet<String> = selection.iter().map(|c| json_key(&c.v.v)).collect();
+            Ok(Some(Pass::from_items(t, &ev, |items| {
+                items.iter().any(|i| match i {
+                    Item::Val { key, .. } => set.contains(key),
+                    Item::Blank => *select_blank,
+                    Item::Error => *select_error,
+                }) != *invert
+            })))
         }
         Facet::Text { column_name, query, mode, case_sensitive, invert, .. } => {
             if query.is_empty() {
                 return Ok(None);
             }
             let ci = t.col(column_name)?;
-            let pat = if mode == "regex" { query.clone() } else { regex::escape(query) };
+            let pat = if mode == "regex" { grel::parse::java_regex(query) } else { regex::escape(query) };
             let re = RegexBuilder::new(&pat).case_insensitive(!case_sensitive).build().map_err(err)?;
-            Ok(Some((ci, t.columns[ci].dict.iter().map(|v| re.is_match(&v.display()) != *invert).collect())))
+            Ok(Some(Pass::Code(ci, t.columns[ci].dict.iter().map(|v| re.is_match(&v.display()) != *invert).collect())))
+        }
+        Facet::Range { column_name, expression, from, to, select_numeric, select_non_numeric, select_blank, select_error, .. } => {
+            let ev = Evaluated::new(t, column_name, expression, Some(ctx))?;
+            // with no numbers at all OpenRefine reports an error and the facet filters nothing
+            if !(0..t.rows).any(|r| ev.of(t, r).iter().any(|i| matches!(i, Item::Val { num: Some(_), .. }))) {
+                return Ok(None);
+            }
+            let flags = [*select_numeric, *select_non_numeric, *select_blank, *select_error];
+            Ok(Some(Pass::from_items(t, &ev, |items| items.iter().any(|i| range_ok(i, *from, *to, flags)))))
         }
     }
 }
 
-/// Row indices passing every facet except `skip` (list-facet counts ignore their own facet).
+/// Row indices passing every facet except `skip` (each facet's counts ignore the facet itself).
 /// In records mode a record passes when each facet matches at least one of its rows, and then all its rows pass.
 pub fn filter(t: &Table, cfg: &EngineConfig, skip: Option<usize>) -> Result<Vec<u32>> {
+    filter_with(t, cfg, skip, &Ctx::default())
+}
+
+fn filter_with(t: &Table, cfg: &EngineConfig, skip: Option<usize>, ctx: &Ctx) -> Result<Vec<u32>> {
     let mut active = vec![];
     for (i, f) in cfg.facets.iter().enumerate() {
         if Some(i) != skip {
-            active.extend(compile(t, f)?);
+            active.extend(compile(t, f, ctx)?);
         }
     }
-    let cols: Vec<_> = active.iter().map(|(ci, ok)| (&t.columns[*ci].codes, ok)).collect();
     if cfg.mode != "record-based" {
-        return Ok((0..t.rows as u32).filter(|&r| cols.iter().all(|(codes, ok)| ok[codes[r as usize] as usize])).collect());
+        return Ok((0..t.rows).filter(|&r| active.iter().all(|p| p.ok(t, r))).map(|r| r as u32).collect());
     }
-    let starts = t.record_starts(t.key_index());
     let mut out = vec![];
-    let mut r = 0;
-    while r < t.rows {
-        let end = (r + 1..t.rows).find(|&k| starts[k]).unwrap_or(t.rows);
-        if cols.iter().all(|(codes, ok)| (r..end).any(|k| ok[codes[k] as usize])) {
-            out.extend(r as u32..end as u32);
+    for (a, b) in records(t) {
+        if active.iter().all(|p| (a..b).any(|k| p.ok(t, k))) {
+            out.extend(a as u32..b as u32);
         }
-        r = end;
     }
     Ok(out)
+}
+
+/// Row ranges of the records, by the table's key column.
+fn records(t: &Table) -> Vec<(usize, usize)> {
+    let starts = t.record_starts(t.key_index());
+    let s: Vec<usize> = (0..t.rows).filter(|&r| starts[r]).collect();
+    s.iter().enumerate().map(|(i, &a)| (a, s.get(i + 1).copied().unwrap_or(t.rows))).collect()
 }
 
 /// Row mask that operations apply to; None when nothing is filtered out.
@@ -149,7 +370,7 @@ pub fn value_counts(t: &Table, ci: usize, rows: &[u32]) -> Vec<(String, u32)> {
     for &r in rows {
         n[col.codes[r as usize] as usize] += 1;
     }
-    let mut by_text: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
+    let mut by_text: HashMap<String, u32> = HashMap::new();
     for (i, &c) in n.iter().enumerate().filter(|(_, &c)| c > 0) {
         *by_text.entry(col.dict[i].display()).or_default() += c;
     }
@@ -158,18 +379,160 @@ pub fn value_counts(t: &Table, ci: usize, rows: &[u32]) -> Vec<(String, u32)> {
     v
 }
 
-/// Choices for each list facet (null for text facets), capped at 2000 like OpenRefine.
-pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<Value>> {
+// ---------------------------------------------------------------- facet panels
+
+/// OpenRefine's NumericBinIndex: a power-of-ten step (doubled past 100 bins), the top pushed one step out.
+fn binning(lo: f64, hi: f64) -> (f64, f64, f64, usize) {
+    if lo >= hi {
+        let min = lo.min(hi);
+        return (min, min + 1.0, 1.0, 1);
+    }
+    let diff = hi - lo;
+    let mut step = 1.0;
+    if diff > 10.0 {
+        while step * 100.0 < diff {
+            step *= 10.0;
+        }
+    } else {
+        while step * 100.0 > diff {
+            step /= 10.0;
+        }
+    }
+    let min = (lo / step).floor() * step;
+    let mut max = (hi / step).ceil() * step;
+    let mut count = (max - min) / step;
+    if count > 100.0 {
+        step *= 2.0;
+        count = (count + 1.0) / 2.0;
+    }
+    if max <= hi {
+        max += step;
+        count += 1.0;
+    }
+    (min, max, step, (count + 0.5).floor() as usize)
+}
+
+#[derive(Default)]
+struct RangeStats {
+    numeric: usize,
+    non_numeric: usize,
+    blank: usize,
+    error: usize,
+}
+
+fn range_panel(t: &Table, ev: &Evaluated, others: &[u32]) -> J {
+    let tally = |rows: &mut dyn Iterator<Item = usize>| {
+        let (mut s, mut nums) = (RangeStats::default(), vec![]);
+        for r in rows {
+            for it in ev.of(t, r) {
+                match it {
+                    Item::Val { num: Some(n), .. } => {
+                        s.numeric += 1;
+                        nums.push(*n);
+                    }
+                    Item::Val { .. } => s.non_numeric += 1,
+                    Item::Blank => s.blank += 1,
+                    Item::Error => s.error += 1,
+                }
+            }
+        }
+        (s, nums)
+    };
+    let (base, base_nums) = tally(&mut (0..t.rows));
+    let (cur, cur_nums) = tally(&mut others.iter().map(|&r| r as usize));
+    let mut out = json!({
+        "baseNumericCount": base.numeric, "baseNonNumericCount": base.non_numeric, "baseBlankCount": base.blank, "baseErrorCount": base.error,
+        "numericCount": cur.numeric, "nonNumericCount": cur.non_numeric, "blankCount": cur.blank, "errorCount": cur.error,
+    });
+    if base_nums.is_empty() {
+        out["error"] = json!("No numeric value present.");
+        return out;
+    }
+    let lo = base_nums.iter().copied().fold(f64::INFINITY, f64::min);
+    let hi = base_nums.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+    let (min, max, step, n) = binning(lo, hi);
+    let bins = |nums: &[f64]| {
+        let mut b = vec![0usize; n];
+        for v in nums {
+            let i = ((v - min) / step).floor() as usize;
+            b[i.min(n - 1)] += 1;
+        }
+        b
+    };
+    out["min"] = json!(min);
+    out["max"] = json!(max);
+    out["step"] = json!(step);
+    out["baseBins"] = json!(bins(&base_nums));
+    out["bins"] = json!(bins(&cur_nums));
+    out
+}
+
+fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], record_mode: bool) -> J {
+    // counts per choice, over rows (or records) that pass the other facets
+    let mut counts: HashMap<String, (usize, J)> = HashMap::new();
+    let (mut blank, mut error) = (0usize, 0usize);
+    let mut add = |items: Vec<&Item>| {
+        for it in items {
+            match it {
+                Item::Val { key, json, .. } => counts.entry(key.clone()).or_insert((0, json.clone())).0 += 1,
+                Item::Blank => blank += 1,
+                Item::Error => error += 1,
+            }
+        }
+    };
+    if record_mode {
+        let keep: HashSet<u32> = others.iter().copied().collect();
+        for (a, b) in records(t) {
+            if keep.contains(&(a as u32)) {
+                let mut seen: Vec<&Item> = vec![];
+                for r in a..b {
+                    for it in ev.of(t, r) {
+                        if !seen.contains(&it) {
+                            seen.push(it);
+                        }
+                    }
+                }
+                add(seen);
+            }
+        }
+    } else {
+        for &r in others {
+            add(ev.of(t, r as usize).iter().collect());
+        }
+    }
+    // selected choices stay listed even when nothing matches them now
+    for c in selection {
+        counts.entry(json_key(&c.v.v)).or_insert((0, c.v.v.clone()));
+    }
+    let mut choices: Vec<(String, usize, J)> = counts.into_iter().map(|(k, (c, j))| (k, c, j)).collect();
+    choices.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    json!({
+        "distinct": choices.len(),
+        "choices": choices.iter().take(2000).map(|(k, c, j)| json!([k, c, j])).collect::<Vec<_>>(),
+        "blank": blank,
+        "error": error,
+    })
+}
+
+/// The panel data for each facet: choices and counts for list facets, histogram for range facets,
+/// null for text facets. Each facet is counted over the rows the other facets let through.
+pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<J>> {
+    let ctx = Ctx::default();
     cfg.facets
         .iter()
         .enumerate()
         .map(|(i, f)| match f {
-            Facet::List { column_name, .. } => {
-                let rows = filter(t, cfg, Some(i))?;
-                let vc = value_counts(t, t.col(column_name)?, &rows);
-                Ok(json!({ "distinct": vc.len(), "choices": vc.iter().take(2000).collect::<Vec<_>>() }))
+            Facet::List { column_name, expression, selection, .. } => {
+                let others = filter_with(t, cfg, Some(i), &ctx)?;
+                let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
+                Ok(list_panel(t, &ev, &others, selection, cfg.mode == "record-based"))
             }
-            Facet::Text { .. } => Ok(Value::Null),
+            Facet::Range { column_name, expression, .. } => {
+                let others = filter_with(t, cfg, Some(i), &ctx)?;
+                let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
+                Ok(range_panel(t, &ev, &others))
+            }
+            Facet::Text { .. } => Ok(J::Null),
         })
         .collect()
 }

@@ -108,12 +108,12 @@ The full expression language: ~130 functions, controls, errors and coercion.
 
 Every facet type, including customized and expression facets.
 
-- [ ] **Numeric range facet** · v0.2 · P0 · M. Histogram, draggable range, numeric/non-numeric/blank/error toggles. _OpenRefine: range_
+- [~] **Numeric range facet** · v0.2 · P0 · M. Histogram, draggable range, numeric/non-numeric/blank/error toggles. _OpenRefine: range_
 - [ ] **Timeline facet** · v0.5 · P1 · M. Date histogram with range selection. _OpenRefine: timerange_
 - [ ] **Scatterplot facet** · later · P2 · L. Scatterplot matrix and brushed 2D selection. _OpenRefine: scatterplot_
-- [ ] **Custom facets by expression** · v0.2 · P0 · M. List and range facets over any GREL expression, needs the full evaluator. _OpenRefine: list facet expression_
-- [ ] **Customized facets menu** · v0.2 · P1 · M. Word, duplicates, text length, Unicode chars, blank, error, star and flag facets. _OpenRefine: Customized facets_
-- [ ] **Facet details** · v0.2 · P1 · S. Sort by name/count, include/exclude, edit a choice in place, choice limit, collapse. _OpenRefine: list-facet.js_
+- [~] **Custom facets by expression** · v0.2 · P0 · M. List and range facets over any GREL expression, needs the full evaluator. _OpenRefine: list facet expression_
+- [~] **Customized facets menu** · v0.2 · P1 · M. Word, duplicates, text length, Unicode chars, blank, error, star and flag facets. _OpenRefine: Customized facets_
+- [~] **Facet details** · v0.2 · P1 · S. Sort by name/count, include/exclude, edit a choice in place, choice limit, collapse. _OpenRefine: list-facet.js_
 
 ## Clustering
 
@@ -139,7 +139,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 
 - [~] **Home: projects and create project** · v0.2 · P0 · M. Recent projects, import sources, drag-and-drop files. _OpenRefine: index page_
 - [ ] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
-- [ ] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
+- [~] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
 - [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
 - [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
 - [ ] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
