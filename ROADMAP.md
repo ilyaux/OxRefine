@@ -1,14 +1,14 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 11 of 102 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 22 of 102 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 45 | 1 |
-| v0.5 | 31 | 0 |
+| v0.2 | 45 | 10 |
+| v0.5 | 31 | 2 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
 
@@ -91,16 +91,16 @@ All 37 OpenRefine operations, same JSON, same results.
 
 The full expression language: ~130 functions, controls, errors and coercion.
 
-- [~] **Full GREL parser and evaluator** · v0.2 · P0 · L. Operators, literals, arrays, function and method syntax, variables value/cell/cells/row/record/rowIndex. _OpenRefine: grel Parser, Evaluable_
-- [ ] **String functions (39)** · v0.2 · P0 · L. split, smartSplit, partition, match, find, replaceChars, replaceEach, escape/unescape, encode/decode, phonetic, diff, unicode, detectLanguage and the rest. _OpenRefine: expr/functions/strings_
-- [ ] **Array functions (7)** · v0.2 · P0 · S. join, sort, reverse, uniques, inArray, zip, argsToArray. _OpenRefine: expr/functions/arrays_
-- [ ] **Math functions (38)** · v0.5 · P1 · M. round, floor, ceil, mod, pow, log, trig, combin, fact, gcd/lcm, sum, min/max, randomNumber. _OpenRefine: expr/functions/math_
-- [ ] **Dates** · v0.2 · P0 · M. toDate with Java-style patterns, datePart, inc, diff, now, toString with formats; time zones. _OpenRefine: ToDate, DatePart, Inc, Now_
-- [ ] **Controls (15)** · v0.2 · P0 · M. if, with, forEach, forEachIndex, forRange, forNonBlank, filter, isBlank, isNull, isNumeric, isError and friends. _OpenRefine: grel/controls_
-- [ ] **Other functions (13) and booleans (4)** · v0.2 · P0 · S. coalesce, cross, facetCount, get, hasField, jsonize, length, slice, toNumber, toString, type; and, or, not, xor. _OpenRefine: expr/functions, booleans_
-- [ ] **HTML/XML functions (11)** · v0.5 · P1 · M. parseHtml, parseXml, select with CSS selectors, htmlText, ownText, xmlAttr and others (scraper / roxmltree). _OpenRefine: expr/functions/html, xml_
-- [ ] **parseJson and JSON paths** · v0.2 · P1 · S. Field access on parsed JSON like OpenRefine. _OpenRefine: ParseJson_
-- [ ] **Error and type-coercion semantics** · v0.2 · P0 · M. Match OpenRefine's EvalError propagation, null handling and number formatting to the character. _OpenRefine: EvalError_
+- [x] **Full GREL parser and evaluator** · v0.2 · P0 · L. Operators, literals, arrays, function and method syntax, variables value/cell/cells/row/record/rowIndex. _OpenRefine: grel Parser, Evaluable_
+- [x] **String functions (39)** · v0.2 · P0 · L. split, smartSplit, partition, match, find, replaceChars, replaceEach, escape/unescape, encode/decode, phonetic, diff, unicode, detectLanguage and the rest. _OpenRefine: expr/functions/strings_
+- [x] **Array functions (7)** · v0.2 · P0 · S. join, sort, reverse, uniques, inArray, zip, argsToArray. _OpenRefine: expr/functions/arrays_
+- [x] **Math functions (38)** · v0.5 · P1 · M. round, floor, ceil, mod, pow, log, trig, combin, fact, gcd/lcm, sum, min/max, randomNumber. _OpenRefine: expr/functions/math_
+- [x] **Dates** · v0.2 · P0 · M. toDate with Java-style patterns, datePart, inc, diff, now, toString with formats; time zones. _OpenRefine: ToDate, DatePart, Inc, Now_
+- [x] **Controls (15)** · v0.2 · P0 · M. if, with, forEach, forEachIndex, forRange, forNonBlank, filter, isBlank, isNull, isNumeric, isError and friends. _OpenRefine: grel/controls_
+- [x] **Other functions (13) and booleans (4)** · v0.2 · P0 · S. coalesce, cross, facetCount, get, hasField, jsonize, length, slice, toNumber, toString, type; and, or, not, xor. _OpenRefine: expr/functions, booleans_
+- [x] **HTML/XML functions (11)** · v0.5 · P1 · M. parseHtml, parseXml, select with CSS selectors, htmlText, ownText, xmlAttr and others (scraper / roxmltree). _OpenRefine: expr/functions/html, xml_
+- [x] **parseJson and JSON paths** · v0.2 · P1 · S. Field access on parsed JSON like OpenRefine. _OpenRefine: ParseJson_
+- [x] **Error and type-coercion semantics** · v0.2 · P0 · M. Match OpenRefine's EvalError propagation, null handling and number formatting to the character. _OpenRefine: EvalError_
 - [ ] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
 - [ ] **Python and Clojure expressions** · later · P2 · L. OpenRefine ships Jython 2.7 and Clojure; decide between embedded Python (pyo3) or clear unsupported errors. _OpenRefine: jython, clojure_
 
@@ -151,7 +151,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 Prove parity automatically against real OpenRefine.
 
 - [ ] **Operation conformance suite** · v0.2 · P0 · L. Run every operation through OpenRefine's API and ours on the same corpus and diff outputs cell by cell (extends compare.mjs). _OpenRefine: benchmarks/compare.mjs_
-- [~] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
+- [x] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
 - [ ] **Messy-data test corpus** · v0.2 · P0 · M. Real-world files: encodings, ragged rows, embedded newlines, huge cells, mixed types. _OpenRefine: tests/_
 - [ ] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
 - [ ] **CI on Windows, macOS, Linux** · v0.2 · P0 · S. GitHub Actions: build, tests, UI typecheck, conformance on a small corpus. _OpenRefine: new_
