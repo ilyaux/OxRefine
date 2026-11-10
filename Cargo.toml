@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = ["crates/ox-core", "crates/ox-cli", "ui/src-tauri"]
+default-members = ["crates/ox-core", "crates/ox-cli"]
+
+[profile.release]
+codegen-units = 1
+lto = "thin"

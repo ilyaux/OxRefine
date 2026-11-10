@@ -1,0 +1,82 @@
+use ox_core::{dispatch, ops::Op, Project};
+use serde_json::{json, Value};
+use std::time::Instant;
+
+const USAGE: &str = "usage:
+  ox apply <history.json> <input.csv> -o <output.csv>   replay an OpenRefine operation history headlessly
+  ox serve [input.csv] [--port 3030]                     JSON API for the web UI (ui/: npm run dev)";
+
+fn main() {
+    if let Err(e) = run() {
+        eprintln!("error: {e}");
+        std::process::exit(1);
+    }
+}
+
+fn run() -> Result<(), String> {
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
+        ["apply", recipe, input, "-o", out] => apply(recipe, input, out),
+        ["serve", rest @ ..] => serve(rest),
+        _ => Err(USAGE.into()),
+    }
+}
+
+fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
+    let ops: Vec<Op> = serde_json::from_str(&std::fs::read_to_string(recipe).map_err(|e| format!("{recipe}: {e}"))?)
+        .map_err(|e| format!("{recipe}: {e}"))?;
+    let t = Instant::now();
+    let mut p = Project::open(input.as_ref())?;
+    let (rows, cols) = (p.table().rows, p.table().names.len());
+    eprintln!("import  {:>9.1} ms   {rows} rows x {cols} columns", ms(t));
+    let t = Instant::now();
+    for (i, op) in ops.into_iter().enumerate() {
+        p.apply(op).map_err(|e| format!("step {}: {e}", i + 1))?;
+    }
+    eprintln!("apply   {:>9.1} ms   {} operations", ms(t), p.recipe().len());
+    let t = Instant::now();
+    p.table().write_csv(out.as_ref(), &(0..rows as u32).collect::<Vec<_>>())?;
+    eprintln!("export  {:>9.1} ms   {out}", ms(t));
+    Ok(())
+}
+
+fn ms(t: Instant) -> f64 {
+    t.elapsed().as_secs_f64() * 1000.0
+}
+
+fn serve(args: &[&str]) -> Result<(), String> {
+    let (mut file, mut port) = (None, 3030u16);
+    let mut it = args.iter();
+    while let Some(&a) = it.next() {
+        match a {
+            "--port" => port = it.next().and_then(|p| p.parse().ok()).ok_or("--port needs a number")?,
+            f => file = Some(f),
+        }
+    }
+    let mut slot = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    let server = tiny_http::Server::http(("127.0.0.1", port)).map_err(|e| e.to_string())?;
+    let host_ok = [format!("127.0.0.1:{port}"), format!("localhost:{port}")];
+    eprintln!("OxRefine API on http://127.0.0.1:{port}/api/<command>");
+    for mut req in server.incoming_requests() {
+        let header = |name: &str| req.headers().iter().find(|h| h.field.as_str().as_str().eq_ignore_ascii_case(name)).map(|h| h.value.as_str().to_owned());
+        // The API reads and writes local files: refuse other hosts (DNS rebinding) and
+        // non-JSON bodies (cross-site form posts can't set this type without a preflight we never answer).
+        let trusted = header("Host").is_some_and(|h| host_ok.contains(&h))
+            && header("Content-Type").is_some_and(|c| c.starts_with("application/json"));
+        let (code, body) = if !trusted {
+            (403, json!("forbidden"))
+        } else {
+            let cmd = req.url().trim_start_matches("/api/").to_owned();
+            let mut body = String::new();
+            req.as_reader().read_to_string(&mut body).ok();
+            let args = serde_json::from_str(&body).unwrap_or_else(|_| json!({}));
+            match dispatch(&mut slot, &cmd, args) {
+                Ok(v) => (200, v),
+                Err(e) => (400, Value::String(e)),
+            }
+        };
+        let ct = tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap();
+        req.respond(tiny_http::Response::from_string(body.to_string()).with_status_code(code).with_header(ct)).ok();
+    }
+    Ok(())
+}

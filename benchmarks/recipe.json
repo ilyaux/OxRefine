@@ -1,0 +1,19 @@
+[
+  {"op": "core/text-transform", "engineConfig": {"facets": [], "mode": "row-based"}, "columnName": "name",
+   "expression": "grel:value.replace(/\\s+/, ' ').trim()", "onError": "keep-original", "repeat": false, "repeatCount": 10,
+   "description": "Collapse whitespace and trim name"},
+  {"op": "core/text-transform", "engineConfig": {"facets": [], "mode": "row-based"}, "columnName": "name",
+   "expression": "grel:value.toTitlecase()", "onError": "keep-original", "repeat": false, "repeatCount": 10,
+   "description": "Titlecase name"},
+  {"op": "core/text-transform", "engineConfig": {"facets": [], "mode": "row-based"}, "columnName": "city",
+   "expression": "grel:value.trim()", "onError": "keep-original", "repeat": false, "repeatCount": 10,
+   "description": "Trim city"},
+  {"op": "core/mass-edit", "engineConfig": {"facets": [], "mode": "row-based"}, "columnName": "country", "expression": "value",
+   "edits": [{"from": ["US", "us", "USA"], "fromBlank": false, "fromError": false, "to": "United States"},
+             {"from": ["DE"], "fromBlank": false, "fromError": false, "to": "Germany"},
+             {"from": ["BR", "Brasil"], "fromBlank": false, "fromError": false, "to": "Brazil"}],
+   "description": "Normalize country"},
+  {"op": "core/column-addition", "engineConfig": {"facets": [], "mode": "row-based"}, "baseColumnName": "city",
+   "newColumnName": "city_key", "columnInsertIndex": 3, "expression": "grel:value.fingerprint()", "onError": "set-to-blank",
+   "description": "Fingerprint city"}
+]

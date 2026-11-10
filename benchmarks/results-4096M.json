@@ -1,0 +1,51 @@
+{
+  "when": "2026-11-10T19:48:27.764Z",
+  "orMemory": "4096M",
+  "results": [
+    {
+      "rows": 2000000,
+      "mb": 154,
+      "ox": {
+        "idle": 6,
+        "import": 2373.7761,
+        "rows": 2000000,
+        "facet": 6.4505999999996675,
+        "facetChoices": 8,
+        "cluster": 16.6262999999999,
+        "clusters": 8,
+        "recipe": 29.833600000000388,
+        "export": 374.9570999999996,
+        "peak": 235
+      },
+      "or": {
+        "idle": 286,
+        "import": 3334.933000000001,
+        "rows": 2000000,
+        "facet": 1252.2848999999987,
+        "facetChoices": 8,
+        "cluster": 3763.2595,
+        "clusters": 8,
+        "recipe": 20347.0928,
+        "export": 3599.3264999999956,
+        "peak": 3433
+      },
+      "diff": {
+        "linesOx": 2000001,
+        "linesOR": 2000001,
+        "cells": 16000008,
+        "same": 16000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { DownloadIcon, FileUpIcon, FolderOpenIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
+import { call, pickFile, type Engine, type Facet, type FacetData, type Op, type Summary } from "@/api"
+import { AskDialog, ClusterDialog, TransformDialog } from "@/Dialogs"
+import { Grid, type ColumnAction } from "@/Grid"
+import { Facets, History } from "@/Sidebar"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Toaster, toast } from "@/components/ui/toast"
+
+type Modal =
+  | { kind: "transform" | "add" | "cluster"; column: string }
+  | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; onSubmit: (v: string) => Promise<void> }
+  | null
+
+const fail = (e: unknown) => void toast.add({ title: "Something went wrong", description: String((e as Error).message ?? e), type: "error" })
+
+export function App() {
+  const [summary, setSummary] = useState<Summary | null>(null)
+  const [facets, setFacets] = useState<Facet[]>([])
+  const [facetData, setFacetData] = useState<FacetData[]>([])
+  const [total, setTotal] = useState(0)
+  const [lastMs, setLastMs] = useState<{ what: string; ms: number } | null>(null)
+  const [modal, setModal] = useState<Modal>(null)
+
+  const engine: Engine = useMemo(() => ({ facets, mode: "row-based" }), [facets])
+  const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
+
+  const run = useCallback(async (what: string, cmd: string, args: object = {}) => {
+    const { data, ms } = await call<Summary>(cmd, args)
+    setSummary(data)
+    setLastMs({ what, ms })
+    // facets on columns that no longer exist would make every request fail
+    setFacets((fs) => fs.filter((f) => data.columns.includes(f.columnName)))
+  }, [])
+
+  useEffect(() => {
+    call<Summary>("summary").then(({ data }) => setSummary(data), () => {})
+  }, [])
+
+  useEffect(() => {
+    if (summary) call<FacetData[]>("facets", { engine }).then(({ data }) => setFacetData(data), fail)
+  }, [summary, engine])
+
+  const apply = (op: Op) => run(String(op.op).replace("core/", ""), "apply", { op }).catch((e) => (fail(e), Promise.reject(e)))
+  const goto = (index: number) => run("history", "goto", { index }).catch(fail)
+
+  // Desktop: native dialogs. Browser (`ox serve`): the server reads/writes paths on its own machine.
+  const withPath = async (kind: "open-csv" | "save-csv" | "save-json", title: string, then: (p: string) => Promise<void>) => {
+    const p = await pickFile(kind)
+    if (p) return then(p).catch(fail)
+    if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
+  }
+  const openFile = () =>
+    withPath("open-csv", "Open CSV / TSV", async (path) => {
+      setFacets([])
+      await run("import", "open", { path })
+    })
+  const exportCsv = () =>
+    withPath("save-csv", "Export matching rows as CSV", async (path) => {
+      const { data, ms } = await call<number>("export_csv", { engine, path })
+      setLastMs({ what: "export", ms })
+      toast.add({ title: `Exported ${data.toLocaleString()} rows`, description: path, type: "success" })
+    })
+  const saveRecipe = () =>
+    withPath("save-json", "Save recipe JSON", async (path) => {
+      await call("export_recipe", { path })
+      toast.add({ title: "Recipe saved", description: path, type: "success" })
+    })
+  const copyRecipe = async () => {
+    const { data } = await call("export_recipe")
+    await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+    toast.add({ title: "Recipe copied", description: "Paste it into OpenRefine's Undo/Redo → Apply, or `ox apply`.", type: "success" })
+  }
+  const applyRecipe = () =>
+    setModal({
+      kind: "ask",
+      title: "Apply operation history",
+      label: "OpenRefine or OxRefine recipe JSON",
+      multiline: true,
+      onSubmit: async (v) => {
+        let ops: unknown
+        try {
+          ops = JSON.parse(v)
+        } catch {
+          return fail(new Error("That is not valid JSON."))
+        }
+        await run("recipe", "apply_recipe", { ops }).catch(fail)
+      },
+    })
+
+  const onAction = (a: ColumnAction) => {
+    const c = a.column
+    if (a.kind === "facet")
+      setFacets((f) => [...f, { type: "list", name: c, columnName: c, expression: "value", selection: [], selectBlank: false, invert: false }])
+    else if (a.kind === "text-filter")
+      setFacets((f) => [...f, { type: "text", name: c, columnName: c, query: "", mode: "text", caseSensitive: false, invert: false }])
+    else if (a.kind === "common")
+      apply({ op: "core/text-transform", engineConfig: engine, columnName: c, expression: `grel:${a.expression}`, onError: "keep-original", repeat: false, repeatCount: 10 }).catch(() => {})
+    else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
+    else if (a.kind === "add-column") setModal({ kind: "add", column: c })
+    else if (a.kind === "remove") apply({ op: "core/column-removal", columnName: c }).catch(() => {})
+    else if (a.kind === "rename")
+      setModal({
+        kind: "ask",
+        title: `Rename “${c}”`,
+        label: "New name",
+        initial: c,
+        onSubmit: async (v) => {
+          if (v.trim() === c) return
+          await apply({ op: "core/column-rename", oldColumnName: c, newColumnName: v.trim() })
+          setFacets((fs) => fs.map((f) => (f.columnName === c ? { ...f, name: v.trim(), columnName: v.trim() } : f)))
+        },
+      })
+  }
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!summary || !(e.ctrlKey || e.metaKey) || (e.target as HTMLElement).closest("input,textarea")) return
+      const k = e.key.toLowerCase()
+      if (k === "z" && !e.shiftKey && summary.cursor > 0) goto(summary.cursor - 1)
+      else if ((k === "y" || (k === "z" && e.shiftKey)) && summary.cursor < summary.history.length) goto(summary.cursor + 1)
+      else return
+      e.preventDefault()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  })
+
+  return (
+    <Toaster>
+      <div className="flex h-svh flex-col bg-background text-foreground">
+        <header className="flex items-center gap-2 border-b px-3 py-2">
+          <TableIcon />
+          <span className="font-semibold">OxRefine</span>
+          {summary && (
+            <>
+              <Separator orientation="vertical" className="mx-1 h-5" />
+              <span className="truncate text-sm">{summary.name}</span>
+              <Badge variant="secondary">
+                {summary.rows.toLocaleString()} rows × {summary.columns.length} columns
+              </Badge>
+            </>
+          )}
+          <div className="ml-auto flex items-center gap-1">
+            <Button variant="ghost" size="icon" aria-label="Undo" disabled={!summary?.cursor} onClick={() => goto(summary!.cursor - 1)}>
+              <Undo2Icon />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Redo"
+              disabled={!summary || summary.cursor >= summary.history.length}
+              onClick={() => goto(summary!.cursor + 1)}
+            >
+              <Redo2Icon />
+            </Button>
+            <Button variant="outline" disabled={!summary} onClick={applyRecipe}>
+              <FileUpIcon data-icon="inline-start" />
+              Apply recipe
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" disabled={!summary} />}>
+                <DownloadIcon data-icon="inline-start" />
+                Export
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={exportCsv}>Matching rows as CSV…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={saveRecipe}>Recipe JSON…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button onClick={openFile}>
+              <FolderOpenIcon data-icon="inline-start" />
+              Open
+            </Button>
+          </div>
+        </header>
+
+        {summary ? (
+          <div className="flex min-h-0 flex-1">
+            <aside className="flex w-80 shrink-0 flex-col border-r">
+              <Tabs defaultValue="facets" className="flex min-h-0 flex-1 flex-col p-2">
+                <TabsList className="w-full">
+                  <TabsTrigger value="facets">Facets / Filters</TabsTrigger>
+                  <TabsTrigger value="history">History ({summary.cursor})</TabsTrigger>
+                </TabsList>
+                <ScrollArea className="min-h-0 flex-1">
+                  <TabsContent value="facets">
+                    <Facets facets={facets} data={facetData} onChange={setFacets} />
+                  </TabsContent>
+                  <TabsContent value="history">
+                    <History summary={summary} onGoto={goto} />
+                  </TabsContent>
+                </ScrollArea>
+              </Tabs>
+            </aside>
+            <main className="min-w-0 flex-1">
+              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} />
+            </main>
+          </div>
+        ) : (
+          <Empty className="flex-1">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <TableIcon />
+              </EmptyMedia>
+              <EmptyTitle>Open a dataset</EmptyTitle>
+              <EmptyDescription>
+                CSV or TSV, any size your RAM allows. Facet, cluster, and transform millions of rows interactively.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button onClick={openFile}>
+                <FolderOpenIcon data-icon="inline-start" />
+                Open file
+              </Button>
+            </EmptyContent>
+          </Empty>
+        )}
+
+        <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">
+          {summary && (
+            <span className="tabular-nums">
+              {total.toLocaleString()} of {summary.rows.toLocaleString()} rows match
+            </span>
+          )}
+          {lastMs && (
+            <span className="ml-auto tabular-nums">
+              last {lastMs.what}: {lastMs.ms.toFixed(1)} ms
+            </span>
+          )}
+        </footer>
+      </div>
+
+      {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+      {(modal?.kind === "transform" || modal?.kind === "add") && summary && (
+        <TransformDialog
+          column={modal.column}
+          mode={modal.kind}
+          columns={summary.columns}
+          engine={engine}
+          onApply={apply}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.kind === "cluster" && (
+        <ClusterDialog column={modal.column} engine={engine} onApply={apply} onClose={() => setModal(null)} />
+      )}
+    </Toaster>
+  )
+}
+
+export default App

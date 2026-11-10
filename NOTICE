@@ -1,0 +1,6 @@
+OxRefine is an independent reimplementation of the OpenRefine data-cleaning
+workflow (https://openrefine.org). It reads and writes OpenRefine's operation
+history JSON and aims to reproduce OpenRefine's results. OpenRefine is
+Copyright (c) 2010 Google Inc. and 2018-present OpenRefine contributors,
+licensed under the BSD 3-Clause License. OxRefine contains no OpenRefine code;
+test fixtures under tests/ were produced by running OpenRefine 3.10.1.

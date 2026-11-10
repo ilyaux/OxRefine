@@ -1,0 +1,205 @@
+{
+  "when": "2026-11-10T19:47:10.885Z",
+  "orMemory": "1400M",
+  "results": [
+    {
+      "rows": 100000,
+      "mb": 8,
+      "ox": {
+        "idle": 6,
+        "import": 90.32090000000005,
+        "rows": 100000,
+        "facet": 2.326599999999985,
+        "facetChoices": 8,
+        "cluster": 1.9335999999999558,
+        "clusters": 8,
+        "recipe": 21.284200000000055,
+        "export": 40.61099999999999,
+        "peak": 17
+      },
+      "or": {
+        "idle": 266,
+        "import": 291.0507000000007,
+        "rows": 100000,
+        "facet": 120.24559999999929,
+        "facetChoices": 8,
+        "cluster": 418.9853000000003,
+        "clusters": 8,
+        "recipe": 1127.3347999999996,
+        "export": 270.85400000000027,
+        "peak": 424
+      },
+      "diff": {
+        "linesOx": 100001,
+        "linesOR": 100001,
+        "cells": 800008,
+        "same": 800008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": []
+      }
+    },
+    {
+      "rows": 250000,
+      "mb": 19,
+      "ox": {
+        "idle": 6,
+        "import": 195.9891000000007,
+        "rows": 250000,
+        "facet": 12.723700000000463,
+        "facetChoices": 8,
+        "cluster": 13.872799999999188,
+        "clusters": 8,
+        "recipe": 9.536099999999351,
+        "export": 62.080000000001746,
+        "peak": 36
+      },
+      "or": {
+        "idle": 283,
+        "import": 651.3158000000003,
+        "rows": 250000,
+        "facet": 238.66669999999976,
+        "facetChoices": 8,
+        "cluster": 862.5447000000004,
+        "clusters": 8,
+        "recipe": 2715.1561,
+        "export": 389.35759999999937,
+        "peak": 758
+      },
+      "diff": {
+        "linesOx": 250001,
+        "linesOR": 250001,
+        "cells": 2000008,
+        "same": 2000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": []
+      }
+    },
+    {
+      "rows": 500000,
+      "mb": 38,
+      "ox": {
+        "idle": 6,
+        "import": 525.6965999999993,
+        "rows": 500000,
+        "facet": 13.911999999996624,
+        "facetChoices": 8,
+        "cluster": 14.143299999999726,
+        "clusters": 8,
+        "recipe": 22.766100000000733,
+        "export": 109.67450000000099,
+        "peak": 65
+      },
+      "or": {
+        "idle": 273,
+        "import": 1415.3052000000025,
+        "rows": 500000,
+        "facet": 320.3094999999994,
+        "facetChoices": 8,
+        "cluster": 1296.1694000000025,
+        "clusters": 8,
+        "recipe": 4304.463300000003,
+        "export": 738.9807000000001,
+        "peak": 976
+      },
+      "diff": {
+        "linesOx": 500001,
+        "linesOR": 500001,
+        "cells": 4000008,
+        "same": 4000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": []
+      }
+    },
+    {
+      "rows": 1000000,
+      "mb": 76,
+      "ox": {
+        "idle": 6,
+        "import": 1632.6984000000011,
+        "rows": 1000000,
+        "facet": 17.267299999999523,
+        "facetChoices": 8,
+        "cluster": 14.398200000003271,
+        "clusters": 8,
+        "recipe": 45.351800000004005,
+        "export": 233.70910000000003,
+        "peak": 122
+      },
+      "or": {
+        "idle": 277,
+        "import": 2264.0878999999986,
+        "rows": 1000000,
+        "facet": 699.5627000000022,
+        "facetChoices": 8,
+        "cluster": 2570.049899999998,
+        "clusters": 8,
+        "recipe": 10428.884299999998,
+        "export": 1357.0575000000026,
+        "peak": 1361
+      },
+      "diff": {
+        "linesOx": 1000001,
+        "linesOR": 1000001,
+        "cells": 8000008,
+        "same": 8000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": []
+      }
+    },
+    {
+      "rows": 2000000,
+      "mb": 154,
+      "ox": {
+        "idle": 6,
+        "import": 2055.9611999999906,
+        "rows": 2000000,
+        "facet": 8.121200000008685,
+        "facetChoices": 8,
+        "cluster": 15.610599999999977,
+        "clusters": 8,
+        "recipe": 35.059499999988475,
+        "export": 437.61260000000766,
+        "peak": 235
+      },
+      "or": {
+        "error": "OpenRefine apply-operations: HTTP 500 <html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html;charset=ISO-8859-1\"/>\n<title>Error 500 java.lang.OutOfMemoryError: Java heap space</title>\n</head>\n<body><h2>HTTP ERROR 500 java.lang.OutOfMemoryError: Java heap space</h2>\n<table>\n<tr><th>URI:</th><td>/command/core/apply-operations</t"
+      }
+    }
+  ]
+}
