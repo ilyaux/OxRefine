@@ -35,8 +35,8 @@ OpenRefine's data model: typed cells, records, persistent projects.
 - [x] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
 - [~] **Records mode** · v0.2 · P1 · L. Rows grouped into records by the key column; record-based engineConfig, record-aware facets and ops. _OpenRefine: mode: record-based_
 - [x] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
-- [ ] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
-- [ ] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
+- [~] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
+- [~] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
 - [ ] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
 - [ ] **Reconciliation data in the cell model** · v0.5 · P2 · M. Per-cell recon judgment, candidates and match, stored outside the dictionary. _OpenRefine: Recon, ReconCandidate_
 
@@ -44,10 +44,10 @@ OpenRefine's data model: typed cells, records, persistent projects.
 
 Every format OpenRefine imports, with its options and preview.
 
-- [ ] **CSV options parity** · v0.2 · P0 · M. Encoding detection, quote char, ignore/skip lines, header lines, limit, trim, guess types, column names on/off. _OpenRefine: text/line-based/*sv options_
-- [ ] **Excel xlsx/xls** · v0.2 · P0 · M. Sheet selection, multiple sheets into one project, dates as dates (calamine). _OpenRefine: binary/text/xml/xls/xlsx_
-- [ ] **OpenDocument spreadsheet** · v0.5 · P2 · S. ODS through the same sheet importer. _OpenRefine: text/xml/ods_
-- [ ] **JSON and JSON Lines** · v0.2 · P0 · L. Pick the record path in a tree preview; nested fields become columns; JSONL streams. _OpenRefine: text/json_
+- [~] **CSV options parity** · v0.2 · P0 · M. Encoding detection, quote char, ignore/skip lines, header lines, limit, trim, guess types, column names on/off. _OpenRefine: text/line-based/*sv options_
+- [~] **Excel xlsx/xls** · v0.2 · P0 · M. Sheet selection, multiple sheets into one project, dates as dates (calamine). _OpenRefine: binary/text/xml/xls/xlsx_
+- [~] **OpenDocument spreadsheet** · v0.5 · P2 · S. ODS through the same sheet importer. _OpenRefine: text/xml/ods_
+- [~] **JSON and JSON Lines** · v0.2 · P0 · L. Pick the record path in a tree preview; nested fields become columns; JSONL streams. _OpenRefine: text/json_
 - [ ] **XML** · v0.5 · P1 · L. Pick the record element in a tree preview, attributes and nested elements as columns. _OpenRefine: text/xml_
 - [ ] **Fixed-width text** · v0.5 · P2 · M. Column widths with a draggable ruler in preview. _OpenRefine: text/line-based/fixed-width_
 - [ ] **Line-based text** · v0.5 · P2 · S. One line per row, lines-per-row grouping. _OpenRefine: text/line-based_
@@ -56,7 +56,7 @@ Every format OpenRefine imports, with its options and preview.
 - [ ] **Wikitext tables** · later · P2 · M. Parse MediaWiki table markup, keep links for reconciliation. _OpenRefine: text/wiki_
 - [ ] **Import from URL and clipboard** · v0.2 · P1 · S. Download with progress and paste-as-table, like OpenRefine's Web Addresses and Clipboard tabs. _OpenRefine: create-project-from-upload_
 - [ ] **Zip/gzip and multi-file import** · v0.5 · P2 · S. Pick files inside archives, add a file-name column. _OpenRefine: includeFileSources, includeArchiveFileName_
-- [ ] **Import preview wizard** · v0.2 · P0 · M. Live preview of the first rows while options change, format auto-detect. _OpenRefine: parsing-ui_
+- [~] **Import preview wizard** · v0.2 · P0 · M. Live preview of the first rows while options change, format auto-detect. _OpenRefine: parsing-ui_
 
 ## Export
 
@@ -137,7 +137,7 @@ W3C Reconciliation API: matching, judging, data extension.
 
 Everything OpenRefine's UI does, in a modern, keyboard-first app.
 
-- [ ] **Home: projects and create project** · v0.2 · P0 · M. Recent projects, import sources, drag-and-drop files. _OpenRefine: index page_
+- [~] **Home: projects and create project** · v0.2 · P0 · M. Recent projects, import sources, drag-and-drop files. _OpenRefine: index page_
 - [ ] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
 - [ ] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
 - [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
