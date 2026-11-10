@@ -23,11 +23,11 @@ pub const FUNCTIONS: &[&str] = &[
     "toUppercase", "toLowercase", "toTitlecase", "trim", "strip", "length", "chomp", "contains", "startsWith", "endsWith", "indexOf", "lastIndexOf",
     "replace", "replaceChars", "replaceEach", "split", "smartSplit", "splitByCharType", "splitByLengths", "partition", "rpartition", "substring",
     "slice", "find", "match", "ngram", "fingerprint", "ngramFingerprint", "phonetic", "unicode", "unicodeType", "escape", "unescape", "encode",
-    "decode", "md5", "sha1", "reinterpret", "detectLanguage", "levenshteinDistance", "diff", "range", "parseUri",
+    "decode", "md5", "sha1", "reinterpret", "normalize", "detectLanguage", "levenshteinDistance", "diff", "range", "parseUri",
     // html / xml
     "parseHtml", "parseXml", "select", "htmlText", "xmlText", "wholeText", "ownText", "innerHtml", "innerXml", "htmlAttr", "xmlAttr", "parent", "scriptText",
     // arrays
-    "join", "reverse", "sort", "uniques", "inArray",
+    "join", "reverse", "sort", "uniques", "inArray", "zip",
     // dates
     "now", "inc", "datePart",
     // math
@@ -485,6 +485,10 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             }
             _ => fail!("{name} expects a string"),
         },
+        "normalize" => match a0 {
+            Str(s) => Str(crate::cluster::asciify(s)),
+            _ => fail!("normalize expects a string"),
+        },
         "reinterpret" => match a0 {
             Str(s) => Str(s.clone()),
             _ => fail!("reinterpret expects string to reinterpret, an encoding and an optional source encoding"),
@@ -619,6 +623,13 @@ pub fn call(name: &str, a: &[Value]) -> Value {
                 Array(out)
             }
             None => fail!("uniques expects an array"),
+        },
+        "zip" => match a.iter().map(list).collect::<Option<Vec<_>>>() {
+            Some(lists) if !lists.is_empty() => {
+                let n = lists.iter().map(Vec::len).min().unwrap_or(0);
+                Array((0..n).map(|i| Array(lists.iter().map(|l| l[i].clone()).collect())).collect())
+            }
+            _ => fail!("zip expects two or more arrays"),
         },
         "inArray" => match (list(a0), a1) {
             (Some(l), Str(s)) => Bool(l.iter().any(|v| v.as_str() == Some(s))),

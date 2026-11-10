@@ -29,7 +29,22 @@ export const COMMON: [string, string][] = [
   ["To titlecase", "value.toTitlecase()"],
   ["To uppercase", "value.toUppercase()"],
   ["To lowercase", "value.toLowercase()"],
+  ["To number", "value.toNumber()"],
+  ["To date", "value.toDate()"],
+  ["To text", "value.toString()"],
   ["To blank", "null"],
+]
+
+/** OpenRefine's "Customized facets", as [menu label, facet type, expression]. */
+const PRESETS: [string, "list" | "range", string][] = [
+  ["Word facet", "list", "value.split(' ')"],
+  ["Duplicates facet", "list", "facetCount(value, 'value', $COL) > 1"],
+  ["Text length facet", "range", "value.length()"],
+  ["Unicode char-code facet", "range", "value.unicode()"],
+  ["Facet by blank", "list", "isBlank(value)"],
+  ["Facet by error", "list", "isError(value)"],
+  ["Facet by star", "list", "row.starred"],
+  ["Facet by flag", "list", "row.flagged"],
 ]
 
 export type ColumnAction =
@@ -38,8 +53,10 @@ export type ColumnAction =
         | "facet" | "text-filter" | "transform" | "add-column" | "cluster" | "rename" | "remove"
         | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
         | "move-first" | "move-left" | "move-right" | "move-last"
+        | "numeric-facet" | "custom-list-facet" | "custom-range-facet"
       column: string
     }
+  | { kind: "preset-facet"; column: string; facet: "list" | "range"; expression: string }
   | { kind: "common"; column: string; expression: string }
 
 export function Grid({
@@ -150,7 +167,7 @@ export function Grid({
 }
 
 function ColumnMenu({ column, onAction }: { column: string; onAction: (a: ColumnAction) => void }) {
-  const act = (kind: Exclude<ColumnAction["kind"], "common">) => () => onAction({ kind, column })
+  const act = (kind: Exclude<ColumnAction["kind"], "common" | "preset-facet">) => () => onAction({ kind, column })
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" size="sm" />}>
@@ -161,7 +178,22 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
         <DropdownMenuGroup>
           <DropdownMenuLabel>Filter</DropdownMenuLabel>
           <DropdownMenuItem onClick={act("facet")}>Text facet</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("numeric-facet")}>Numeric facet</DropdownMenuItem>
           <DropdownMenuItem onClick={act("text-filter")}>Text filter</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("custom-list-facet")}>Custom text facet…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("custom-range-facet")}>Custom numeric facet…</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Customized facets</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-56">
+              <DropdownMenuGroup>
+                {PRESETS.map(([label, facet, expression]) => (
+                  <DropdownMenuItem key={label} onClick={() => onAction({ kind: "preset-facet", column, facet, expression: expression.replace("$COL", JSON.stringify(column)) })}>
+                    {label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

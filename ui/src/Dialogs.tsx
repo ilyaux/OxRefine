@@ -18,6 +18,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { ExpressionEditor, recentExpressions, rememberExpression } from "@/ExpressionEditor"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
@@ -36,22 +38,38 @@ function useDebounced<T>(value: T, ms = 200) {
   return v
 }
 
+const TITLES = {
+  transform: (c: string) => `Transform “${c}”`,
+  add: (c: string) => `Add column based on “${c}”`,
+  "facet-list": (c: string) => `Custom text facet on “${c}”`,
+  "facet-range": (c: string) => `Custom numeric facet on “${c}”`,
+}
+const HINTS = {
+  transform: "Runs on the rows matching the current facets: once per distinct value, or once per row when it reads other cells.",
+  add: "Runs on the rows matching the current facets; other rows get an empty cell.",
+  "facet-list": "Each distinct result becomes a choice; an array gives one choice per item.",
+  "facet-range": "Numbers go into the histogram; text, blanks and errors are counted separately.",
+}
+
 export function TransformDialog({
   column,
   mode,
   columns,
   engine,
   onApply,
+  onFacet,
   onClose,
 }: {
   column: string
-  mode: "transform" | "add"
+  mode: keyof typeof TITLES
   columns: string[]
   engine: Engine
   onApply: (op: Op) => Promise<void>
+  onFacet?: (expression: string) => void
   onClose: () => void
 }) {
   const [expr, setExpr] = useState("value")
+  const [recent] = useState(recentExpressions)
   const [name, setName] = useState("")
   const [preview, setPreview] = useState<[string | null, Result][]>([])
   const [error, setError] = useState("")
@@ -64,8 +82,15 @@ export function TransformDialog({
   }, [debounced, column, engine])
 
   const nameTaken = mode === "add" && columns.includes(name.trim())
-  const apply = () =>
-    onApply(
+  const blocked = !!error || (mode === "add" && (!name.trim() || nameTaken))
+  const apply = () => {
+    if (blocked) return
+    rememberExpression(expr.trim())
+    if (mode === "facet-list" || mode === "facet-range") {
+      onFacet?.(grel(expr))
+      return onClose()
+    }
+    return onApply(
       mode === "add"
         ? {
             op: "core/column-addition",
@@ -86,15 +111,14 @@ export function TransformDialog({
             repeatCount: 10,
           }
     ).then(onClose)
+  }
 
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{mode === "add" ? `Add column based on “${column}”` : `Transform “${column}”`}</DialogTitle>
-          <DialogDescription>
-            Runs once per distinct value and applies only to rows matching the current facets.
-          </DialogDescription>
+          <DialogTitle>{TITLES[mode](column)}</DialogTitle>
+          <DialogDescription>{HINTS[mode]}</DialogDescription>
         </DialogHeader>
         <FieldGroup>
           {mode === "add" && (
@@ -105,20 +129,31 @@ export function TransformDialog({
             </Field>
           )}
           <Field data-invalid={!!error}>
-            <FieldLabel htmlFor="expression">GREL expression</FieldLabel>
-            <Textarea
-              id="expression"
-              className="font-mono"
-              value={expr}
-              aria-invalid={!!error}
-              onChange={(e) => setExpr(e.target.value)}
-              autoFocus
-            />
+            <div className="flex items-end justify-between gap-2">
+              <FieldLabel htmlFor="expression">GREL expression</FieldLabel>
+              {recent.length > 0 && (
+                <Select value="" onValueChange={(v) => v && setExpr(String(v))}>
+                  <SelectTrigger size="sm" className="max-w-60" aria-label="Recent expressions">
+                    <SelectValue placeholder="Recent expressions" />
+                  </SelectTrigger>
+                  <SelectContent align="end">
+                    <SelectGroup>
+                      {recent.map((r) => (
+                        <SelectItem key={r} value={r}>
+                          <span className="truncate font-mono">{r}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            <ExpressionEditor id="expression" value={expr} onChange={setExpr} onSubmit={apply} columns={columns} invalid={!!error} autoFocus />
             {error ? (
               <FieldError>{error}</FieldError>
             ) : (
               <FieldDescription>
-                e.g. value.trim().toTitlecase() · value.replace(/\s+/, ' ') · value.fingerprint()
+                Ctrl+Space suggests functions; Ctrl+Enter applies. e.g. value.trim().toTitlecase() · value.replace(/\s+/, ' ')
               </FieldDescription>
             )}
           </Field>
@@ -143,8 +178,8 @@ export function TransformDialog({
         </ScrollArea>
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
-          <Button disabled={!!error || (mode === "add" && (!name.trim() || nameTaken))} onClick={apply}>
-            Apply
+          <Button disabled={blocked} onClick={apply}>
+            {mode.startsWith("facet") ? "Add facet" : "Apply"}
           </Button>
         </DialogFooter>
       </DialogContent>

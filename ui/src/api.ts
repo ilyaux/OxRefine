@@ -14,10 +14,23 @@ export type ListFacet = {
   type: "list"
   name: string
   columnName: string
-  expression: "value"
-  selection: { v: { v: string; l: string } }[]
+  expression: string
+  selection: { v: { v: unknown; l: string } }[]
   selectBlank: boolean
+  selectError: boolean
   invert: boolean
+}
+export type RangeFacet = {
+  type: "range"
+  name: string
+  columnName: string
+  expression: string
+  from: number
+  to: number
+  selectNumeric: boolean
+  selectNonNumeric: boolean
+  selectBlank: boolean
+  selectError: boolean
 }
 export type TextFacet = {
   type: "text"
@@ -28,9 +41,32 @@ export type TextFacet = {
   caseSensitive: boolean
   invert: boolean
 }
-export type Facet = ListFacet | TextFacet
+export type Facet = ListFacet | TextFacet | RangeFacet
 export type Engine = { facets: Facet[]; mode: "row-based" | "record-based" }
-export type FacetData = { distinct: number; choices: [string, number][] } | null
+/** Choices as [text, count, typed value], plus blank and error counts. */
+export type ListData = { distinct: number; choices: [string, number, unknown][]; blank: number; error: number }
+export type RangeData = {
+  min?: number
+  max?: number
+  step?: number
+  bins?: number[]
+  baseBins?: number[]
+  numericCount: number
+  nonNumericCount: number
+  blankCount: number
+  errorCount: number
+  error?: string
+}
+export type FacetData = ListData | RangeData | null
+
+export const listFacet = (column: string, expression = "value"): ListFacet => ({
+  type: "list", name: column, columnName: column, expression, selection: [], selectBlank: false, selectError: false, invert: false,
+})
+/** A numeric facet that starts by letting every number through; the panel narrows it. */
+export const rangeFacet = (column: string, expression = "value"): RangeFacet => ({
+  type: "range", name: column, columnName: column, expression, from: -Number.MAX_VALUE, to: Number.MAX_VALUE,
+  selectNumeric: true, selectNonNumeric: true, selectBlank: true, selectError: true,
+})
 export type Op = { op: string } & Record<string, unknown>
 
 export const isTauri = "__TAURI_INTERNALS__" in window

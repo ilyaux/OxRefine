@@ -81,6 +81,12 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    /* GREL syntax highlighting in the expression editor */
+    --syntax-string: oklch(0.52 0.13 150);
+    --syntax-regex: oklch(0.55 0.16 30);
+    --syntax-number: oklch(0.55 0.15 250);
+    --syntax-function: oklch(0.5 0.17 300);
+    --syntax-variable: oklch(0.55 0.13 60);
 }
 
 .dark {
@@ -115,6 +121,11 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+    --syntax-string: oklch(0.78 0.13 150);
+    --syntax-regex: oklch(0.75 0.14 30);
+    --syntax-number: oklch(0.76 0.12 250);
+    --syntax-function: oklch(0.78 0.13 300);
+    --syntax-variable: oklch(0.8 0.12 75);
 }
 
 @layer base {

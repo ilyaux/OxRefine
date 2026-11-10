@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
-import { call, pickFile, type Engine, type Facet, type FacetData, type Op, type Summary } from "@/api"
+import { call, listFacet, pickFile, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
@@ -23,7 +23,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
 
 type Modal =
-  | { kind: "transform" | "add" | "cluster" | "sort"; column: string }
+  | { kind: "transform" | "add" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; onSubmit: (v: string) => Promise<void> }
   | null
 
@@ -117,10 +117,27 @@ export function App() {
       },
     })
 
+  // editing a choice renames that value everywhere it appears in the column (a mass edit)
+  const editChoice = (f: ListFacet, choice: string) =>
+    setModal({
+      kind: "ask",
+      title: `Edit “${choice}” in ${f.columnName}`,
+      label: "New value",
+      initial: choice,
+      onSubmit: async (to) => {
+        if (to === choice) return
+        await apply({ op: "core/mass-edit", engineConfig: engine, columnName: f.columnName, expression: "value", edits: [{ from: [choice], fromBlank: false, fromError: false, to }] })
+        setFacets((fs) => fs.map((x) => (x === f ? { ...f, selection: f.selection.map((s) => ((s.v.l || String(s.v.v)) === choice ? { v: { v: to, l: to } } : s)) } : x)))
+      },
+    })
+
   const onAction = (a: ColumnAction) => {
     const c = a.column
-    if (a.kind === "facet")
-      setFacets((f) => [...f, { type: "list", name: c, columnName: c, expression: "value", selection: [], selectBlank: false, invert: false }])
+    if (a.kind === "facet") setFacets((f) => [...f, listFacet(c)])
+    else if (a.kind === "numeric-facet") setFacets((f) => [...f, rangeFacet(c)])
+    else if (a.kind === "preset-facet") setFacets((f) => [...f, a.facet === "list" ? listFacet(c, a.expression) : rangeFacet(c, a.expression)])
+    else if (a.kind === "custom-list-facet") setModal({ kind: "facet-list", column: c })
+    else if (a.kind === "custom-range-facet") setModal({ kind: "facet-range", column: c })
     else if (a.kind === "text-filter")
       setFacets((f) => [...f, { type: "text", name: c, columnName: c, query: "", mode: "text", caseSensitive: false, invert: false }])
     else if (a.kind === "common")
@@ -262,7 +279,7 @@ export function App() {
                 </TabsList>
                 <ScrollArea className="min-h-0 flex-1">
                   <TabsContent value="facets">
-                    <Facets facets={facets} data={facetData} onChange={setFacets} />
+                    <Facets facets={facets} data={facetData} onChange={setFacets} onEditChoice={editChoice} />
                   </TabsContent>
                   <TabsContent value="history">
                     <History summary={summary} onGoto={goto} />
@@ -310,13 +327,14 @@ export function App() {
           }}
         />
       )}
-      {(modal?.kind === "transform" || modal?.kind === "add") && summary && (
+      {(modal?.kind === "transform" || modal?.kind === "add" || modal?.kind === "facet-list" || modal?.kind === "facet-range") && summary && (
         <TransformDialog
           column={modal.column}
           mode={modal.kind}
           columns={summary.columns}
           engine={engine}
           onApply={apply}
+          onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
           onClose={() => setModal(null)}
         />
       )}

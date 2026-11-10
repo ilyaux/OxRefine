@@ -1,0 +1,667 @@
+{
+ "source": "OpenRefine 3.10.1 get-expression-language-info (BSD-3-Clause)",
+ "functions": {
+  "abs": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the absolute value of a number."
+  },
+  "acos": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the arc cosine of an angle, in the range 0 through PI."
+  },
+  "and": {
+   "params": "boolean a, boolean b, ...",
+   "returns": "boolean",
+   "description": "Uses the logical operator AND on two or more booleans to output a boolean. Evaluates multiple statements into booleans, then returns true if all the statements are true. For example, (1 < 3).and(1 < 0) returns false because one condition is true and one is false."
+  },
+  "asin": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the arc sine of an angle in the range of -PI/2 through PI/2."
+  },
+  "atan": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the arc tangent of an angle in the range of -PI/2 through PI/2."
+  },
+  "atan2": {
+   "params": "number n1, number n2",
+   "returns": "number theta",
+   "description": "Converts rectangular coordinates (n1, n2) to polar (r, theta). Returns number theta."
+  },
+  "ceil": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the ceiling of a number."
+  },
+  "chomp": {
+   "params": "string s, string sep",
+   "returns": "string",
+   "description": "Returns a copy of string s with string sep removed from the end if s ends with sep; otherwise, returns s."
+  },
+  "coalesce": {
+   "params": "o1, o2, ...",
+   "returns": "object or null",
+   "description": "Returns the first non-null from a series of objects (meaning any data type - string, date, number, boolean, etc.)."
+  },
+  "combin": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the ceiling of a number."
+  },
+  "contains": {
+   "params": "string s, string or pattern sub",
+   "returns": "boolean",
+   "description": "Returns a boolean indicating whether s contains sub, which is either a substring or a regex pattern. For example, \"food\".contains(\"oo\") returns true."
+  },
+  "cos": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the trigonometric cosine of an angle."
+  },
+  "cosh": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the hyperbolic cosine of a value."
+  },
+  "cross": {
+   "params": "cell or value, string projectName (optional), string columnName (optional)",
+   "returns": "array",
+   "description": "Looks up the given value in the target column of the target project, returns an array of matched rows. Two values match if and only if they have the same string representation. The first argument will be interpreted as cell.value if set to cell. The second argument will be interpreted as the current project name if omitted or set to \"\". The third argument will be interpreted as the index (starts from 0) column if omitted or set to \"\"."
+  },
+  "datePart": {
+   "params": "date d, string timeUnit",
+   "returns": "date",
+   "description": "Returns part of a date. The data type returned depends on the unit. See https://openrefine.org/docs/manual/grelfunctions/#datepartd-s-timeunit, https://openrefine.org/docs/manual/grelfunctions#date-functions for a table."
+  },
+  "decode": {
+   "params": "string s, string encoding",
+   "returns": "string",
+   "description": "Decodes a string using the specified encoding. Encodings include Base16, Base32Hex, Base32, Base64, and Base64Url."
+  },
+  "degrees": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Converts an angle from radians to degrees."
+  },
+  "detectLanguage": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Detects the language of the given string and provides the language code."
+  },
+  "diff": {
+   "params": "o1, o2, time unit (optional)",
+   "returns": "string for strings, number for dates",
+   "description": "For strings, takes two strings and compares them, returning a string. Returns the remainder of o2 starting with the first character where they differ. For dates, returns the difference in given time units. See the time unit table at https://openrefine.org/docs/manual/grelfunctions/#datepartd-s-timeunit."
+  },
+  "encode": {
+   "params": "string s, string encoding",
+   "returns": "string",
+   "description": "Encodes a string using the specified encoding. Encodings include Base16, Base32Hex, Base32, Base64, and Base64Url."
+  },
+  "endsWith": {
+   "params": "string s, string sub",
+   "returns": "boolean",
+   "description": "Returns a boolean indicating whether s ends with sub. For example, \"food\".endsWith(\"ood\") returns true, whereas \"food\".endsWith(\"odd\") returns false."
+  },
+  "escape": {
+   "params": "string s, string mode ['html','xml','csv','url','javascript','urlpath','urlform','urlfragment']",
+   "returns": "string",
+   "description": "Escapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript', 'urlpath', 'urlform', 'urlfragment'. Note that quotes are required around your mode."
+  },
+  "even": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Rounds the number up to the nearest even integer."
+  },
+  "exp": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns e to the power of n."
+  },
+  "facetCount": {
+   "params": "choiceValue, string facetExpression, string columnName",
+   "returns": "number",
+   "description": "Returns the facet count corresponding to the given choice value, by looking for the facetExpression in the choiceValue in columnName."
+  },
+  "fact": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the factorial of a number, starting from 1."
+  },
+  "factn": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the factorial of n1, starting from n2."
+  },
+  "find": {
+   "params": "string s, substring or regex p",
+   "returns": "array of strings",
+   "description": "Outputs an array of all consecutive substrings inside string s that match the substring or regex pattern p. You can supply a substring by putting it in quotes. See also match()."
+  },
+  "fingerprint": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns the fingerprint of s, a string that is the first step in fingerprint clustering methods: it will trim whitespaces, convert all characters to lowercase, remove punctuation, sort words alphabetically, etc."
+  },
+  "floor": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the floor of a number."
+  },
+  "gcd": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the greatest common denominator of two numbers."
+  },
+  "get": {
+   "params": "o, number or string from, optional number to",
+   "returns": "Depends on actual arguments",
+   "description": "If o has named fields, returns the field named 'from' of o. If o is an array, returns a sub-array o[from, to]. if o is a string, returns o.substring(from, to)."
+  },
+  "hasField": {
+   "params": "o, string name",
+   "returns": "boolean",
+   "description": "Returns a boolean indicating whether o has a member field called name."
+  },
+  "htmlAttr": {
+   "params": "string s, element e",
+   "returns": "string attribute value",
+   "description": "Returns a string from an attribute on an XML or HTML element. Use it in conjunction with parseHtml() or parseXml() to point to an element first."
+  },
+  "htmlText": {
+   "params": "Element e",
+   "returns": "String text",
+   "description": "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element."
+  },
+  "inArray": {
+   "params": "array a, string s",
+   "returns": "boolean",
+   "description": "Returns true if the array contains the desired string, and false otherwise. Will not convert data types."
+  },
+  "inc": {
+   "params": "date d, number n, string unit",
+   "returns": "date",
+   "description": "Returns a date changed by the given amount in the given unit of time, in quotes. See https://openrefine.org/docs/manual/grelfunctions/#incd-n-s-timeunit for a table. The default unit is 'hour'. A positive value increases the date, and a negative value moves it back in time."
+  },
+  "indexOf": {
+   "params": "string s, string sub",
+   "returns": "number",
+   "description": "Returns the first character index of sub as it first occurs in s; or, returns -1 if s does not contain sub. For example, \"internationalization\".indexOf(\"nation\") returns 5."
+  },
+  "innerHtml": {
+   "params": "element e",
+   "returns": "string innerHtml",
+   "description": "Returns the inner HTML of an HTML element. This will include text and children elements within the element selected. Use it in conjunction with parseHtml() and select() to provide an element."
+  },
+  "innerXml": {
+   "params": "element e",
+   "returns": "string innerXml",
+   "description": "Returns the inner XML elements of an XML element. Does not return the text directly inside your chosen XML element - only the contents of its children. Use it in conjunction with parseXml() and select() to provide an element."
+  },
+  "join": {
+   "params": "array a, string sep",
+   "returns": "string",
+   "description": "Joins the items in the array with sep, and returns it all as a string."
+  },
+  "jsonize": {
+   "params": "o",
+   "returns": "JSON literal value",
+   "description": "Quotes a value as a JSON literal value."
+  },
+  "lastIndexOf": {
+   "params": "string s, string sub",
+   "returns": "number",
+   "description": "Returns the first character index of sub as it last occurs in s; or, returns -1 if s does not contain sub. For example, \"parallel\".lastIndexOf(\"a\") returns 3 (pointing at the second 'a')."
+  },
+  "lcm": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the least common multiple of two numbers."
+  },
+  "length": {
+   "params": "array a or string s",
+   "returns": "number",
+   "description": "Returns the length of string s as a number, or the size of array a, meaning the number of objects inside it. Arrays can be empty, in which case length() will return 0."
+  },
+  "levenshteinDistance": {
+   "params": "string s1, string s2",
+   "returns": "number",
+   "description": "Calculate the number of edits required to make one value match another."
+  },
+  "ln": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the natural logarithm of n."
+  },
+  "log": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the base 10 logarithm of n."
+  },
+  "match": {
+   "params": "string s, regex p",
+   "returns": "array of strings",
+   "description": "Attempts to match the string s in its entirety against the regex pattern p and, if the pattern is found, outputs an array of all capturing groups (found in order). See also find()."
+  },
+  "max": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the greater of two numbers."
+  },
+  "md5": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns the MD5 hash of an object. If fed something other than a string (array, number, date, etc.), md5() will convert it to a string and deliver the hash of the string."
+  },
+  "min": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns the smaller of two numbers."
+  },
+  "mod": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns n1 modulus n2."
+  },
+  "multinomial": {
+   "params": "number n1, number n2, ...",
+   "returns": "number",
+   "description": "Calculates the multinomial of one number or a series of numbers."
+  },
+  "ngram": {
+   "params": "string s, number n",
+   "returns": "array of strings",
+   "description": "Returns an array of the word n-grams of s. That is, it lists all the possible consecutive combinations of n words in the string."
+  },
+  "ngramFingerprint": {
+   "params": "string s, number n",
+   "returns": "string",
+   "description": "Returns the n-gram fingerprint of s."
+  },
+  "normalize": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns a normalized version of the input string by removing diacritics and normalizing extended western characters to their ASCII representation."
+  },
+  "not": {
+   "params": "boolean b",
+   "returns": "boolean",
+   "description": "Uses the logical operator NOT on a boolean to output a boolean. For example, not(1 > 7) returns true because 1 > 7 itself is false."
+  },
+  "now": {
+   "params": "",
+   "returns": "date",
+   "description": "Returns the current time according to your system clock, in the ISO 8601 extended format (converted to UTC). For example, 10:53am (and 00 seconds) on November 26th 2020 in EST returns [date 2020-11-26T15:53:00Z]."
+  },
+  "odd": {
+   "params": "number n1",
+   "returns": "number",
+   "description": "Rounds the number up to the nearest odd integer."
+  },
+  "or": {
+   "params": "boolean a, boolean b, ...",
+   "returns": "boolean",
+   "description": "Uses the logical operator OR on two or more booleans to output a boolean. For example, (1 < 3).or(1 > 7) returns true because at least one of the conditions (the first one) is true."
+  },
+  "ownText": {
+   "params": "element e",
+   "returns": "string ownText",
+   "description": "Returns the text directly inside the selected XML or HTML element only, ignoring text inside children elements (for this, use innerXml()). Use it in conjunction with a parser and select() to provide an element."
+  },
+  "parent": {
+   "params": "string s, element e",
+   "returns": "HTML/XML Element",
+   "description": "Returns the parent node or null if no parent. Use it in conjunction with parseHtml() and select() to provide an element."
+  },
+  "parseHtml": {
+   "params": "string s",
+   "returns": "HTML object",
+   "description": "Given a cell full of HTML-formatted text, parseHtml() simplifies HTML tags (such as by removing ' /' at the end of self-closing tags), closes any unclosed tags, and inserts linebreaks and indents for cleaner code. A cell cannot store the output of parseHtml() unless you convert it with toString(): for example, value.parseHtml().toString()."
+  },
+  "parseJson": {
+   "params": "string s",
+   "returns": "JSON object",
+   "description": "Parses a string as JSON."
+  },
+  "parseUri": {
+   "params": "string url",
+   "returns": "JSON object",
+   "description": "Parses a URI and extracts its components."
+  },
+  "parseXml": {
+   "params": "string s",
+   "returns": "XML object",
+   "description": "Given a cell full of XML-formatted text, parseXml() returns a full XML document and adds any missing closing tags."
+  },
+  "partition": {
+   "params": "string s, string or regex fragment, optional boolean omitFragment",
+   "returns": "array",
+   "description": "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the first occurrence of fragment, and z is the substring after fragment. Fragment can be a string or a regex. If omitFragment is true, frag is not returned."
+  },
+  "phonetic": {
+   "params": "string s, string encoding (optional, defaults to 'metaphone3')",
+   "returns": "string",
+   "description": "Returns a phonetic encoding of a string, based on an available phonetic algorithm. Can be one of the following supported phonetic methods: metaphone, doublemetaphone, metaphone3, soundex, cologne. Defaults to 'metaphone3'."
+  },
+  "pow": {
+   "params": "number n1, number n2",
+   "returns": "number",
+   "description": "Returns n1 raised to the power of n2."
+  },
+  "quotient": {
+   "params": "number numerator, number denominator",
+   "returns": "number",
+   "description": "Returns the integer portion of a division (truncated, not rounded), when supplied with a numerator and denominator."
+  },
+  "radians": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Converts an angle in degrees to radians."
+  },
+  "random": {
+   "params": "number lowerBound, number upperBound",
+   "returns": "number",
+   "description": "Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column."
+  },
+  "randomNumber": {
+   "params": "number lowerBound, number upperBound",
+   "returns": "number",
+   "description": "Returns a random integer in the interval between the lower and upper bounds (inclusively). Will output a different random number in each cell in a column."
+  },
+  "range": {
+   "params": "A single string 'a', 'a, b' or 'a, b, c' or one, two or three integers a or a, b or a, b, c",
+   "returns": "array",
+   "description": "Returns an array where a and b are the start and the end of the range respectively and c is the step (increment)."
+  },
+  "reinterpret": {
+   "params": "string s, string target encoding, string source encoding",
+   "returns": "string",
+   "description": "Returns s reinterpreted through the given character encoders. You must supply one of the supported encodings for each of the original source and the target output: https://docs.oracle.com/javase/1.5.0/docs/guide/intl/encoding.doc.html. Note that quotes are required around character encoders."
+  },
+  "replace": {
+   "params": "string s, string or regex find, string replace",
+   "returns": "string",
+   "description": "Returns the string obtained by replacing the find string with the replace string in the inputted string. For example, 'The cow jumps over the moon and moos'.replace('oo', 'ee') returns the string 'The cow jumps over the meen and mees'. Find can be a regex pattern. For example, 'The cow jumps over the moon and moos'.replace(/\\s+/, \"_\") will return 'The_cow_jumps_over_the_moon_and_moos'"
+  },
+  "replaceChars": {
+   "params": "string s, string find, string replace",
+   "returns": "string",
+   "description": "Returns the string obtained by replacing a character in s, identified by find, with the corresponding character identified in replace. You cannot use this to replace a single character with more than one character."
+  },
+  "replaceEach": {
+   "params": "string, array of strings to replace, array of replacement strings",
+   "returns": "string",
+   "description": "Replace each occurrence of a substring in a string with another substring."
+  },
+  "reverse": {
+   "params": "array a",
+   "returns": "array",
+   "description": "Reverses array a."
+  },
+  "round": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Rounds a number to the nearest integer."
+  },
+  "rpartition": {
+   "params": "string s, string or regex fragment, optional boolean omitFragment",
+   "returns": "array",
+   "description": "Returns an array of strings [ a, fragment, z ] where a is the substring within s before the last occurrence of fragment, and z is the substring after the last instance of fragment. If omitFragment is true, frag is not returned."
+  },
+  "scriptText": {
+   "params": "element e",
+   "returns": "string",
+   "description": "Returns the combined data of an HTML/XML Element. Data is e.g. the inside of a &lt;script&gt; tag.\nNote that data is NOT the text of the element.\nUse htmlText() to get the text that would be visible to a user, and scriptText() for the contents of &lt;script&gt;, &lt;style&gt;, etc.\nUse scriptText() in conjunction with parseHtml() and select()."
+  },
+  "select": {
+   "params": "element e, string s",
+   "returns": "HTML Elements",
+   "description": "Returns an array of all the desired elements from an HTML or XML document, if the element exists. Elements are identified using the Jsoup selector syntax: https://jsoup.org/apidocs/org/jsoup/select/Selector.html."
+  },
+  "sha1": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns the SHA-1 hash of an object. If fed something other than a string (array, number, date, etc.), sha1() will convert it to a string and deliver the hash of the string."
+  },
+  "sin": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the trigonometric sine of an angle."
+  },
+  "sinh": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the hyperbolic sine of an angle."
+  },
+  "slice": {
+   "params": "string s or array a, number from, number to (optional)",
+   "returns": "string, array, or array item (number, string, etc.)",
+   "description": "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only."
+  },
+  "smartSplit": {
+   "params": "string s, optional string sep",
+   "returns": "array",
+   "description": "Returns the array of strings obtained by splitting s by sep, or by guessing either tab or comma separation if there is no sep given. Handles quotes properly and understands cancelled characters. The separator can be either a string or a regex pattern."
+  },
+  "sort": {
+   "params": "array a of uniform type",
+   "returns": "array",
+   "description": "Sorts the array in ascending order. Sorting is case-sensitive, uppercase first and lowercase second."
+  },
+  "split": {
+   "params": "string s, string or regex sep, optional boolean preserveTokens",
+   "returns": "array",
+   "description": "Returns the array of strings obtained by splitting s by sep. The separator can be either a string or a regex pattern. If preserveTokens is true, empty segments are preserved."
+  },
+  "splitByCharType": {
+   "params": "string s",
+   "returns": "array",
+   "description": "Returns an array of strings obtained by splitting s into groups of consecutive characters each time the characters change Unicode categories."
+  },
+  "splitByLengths": {
+   "params": "string s, number n1, number n2, ...",
+   "returns": "array",
+   "description": "Returns the array of strings obtained by splitting s into substrings with the given lengths. For example, \"internationalization\".splitByLengths(5, 6, 3) returns an array of 3 strings: [ \"inter\", \"nation\", \"ali\" ]. Excess characters are discarded from the output array."
+  },
+  "startsWith": {
+   "params": "string s, string sub",
+   "returns": "boolean",
+   "description": "Returns a boolean indicating whether s starts with sub. For example, \"food\".startsWith(\"foo\") returns true, whereas \"food\".startsWith(\"bar\") returns false."
+  },
+  "strip": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns a copy of string s with leading and trailing whitespace removed."
+  },
+  "substring": {
+   "params": "string s or array a, number from, number to (optional)",
+   "returns": "string, array, or array item (number, string, etc.)",
+   "description": "Given a string, returns the substring starting from character index from, and up to character index to. If the to argument is omitted, will output to the end of s. Remember character indices start from zero. Given an array, returns a sub-array from the first index provided up to and including the last index provided. If the to value is omitted, it is understood to be the end of the array. Slice only."
+  },
+  "sum": {
+   "params": "array a",
+   "returns": "number",
+   "description": "Return the sum of the numbers in the array. Ignores non-number items. Returns 0 if the array does not contain numbers."
+  },
+  "tan": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the trigonometric tangent of an angle."
+  },
+  "tanh": {
+   "params": "number n",
+   "returns": "number",
+   "description": "Returns the hyperbolic tangent of an angle."
+  },
+  "timeSinceUnixEpochToDate": {
+   "params": "number n, string unit (optional, defaults to 'seconds')",
+   "returns": "date(OffsetDateTime)",
+   "description": "Returns a number converted to a date based on Unix Epoch Time. The number can be Unix Epoch Time in one of the following supported units: second, millisecond, microsecond. Defaults to 'second'."
+  },
+  "toDate": {
+   "params": "o, boolean monthFirst, string format1, string format2, ...)",
+   "returns": "date",
+   "description": "Returns the inputted object converted to a date object. Without arguments, it returns the ISO 8601 extended format. With arguments, you can control the output format. With monthFirst: set false if the date is formatted with the day before the month. With formatN: attempt to parse the date using an ordered list of possible formats. Supply formats based on the SimpleDateFormat syntax: <a href=\"http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html\">SimpleDateFormat</a>."
+  },
+  "toLowercase": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns string s converted to all lowercase characters."
+  },
+  "toNumber": {
+   "params": "o",
+   "returns": "number",
+   "description": "Returns a string converted to a number. Will attempt to convert other formats into a string, then into a number. If the value is already a number, it will return the number."
+  },
+  "toString": {
+   "params": "object o, string format (optional)",
+   "returns": "string",
+   "description": "Takes any value type (string, number, date, boolean, error, null) and gives a string version of that value. You can convert numbers to strings with rounding, using an optional string format. See https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html. You can also convert dates to strings using date parsing syntax. See https://openrefine.org/docs/manual/grelfunctions/#date-functions."
+  },
+  "toTitlecase": {
+   "params": "string s, string delimiters (optional)",
+   "returns": "string",
+   "description": "Returns string s converted into titlecase: a capital letter starting each word, and the rest of the letters lowercase. For example, 'Once upon a midnight DREARY'.toTitlecase() returns the string 'Once Upon A Midnight Dreary'. Optionally, a string of delimiter characters used to separate words. The first character and the first non-delimiter character after a delimiter will be captialized. For example, \"jean-michel jarre\".toTitlecase(\" -\") returns \"Jean-Michel Jarre\"."
+  },
+  "toUppercase": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns string s converted to all uppercase characters."
+  },
+  "trim": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns a copy of string s with leading and trailing whitespace removed."
+  },
+  "type": {
+   "params": "object o",
+   "returns": "string",
+   "description": "Returns a string with the data type of o, such as undefined, string, number, boolean, etc."
+  },
+  "unescape": {
+   "params": "string s, string mode ['html','xml','csv','url','javascript']",
+   "returns": "string",
+   "description": "Unescapes s in the given escaping mode. The mode can be one of: 'html', 'xml', 'csv', 'url', 'javascript'. Note that quotes are required around your mode."
+  },
+  "unicode": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns an array of strings describing each character of s in their full Unicode notation."
+  },
+  "unicodeType": {
+   "params": "string s",
+   "returns": "string",
+   "description": "Returns an array of strings describing each character of s by their Unicode type."
+  },
+  "uniques": {
+   "params": "array a",
+   "returns": "array",
+   "description": "Returns the array with duplicates removed. Case-sensitive."
+  },
+  "wholeText": {
+   "params": "element e",
+   "returns": "string",
+   "description": "Selects the (unencoded) text of an element and its children, including any new lines and spaces, and returns a string of unencoded, un-normalized text. Use it in conjunction with parseHtml() and select() to provide an element."
+  },
+  "wikibaseIssues": {
+   "params": "",
+   "returns": "returns the list of Wikibase issue aggregation identifiers for the edits generated by the current row",
+   "description": "function taking no arguments and computing the Wikibase quality issues for the current row"
+  },
+  "xmlAttr": {
+   "params": "string s, element e",
+   "returns": "string attribute value",
+   "description": "Returns a string from an attribute on an XML or HTML element. Use it in conjunction with parseHtml() or parseXml() to point to an element first."
+  },
+  "xmlText": {
+   "params": "Element e",
+   "returns": "String text",
+   "description": "Returns a string of the text from within an HTML or XML element (including all child elements), removing tags and line breaks inside the string. Use it in conjunction with parseHtml() or parseXml() and select() to provide an element."
+  },
+  "xor": {
+   "params": "boolean a, boolean b, ...",
+   "returns": "boolean",
+   "description": "Uses the logical operator XOR (exclusive-or) on two or more booleans to output a boolean. Evaluates multiple statements, then returns true if only one of them is true. For example, (1 < 3).xor(1 < 7) returns false because more than one of the conditions is true."
+  },
+  "zip": {
+   "params": "array a, array b, ...",
+   "returns": "array of arrays",
+   "description": "Combines two or more arrays into a single array of arrays, where the elements at the same index from the input arrays are grouped together to form a sub-array in the output array."
+  }
+ },
+ "controls": {
+  "filter": {
+   "params": "expression a, variable v, expression test",
+   "returns": "array",
+   "description": "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression test which should return a boolean. If the boolean is true, pushes v onto the result array."
+  },
+  "forEach": {
+   "params": "expression a, variable v, expression e",
+   "returns": "array",
+   "description": "Evaluates expression a to an array. Then for each array element, binds its value to variable name v, evaluates expression e, and pushes the result onto the result array."
+  },
+  "forEachIndex": {
+   "params": "expression a, variable i, variable v, expression e",
+   "returns": "array",
+   "description": "Evaluates expression a to an array. Then for each array element, binds its index to variable i and its value to variable name v, evaluates expression e, and pushes the result onto the result array."
+  },
+  "forNonBlank": {
+   "params": "expression o, variable v, expression eNonBlank, expression eBlank",
+   "returns": "Depends on actual arguments",
+   "description": "Evaluates expression o. If it is non-blank, binds its value to variable name v, evaluates expression eNonBlank and returns the result. Otherwise (if o evaluates to blank), evaluates expression eBlank and returns that result instead."
+  },
+  "forRange": {
+   "params": "number from, number to, number step, variable v, expression e",
+   "returns": "array",
+   "description": "Iterates over the variable v starting at \"from\", incrementing by \"step\" each time while less than \"to\". At each iteration, evaluates expression e, and pushes the result onto the result array."
+  },
+  "if": {
+   "params": "expression o, expression eTrue, expression eFalse",
+   "returns": "Depends on actual arguments",
+   "description": "Evaluates expression o. If it is true, evaluates expression eTrue and returns the result. Otherwise, evaluates expression eFalse and returns that result instead."
+  },
+  "isBlank": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is null or an empty string"
+  },
+  "isEmptyString": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is an empty string"
+  },
+  "isError": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is an error"
+  },
+  "isNonBlank": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is not null and not an empty string"
+  },
+  "isNotNull": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is not null"
+  },
+  "isNull": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o is null"
+  },
+  "isNumeric": {
+   "params": "expression o",
+   "returns": "boolean",
+   "description": "Returns whether o can represent a number"
+  },
+  "with": {
+   "params": "expression o, variable v, expression e",
+   "returns": "Depends on actual arguments",
+   "description": "Evaluates expression o and binds its value to variable name v. Then evaluates expression e and returns that result"
+  }
+ }
+}
