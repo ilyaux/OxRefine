@@ -21,7 +21,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
-const vis = (s: string) => (s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
+const vis = (s: string | null) => (s === null ? "(null)" : s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
+/** A preview result: text, null, or an error the transform would hit (onError decides what the cell gets). */
+type Result = string | null | { error: string }
+const show = (r: Result) => (r !== null && typeof r === "object" ? `Error: ${r.error}` : vis(r))
 const grel = (e: string) => (e.trim().startsWith("grel:") ? e.trim() : `grel:${e.trim()}`)
 
 function useDebounced<T>(value: T, ms = 200) {
@@ -50,12 +53,12 @@ export function TransformDialog({
 }) {
   const [expr, setExpr] = useState("value")
   const [name, setName] = useState("")
-  const [preview, setPreview] = useState<[string, string][]>([])
+  const [preview, setPreview] = useState<[string | null, Result][]>([])
   const [error, setError] = useState("")
   const debounced = useDebounced(expr)
 
   useEffect(() => {
-    call<[string, string][]>("preview", { engine, column, expression: debounced, limit: 20 })
+    call<[string | null, Result][]>("preview", { engine, column, expression: debounced, limit: 20 })
       .then(({ data }) => (setPreview(data), setError("")))
       .catch((e) => setError(e.message))
   }, [debounced, column, engine])
@@ -132,7 +135,7 @@ export function TransformDialog({
               {preview.map(([a, b], i) => (
                 <TableRow key={i}>
                   <TableCell className="max-w-xs truncate font-mono">{vis(a)}</TableCell>
-                  <TableCell className="max-w-xs truncate font-mono">{vis(b)}</TableCell>
+                  <TableCell className="max-w-xs truncate font-mono">{show(b)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

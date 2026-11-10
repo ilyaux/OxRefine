@@ -88,6 +88,11 @@ impl Project {
     }
 }
 
+/// A cell for the grid: null, or the text OpenRefine shows (numbers and dates formatted).
+fn cell_json(v: &grel::Value) -> Value {
+    if v.is_null() { Value::Null } else { Value::String(v.display()) }
+}
+
 #[derive(Deserialize, Default)]
 #[serde(default)]
 struct Args {
@@ -124,7 +129,7 @@ fn run(slot: &mut Option<Project>, cmd: &str, a: Args) -> Result<Value> {
             let page: Vec<_> = rows[a.start.min(rows.len())..]
                 .iter()
                 .take(a.limit.min(1000))
-                .map(|&r| json!([r, t.columns.iter().map(|c| c.get(r as usize)).collect::<Vec<_>>()]))
+                .map(|&r| json!([r, t.columns.iter().map(|c| cell_json(c.get(r as usize))).collect::<Vec<_>>()]))
                 .collect();
             json!({ "total": rows.len(), "rows": page })
         }
@@ -147,6 +152,7 @@ fn run(slot: &mut Option<Project>, cmd: &str, a: Args) -> Result<Value> {
             let rows = p.rows(&a.engine)?;
             let t = p.table();
             let vc = engine::value_counts(t, t.col(&a.column)?, &rows);
+            let vc: Vec<(&str, u32)> = vc.iter().map(|(v, c)| (v.as_str(), *c)).collect();
             json!(cluster::cluster(&vc, &a.method, if a.n == 0 { 2 } else { a.n })?)
         }
         "preview" => {
@@ -154,12 +160,14 @@ fn run(slot: &mut Option<Project>, cmd: &str, a: Args) -> Result<Value> {
             let rows = p.rows(&a.engine)?;
             let t = p.table();
             let col = &t.columns[t.col(&a.column)?];
+            // [before, after] as the expression dialog shows them: null, text, or {"error": message}
             let pairs = rows.iter().take(a.limit.clamp(1, 100)).map(|&r| {
                 let v = col.get(r as usize);
-                json!([v, match e.eval(if v.is_empty() { grel::Value::Null } else { grel::Value::Str(v.into()) }, &grel::NoRow) {
-                    grel::Value::Error(m) => format!("Error: {m}"),
-                    out => out.display(),
-                }])
+                let out = match e.eval(v.clone(), &t.row(r as usize)) {
+                    grel::Value::Error(m) => json!({ "error": m }),
+                    out => json!(out.render()),
+                };
+                json!([cell_json(v), out])
             });
             json!(pairs.collect::<Vec<_>>())
         }

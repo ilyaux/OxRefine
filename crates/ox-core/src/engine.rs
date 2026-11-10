@@ -88,7 +88,7 @@ fn compile(t: &Table, f: &Facet) -> Result<Option<(usize, Vec<bool>)>> {
                     v => v.to_string(),
                 })
                 .collect();
-            let ok = t.columns[ci].dict.iter().map(|s| (set.contains(&**s) || (*select_blank && s.is_empty())) != *invert);
+            let ok = t.columns[ci].dict.iter().map(|v| (set.contains(&v.display()) || (*select_blank && v.is_blank())) != *invert);
             Ok(Some((ci, ok.collect())))
         }
         Facet::Text { column_name, query, mode, case_sensitive, invert, .. } => {
@@ -98,7 +98,7 @@ fn compile(t: &Table, f: &Facet) -> Result<Option<(usize, Vec<bool>)>> {
             let ci = t.col(column_name)?;
             let pat = if mode == "regex" { query.clone() } else { regex::escape(query) };
             let re = RegexBuilder::new(&pat).case_insensitive(!case_sensitive).build().map_err(err)?;
-            Ok(Some((ci, t.columns[ci].dict.iter().map(|s| re.is_match(s) != *invert).collect())))
+            Ok(Some((ci, t.columns[ci].dict.iter().map(|v| re.is_match(&v.display()) != *invert).collect())))
         }
     }
 }
@@ -131,15 +131,19 @@ pub fn mask(t: &Table, cfg: &EngineConfig) -> Result<Option<Vec<bool>>> {
     Ok(Some(m))
 }
 
-/// Distinct values of a column over `rows`, most frequent first.
-pub fn value_counts<'a>(t: &'a Table, ci: usize, rows: &[u32]) -> Vec<(&'a str, u32)> {
+/// Distinct values of a column over `rows` by their text (null and "" count as one blank), most frequent first.
+pub fn value_counts(t: &Table, ci: usize, rows: &[u32]) -> Vec<(String, u32)> {
     let col = &*t.columns[ci];
     let mut n = vec![0u32; col.dict.len()];
     for &r in rows {
         n[col.codes[r as usize] as usize] += 1;
     }
-    let mut v: Vec<_> = n.iter().enumerate().filter(|(_, &c)| c > 0).map(|(i, &c)| (&*col.dict[i], c)).collect();
-    v.sort_unstable_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(b.0)));
+    let mut by_text: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
+    for (i, &c) in n.iter().enumerate().filter(|(_, &c)| c > 0) {
+        *by_text.entry(col.dict[i].display()).or_default() += c;
+    }
+    let mut v: Vec<_> = by_text.into_iter().collect();
+    v.sort_unstable_by(|a, b| b.1.cmp(&a.1).then(a.0.cmp(&b.0)));
     v
 }
 

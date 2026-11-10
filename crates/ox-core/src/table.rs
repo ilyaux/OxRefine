@@ -1,4 +1,4 @@
-use crate::{err, Result};
+use crate::{err, grel, grel::Value, Result};
 use std::{
     collections::{HashMap, HashSet},
     fs::File,
@@ -9,45 +9,69 @@ use std::{
 
 const NONE: u32 = u32::MAX;
 
+/// Assigns dictionary codes. Strings have their own map so CSV import can look up a `&str`
+/// without allocating; every other value type goes through the general map.
 #[derive(Default)]
 pub struct Interner {
-    map: HashMap<Box<str>, u32>,
+    strs: HashMap<Box<str>, u32>,
+    other: HashMap<Value, u32>,
 }
 
 impl Interner {
-    pub fn intern(&mut self, s: &str) -> u32 {
-        if let Some(&i) = self.map.get(s) {
+    fn next(&self) -> u32 {
+        (self.strs.len() + self.other.len()) as u32
+    }
+    pub fn intern_str(&mut self, s: &str) -> u32 {
+        if let Some(&i) = self.strs.get(s) {
             return i;
         }
-        let i = self.map.len() as u32;
-        self.map.insert(s.into(), i);
+        let i = self.next();
+        self.strs.insert(s.into(), i);
         i
     }
-
-    pub fn finish(self) -> Vec<Box<str>> {
-        let mut dict = vec![Box::<str>::default(); self.map.len()];
-        for (s, i) in self.map {
-            dict[i as usize] = s;
+    pub fn intern(&mut self, v: Value) -> u32 {
+        if let Value::Str(s) = v {
+            if let Some(&i) = self.strs.get(s.as_str()) {
+                return i;
+            }
+            let i = self.next();
+            self.strs.insert(s.into_boxed_str(), i);
+            return i;
+        }
+        if let Some(&i) = self.other.get(&v) {
+            return i;
+        }
+        let i = self.next();
+        self.other.insert(v, i);
+        i
+    }
+    pub fn finish(self) -> Vec<Value> {
+        let mut dict = vec![Value::Null; self.strs.len() + self.other.len()];
+        for (s, i) in self.strs {
+            dict[i as usize] = Value::Str(s.into());
+        }
+        for (v, i) in self.other {
+            dict[i as usize] = v;
         }
         dict
     }
 }
 
-/// Dictionary-encoded string column: each distinct value is stored once and rows
-/// hold u32 codes, so transforms and facets cost O(distinct) + one pass over codes.
+/// Dictionary-encoded column of OpenRefine cell values: each distinct value is stored once and
+/// rows hold u32 codes, so transforms and facets cost O(distinct) + one pass over codes.
 pub struct Column {
-    pub dict: Vec<Box<str>>,
+    pub dict: Vec<Value>,
     pub codes: Vec<u32>,
 }
 
 impl Column {
-    pub fn get(&self, row: usize) -> &str {
+    pub fn get(&self, row: usize) -> &Value {
         &self.dict[self.codes[row] as usize]
     }
 
     /// Rows in `sel` (None = all) get `f(value)`; other rows keep their value, or turn
-    /// blank when `blank_others`. `f` runs once per distinct value; the dict is compacted.
-    pub fn map(&self, sel: Option<&[bool]>, blank_others: bool, mut f: impl FnMut(&str) -> String) -> Column {
+    /// null when `blank_others`. `f` runs once per distinct value; the dict is compacted.
+    pub fn map(&self, sel: Option<&[bool]>, blank_others: bool, mut f: impl FnMut(&Value) -> Value) -> Column {
         let mut b = Interner::default();
         let n = self.dict.len();
         let (mut mapped, mut kept) = (vec![NONE; n], vec![NONE; n]);
@@ -59,16 +83,34 @@ impl Column {
                 let c = c as usize;
                 if sel.map_or(true, |s| s[r]) {
                     if mapped[c] == NONE {
-                        mapped[c] = b.intern(&f(&self.dict[c]));
+                        mapped[c] = b.intern(f(&self.dict[c]));
                     }
                     mapped[c]
                 } else if blank_others {
-                    b.intern("")
+                    b.intern(Value::Null)
                 } else {
                     if kept[c] == NONE {
-                        kept[c] = b.intern(&self.dict[c]);
+                        kept[c] = b.intern(self.dict[c].clone());
                     }
                     kept[c]
+                }
+            })
+            .collect();
+        Column { dict: b.finish(), codes }
+    }
+
+    /// Like `map`, but `f(row, value)` runs for every selected row (expressions reading other cells).
+    pub fn map_rows(&self, sel: Option<&[bool]>, blank_others: bool, mut f: impl FnMut(usize, &Value) -> Value) -> Column {
+        let mut b = Interner::default();
+        let codes = (0..self.codes.len())
+            .map(|r| {
+                let v = self.get(r);
+                if sel.map_or(true, |s| s[r]) {
+                    b.intern(f(r, v))
+                } else if blank_others {
+                    b.intern(Value::Null)
+                } else {
+                    b.intern(v.clone())
                 }
             })
             .collect();
@@ -84,11 +126,35 @@ pub struct Table {
     pub rows: usize,
 }
 
+/// One row as GREL sees it (`cells`, `row`, `rowIndex`).
+pub struct RowRef<'a> {
+    pub table: &'a Table,
+    pub row: usize,
+}
+
+impl grel::Row for RowRef<'_> {
+    fn index(&self) -> usize {
+        self.row
+    }
+    fn columns(&self) -> Vec<String> {
+        self.table.names.clone()
+    }
+    fn cell(&self, column: &str) -> Option<Value> {
+        let ci = self.table.names.iter().position(|n| n == column)?;
+        Some(self.table.columns[ci].get(self.row).clone())
+    }
+}
+
 impl Table {
     pub fn col(&self, name: &str) -> Result<usize> {
         self.names.iter().position(|n| n == name).ok_or_else(|| format!("no column named '{name}'"))
     }
 
+    pub fn row(&self, row: usize) -> RowRef<'_> {
+        RowRef { table: self, row }
+    }
+
+    /// CSV/TSV import as OpenRefine does it by default: every cell a string, empty cells null.
     pub fn read_csv(path: &Path) -> Result<Table> {
         let mut head = vec![0u8; 1 << 16];
         let n = File::open(path)
@@ -118,14 +184,14 @@ impl Table {
             for (i, f) in rec.iter().enumerate() {
                 if i == cols.len() {
                     let mut b = Interner::default();
-                    let blank = b.intern("");
-                    cols.push((b, vec![blank; rows]));
+                    let null = b.intern(Value::Null);
+                    cols.push((b, vec![null; rows]));
                 }
                 let (b, codes) = &mut cols[i];
-                codes.push(b.intern(&String::from_utf8_lossy(f)));
+                codes.push(if f.is_empty() { b.intern(Value::Null) } else { b.intern_str(&String::from_utf8_lossy(f)) });
             }
             for (b, codes) in &mut cols[rec.len()..] {
-                codes.push(b.intern(""));
+                codes.push(b.intern(Value::Null));
             }
             rows += 1;
         }
@@ -140,8 +206,17 @@ impl Table {
     pub fn write_csv(&self, path: &Path, rows: &[u32]) -> Result<()> {
         let mut w = csv::Writer::from_path(path).map_err(err)?;
         w.write_record(&self.names).map_err(err)?;
+        // render each distinct value once per column
+        let text: Vec<Vec<std::borrow::Cow<str>>> = self
+            .columns
+            .iter()
+            .map(|c| c.dict.iter().map(|v| match v {
+                Value::Str(s) => std::borrow::Cow::Borrowed(s.as_str()),
+                v => std::borrow::Cow::Owned(v.display()),
+            }).collect())
+            .collect();
         for &r in rows {
-            w.write_record(self.columns.iter().map(|c| c.get(r as usize))).map_err(err)?;
+            w.write_record(self.columns.iter().zip(&text).map(|(c, t)| t[c.codes[r as usize] as usize].as_ref())).map_err(err)?;
         }
         w.flush().map_err(err)
     }

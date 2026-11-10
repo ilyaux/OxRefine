@@ -28,7 +28,7 @@ fn recipe_facets_cluster_history() {
     ]}));
     let rows = call("rows", json!({ "start": 0, "limit": 10 }));
     assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"]]));
-    assert_eq!(rows["rows"][3], json!([3, ["", "Boston", "boston"]]), "facet-excluded row untouched");
+    assert_eq!(rows["rows"][3], json!([3, [null, "Boston", "boston"]]), "facet-excluded row untouched; empty cells are null");
 
     // ngram clusters all three spellings; fingerprint misses New-York (punctuation is removed, not split)
     let c = call("cluster", json!({ "column": "city", "method": "ngram-fingerprint" }));
@@ -50,4 +50,34 @@ fn recipe_facets_cluster_history() {
 
     let bad = dispatch(&mut slot, "preview", json!({ "column": "name", "expression": "value.nope()" }));
     assert!(bad.unwrap_err().contains("Unknown function nope"));
+}
+
+#[test]
+fn typed_cells_row_context_and_on_error() {
+    let dir = std::env::temp_dir().join("oxrefine-typed");
+    std::fs::create_dir_all(&dir).unwrap();
+    let csv = dir.join("in.csv");
+    std::fs::write(&csv, "qty,price,note\n3,2.5,a\n10,,b\nx,4,c\n").unwrap();
+    let mut slot: Option<Project> = None;
+    let mut call = |cmd: &str, args: serde_json::Value| dispatch(&mut slot, cmd, args).unwrap()["data"].clone();
+    call("open", json!({ "path": csv }));
+    let t = |col: &str, expr: &str, on_error: &str| json!({ "op": {"op": "core/text-transform", "columnName": col, "expression": expr, "onError": on_error} });
+
+    call("apply", t("qty", "value.toNumber()", "keep-original"));
+    call("apply", t("price", "value.toNumber()", "set-to-blank"));
+    // per-row expression reading another column; numbers keep Long/Double semantics (10 * null -> null)
+    call("apply", json!({ "op": {"op": "core/column-addition", "baseColumnName": "qty", "newColumnName": "total", "columnInsertIndex": 3,
+        "expression": "grel:value * cells['price'].value", "onError": "set-to-blank"} }));
+    let rows = call("rows", json!({ "limit": 10 }))["rows"].clone();
+    assert_eq!(rows[0][1], json!(["3", "2.5", "a", "7.5"]), "3 * 2.5");
+    assert_eq!(rows[1][1], json!(["10", null, "b", null]), "blank price stays null");
+    assert_eq!(rows[2][1], json!(["x", "4", "c", null]), "keep-original kept 'x'; 'x' * 4 is null");
+    // an array result can't be stored: store-error keeps the error in the cell
+    call("apply", t("note", "value.split('')", "store-error"));
+    assert_eq!(call("rows", json!({ "limit": 1 }))["rows"][0][1][2], json!("array value not storable"));
+    let p = call("preview", json!({ "column": "note", "expression": "isError(value)" }));
+    assert_eq!(p[0][1], json!("true"), "type(error) would propagate the error, as in OpenRefine");
+    // rowIndex makes the expression run per row, not once per distinct value
+    call("apply", t("note", "rowIndex + 1", "keep-original"));
+    assert_eq!(call("rows", json!({ "limit": 10 }))["rows"][2][1][2], json!("3"));
 }

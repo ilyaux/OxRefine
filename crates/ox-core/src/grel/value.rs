@@ -15,17 +15,24 @@ pub enum Value {
     Date(NaiveDateTime),
     Array(Vec<Value>),
     /// Objects and arrays from parseJson (Jackson nodes); scalars are converted to native values.
-    Json(serde_json::Value),
+    Json(Box<serde_json::Value>),
     /// A parsed HTML/XML element or document, kept as markup (re-parsed on demand).
-    Html { markup: String, document: bool },
+    Html(Box<Markup>),
     /// cell / row / cells objects exposed to expressions.
     Obj(Vec<(String, Value)>),
     /// A regex literal passed as a function argument.
-    Re(regex::Regex),
+    Re(Box<regex::Regex>),
     Error(String),
 }
 
 pub use Value::*;
+
+/// Markup behind a parsed HTML/XML value; boxed so common cell values stay small.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Markup {
+    pub markup: String,
+    pub document: bool,
+}
 
 impl Value {
     pub fn err(msg: impl Into<String>) -> Value {
@@ -43,7 +50,8 @@ impl Value {
     }
     pub fn as_str(&self) -> Option<&str> {
         match self {
-            Str(s) | Json(serde_json::Value::String(s)) => Some(s),
+            Str(s) => Some(s),
+            Json(j) => j.as_str(),
             _ => None,
         }
     }
@@ -51,7 +59,7 @@ impl Value {
         match self {
             Int(i) => Some(*i as f64),
             Num(n) => Some(*n),
-            Json(serde_json::Value::Number(n)) => n.as_f64(),
+            Json(j) => j.as_f64(),
             _ => None,
         }
     }
@@ -70,12 +78,14 @@ impl Value {
             Str(_) => "string",
             Date(_) => "date",
             Array(_) => "array",
-            Json(serde_json::Value::Array(_)) => "array",
-            Json(serde_json::Value::Number(_)) => "number",
-            Json(serde_json::Value::String(_)) => "string",
-            Json(serde_json::Value::Bool(_)) => "boolean",
-            Json(_) => "object",
-            Html { .. } | Obj(_) => "object",
+            Json(j) => match **j {
+                serde_json::Value::Array(_) => "array",
+                serde_json::Value::Number(_) => "number",
+                serde_json::Value::String(_) => "string",
+                serde_json::Value::Bool(_) => "boolean",
+                _ => "object",
+            },
+            Html(_) | Obj(_) => "object",
             Re(_) => "regex",
             Error(_) => "error",
         }
@@ -104,16 +114,19 @@ impl Value {
             Date(d) => fmt_date(d),
             Array(a) => format!("[{}]", a.iter().map(|v| v.to_java_string()).collect::<Vec<_>>().join(", ")),
             Json(j) => j.to_string(),
-            Html { markup, .. } => markup.clone(),
+            Html(h) => h.markup.clone(),
             Obj(f) => format!("{{{}}}", f.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect::<Vec<_>>().join(", ")),
             Re(r) => r.as_str().to_string(),
             Error(e) => e.clone(),
         }
     }
 
-    /// Text a cell shows and exports: like render, with null as "".
+    /// Text a cell shows in the grid and in exports: null is "", dates are plain ISO.
     pub fn display(&self) -> String {
-        self.render().unwrap_or_default()
+        match self {
+            Date(d) => fmt_date(d),
+            _ => self.render().unwrap_or_default(),
+        }
     }
 }
 
@@ -174,7 +187,7 @@ pub fn json_pretty(v: &Value, depth: usize) -> String {
         Array(a) if a.is_empty() => "[  ]".into(),
         Array(a) => format!("[ {} ]", a.iter().map(|x| json_pretty(x, depth)).collect::<Vec<_>>().join(", ")),
         Json(j) => json_node_pretty(j, depth),
-        Html { markup, .. } => json_str(markup),
+        Html(h) => json_str(&h.markup),
         Obj(f) => {
             let pad = "  ".repeat(depth + 1);
             let items: Vec<_> = f.iter().map(|(k, v)| format!("{pad}{} : {}", json_str(k), json_pretty(v, depth + 1))).collect();
@@ -211,7 +224,7 @@ pub fn from_json(j: serde_json::Value) -> Value {
         J::Bool(b) => Bool(b),
         J::Number(n) => n.as_i64().map(Int).unwrap_or_else(|| Num(n.as_f64().unwrap_or(f64::NAN))),
         J::String(s) => Str(s),
-        other => Json(other),
+        other => Json(Box::new(other)),
     }
 }
 
@@ -227,7 +240,7 @@ impl PartialEq for Value {
             (Date(a), Date(b)) => a == b,
             (Array(a), Array(b)) => a == b,
             (Json(a), Json(b)) => a == b,
-            (Html { markup: a, document: x }, Html { markup: b, document: y }) => a == b && x == y,
+            (Html(a), Html(b)) => a == b,
             (Obj(a), Obj(b)) => a == b,
             (Re(a), Re(b)) => a.as_str() == b.as_str(),
             _ => false,
@@ -247,7 +260,7 @@ impl Hash for Value {
             Date(d) => d.hash(h),
             Array(a) => a.hash(h),
             Json(j) => j.to_string().hash(h),
-            Html { markup, document } => (markup, document).hash(h),
+            Html(x) => x.hash(h),
             Obj(f) => f.hash(h),
             Re(r) => r.as_str().hash(h),
         }
@@ -268,4 +281,11 @@ mod tests {
         assert_eq!(render_num(7.766279631452242e18), "7766279631452241920");
         assert_eq!(json_pretty(&Array(vec![Int(1), Num(2.0), Str("x".into())]), 0), "[ 1, 2, \"x\" ]");
     }
+}
+
+#[cfg(test)]
+#[test]
+fn value_stays_small() {
+    // dictionary entries are Values: keep the enum at a String plus a tag
+    assert!(std::mem::size_of::<Value>() <= 32, "Value is {} bytes", std::mem::size_of::<Value>());
 }

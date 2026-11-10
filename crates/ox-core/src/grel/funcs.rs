@@ -1,7 +1,7 @@
 //! GREL function library (OpenRefine 3.10 ControlFunctionRegistry), checked against tests/grel/fixtures.json.
 use super::{
     dates, text,
-    value::{from_json, json_pretty, Value, Value::*},
+    value::{from_json, json_pretty, Markup, Value, Value::*},
 };
 use base64::Engine as _;
 use regex::Regex;
@@ -53,7 +53,7 @@ macro_rules! fail {
 fn list(v: &Value) -> Option<Vec<Value>> {
     match v {
         Array(a) => Some(a.clone()),
-        Json(serde_json::Value::Array(a)) => Some(a.iter().cloned().map(from_json).collect()),
+        Json(j) => j.as_array().map(|a| a.iter().cloned().map(from_json).collect()),
         _ => None,
     }
 }
@@ -221,13 +221,13 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             // Jackson nodes stay nodes (a double prints as "1000.0"); fields and items convert on access
             Str(s) => match serde_json::from_str::<serde_json::Value>(s) {
                 Ok(serde_json::Value::Null) => Null,
-                Ok(j) => Json(j),
+                Ok(j) => Json(Box::new(j)),
                 Err(e) => fail!("parseJson failed: {e}"),
             },
             _ => fail!("parseJson expects a string"),
         },
         "hasField" => match (a0, a1) {
-            (Json(serde_json::Value::Object(m)), Str(k)) => Bool(m.contains_key(k)),
+            (Json(j), Str(k)) => Bool(j.as_object().is_some_and(|m| m.contains_key(k))),
             (Obj(f), Str(k)) => Bool(f.iter().any(|(n, _)| n == k)),
             _ => Bool(false),
         },
@@ -541,7 +541,7 @@ pub fn call(name: &str, a: &[Value]) -> Value {
                     m.insert("fragment".into(), u.fragment().unwrap_or("").into());
                     // OpenRefine 3.10 returns an empty query_params object
                     m.insert("query_params".into(), serde_json::Value::Object(Default::default()));
-                    Json(serde_json::Value::Object(m))
+                    Json(Box::new(serde_json::Value::Object(m)))
                 }
                 _ => fail!("Invalid URI {s}"),
             },
@@ -550,19 +550,19 @@ pub fn call(name: &str, a: &[Value]) -> Value {
 
         // ---------------------------------------------------------------- html / xml
         "parseHtml" | "parseXml" => match a0 {
-            Str(s) => Html { markup: s.clone(), document: true },
+            Str(s) => Html(Box::new(Markup { markup: s.clone(), document: true })),
             _ => fail!("{name} expects a single string as an argument"),
         },
         "select" => match (a0, a1) {
-            (Html { markup, document }, Str(css)) => {
+            (Html(h), Str(css)) => {
                 let Ok(sel) = scraper::Selector::parse(css) else { fail!("select: invalid selector {css}") };
-                let doc = html_doc(markup, *document);
-                Array(doc.select(&sel).map(|e| Html { markup: e.html(), document: false }).collect())
+                let doc = html_doc(&h.markup, h.document);
+                Array(doc.select(&sel).map(|e| Html(Box::new(Markup { markup: e.html(), document: false }))).collect())
             }
             _ => fail!("select expects an HTML element and a CSS selector"),
         },
         "htmlText" | "xmlText" | "wholeText" | "ownText" | "innerHtml" | "innerXml" | "scriptText" => match a0 {
-            Html { markup, document } => with_element(markup, *document, |e| match name {
+            Html(h) => with_element(&h.markup, h.document, |e| match name {
                 "htmlText" | "xmlText" => norm_ws(&e.text().collect::<String>()),
                 "wholeText" | "scriptText" => e.text().collect(),
                 "ownText" => norm_ws(&e.children().filter_map(|n| n.value().as_text().map(|t| t.to_string())).collect::<String>()),
@@ -573,7 +573,7 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("{name} expects an HTML element"),
         },
         "htmlAttr" | "xmlAttr" => match (a0, a1) {
-            (Html { markup, document }, Str(attr)) => Str(with_element(markup, *document, |e| e.value().attr(attr).unwrap_or("").to_string()).unwrap_or_default()),
+            (Html(h), Str(attr)) => Str(with_element(&h.markup, h.document, |e| e.value().attr(attr).unwrap_or("").to_string()).unwrap_or_default()),
             _ => fail!("{name} expects an HTML element and an attribute name"),
         },
         "parent" => fail!("parent is not supported yet"),
@@ -784,7 +784,8 @@ pub fn call(name: &str, a: &[Value]) -> Value {
 fn get(o: &Value, from: &Value, to: Option<&Value>) -> Value {
     match (o, from) {
         (Null, _) => Null,
-        (Obj(_), Str(k)) | (Json(serde_json::Value::Object(_)), Str(k)) => super::eval::field(o.clone(), k),
+        (Obj(_), Str(k)) => super::eval::field(o.clone(), k),
+        (Json(j), Str(k)) if j.is_object() => super::eval::field(o.clone(), k),
         (Str(s), _) => {
             let Some(i) = from.as_i64() else { fail!("get expects a number index") };
             let len = text::utf16_len(s) as i64;

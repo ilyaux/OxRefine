@@ -76,7 +76,10 @@ pub fn field(o: Value, name: &str) -> Value {
     match o {
         Error(_) => o,
         Obj(fields) => fields.into_iter().find(|(k, _)| k == name).map_or(Null, |(_, v)| v),
-        Json(serde_json::Value::Object(mut m)) => m.remove(name).map_or(Null, from_json),
+        Json(j) => match *j {
+            serde_json::Value::Object(mut m) => m.remove(name).map_or(Null, from_json),
+            _ => Null,
+        },
         _ => Null,
     }
 }
@@ -84,7 +87,7 @@ pub fn field(o: Value, name: &str) -> Value {
 pub fn eval(e: &Expr, env: &mut Env) -> Value {
     match e {
         Expr::Lit(v) => v.clone(),
-        Expr::Regex(r) => Re(r.clone()),
+        Expr::Regex(r) => Re(Box::new(r.clone())),
         Expr::Var(name) => var(name, env),
         Expr::Array(items) => Array(items.iter().map(|x| eval(x, env)).collect()),
         Expr::Field(o, name) => field(eval(o, env), name),
@@ -191,7 +194,10 @@ fn var_name(e: &Expr) -> Option<&str> {
 fn items(v: Value, ctl: &str) -> Result<Vec<Value>, Value> {
     match v {
         Array(a) => Ok(a),
-        Json(serde_json::Value::Array(a)) => Ok(a.into_iter().map(from_json).collect()),
+        Json(j) if j.is_array() => match *j {
+            serde_json::Value::Array(a) => Ok(a.into_iter().map(from_json).collect()),
+            _ => unreachable!(),
+        },
         Error(_) => Err(v),
         _ => Err(Value::err(format!("{ctl} expects an array"))),
     }
