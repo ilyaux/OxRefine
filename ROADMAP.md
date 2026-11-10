@@ -1,13 +1,13 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 22 of 102 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 25 of 102 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 45 | 10 |
+| v0.2 | 45 | 13 |
 | v0.5 | 31 | 2 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
@@ -31,8 +31,8 @@ Prove the engine model and the benchmark story.
 
 OpenRefine's data model: typed cells, records, persistent projects.
 
-- [~] **Typed cells** · v0.2 · P0 · L. String, number, boolean, date, null and error cells (OpenRefine's Cell model) while keeping dictionary encoding; toNumber/toDate and type guessing on import. _OpenRefine: Cell, guessCellValueTypes_
-- [~] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
+- [x] **Typed cells** · v0.2 · P0 · L. String, number, boolean, date, null and error cells (OpenRefine's Cell model) while keeping dictionary encoding; toNumber/toDate and type guessing on import. _OpenRefine: Cell, guessCellValueTypes_
+- [x] **Null vs empty string** · v0.2 · P0 · S. Distinguish blank (null) from "", matching storeBlankCellsAsNulls and isBlank/isEmptyString. _OpenRefine: storeBlankCellsAsNulls_
 - [ ] **Records mode** · v0.2 · P1 · L. Rows grouped into records by the key column; record-based engineConfig, record-aware facets and ops. _OpenRefine: mode: record-based_
 - [ ] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
 - [ ] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
@@ -84,7 +84,7 @@ All 37 OpenRefine operations, same JSON, same results.
 - [ ] **Sort and reorder rows permanently** · v0.2 · P0 · M. Multi-column sort criteria by type, then make it permanent. _OpenRefine: row-reorder_
 - [ ] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
 - [ ] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
-- [ ] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
+- [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
 - [ ] **Reconciliation operations** · v1.0 · P1 · L. recon, match best, judge similar, clear similar, mark new, discard, match specific, copy across columns, use values as identifiers. _OpenRefine: recon-*_
 
 ## GREL
