@@ -1066,7 +1066,7 @@
       "id": "perf-import",
       "phase": "p11",
       "milestone": "v0.2",
-      "status": "todo",
+      "status": "doing",
       "priority": "P0",
       "size": "M",
       "title": "Parallel CSV import",

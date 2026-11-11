@@ -161,7 +161,7 @@ Prove parity automatically against real OpenRefine.
 
 Keep the 10x lead as features land; close the import gap.
 
-- [ ] **Parallel CSV import** · v0.2 · P0 · M. Chunked multi-threaded parsing plus a faster hasher; import is the smallest gap today (1.6x at 2M rows). _OpenRefine: benchmark_
+- [~] **Parallel CSV import** · v0.2 · P0 · M. Chunked multi-threaded parsing plus a faster hasher; import is the smallest gap today (1.6x at 2M rows). _OpenRefine: benchmark_
 - [ ] **History as diffs** · v0.5 · P1 · M. Store changed codes instead of full column snapshots so long histories on big files stay small. _OpenRefine: project.rs_
 - [ ] **Datasets larger than RAM** · later · P2 · L. Memory-mapped column files and spill-to-disk for 50M+ rows. _OpenRefine: new_
 - [ ] **Benchmark tracking** · v0.5 · P2 · S. Run the comparison on every release and publish the chart. _OpenRefine: benchmarks/_
