@@ -263,12 +263,23 @@
       "id": "model-recon",
       "phase": "p1",
       "milestone": "v0.5",
+      "status": "doing",
+      "priority": "P1",
+      "size": "M",
+      "title": "Reconciliation data in the cell model",
+      "detail": "Every cell can carry a Recon: id, service, identifierSpace, schemaSpace, judgment (none / matched / new), judgmentAction, judgmentHistoryEntry, match (id, name, types, score), candidates (ranked), features (typeMatch, nameMatch, nameLevenshtein, nameWordDistance), matchRank. Stored beside the dictionary codes, not in them. GREL sees cell.recon.* (judgment, match, best, candidates, features, service…). Recon data reads from and writes to OpenRefine project archives (the recon pool in data.txt and change files) instead of being dropped, and survives operations that move cells (column copy, move, reorder, rows remove/reorder, fill down/blank down, records).",
+      "ref": "Recon, ReconCandidate, ReconStats, Pool"
+    },
+    {
+      "id": "model-meta",
+      "phase": "p1",
+      "milestone": "v0.5",
       "status": "backlog",
       "priority": "P2",
       "size": "M",
-      "title": "Reconciliation data in the cell model",
-      "detail": "Per-cell recon judgment, candidates and match, stored outside the dictionary.",
-      "ref": "Recon, ReconCandidate"
+      "title": "Project metadata and tags",
+      "detail": "OpenRefine's project metadata: tags, description, creator, contributors, subject, license, homepage, image, title, version, custom metadata fields; editable from the home page, projects filtered by tag, read from and written to archive metadata.json (tags and fields are read today but not shown).",
+      "ref": "ProjectMetadata, SetProjectMetadataCommand, SetProjectTagsCommand"
     },
     {
       "id": "imp-csv-opts",
@@ -355,8 +366,8 @@
       "priority": "P2",
       "size": "L",
       "title": "RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)",
-      "detail": "Subject-per-record import as OpenRefine does.",
-      "ref": "text/rdf/*"
+      "detail": "OpenRefine's RDF importers: one row per subject, one column per predicate, multiple values as record rows. Formats: RDF/N3, N-Triples, Turtle, RDF/XML, JSON-LD. Fixtures from OpenRefine.",
+      "ref": "RdfTripleImporter, RdfXmlTripleImporter, RdfJsonldTripleImporter"
     },
     {
       "id": "imp-marc",
@@ -366,8 +377,8 @@
       "priority": "P2",
       "size": "M",
       "title": "MARC records",
-      "detail": "Library records via MARCXML conversion.",
-      "ref": "text/marc"
+      "detail": "MARC (ISO 2709) import: converted to MARCXML and read with the XML importer, as OpenRefine does.",
+      "ref": "MarcImporter"
     },
     {
       "id": "imp-wiki",
@@ -377,8 +388,8 @@
       "priority": "P2",
       "size": "M",
       "title": "Wikitext tables",
-      "detail": "Parse MediaWiki table markup, keep links for reconciliation.",
-      "ref": "text/wiki"
+      "detail": "Import tables from MediaWiki markup: table choice, headers, rowspan/colspan, links as cells (optionally reconciled to Wikidata), references, blank-cell handling. Same options as OpenRefine.",
+      "ref": "WikitextImporter"
     },
     {
       "id": "imp-sources",
@@ -412,6 +423,17 @@
       "title": "Import preview wizard",
       "detail": "Live preview of the first rows while options change, format auto-detect.",
       "ref": "parsing-ui"
+    },
+    {
+      "id": "imp-bzip2",
+      "phase": "p2",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "S",
+      "title": "bzip2 archives",
+      "detail": "Import .bz2 and .tar.bz2 like OpenRefine (it reads gzip, bzip2, zip and tar), in the wizard and from URLs.",
+      "ref": "ImportingUtilities.tryOpenAsCompressedFile"
     },
     {
       "id": "exp-sv",
@@ -500,6 +522,17 @@
       "title": "Export project archive",
       "detail": "Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible.",
       "ref": "export-project"
+    },
+    {
+      "id": "exp-xls",
+      "phase": "p3",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "Excel 97 (.xls) export",
+      "detail": "OpenRefine exports both .xls (BIFF8) and .xlsx. Write .xls with typed cells, the sheet named after the project, OpenRefine's cell limits (32767 chars, 65536 rows).",
+      "ref": "XlsExporter (xlsx=false)"
     },
     {
       "id": "op-columns",
@@ -617,10 +650,10 @@
       "milestone": "v1.0",
       "status": "backlog",
       "priority": "P1",
-      "size": "L",
+      "size": "M",
       "title": "Reconciliation operations",
-      "detail": "recon, match best, judge similar, clear similar, mark new, discard, match specific, copy across columns, use values as identifiers.",
-      "ref": "recon-*"
+      "detail": "The operations around reconciliation: match each cell to its best candidate, create a new item for each cell, match all filtered cells to a chosen item, discard judgments, clear reconciliation data, copy reconciliation data to other columns, use values as identifiers, add a column of matched entity identifiers/names. Same operation JSON and results as OpenRefine 3.10.1, checked by fixtures.",
+      "ref": "ReconMatchBestCandidatesOperation, ReconMarkNewTopicsOperation, ReconDiscardJudgmentsOperation, ReconClearSimilarCellsOperation, ReconCopyAcrossColumnsOperation, ReconUseValuesAsIdentifiersOperation, ReconMatchSpecificTopicOperation"
     },
     {
       "id": "grel-parser",
@@ -751,8 +784,19 @@
       "priority": "P2",
       "size": "L",
       "title": "Python and Clojure expressions",
-      "detail": "OpenRefine ships Jython 2.7 and Clojure; decide between embedded Python (pyo3) or clear unsupported errors.",
-      "ref": "jython, clojure"
+      "detail": "Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes).",
+      "ref": "JythonEvaluable, ClojureEvaluable"
+    },
+    {
+      "id": "grel-detectlang",
+      "phase": "p5",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "detectLanguage()",
+      "detail": "GREL detectLanguage(s): ISO 639-1 code from OpenRefine's language-detector n-gram profiles, the same answers on the fixture texts (currently 2 known failures).",
+      "ref": "DetectLanguage, optimaize language-detector"
     },
     {
       "id": "facet-range",
@@ -782,10 +826,10 @@
       "milestone": "later",
       "status": "backlog",
       "priority": "P2",
-      "size": "L",
+      "size": "M",
       "title": "Scatterplot facet",
-      "detail": "Scatterplot matrix and brushed 2D selection.",
-      "ref": "scatterplot"
+      "detail": "Facet → Scatterplot matrix of numeric columns, then a scatterplot facet on a pair: linear/log scales, rotation, dot size, rectangle selection that filters rows; facet JSON (scatterplot, from_x/to_x/from_y/to_y) as in OpenRefine.",
+      "ref": "ScatterplotFacet, GetScatterplotCommand"
     },
     {
       "id": "facet-expr",
@@ -848,10 +892,10 @@
       "milestone": "v0.5",
       "status": "backlog",
       "priority": "P2",
-      "size": "M",
+      "size": "S",
       "title": "PPM distance for nearest neighbours",
-      "detail": "Port vicino's PPM distance: 10*((C(x+y)+C(y+x))/(C(x+x)+C(y+y)) - 1), where C is the compressed length from arithcode's PPMModel(8). Needs the arithcode-1.2 sources (OpenRefine/simile-vicino, lib-src/arithcode-1.2-sources.jar, 1.3 MB). Then drop the 2 PPM lines from tests/cluster/known_failures.txt and enable PPM in the cluster dialog.",
-      "ref": "knn: ppm"
+      "detail": "Prediction by Partial Matching distance, as OpenRefine computes it with its bundled arithmetic coder (needs permission to download the reference code). 2 known failures today.",
+      "ref": "PPMDistance, arithcode"
     },
     {
       "id": "cl-ui",
@@ -872,19 +916,19 @@
       "priority": "P2",
       "size": "M",
       "title": "Custom clustering functions",
-      "detail": "User-defined keying and distance functions in GREL.",
-      "ref": "clustering-functions-dialog"
+      "detail": "OpenRefine 3.8+ lets users add key-collision keyers and kNN distances written in GREL/Python, saved in preferences and listed in the cluster dialog.",
+      "ref": "ClusteringFunctionsCommand, preferences: ui.clustering.customKeyingFunctions"
     },
     {
       "id": "rc-client",
       "phase": "p8",
       "milestone": "v1.0",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "L",
-      "title": "Reconciliation API client",
-      "detail": "W3C Reconciliation API: service manifest, batched queries, type and property constraints, service registry with Wikidata preset.",
-      "ref": "StandardReconConfig"
+      "title": "Reconciliation API client and the reconcile operation",
+      "detail": "W3C Reconciliation API client: fetch a service manifest, batched queries (OpenRefine's batch size), type constraint, property constraints from other columns, limit, auto-match (OpenRefine's rule: top candidate matched when its score and the gap to the second qualify). The core/recon operation with StandardReconConfig JSON, same output cells as OpenRefine; long-running job with progress and cancel. Service list kept in preferences, with Wikidata as a preset; 'guess types of column'. The reconcile dialog: service, type, columns as properties, auto-match toggle. Tests run against a local mock service with fixtures from OpenRefine 3.10.1.",
+      "ref": "StandardReconConfig, ReconOperation, GuessTypesOfColumnCommand"
     },
     {
       "id": "rc-judge",
@@ -894,8 +938,8 @@
       "priority": "P1",
       "size": "M",
       "title": "Matching UI",
-      "detail": "Candidates with scores in cells, one-click match, search-for-match, auto-match threshold.",
-      "ref": "recon cell UI"
+      "detail": "Per-cell reconciliation UI as in OpenRefine: the candidate list with scores under each cell, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', 'search for match' with the service's suggest API, entity preview (preview service / flyout), matched cells shown as links to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries.",
+      "ref": "ReconJudgeOneCellCommand, ReconJudgeSimilarCellsOperation"
     },
     {
       "id": "rc-facets",
@@ -905,8 +949,8 @@
       "priority": "P1",
       "size": "M",
       "title": "Reconciliation facets",
-      "detail": "Judgment, best-candidate score, type match and other recon facets.",
-      "ref": "recon facets"
+      "detail": "Reconcile → Facets menu: by judgment, best candidate's score (range), best candidate's type match, best candidate's name edit distance, best candidate's name word similarity, best candidate's types; by judgment action and judgment timestamp. Same facet JSON in engineConfig, so recipes with these facets replay.",
+      "ref": "ReconJudgmentFacet, cell.recon.* expressions"
     },
     {
       "id": "rc-extend",
@@ -914,10 +958,10 @@
       "milestone": "v1.0",
       "status": "backlog",
       "priority": "P1",
-      "size": "M",
+      "size": "L",
       "title": "Add columns from reconciled values",
-      "detail": "Data extension API: fetch properties of matched entities into new columns.",
-      "ref": "extend-reconciled-data"
+      "detail": "Data extension: propose properties from the service, preview, fetch in batches, add one column per property (extend-reconciled-data), multi-valued results as extra record rows, settings (limit, rank, references, count), values that are entities come back reconciled. Fixtures from OpenRefine against the mock service.",
+      "ref": "ExtendDataOperation, ReconciledDataExtensionJob"
     },
     {
       "id": "ui-home",
@@ -1015,8 +1059,19 @@
       "priority": "P2",
       "size": "M",
       "title": "Translations",
-      "detail": "i18n framework; OpenRefine's BSD-licensed translation files can seed 40+ languages.",
-      "ref": "langs/*.json"
+      "detail": "UI strings in message files, language picker, OpenRefine's translations (40+ languages from its Weblate project) mapped onto ours where the meaning matches, Russian checked by hand.",
+      "ref": "main/webapp/modules/core/langs"
+    },
+    {
+      "id": "ui-prefs",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "Preferences",
+      "detail": "A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest.",
+      "ref": "PreferenceStore, preferences.vt"
     },
     {
       "id": "qa-conformance",
@@ -1158,8 +1213,8 @@
       "priority": "P2",
       "size": "L",
       "title": "OpenRefine HTTP API compatibility",
-      "detail": "Serve OpenRefine's /command/core/* so existing clients and scripts work unchanged.",
-      "ref": "openrefine-client"
+      "detail": "Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged.",
+      "ref": "openrefine-client, CommandServlet"
     },
     {
       "id": "rel-docs",
@@ -1191,7 +1246,7 @@
       "priority": "P2",
       "size": "L",
       "title": "Database import",
-      "detail": "PostgreSQL, MySQL/MariaDB, SQLite with a query editor and preview.",
+      "detail": "OpenRefine's database extension: PostgreSQL, MySQL, MariaDB and SQLite connections (saved, with test), schema browser, SQL query editor, preview, import of the query result.",
       "ref": "extensions/database"
     },
     {
@@ -1200,9 +1255,9 @@
       "milestone": "later",
       "status": "backlog",
       "priority": "P2",
-      "size": "XL",
+      "size": "L",
       "title": "Wikibase schema and upload",
-      "detail": "Schema editor, issue checks, preview and upload edits to Wikidata/Wikibase.",
+      "detail": "Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation.",
       "ref": "extensions/wikibase"
     },
     {
@@ -1213,8 +1268,41 @@
       "priority": "P2",
       "size": "S",
       "title": "PC-Axis import",
-      "detail": "Statistical PX file importer.",
+      "detail": "Statistical PC-Axis (.px) files: one row per data point with its dimension values, as OpenRefine's pc-axis extension.",
       "ref": "extensions/pc-axis"
+    },
+    {
+      "id": "ext-commons",
+      "phase": "p13",
+      "milestone": "later",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "Wikimedia Commons import",
+      "detail": "OpenRefine's commons extension: import files from Commons categories (with depth), file names reconciled to M-ids, the wikitext of each file page as an option.",
+      "ref": "extensions/commons"
+    },
+    {
+      "id": "ext-gdata",
+      "phase": "p13",
+      "milestone": "later",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "L",
+      "title": "Google Sheets and Drive",
+      "detail": "OpenRefine's gdata extension: import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in.",
+      "ref": "extensions/gdata"
+    },
+    {
+      "id": "ext-plugins",
+      "phase": "p13",
+      "milestone": "later",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "L",
+      "title": "Extensions",
+      "detail": "A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules); a documented API and one example extension.",
+      "ref": "Butterfly modules, ClientSideResourceManager"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 104 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 112 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,9 +8,9 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 21 |
-| v0.5 | 32 | 2 |
+| v0.5 | 37 | 2 |
 | v1.0 | 5 | 0 |
-| later | 11 | 0 |
+| later | 14 | 0 |
 
 ## Prototype
 
@@ -38,7 +38,8 @@ OpenRefine's data model: typed cells, records, persistent projects.
 - [~] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
 - [~] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
 - [~] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
-- [ ] **Reconciliation data in the cell model** · v0.5 · P2 · M. Per-cell recon judgment, candidates and match, stored outside the dictionary. _OpenRefine: Recon, ReconCandidate_
+- [~] **Reconciliation data in the cell model** · v0.5 · P1 · M. Every cell can carry a Recon: id, service, identifierSpace, schemaSpace, judgment (none / matched / new), judgmentAction, judgmentHistoryEntry, match (id, name, types, score), candidates (ranked), features (typeMatch, nameMatch, nameLevenshtein, nameWordDistance), matchRank. Stored beside the dictionary codes, not in them. GREL sees cell.recon.* (judgment, match, best, candidates, features, service…). Recon data reads from and writes to OpenRefine project archives (the recon pool in data.txt and change files) instead of being dropped, and survives operations that move cells (column copy, move, reorder, rows remove/reorder, fill down/blank down, records). _OpenRefine: Recon, ReconCandidate, ReconStats, Pool_
+- [ ] **Project metadata and tags** · v0.5 · P2 · M. OpenRefine's project metadata: tags, description, creator, contributors, subject, license, homepage, image, title, version, custom metadata fields; editable from the home page, projects filtered by tag, read from and written to archive metadata.json (tags and fields are read today but not shown). _OpenRefine: ProjectMetadata, SetProjectMetadataCommand, SetProjectTagsCommand_
 
 ## Import
 
@@ -51,12 +52,13 @@ Every format OpenRefine imports, with its options and preview.
 - [~] **XML** · v0.5 · P1 · L. Pick the record element in a tree preview, attributes and nested elements as columns. _OpenRefine: text/xml_
 - [~] **Fixed-width text** · v0.5 · P2 · M. Column widths with a draggable ruler in preview. _OpenRefine: text/line-based/fixed-width_
 - [~] **Line-based text** · v0.5 · P2 · S. One line per row, lines-per-row grouping. _OpenRefine: text/line-based_
-- [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** · later · P2 · L. Subject-per-record import as OpenRefine does. _OpenRefine: text/rdf/*_
-- [ ] **MARC records** · later · P2 · M. Library records via MARCXML conversion. _OpenRefine: text/marc_
-- [ ] **Wikitext tables** · later · P2 · M. Parse MediaWiki table markup, keep links for reconciliation. _OpenRefine: text/wiki_
+- [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** · later · P2 · L. OpenRefine's RDF importers: one row per subject, one column per predicate, multiple values as record rows. Formats: RDF/N3, N-Triples, Turtle, RDF/XML, JSON-LD. Fixtures from OpenRefine. _OpenRefine: RdfTripleImporter, RdfXmlTripleImporter, RdfJsonldTripleImporter_
+- [ ] **MARC records** · later · P2 · M. MARC (ISO 2709) import: converted to MARCXML and read with the XML importer, as OpenRefine does. _OpenRefine: MarcImporter_
+- [ ] **Wikitext tables** · later · P2 · M. Import tables from MediaWiki markup: table choice, headers, rowspan/colspan, links as cells (optionally reconciled to Wikidata), references, blank-cell handling. Same options as OpenRefine. _OpenRefine: WikitextImporter_
 - [~] **Import from URL and clipboard** · v0.2 · P1 · S. Download with progress and paste-as-table, like OpenRefine's Web Addresses and Clipboard tabs. _OpenRefine: create-project-from-upload_
 - [~] **Zip/gzip and multi-file import** · v0.5 · P2 · S. Pick files inside archives, add a file-name column. _OpenRefine: includeFileSources, includeArchiveFileName_
 - [~] **Import preview wizard** · v0.2 · P0 · M. Live preview of the first rows while options change, format auto-detect. _OpenRefine: parsing-ui_
+- [ ] **bzip2 archives** · v0.5 · P2 · S. Import .bz2 and .tar.bz2 like OpenRefine (it reads gzip, bzip2, zip and tar), in the wizard and from URLs. _OpenRefine: ImportingUtilities.tryOpenAsCompressedFile_
 
 ## Export
 
@@ -70,6 +72,7 @@ Every exporter OpenRefine ships.
 - [~] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
 - [~] **Custom tabular exporter** · v0.5 · P1 · M. Choose and order columns, format dates and recon values, save as a reusable preset. _OpenRefine: custom-tabular-exporter_
 - [~] **Export project archive** · v0.5 · P2 · M. Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible. _OpenRefine: export-project_
+- [ ] **Excel 97 (.xls) export** · v0.5 · P2 · M. OpenRefine exports both .xls (BIFF8) and .xlsx. Write .xls with typed cells, the sheet named after the project, OpenRefine's cell limits (32767 chars, 65536 rows). _OpenRefine: XlsExporter (xlsx=false)_
 
 ## Operations
 
@@ -85,7 +88,7 @@ All 37 OpenRefine operations, same JSON, same results.
 - [~] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
 - [~] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
 - [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
-- [ ] **Reconciliation operations** · v1.0 · P1 · L. recon, match best, judge similar, clear similar, mark new, discard, match specific, copy across columns, use values as identifiers. _OpenRefine: recon-*_
+- [ ] **Reconciliation operations** · v1.0 · P1 · M. The operations around reconciliation: match each cell to its best candidate, create a new item for each cell, match all filtered cells to a chosen item, discard judgments, clear reconciliation data, copy reconciliation data to other columns, use values as identifiers, add a column of matched entity identifiers/names. Same operation JSON and results as OpenRefine 3.10.1, checked by fixtures. _OpenRefine: ReconMatchBestCandidatesOperation, ReconMarkNewTopicsOperation, ReconDiscardJudgmentsOperation, ReconClearSimilarCellsOperation, ReconCopyAcrossColumnsOperation, ReconUseValuesAsIdentifiersOperation, ReconMatchSpecificTopicOperation_
 
 ## GREL
 
@@ -102,7 +105,8 @@ The full expression language: ~130 functions, controls, errors and coercion.
 - [x] **parseJson and JSON paths** · v0.2 · P1 · S. Field access on parsed JSON like OpenRefine. _OpenRefine: ParseJson_
 - [x] **Error and type-coercion semantics** · v0.2 · P0 · M. Match OpenRefine's EvalError propagation, null handling and number formatting to the character. _OpenRefine: EvalError_
 - [~] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
-- [ ] **Python and Clojure expressions** · later · P2 · L. OpenRefine ships Jython 2.7 and Clojure; decide between embedded Python (pyo3) or clear unsupported errors. _OpenRefine: jython, clojure_
+- [ ] **Python and Clojure expressions** · later · P2 · L. Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). _OpenRefine: JythonEvaluable, ClojureEvaluable_
+- [ ] **detectLanguage()** · v0.5 · P2 · M. GREL detectLanguage(s): ISO 639-1 code from OpenRefine's language-detector n-gram profiles, the same answers on the fixture texts (currently 2 known failures). _OpenRefine: DetectLanguage, optimaize language-detector_
 
 ## Facets
 
@@ -110,7 +114,7 @@ Every facet type, including customized and expression facets.
 
 - [~] **Numeric range facet** · v0.2 · P0 · M. Histogram, draggable range, numeric/non-numeric/blank/error toggles. _OpenRefine: range_
 - [~] **Timeline facet** · v0.5 · P1 · M. Date histogram with range selection. _OpenRefine: timerange_
-- [ ] **Scatterplot facet** · later · P2 · L. Scatterplot matrix and brushed 2D selection. _OpenRefine: scatterplot_
+- [ ] **Scatterplot facet** · later · P2 · M. Facet → Scatterplot matrix of numeric columns, then a scatterplot facet on a pair: linear/log scales, rotation, dot size, rectangle selection that filters rows; facet JSON (scatterplot, from_x/to_x/from_y/to_y) as in OpenRefine. _OpenRefine: ScatterplotFacet, GetScatterplotCommand_
 - [~] **Custom facets by expression** · v0.2 · P0 · M. List and range facets over any GREL expression, needs the full evaluator. _OpenRefine: list facet expression_
 - [~] **Customized facets menu** · v0.2 · P1 · M. Word, duplicates, text length, Unicode chars, blank, error, star and flag facets. _OpenRefine: Customized facets_
 - [~] **Facet details** · v0.2 · P1 · S. Sort by name/count, include/exclude, edit a choice in place, choice limit, collapse. _OpenRefine: list-facet.js_
@@ -121,18 +125,18 @@ All key-collision keyers and nearest-neighbour methods.
 
 - [~] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
 - [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein distance with n-gram blocking, radius and block size; parallel, with progress and cancel. _OpenRefine: knn: levenshtein_
-- [ ] **PPM distance for nearest neighbours** · v0.5 · P2 · M. Port vicino's PPM distance: 10*((C(x+y)+C(y+x))/(C(x+x)+C(y+y)) - 1), where C is the compressed length from arithcode's PPMModel(8). Needs the arithcode-1.2 sources (OpenRefine/simile-vicino, lib-src/arithcode-1.2-sources.jar, 1.3 MB). Then drop the 2 PPM lines from tests/cluster/known_failures.txt and enable PPM in the cluster dialog. _OpenRefine: knn: ppm_
+- [ ] **PPM distance for nearest neighbours** · v0.5 · P2 · S. Prediction by Partial Matching distance, as OpenRefine computes it with its bundled arithmetic coder (needs permission to download the reference code). 2 known failures today. _OpenRefine: PPMDistance, arithcode_
 - [~] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
-- [ ] **Custom clustering functions** · later · P2 · M. User-defined keying and distance functions in GREL. _OpenRefine: clustering-functions-dialog_
+- [ ] **Custom clustering functions** · later · P2 · M. OpenRefine 3.8+ lets users add key-collision keyers and kNN distances written in GREL/Python, saved in preferences and listed in the cluster dialog. _OpenRefine: ClusteringFunctionsCommand, preferences: ui.clustering.customKeyingFunctions_
 
 ## Reconciliation
 
 W3C Reconciliation API: matching, judging, data extension.
 
-- [ ] **Reconciliation API client** · v1.0 · P1 · L. W3C Reconciliation API: service manifest, batched queries, type and property constraints, service registry with Wikidata preset. _OpenRefine: StandardReconConfig_
-- [ ] **Matching UI** · v1.0 · P1 · M. Candidates with scores in cells, one-click match, search-for-match, auto-match threshold. _OpenRefine: recon cell UI_
-- [ ] **Reconciliation facets** · v1.0 · P1 · M. Judgment, best-candidate score, type match and other recon facets. _OpenRefine: recon facets_
-- [ ] **Add columns from reconciled values** · v1.0 · P1 · M. Data extension API: fetch properties of matched entities into new columns. _OpenRefine: extend-reconciled-data_
+- [~] **Reconciliation API client and the reconcile operation** · v1.0 · P1 · L. W3C Reconciliation API client: fetch a service manifest, batched queries (OpenRefine's batch size), type constraint, property constraints from other columns, limit, auto-match (OpenRefine's rule: top candidate matched when its score and the gap to the second qualify). The core/recon operation with StandardReconConfig JSON, same output cells as OpenRefine; long-running job with progress and cancel. Service list kept in preferences, with Wikidata as a preset; 'guess types of column'. The reconcile dialog: service, type, columns as properties, auto-match toggle. Tests run against a local mock service with fixtures from OpenRefine 3.10.1. _OpenRefine: StandardReconConfig, ReconOperation, GuessTypesOfColumnCommand_
+- [ ] **Matching UI** · v1.0 · P1 · M. Per-cell reconciliation UI as in OpenRefine: the candidate list with scores under each cell, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', 'search for match' with the service's suggest API, entity preview (preview service / flyout), matched cells shown as links to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries. _OpenRefine: ReconJudgeOneCellCommand, ReconJudgeSimilarCellsOperation_
+- [ ] **Reconciliation facets** · v1.0 · P1 · M. Reconcile → Facets menu: by judgment, best candidate's score (range), best candidate's type match, best candidate's name edit distance, best candidate's name word similarity, best candidate's types; by judgment action and judgment timestamp. Same facet JSON in engineConfig, so recipes with these facets replay. _OpenRefine: ReconJudgmentFacet, cell.recon.* expressions_
+- [ ] **Add columns from reconciled values** · v1.0 · P1 · L. Data extension: propose properties from the service, preview, fetch in batches, add one column per property (extend-reconciled-data), multi-valued results as extra record rows, settings (limit, rank, references, count), values that are entities come back reconciled. Fixtures from OpenRefine against the mock service. _OpenRefine: ExtendDataOperation, ReconciledDataExtensionJob_
 
 ## Desktop UI
 
@@ -146,7 +150,8 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [~] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
 - [~] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
 - [~] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
-- [ ] **Translations** · v0.5 · P2 · M. i18n framework; OpenRefine's BSD-licensed translation files can seed 40+ languages. _OpenRefine: langs/*.json_
+- [ ] **Translations** · v0.5 · P2 · M. UI strings in message files, language picker, OpenRefine's translations (40+ languages from its Weblate project) mapped onto ours where the meaning matches, Russian checked by hand. _OpenRefine: main/webapp/modules/core/langs_
+- [ ] **Preferences** · v0.5 · P2 · M. A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest. _OpenRefine: PreferenceStore, preferences.vt_
 
 ## Compatibility & QA
 
@@ -174,7 +179,7 @@ Installers, docs and a public launch.
 - [x] **Public repository** · v0.2 · P0 · S. git init, license (MIT/Apache-2.0), contributing guide, issue templates; credit OpenRefine (BSD-3). _OpenRefine: new_
 - [ ] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
 - [~] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
-- [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* so existing clients and scripts work unchanged. _OpenRefine: openrefine-client_
+- [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged. _OpenRefine: openrefine-client, CommandServlet_
 - [ ] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_
 - [ ] **Launch** · v0.5 · P1 · S. README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post. _OpenRefine: new_
 
@@ -182,6 +187,9 @@ Installers, docs and a public launch.
 
 OpenRefine's bundled extensions: database, Wikibase, scripting.
 
-- [ ] **Database import** · later · P2 · L. PostgreSQL, MySQL/MariaDB, SQLite with a query editor and preview. _OpenRefine: extensions/database_
-- [ ] **Wikibase schema and upload** · later · P2 · XL. Schema editor, issue checks, preview and upload edits to Wikidata/Wikibase. _OpenRefine: extensions/wikibase_
-- [ ] **PC-Axis import** · later · P2 · S. Statistical PX file importer. _OpenRefine: extensions/pc-axis_
+- [ ] **Database import** · later · P2 · L. OpenRefine's database extension: PostgreSQL, MySQL, MariaDB and SQLite connections (saved, with test), schema browser, SQL query editor, preview, import of the query result. _OpenRefine: extensions/database_
+- [ ] **Wikibase schema and upload** · later · P2 · L. Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. _OpenRefine: extensions/wikibase_
+- [ ] **PC-Axis import** · later · P2 · S. Statistical PC-Axis (.px) files: one row per data point with its dimension values, as OpenRefine's pc-axis extension. _OpenRefine: extensions/pc-axis_
+- [ ] **Wikimedia Commons import** · later · P2 · M. OpenRefine's commons extension: import files from Commons categories (with depth), file names reconciled to M-ids, the wikitext of each file page as an option. _OpenRefine: extensions/commons_
+- [ ] **Google Sheets and Drive** · later · P2 · L. OpenRefine's gdata extension: import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in. _OpenRefine: extensions/gdata_
+- [ ] **Extensions** · later · P2 · L. A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules); a documented API and one example extension. _OpenRefine: Butterfly modules, ClientSideResourceManager_
