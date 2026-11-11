@@ -62,13 +62,13 @@ Every format OpenRefine imports, with its options and preview.
 
 Every exporter OpenRefine ships.
 
-- [ ] **CSV/TSV/custom separator export** · v0.2 · P0 · S. Separator, quoting, line endings, BOM, filtered rows only. _OpenRefine: csv, tsv, *sv_
-- [ ] **Excel export** · v0.2 · P0 · M. xlsx with typed cells (rust_xlsxwriter); legacy xls only if users ask. _OpenRefine: xlsx, xls_
+- [~] **CSV/TSV/custom separator export** · v0.2 · P0 · S. Separator, quoting, line endings, BOM, filtered rows only. _OpenRefine: csv, tsv, *sv_
+- [~] **Excel export** · v0.2 · P0 · M. xlsx with typed cells (rust_xlsxwriter); legacy xls only if users ask. _OpenRefine: xlsx, xls_
 - [ ] **ODS export** · v0.5 · P2 · M. OpenDocument spreadsheet writer. _OpenRefine: ods_
-- [ ] **HTML table export** · v0.5 · P2 · S. Plain HTML table of the filtered rows. _OpenRefine: html_
-- [ ] **Templating exporter** · v0.5 · P1 · M. Prefix / row template / separator / suffix with GREL inside {{ }}; the usual way to produce JSON. _OpenRefine: template_
-- [ ] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
-- [ ] **Custom tabular exporter** · v0.5 · P1 · M. Choose and order columns, format dates and recon values, save as a reusable preset. _OpenRefine: custom-tabular-exporter_
+- [~] **HTML table export** · v0.5 · P2 · S. Plain HTML table of the filtered rows. _OpenRefine: html_
+- [~] **Templating exporter** · v0.5 · P1 · M. Prefix / row template / separator / suffix with GREL inside {{ }}; the usual way to produce JSON. _OpenRefine: template_
+- [~] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
+- [~] **Custom tabular exporter** · v0.5 · P1 · M. Choose and order columns, format dates and recon values, save as a reusable preset. _OpenRefine: custom-tabular-exporter_
 - [ ] **Export project archive** · v0.5 · P2 · M. Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible. _OpenRefine: export-project_
 
 ## Operations
