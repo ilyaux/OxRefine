@@ -87,6 +87,20 @@ pub struct SqlColumn {
 /// Export `rows` of `t`. `params` holds the exporter's own options as OpenRefine sends them
 /// (`options` as a JSON string or object, or the template fields at top level).
 pub fn export(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str) -> Result<Vec<u8>> {
+    let mut out = vec![];
+    export_to(t, rows, format, params, project_name, &mut out)?;
+    Ok(out)
+}
+
+/// Export straight into a file: delimited text is written as it is made, never whole in memory.
+pub fn export_file(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str, path: &std::path::Path) -> Result<()> {
+    let f = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let mut w = std::io::BufWriter::new(f);
+    export_to(t, rows, format, params, project_name, &mut w)?;
+    std::io::Write::flush(&mut w).map_err(|e| format!("{}: {e}", path.display()))
+}
+
+pub fn export_to(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str, w: &mut dyn std::io::Write) -> Result<()> {
     let options = |p: &J| -> J {
         match p.get("options") {
             Some(J::String(s)) => serde_json::from_str(s).unwrap_or(J::Null),
@@ -102,10 +116,10 @@ pub fn export(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &
         }
         Ok(o)
     };
-    Ok(match format {
-        "csv" => tabular_text(t, rows, &tabular(",")?)?.into_bytes(),
-        "tsv" => tabular_text(t, rows, &TabularOptions { raw: true, ..tabular("\t")? })?.into_bytes(),
-        "*sv" | "custom" => tabular_text(t, rows, &tabular("")?)?.into_bytes(),
+    let bytes = match format {
+        "csv" => return tabular_write(t, rows, &tabular(",")?, w),
+        "tsv" => return tabular_write(t, rows, &TabularOptions { raw: true, ..tabular("\t")? }, w),
+        "*sv" | "custom" => return tabular_write(t, rows, &tabular("")?, w),
         "html" => html(t, rows, project_name).into_bytes(),
         "template" => {
             let o: TemplateOptions = serde_json::from_value(params.clone()).map_err(err)?;
@@ -118,7 +132,8 @@ pub fn export(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &
         "xlsx" => xlsx(t, rows, project_name)?,
         "ods" => ods(t, rows, project_name)?,
         f => return Err(format!("unknown export format `{f}` (csv, tsv, *sv, html, template, sql, xlsx, ods)")),
-    })
+    };
+    w.write_all(&bytes).map_err(err)
 }
 
 /// Export format from a file name: .tsv, .html/.htm, .xlsx, .ods, .sql, anything else CSV.
@@ -150,6 +165,12 @@ fn quote(s: &str, o: &TabularOptions) -> String {
 }
 
 pub fn tabular_text(t: &Table, rows: &[u32], o: &TabularOptions) -> Result<String> {
+    let mut out = vec![];
+    tabular_write(t, rows, o, &mut out)?;
+    Ok(String::from_utf8(out).map_err(err)?)
+}
+
+fn tabular_write(t: &Table, rows: &[u32], o: &TabularOptions, w: &mut dyn std::io::Write) -> Result<()> {
     let cols = columns(t, &o.columns)?;
     // what the grid shows, trimmed like OpenRefine does; (quoted text, blank)
     let render = |v: &Value| {
@@ -157,9 +178,10 @@ pub fn tabular_text(t: &Table, rows: &[u32], o: &TabularOptions) -> Result<Strin
         let blank = s.is_empty();
         (quote(&s, o), blank)
     };
-    // render each distinct value once per column, unless there are fewer rows than values (previews)
+    // render each distinct value once per column when values repeat; columns of mostly unique values
+    // (and previews of a few rows) are rendered row by row instead of keeping every value's text
     let text: Vec<Option<Vec<(String, bool)>>> =
-        cols.iter().map(|&c| (rows.len() >= t.columns[c].dict.len()).then(|| t.columns[c].dict.iter().map(render).collect())).collect();
+        cols.iter().map(|&c| (rows.len() >= 2 * t.columns[c].dict.len()).then(|| t.columns[c].dict.iter().map(render).collect())).collect();
     let mut out = String::new();
     if o.output_column_headers {
         out += &cols.iter().map(|&c| quote(&t.names[c], o)).collect::<Vec<_>>().join(&o.separator);
@@ -185,8 +207,13 @@ pub fn tabular_text(t: &Table, rows: &[u32], o: &TabularOptions) -> Result<Strin
             out += &c.0;
         }
         out += &o.line_separator;
+        // hand the text over in chunks of about 64 KB
+        if out.len() >= 1 << 16 {
+            w.write_all(out.as_bytes()).map_err(err)?;
+            out.clear();
+        }
     }
-    Ok(out)
+    w.write_all(out.as_bytes()).map_err(err)
 }
 
 fn escape(s: &str) -> String {

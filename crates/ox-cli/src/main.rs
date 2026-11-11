@@ -47,8 +47,7 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
         return Ok(());
     }
     let t2 = p.table();
-    let bytes = ox_core::export::export(t2, &(0..t2.rows as u32).collect::<Vec<_>>(), ox_core::export::format_for(out), &serde_json::Value::Null, "data")?;
-    std::fs::write(out, bytes).map_err(|e| format!("{out}: {e}"))?;
+    ox_core::export::export_file(t2, &(0..t2.rows as u32).collect::<Vec<_>>(), ox_core::export::format_for(out), &serde_json::Value::Null, "data", out.as_ref())?;
     eprintln!("export  {:>9.1} ms   {out}", ms(t));
     Ok(())
 }

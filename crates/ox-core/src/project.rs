@@ -488,8 +488,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 let bytes = crate::export::export(p.table(), rows, format, &a.params, &p.name)?;
                 json!(String::from_utf8_lossy(&bytes))
             } else {
-                let bytes = crate::export::export(p.table(), &rows, format, &a.params, &p.name)?;
-                std::fs::write(&a.path, bytes).map_err(|e| format!("{}: {e}", a.path))?;
+                crate::export::export_file(p.table(), &rows, format, &a.params, &p.name, Path::new(&a.path))?;
                 json!(rows.len())
             }
         }
