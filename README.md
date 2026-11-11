@@ -6,6 +6,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
@@ -101,7 +102,7 @@ Each area is checked against fixtures produced by running the same cases through
 Installers aren't available yet, so OxRefine is built from source. You need Rust (stable) and Node.js 22.
 
 ```bash
-git clone <this repository> && cd OxRefine
+git clone https://github.com/ilyaux/OxRefine.git && cd OxRefine
 
 # desktop app
 cd ui && npm install && npm run tauri dev

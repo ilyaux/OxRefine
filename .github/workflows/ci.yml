@@ -44,7 +44,9 @@ jobs:
 
   bench:
     name: Performance against the base build
-    # the same runner builds both, so the comparison holds whatever the machine
+    # the same runner builds both, so the comparison holds whatever the machine; a branch's first
+    # push has no previous build to compare with
+    if: github.event_name == 'pull_request' || github.event.before != '0000000000000000000000000000000000000000'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
