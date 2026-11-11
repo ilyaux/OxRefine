@@ -1,5 +1,5 @@
 {
-  "when": "2026-11-11T02:35:19.184Z",
+  "when": "2026-11-11T15:44:07.791Z",
   "orMemory": "1400M",
   "results": [
     {
@@ -7,27 +7,27 @@
       "mb": 8,
       "ox": {
         "idle": 7,
-        "import": 78.11289999999997,
+        "import": 69.32639999999998,
         "rows": 100000,
-        "facet": 20.662200000000098,
+        "facet": 23.696799999999996,
         "facetChoices": 8,
-        "cluster": 8.080100000000016,
+        "cluster": 4.862799999999993,
         "clusters": 8,
-        "recipe": 10.936599999999999,
-        "export": 57.47480000000007,
-        "peak": 36
+        "recipe": 9.792599999999993,
+        "export": 31.78539999999998,
+        "peak": 35
       },
       "or": {
-        "idle": 268,
-        "import": 536.7259999999997,
+        "idle": 293,
+        "import": 454.52459999999974,
         "rows": 100000,
-        "facet": 158.59330000000045,
+        "facet": 143.02630000000045,
         "facetChoices": 8,
-        "cluster": 515.5412999999999,
+        "cluster": 474.1996999999992,
         "clusters": 8,
-        "recipe": 1567.2696999999998,
-        "export": 292.9236000000001,
-        "peak": 462
+        "recipe": 1363.3091999999997,
+        "export": 263.1124,
+        "peak": 451
       },
       "diff": {
         "linesOx": 100001,
@@ -52,27 +52,27 @@
       "mb": 19,
       "ox": {
         "idle": 7,
-        "import": 114.29529999999977,
+        "import": 97.36700000000019,
         "rows": 250000,
-        "facet": 42.60230000000047,
+        "facet": 39.030000000000655,
         "facetChoices": 8,
-        "cluster": 3.8228999999992084,
+        "cluster": 9.744200000001001,
         "clusters": 8,
-        "recipe": 18.200700000001234,
-        "export": 74.56950000000143,
+        "recipe": 21.352199999999357,
+        "export": 58.42919999999867,
         "peak": 64
       },
       "or": {
-        "idle": 272,
-        "import": 827.4374000000007,
+        "idle": 262,
+        "import": 989.7739999999994,
         "rows": 250000,
-        "facet": 332.1162999999997,
+        "facet": 233.60530000000108,
         "facetChoices": 8,
-        "cluster": 844.5404000000017,
+        "cluster": 777.1201000000001,
         "clusters": 8,
-        "recipe": 3262.4330999999984,
-        "export": 506.9339,
-        "peak": 747
+        "recipe": 2633.876799999998,
+        "export": 439.27709999999934,
+        "peak": 720
       },
       "diff": {
         "linesOx": 250001,
@@ -97,27 +97,27 @@
       "mb": 38,
       "ox": {
         "idle": 7,
-        "import": 230.28830000000016,
+        "import": 200.89280000000144,
         "rows": 500000,
-        "facet": 53.910799999997835,
+        "facet": 53.30879999999888,
         "facetChoices": 8,
-        "cluster": 14.077000000001135,
+        "cluster": 20.016799999997602,
         "clusters": 8,
-        "recipe": 25.428899999998976,
-        "export": 145.83920000000217,
-        "peak": 113
+        "recipe": 22.754499999999098,
+        "export": 118.26959999999963,
+        "peak": 112
       },
       "or": {
-        "idle": 261,
-        "import": 1482.7531999999992,
+        "idle": 272,
+        "import": 1196.035899999999,
         "rows": 500000,
-        "facet": 360.23209999999744,
+        "facet": 336.0783999999985,
         "facetChoices": 8,
-        "cluster": 1253.6971000000012,
+        "cluster": 1129.8289000000004,
         "clusters": 8,
-        "recipe": 5616.822300000003,
-        "export": 889.6808000000019,
-        "peak": 973
+        "recipe": 4905.898200000003,
+        "export": 871.4939000000013,
+        "peak": 976
       },
       "diff": {
         "linesOx": 500001,
@@ -142,27 +142,27 @@
       "mb": 76,
       "ox": {
         "idle": 7,
-        "import": 468.1849999999977,
+        "import": 407.8706999999995,
         "rows": 1000000,
-        "facet": 111.51029999999446,
+        "facet": 102.41309999999794,
         "facetChoices": 8,
-        "cluster": 14.430299999999988,
+        "cluster": 20.372199999997974,
         "clusters": 8,
-        "recipe": 21.09730000000127,
-        "export": 253.3660000000018,
-        "peak": 211
+        "recipe": 31.04200000000128,
+        "export": 251.95440000000235,
+        "peak": 212
       },
       "or": {
         "idle": 275,
-        "import": 2116.334600000002,
+        "import": 2022.7644,
         "rows": 1000000,
-        "facet": 569.9570000000022,
+        "facet": 580.7413000000015,
         "facetChoices": 8,
-        "cluster": 1792.5764000000054,
+        "cluster": 2082.5017000000007,
         "clusters": 8,
-        "recipe": 8307.236000000004,
-        "export": 1290.2885000000024,
-        "peak": 1396
+        "recipe": 10181.029000000002,
+        "export": 1591.2295000000013,
+        "peak": 1360
       },
       "diff": {
         "linesOx": 1000001,
@@ -187,15 +187,15 @@
       "mb": 154,
       "ox": {
         "idle": 7,
-        "import": 863.9079000000056,
+        "import": 852.0311999999976,
         "rows": 2000000,
-        "facet": 247.90060000000813,
+        "facet": 184.55359999999928,
         "facetChoices": 8,
-        "cluster": 8.977700000003097,
+        "cluster": 15.359800000005635,
         "clusters": 8,
-        "recipe": 38.82749999999942,
-        "export": 559.6291999999958,
-        "peak": 407
+        "recipe": 43.63609999999608,
+        "export": 545.3819999999978,
+        "peak": 408
       },
       "or": {
         "error": "OpenRefine apply-operations: HTTP 500 <html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html;charset=ISO-8859-1\"/>\n<title>Error 500 java.lang.OutOfMemoryError: Java heap space</title>\n</head>\n<body><h2>HTTP ERROR 500 java.lang.OutOfMemoryError: Java heap space</h2>\n<table>\n<tr><th>URI:</th><td>/command/core/apply-operations</t"

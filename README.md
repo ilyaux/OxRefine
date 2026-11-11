@@ -8,16 +8,15 @@ The workflow is OpenRefine's: facet, filter, cluster near-duplicates, transform,
 
 Both tools ran the same workflow through their own local HTTP API: import, a text facet, fingerprint clustering, the same 5-step OpenRefine recipe, and CSV export. Each run used a fresh server process, one Windows laptop, and OpenRefine's default 1400 MB heap.
 
-| rows | OxRefine | OpenRefine | faster | peak RAM (Ox / OR) | identical output cells |
-|---|---|---|---|---|---|
-| 100k | 0.16 s | 2.2 s | 14× | 17 / 424 MB | 800,008 / 800,008 |
-| 250k | 0.29 s | 4.9 s | 17× | 36 / 758 MB | 2,000,008 / 2,000,008 |
-| 500k | 0.69 s | 8.1 s | 12× | 65 / 976 MB | 4,000,008 / 4,000,008 |
-| 1M | 1.9 s | 17.3 s | 8.9× | 122 / 1,361 MB | 8,000,008 / 8,000,008 |
-| 2M | 2.6 s | out of memory | | 235 MB / OOM | |
-| 2M, OpenRefine on a 4 GB heap | 2.6 s | 32.3 s | 13× | 235 / 3,433 MB | 16,000,008 / 16,000,008 |
+| rows | OxRefine | OpenRefine | faster | peak RAM (Ox / OR) |
+|---|---|---|---|---|
+| 100k | 0.14 s | 2.7 s | 19× | 35 / 451 MB |
+| 250k | 0.23 s | 5.1 s | 22× | 64 / 720 MB |
+| 500k | 0.42 s | 8.4 s | 20× | 112 / 976 MB |
+| 1M | 0.81 s | 16.5 s | 20× | 212 / 1,360 MB |
+| 2M | 1.6 s | out of memory | | 408 MB / OOM |
 
-Interactive steps show the biggest gaps. At 2M rows a facet takes 8 ms against 1.25 s, clustering 16 ms against 3.8 s, and the recipe 35 ms against 20.3 s. Import shows the smallest gap, 1.6×.
+At 1M rows every one of the 8,000,008 output cells is identical. Per step at 1M: import 0.41 s against 2.0 s, the facet 0.10 s against 0.58 s, clustering 20 ms against 2.1 s, the recipe 31 ms against 10.2 s, export 0.25 s against 1.6 s.
 
 There was one run per size, so timings under about 20 ms are noisy. To reproduce, put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1`, then run:
 
