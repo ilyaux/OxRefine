@@ -1,3 +1,10 @@
+<!--
+Keywords: OpenRefine alternative, Google Refine alternative, data cleaning tool, data cleansing, data wrangling,
+data preparation, data quality, messy data, clean CSV, clean Excel, deduplicate data, remove duplicates,
+fuzzy matching, fuzzy deduplication, clustering, record linkage, entity resolution, reconciliation, Wikidata
+reconciliation, GREL, faceted browsing, data transformation, ETL, spreadsheet cleanup, large CSV files,
+million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta alternative, Talend alternative
+-->
 <h1 align="center">OxRefine</h1>
 
 <p align="center">
@@ -19,6 +26,8 @@
 </picture>
 
 ## Why
+
+OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and data wrangling: deduplicate and fix messy CSV, Excel and JSON files, cluster near-duplicate spellings, transform columns with GREL, and reconcile values against Wikidata.
 
 [OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
 
