@@ -945,7 +945,7 @@
       "id": "rc-facets",
       "phase": "p8",
       "milestone": "v1.0",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "M",
       "title": "Reconciliation facets",
