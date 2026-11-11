@@ -82,7 +82,7 @@ All 37 OpenRefine operations, same JSON, same results.
 - [ ] **Transpose and key-value columnize** · v0.5 · P1 · L. Columns into rows, rows into columns, key/value pairs into columns. _OpenRefine: transpose-columns-into-rows, transpose-rows-into-columns, key-value-columnize_
 - [x] **Row operations** · v0.2 · P0 · M. Remove matching rows, keep matched, add rows, remove duplicates by key columns. _OpenRefine: row-removal, row-keep-matched, row-addition, row-duplicate-removal_
 - [x] **Sort and reorder rows permanently** · v0.2 · P0 · M. Multi-column sort criteria by type, then make it permanent. _OpenRefine: row-reorder_
-- [ ] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
+- [~] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
 - [ ] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
 - [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
 - [ ] **Reconciliation operations** · v1.0 · P1 · L. recon, match best, judge similar, clear similar, mark new, discard, match specific, copy across columns, use values as identifiers. _OpenRefine: recon-*_
@@ -138,11 +138,11 @@ W3C Reconciliation API: matching, judging, data extension.
 Everything OpenRefine's UI does, in a modern, keyboard-first app.
 
 - [~] **Home: projects and create project** · v0.2 · P0 · M. Recent projects, import sources, drag-and-drop files. _OpenRefine: index page_
-- [ ] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
+- [~] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
 - [~] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
 - [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
 - [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
-- [ ] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
+- [~] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
 - [ ] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
 - [ ] **Translations** · v0.5 · P2 · M. i18n framework; OpenRefine's BSD-licensed translation files can seed 40+ languages. _OpenRefine: langs/*.json_
 
