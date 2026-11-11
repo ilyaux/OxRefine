@@ -50,7 +50,7 @@ Every format OpenRefine imports, with its options and preview.
 - [~] **JSON and JSON Lines** · v0.2 · P0 · L. Pick the record path in a tree preview; nested fields become columns; JSONL streams. _OpenRefine: text/json_
 - [ ] **XML** · v0.5 · P1 · L. Pick the record element in a tree preview, attributes and nested elements as columns. _OpenRefine: text/xml_
 - [ ] **Fixed-width text** · v0.5 · P2 · M. Column widths with a draggable ruler in preview. _OpenRefine: text/line-based/fixed-width_
-- [ ] **Line-based text** · v0.5 · P2 · S. One line per row, lines-per-row grouping. _OpenRefine: text/line-based_
+- [~] **Line-based text** · v0.5 · P2 · S. One line per row, lines-per-row grouping. _OpenRefine: text/line-based_
 - [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** · later · P2 · L. Subject-per-record import as OpenRefine does. _OpenRefine: text/rdf/*_
 - [ ] **MARC records** · later · P2 · M. Library records via MARCXML conversion. _OpenRefine: text/marc_
 - [ ] **Wikitext tables** · later · P2 · M. Parse MediaWiki table markup, keep links for reconciliation. _OpenRefine: text/wiki_
@@ -143,8 +143,8 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
 - [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
 - [~] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
-- [ ] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
-- [ ] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
+- [~] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
+- [~] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
 - [ ] **Translations** · v0.5 · P2 · M. i18n framework; OpenRefine's BSD-licensed translation files can seed 40+ languages. _OpenRefine: langs/*.json_
 
 ## Compatibility & QA
