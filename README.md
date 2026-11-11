@@ -17,7 +17,7 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2017%20of%202033%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2018%20of%202033%20checks-brightgreen">
 </p>
 
 <picture>
@@ -32,7 +32,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 [OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
 
 - **About 20× faster, with 10–18× less memory.** A million-row workflow takes 0.7 s instead of 16.5 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 259 MB.
-- **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,017 of 2,033 checks match, and each known difference is written down with its reason.
+- **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,018 of 2,033 checks match, and each known difference is written down with its reason.
 - **Your work moves both ways.** OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact.
 - **Desktop, browser, server or command line.** It runs as a native desktop app, in a browser (`ox serve`, like OpenRefine), on a server or in Docker behind an access token, or headless with `ox apply`.
 
@@ -95,7 +95,7 @@ Each area is checked against fixtures produced by running the same cases through
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 469 / 472 |
+| GREL expressions | 470 / 472 |
 | Operations, including single-cell edits, stars, flags, transposing, fetching URLs and `cross()` | 80 / 81 |
 | Facets: list, range, timeline, text, custom and records mode | 34 / 34 |
 | Import options: CSV/TSV, fixed-width, Excel, ODS, JSON, XML, and zip/tar/gzip/bzip2 archives | 43 / 45 |

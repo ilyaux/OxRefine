@@ -2,4 +2,3 @@
 # The conformance test fails when one of these starts passing, so remove lines as they get fixed.
 'This is plain English text about cleaning data.'.detectLanguage()  # needs a language-identification model
 'Это русский текст о чистке данных.'.detectLanguage()  # needs a language-identification model
-cosh(1)  # last-digit difference between Java StrictMath (fdlibm) and Rust libm

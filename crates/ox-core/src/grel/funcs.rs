@@ -755,32 +755,31 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             };
             let x = n.first().copied().unwrap_or(f64::NAN);
             let y = n.get(1).copied().unwrap_or(f64::NAN);
+            // libm (fdlibm, as in Java's StrictMath) rather than the platform's math library, so every
+            // system rounds the last digit the same way
             Num(match name {
-                "pow" => x.powf(y),
+                "pow" => libm::pow(x, y),
                 "max" => x.max(y),
                 "min" => x.min(y),
-                "atan2" => x.atan2(y),
-                "log" => x.log10(),
+                "atan2" => libm::atan2(x, y),
+                "log" => libm::log10(x),
                 "random" | "randomNumber" => {
                     let r = std::collections::hash_map::RandomState::new();
                     let seed = std::hash::BuildHasher::hash_one(&r, 0u8) as f64 / u64::MAX as f64;
                     return if n.len() == 2 { Int((x + seed * (y - x)).floor() as i64) } else { Num(seed) };
                 }
+                // Java's Math.exp is correctly rounded, like the platform's and unlike libm's
                 "exp" => x.exp(),
-                "ln" => x.ln(),
-                "sin" => x.sin(),
-                "cos" => x.cos(),
-                "tan" => x.tan(),
-                "asin" => x.asin(),
-                "acos" => x.acos(),
-                "atan" => x.atan(),
-                "sinh" => x.sinh(),
-                // fdlibm (Java StrictMath) formula, which differs from libm in the last digit
-                "cosh" => {
-                    let t = x.abs().exp();
-                    0.5 * t + 0.5 / t
-                }
-                "tanh" => x.tanh(),
+                "ln" => libm::log(x),
+                "sin" => libm::sin(x),
+                "cos" => libm::cos(x),
+                "tan" => libm::tan(x),
+                "asin" => libm::asin(x),
+                "acos" => libm::acos(x),
+                "atan" => libm::atan(x),
+                "sinh" => libm::sinh(x),
+                "cosh" => libm::cosh(x),
+                "tanh" => libm::tanh(x),
                 "degrees" => x.to_degrees(),
                 _ => x.to_radians(),
             })
