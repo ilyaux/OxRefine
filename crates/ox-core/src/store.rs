@@ -224,7 +224,7 @@ pub fn write_table(path: &Path, t: &Table) -> Result<()> {
         w.write_all(&(header.len() as u64).to_le_bytes())?;
         w.write_all(&header)?;
         for c in &t.columns {
-            for code in &c.codes {
+            for code in c.codes.iter() {
                 w.write_all(&code.to_le_bytes())?;
             }
         }
@@ -250,7 +250,7 @@ pub fn read_table(bytes: &[u8]) -> Result<Table> {
         if codes.iter().any(|&c| c as usize >= dict.len()) {
             return Err(bad());
         }
-        columns.push(Arc::new(Column { dict, codes }));
+        columns.push(Arc::new(Column { dict, codes: codes.into() }));
         pos += 4 * n;
     }
     let flags = |pos: usize| -> Result<Arc<Vec<bool>>> { Ok(Arc::new(bytes.get(pos..pos + n).ok_or_else(bad)?.iter().map(|&b| b != 0).collect())) };

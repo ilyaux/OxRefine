@@ -56,7 +56,9 @@ impl Interner {
 /// rows hold u32 codes, so transforms and facets cost O(distinct) + one pass over codes.
 pub struct Column {
     pub dict: Vec<Value>,
-    pub codes: Vec<u32>,
+    /// Shared between history steps whenever a step leaves every row's code as it was (see
+    /// `Project::apply`); write through `Arc::make_mut`.
+    pub codes: Arc<Vec<u32>>,
 }
 
 impl Column {
@@ -90,7 +92,7 @@ impl Column {
                     kept[c]
                 }
             })
-            .collect();
+            .collect::<Vec<u32>>().into();
         Column { dict: b.finish(), codes }
     }
 
@@ -104,13 +106,13 @@ impl Column {
                 (dict.len() - 1) as u32
             }
         };
-        Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect() }
+        Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect::<Vec<u32>>().into() }
     }
 
     pub fn from_values(values: impl IntoIterator<Item = Value>) -> Column {
         let mut b = Interner::default();
-        let codes = values.into_iter().map(|v| b.intern(v)).collect();
-        Column { dict: b.finish(), codes }
+        let codes: Vec<u32> = values.into_iter().map(|v| b.intern(v)).collect();
+        Column { dict: b.finish(), codes: codes.into() }
     }
 
     /// Like `map`, but `f(row, value)` runs for every selected row (expressions reading other cells).
@@ -127,7 +129,7 @@ impl Column {
                     b.intern(v.clone())
                 }
             })
-            .collect();
+            .collect::<Vec<u32>>().into();
         Column { dict: b.finish(), codes }
     }
 }

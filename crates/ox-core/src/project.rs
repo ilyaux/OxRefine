@@ -67,7 +67,7 @@ impl Project {
     }
 
     pub fn apply(&mut self, mut op: Op) -> Result<()> {
-        let t = op.apply(self.table())?;
+        let t = share(self.table(), op.apply(self.table())?);
         self.states.truncate(self.cursor + 1);
         self.ops.truncate(self.cursor);
         self.states.push(t);
@@ -130,6 +130,45 @@ impl Project {
         let t = &self.states[self.cursor];
         store.touch(meta, t, &history)
     }
+}
+
+/// What a step left as it was shares the previous step's memory: a column that is equal, or the row
+/// codes of one whose rows were only renamed value for value (each old code became one new code and
+/// no two became the same; most transforms), with its dictionary reordered to the old codes.
+// ponytail: a step that changes the codes of some rows (a mass edit merging values) still stores the
+// column's codes in full (4 bytes a row); store those as a patch over the previous codes if long
+// histories of such steps on very large projects need it.
+fn share(prev: &Table, mut t: Table) -> Table {
+    if prev.rows != t.rows {
+        return t;
+    }
+    for i in 0..t.columns.len() {
+        let Some(p) = prev.names.iter().position(|n| *n == t.names[i]).map(|j| &prev.columns[j]) else { continue };
+        let c = &t.columns[i];
+        if Arc::ptr_eq(p, c) || Arc::ptr_eq(&p.codes, &c.codes) {
+            continue;
+        }
+        if p.codes == c.codes && p.dict == c.dict {
+            t.columns[i] = p.clone();
+            continue;
+        }
+        // old code -> new code, the same for every row, and never two old codes to one new one
+        const NONE: u32 = u32::MAX;
+        let (mut to, mut from) = (vec![NONE; p.dict.len()], vec![NONE; c.dict.len()]);
+        let renamed = p.codes.iter().zip(c.codes.iter()).all(|(&o, &n)| match (to[o as usize], from[n as usize]) {
+            (NONE, NONE) => {
+                to[o as usize] = n;
+                from[n as usize] = o;
+                true
+            }
+            (x, y) => x == n && y == o,
+        });
+        if renamed {
+            let dict = to.iter().map(|&n| if n == NONE { crate::grel::Value::Null } else { c.dict[n as usize].clone() }).collect();
+            t.columns[i] = Arc::new(crate::table::Column { dict, codes: p.codes.clone() });
+        }
+    }
+    t
 }
 
 fn file_name(path: &Path) -> String {
@@ -441,4 +480,41 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         _ => return Err(format!("unknown command `{cmd}`")),
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// History keeps one copy of a column's row codes for as long as steps leave them as they are.
+    #[test]
+    fn steps_share_unchanged_codes() {
+        let path = std::env::temp_dir().join(format!("oxrefine-share-{}.csv", std::process::id()));
+        let mut csv = String::from("name,city\n");
+        for i in 0..1000 {
+            csv += &format!(" person {} ,City{}\n", i % 37, i % 11);
+        }
+        std::fs::write(&path, csv).unwrap();
+        let mut p = Project::open(&path).unwrap();
+        let _ = std::fs::remove_file(&path);
+        let op = |col: &str, e: &str| -> Op {
+            serde_json::from_value(json!({ "op": "core/text-transform", "columnName": col, "expression": format!("grel:{e}") })).unwrap()
+        };
+        for e in ["value.trim()", "value.toUppercase()", "value.toLowercase()", "value + ''"] {
+            p.apply(op("name", e)).unwrap();
+        }
+        // a step that merges values changes codes, and gets codes of its own
+        p.apply(op("city", "value.substring(0, 5)")).unwrap();
+        let codes: Vec<&Arc<Vec<u32>>> = p.states.iter().flat_map(|t| t.columns.iter().map(|c| &c.codes)).collect();
+        let mut unique: Vec<&Arc<Vec<u32>>> = vec![];
+        for c in codes {
+            if !unique.iter().any(|u| Arc::ptr_eq(u, c)) {
+                unique.push(c);
+            }
+        }
+        // name's codes once (its four steps only change the distinct values), city's twice
+        let per_state: Vec<Vec<usize>> = p.states.iter().map(|t| t.columns.iter().map(|c| unique.iter().position(|u| Arc::ptr_eq(u, &c.codes)).unwrap()).collect()).collect();
+        assert_eq!(unique.len(), 3, "6 states x 2 columns should keep 3 code vectors: {per_state:?}");
+        assert_eq!(p.table().columns[0].get(0).as_str(), Some("person 0"));
+    }
 }

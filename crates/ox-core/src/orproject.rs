@@ -71,7 +71,7 @@ struct State {
 }
 
 fn null_column(rows: usize) -> Column {
-    Column { dict: vec![Value::Null], codes: vec![0; rows] }
+    Column { dict: vec![Value::Null], codes: vec![0; rows].into() }
 }
 
 /// A cell of OpenRefine's JSON: null | {"v": value, "t"?: "date"} | {"e": message}; recon data is dropped.
@@ -153,7 +153,7 @@ impl Builder {
     }
 
     fn state(self, cols: Vec<Col>, key: Option<String>) -> State {
-        let data = self.cols.into_iter().enumerate().map(|(c, (i, codes))| (c, Arc::new(Column { dict: i.finish(), codes }))).collect();
+        let data = self.cols.into_iter().enumerate().map(|(c, (i, codes))| (c, Arc::new(Column { dict: i.finish(), codes: codes.into() }))).collect();
         State { cols, data, rows: self.rows, starred: Arc::new(self.starred), flagged: Arc::new(self.flagged), key }
     }
 }
@@ -261,7 +261,7 @@ fn patch(mut col: Column, edits: Vec<(usize, Value)>) -> Column {
                 c
             }
         };
-        col.codes[r] = code;
+        Arc::make_mut(&mut col.codes)[r] = code;
     }
     col
 }

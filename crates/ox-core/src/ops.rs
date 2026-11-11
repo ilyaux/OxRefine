@@ -968,7 +968,7 @@ impl Op {
                     col.dict.push(v);
                     col.dict.len() - 1
                 });
-                col.codes[*row] = code as u32;
+                Arc::make_mut(&mut col.codes)[*row] = code as u32;
                 let mut out = t.clone();
                 out.columns[ci] = Arc::new(col);
                 out
