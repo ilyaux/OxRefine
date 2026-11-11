@@ -104,6 +104,7 @@ export const MANIFEST = (base) => ({
   view: { url: "http://ox.test/entity/{{id}}" },
   preview: { url: `${base}/svc/preview?id={{id}}`, width: 300, height: 100 },
   extend: { propose_properties: { service_url: base, service_path: "/svc/properties" }, property_settings: [] },
+  suggest: Object.fromEntries(["entity", "type", "property"].map((k) => [k, { service_url: base, service_path: `/svc/suggest/${k}` }])),
 })
 
 /** Starts the service; `seen` collects every query object OpenRefine sent, with its answer, and
@@ -121,6 +122,19 @@ export async function serve() {
       const form = new URLSearchParams(req.method === "POST" ? body : req.url.split("?")[1] ?? "")
       if (path === "/svc500") return json(500, { error: "down" })
       if (path === "/svcnull") return json(200, "null")
+      // suggest API and preview
+      if (path.startsWith("/svc/suggest/")) {
+        const prefix = (new URLSearchParams(req.url.split("?")[1] ?? "").get("prefix") ?? "").toLowerCase()
+        const pool = { entity: ENTITIES.map((e) => ({ id: e.id, name: e.name, description: e.types.map((t) => TYPES[t]).join(", ") })),
+          type: Object.entries(TYPES).map(([id, name]) => ({ id, name })),
+          property: Object.entries(PROPERTIES).map(([id, p]) => ({ id, name: p.name })) }[path.slice("/svc/suggest/".length)] ?? []
+        return json(200, { result: pool.filter((x) => x.name.toLowerCase().includes(prefix) || x.id.toLowerCase() === prefix) })
+      }
+      if (path === "/svc/preview") {
+        const id = new URLSearchParams(req.url.split("?")[1] ?? "").get("id")
+        const e = ENTITIES.find((x) => x.id === id)
+        return res.writeHead(200, { "content-type": "text/html" }).end(`<html><body style="font:14px sans-serif"><b>${e?.name ?? id}</b><br>${id} · ${(e?.types ?? []).map((t) => TYPES[t]).join(", ")}</body></html>`)
+      }
       // propose properties for a type (data extension)
       if (path === "/svc/properties") {
         const type = form.get("type")

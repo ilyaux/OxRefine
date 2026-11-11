@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { SuggestBox } from "@/ReconPanel"
 
 type Service = { url: string; name: string }
 type Manifest = { name?: string; identifierSpace: string; schemaSpace: string; defaultTypes?: { id: string; name: string }[] }
@@ -196,6 +197,7 @@ export function ReconcileDialog({
                     </FieldLabel>
                     <Input aria-label="Type id" placeholder="Type id, like Q5" value={custom} onChange={(e) => (setCustom(e.target.value), setType(CUSTOM))} className="max-w-48" />
                   </Field>
+                  {"suggest" in (manifest ?? {}) && <SuggestBox service={url} kind="type" placeholder="Search for a type" onPick={(s) => (setCustom(s.id), setType(CUSTOM))} />}
                   <Field orientation="horizontal">
                     <RadioGroupItem value={NONE} id="rt-none" />
                     <FieldLabel htmlFor="rt-none" className="font-normal">

@@ -333,6 +333,8 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             return Ok(json!({ "path": path, "name": "Clipboard", "origin": "(clipboard)" }));
         }
         "recon_service" => return crate::recon::manifest(&a.url),
+        // `method`: entity, type or property; `text`: what was typed
+        "recon_suggest" => return crate::recon::suggest(&a.url, &a.method, &a.text),
         "fetch_url" => {
             let (path, name) = import::download(&import::staging_dir(store.map(|s| s.root())), &a.url)?;
             return Ok(json!({ "path": path, "name": name, "origin": a.url.trim() }));

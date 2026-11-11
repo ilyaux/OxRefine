@@ -741,6 +741,19 @@ pub fn manifest(url: &str) -> Result<J> {
     Ok(j)
 }
 
+/// The service's suggest API (`kind`: entity, type or property): what matches the typed `prefix`.
+pub fn suggest(service: &str, kind: &str, prefix: &str) -> Result<J> {
+    let m = manifest(service)?;
+    let Some(s) = m.get("suggest").and_then(|s| s.get(kind)) else { return Ok(json!([])) };
+    let base = s.get("service_url").and_then(J::as_str).unwrap_or(service);
+    let mut url = url::Url::parse(&format!("{base}{}", s.get("service_path").and_then(J::as_str).unwrap_or(""))).map_err(|e| e.to_string())?;
+    url.query_pairs_mut().append_pair("prefix", prefix);
+    let mut res = agent().get(url.as_str()).call().map_err(|e| format!("{url}: {e}"))?;
+    let body = res.body_mut().read_to_string().map_err(|e| e.to_string())?;
+    let j: J = serde_json::from_str(&body).map_err(|_| "the service's suggestions aren't JSON".to_string())?;
+    Ok(j.get("result").cloned().unwrap_or(json!([])))
+}
+
 /// Properties the service proposes for a type (its manifest's extend.propose_properties).
 pub fn propose_properties(service: &str, type_id: Option<&str>) -> Result<J> {
     let m = manifest(service)?;
