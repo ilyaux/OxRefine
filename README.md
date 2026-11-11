@@ -10,13 +10,13 @@ Both tools ran the same workflow through their own local HTTP API: import, a tex
 
 | rows | OxRefine | OpenRefine | faster | peak RAM (Ox / OR) |
 |---|---|---|---|---|
-| 100k | 0.14 s | 2.7 s | 19× | 35 / 451 MB |
-| 250k | 0.23 s | 5.1 s | 22× | 64 / 720 MB |
-| 500k | 0.42 s | 8.4 s | 20× | 112 / 976 MB |
-| 1M | 0.81 s | 16.5 s | 20× | 212 / 1,360 MB |
-| 2M | 1.6 s | out of memory | | 408 MB / OOM |
+| 100k | 0.18 s | 2.6 s | 14× | 23 / 415 MB |
+| 250k | 0.21 s | 5.1 s | 24× | 44 / 781 MB |
+| 500k | 0.36 s | 9.0 s | 25× | 76 / 971 MB |
+| 1M | 0.70 s | 16.5 s | 24× | 141 / 1,360 MB |
+| 2M | 1.3 s | out of memory | | 259 MB / OOM |
 
-At 1M rows every one of the 8,000,008 output cells is identical. Per step at 1M: import 0.41 s against 2.0 s, the facet 0.10 s against 0.58 s, clustering 20 ms against 2.1 s, the recipe 31 ms against 10.2 s, export 0.25 s against 1.6 s.
+At every size every output cell is identical (8,000,008 of 8,000,008 at 1M). Per step at 1M: import 0.43 s against 2.1 s, the facet 9 ms against 0.6 s, clustering 17 ms against 2.3 s, the recipe 32 ms against 10.8 s, export 0.21 s against 1.8 s. `node benchmarks/report.mjs` turns the results into `benchmarks/report/index.html`.
 
 There was one run per size, so timings under about 20 ms are noisy. To reproduce, put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1`, then run:
 
