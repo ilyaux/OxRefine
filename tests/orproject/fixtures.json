@@ -38818,7 +38818,7 @@
    "name": "fetch urls",
    "archive": "66.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column name using expression grel:\"http://127.0.0.1:15984/echo/\" + escape(value, \"url\")"
+    "Create column fetched at index 1 by fetching URLs based on column name using expression grel:\"http://127.0.0.1:48452/echo/\" + escape(value, \"url\")"
    ],
    "cursor": 1,
    "states": [
@@ -39308,7 +39308,7 @@
    "name": "fetch urls in facet",
    "archive": "67.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column city using expression grel:\"http://127.0.0.1:15984/echo/\" + escape(value, \"url\")"
+    "Create column fetched at index 1 by fetching URLs based on column city using expression grel:\"http://127.0.0.1:48452/echo/\" + escape(value, \"url\")"
    ],
    "cursor": 1,
    "states": [
@@ -39786,7 +39786,7 @@
    "name": "fetch 404 store-error",
    "archive": "68.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:15984/status/404\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:48452/status/404\""
    ],
    "cursor": 1,
    "states": [
@@ -40036,7 +40036,7 @@
          "v": "1"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "Alice Smith"
@@ -40064,7 +40064,7 @@
        "cells": [
         null,
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         null,
         {
@@ -40088,7 +40088,7 @@
          "v": "2"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "bob jones"
@@ -40116,7 +40116,7 @@
          "v": "3"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "Carol King"
@@ -40142,7 +40142,7 @@
          "v": "3"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "Carol King"
@@ -40166,7 +40166,7 @@
        "cells": [
         null,
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         null,
         {
@@ -40192,7 +40192,7 @@
          "v": "4"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "Dan  Brown"
@@ -40222,7 +40222,7 @@
          "v": "5"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         null,
         {
@@ -40246,7 +40246,7 @@
          "v": "6"
         },
         {
-         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:15984/status/404"
+         "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:48452/status/404"
         },
         {
          "v": "Eve Adams"
@@ -40276,7 +40276,7 @@
    "name": "fetch 404 set-to-blank",
    "archive": "69.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:15984/status/404\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:48452/status/404\""
    ],
    "cursor": 1,
    "states": [
@@ -40748,7 +40748,7 @@
    "name": "fetch with header",
    "archive": "70.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:15984/header\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:48452/header\""
    ],
    "cursor": 1,
    "states": [
@@ -41238,7 +41238,7 @@
    "name": "fetch without cache",
    "archive": "71.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:15984/count/nocache\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:48452/count/nocache\""
    ],
    "cursor": 1,
    "states": [
@@ -41728,7 +41728,7 @@
    "name": "fetch with cache",
    "archive": "72.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:15984/count/cache\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:48452/count/cache\""
    ],
    "cursor": 1,
    "states": [
@@ -42218,7 +42218,7 @@
    "name": "fetch blank urls",
    "archive": "73.openrefine.tar.gz",
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column note using expression grel:if(isBlank(value), null, \"http://127.0.0.1:15984/echo/\" + escape(value, \"url\"))"
+    "Create column fetched at index 1 by fetching URLs based on column note using expression grel:if(isBlank(value), null, \"http://127.0.0.1:48452/echo/\" + escape(value, \"url\"))"
    ],
    "cursor": 1,
    "states": [
@@ -80839,8 +80839,9979 @@
    ]
   },
   {
-   "name": "recon: undo leaves future steps",
+   "name": "recon: extend: entity and strings",
    "archive": "125.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Extend data at index 1 based on column name",
+    "Create new column hidden based on column name by filling 9 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country2",
+      "pseudonym",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "Doug"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "Ada"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "Countess"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "Enchantress of Numbers"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country2",
+      "pseudonym",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "DNA"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "Ford Prefect"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "Doug"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "Ada"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "Countess"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "Enchantress of Numbers"
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: extend: numbers, dates, booleans",
+   "archive": "126.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Extend data at index 1 based on column name",
+    "Create new column hidden based on column name by filling 9 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "date of birth",
+      "score",
+      "alive",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "1981-02-17T00:00:00Z",
+         "t": "date"
+        },
+        null,
+        {
+         "v": true
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "1815-12-10T00:00:00Z",
+         "t": "date"
+        },
+        null,
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "date of birth",
+      "score",
+      "alive",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "1952-03-11T00:00:00Z",
+         "t": "date"
+        },
+        {
+         "v": 0.42
+        },
+        {
+         "v": false
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "1981-02-17T00:00:00Z",
+         "t": "date"
+        },
+        null,
+        {
+         "v": true
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "1815-12-10T00:00:00Z",
+         "t": "date"
+        },
+        null,
+        {
+         "v": false
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: extend: city population, in facet",
+   "archive": "127.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column city to type Q515",
+    "Extend data at index 3 based on column city",
+    "Create new column hidden based on column name by filling 0 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city",
+      "population",
+      "pseudonym"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        },
+        {
+         "v": 141685
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null,
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        },
+        {
+         "v": 141685
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country",
+      "city",
+      "population",
+      "pseudonym"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        },
+        {
+         "v": 141685
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null,
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        },
+        {
+         "v": 141685
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "The Smoke"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: extend: unknown id",
+   "archive": "128.openrefine.tar.gz",
+   "history": [
+    "Match specific item Nowhere (Q404) to 1 cells in column city",
+    "Reconcile cells in column city to type Q515",
+    "Extend data at index 1 based on column city",
+    "Create new column hidden based on column name by filling 0 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 4,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "matched",
+          "m": "Q404"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "population",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": 141685
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": 141685
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "population",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        null,
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        null,
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        null,
+        {
+         "v": 141685
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        null,
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": 141685
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York",
+         "r": {
+          "j": "matched",
+          "m": "Q13"
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        null,
+        {
+         "v": 8799800
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London",
+         "r": {
+          "j": "matched",
+          "m": "Q12"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: extend: result column names",
+   "archive": "129.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Extend data at index 1 based on column name",
+    "Create new column hidden based on column name by filling 9 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "home",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "home",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United States",
+         "r": {
+          "j": "matched",
+          "m": "Q30"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "United Kingdom",
+         "r": {
+          "j": "matched",
+          "m": "Q145"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: fill down copies recon",
+   "archive": "130.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Fill down 1 cells in column name",
+    "Create new column hidden based on column name by filling 10 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: blank down drops recon",
+   "archive": "131.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Blank down 2 cells in column name",
+    "Create new column hidden based on column name by filling 7 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: mass edit keeps recon",
+   "archive": "132.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Mass edit 2 cells in column name",
+    "Create new column hidden based on column name by filling 9 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris, France",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris, France",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris, France",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris, France",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: rows removed and sorted",
+   "archive": "133.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Remove 6 rows",
+    "Reorder rows",
+    "Create new column hidden based on column name by filling 5 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 4,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: split column drops recon",
+   "archive": "134.openrefine.tar.gz",
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Split 11 cell(s) in column name into several columns by separator",
+    "Create new column hidden based on column name by filling 9 rows with grel:if(cell.recon == null, null, cell.recon.judgmentAction + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank + \"|\" + cell.recon.features.nameMatch)"
+   ],
+   "cursor": 3,
+   "states": [
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "name 1",
+      "name 2",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "douglas"
+        },
+        {
+         "v": "adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "Ada"
+        },
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "Lovelace"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "Nobody"
+        },
+        {
+         "v": "Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        {
+         "v": "Broken"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "columns": [
+      "name",
+      "hidden",
+      "name 1",
+      "name 2",
+      "country",
+      "city"
+     ],
+     "rows": [
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|2|0|true"
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adams"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "douglas adams",
+         "r": {
+          "j": "matched",
+          "m": "Q1"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "douglas"
+        },
+        {
+         "v": "adams"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Douglas Adam",
+         "r": {
+          "j": "matched",
+          "m": "Q2"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "Douglas"
+        },
+        {
+         "v": "Adam"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "FR"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|2|-1|true"
+        },
+        {
+         "v": "Paris"
+        },
+        null,
+        {
+         "v": "US"
+        },
+        {
+         "v": "Paris"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Paris Hilton",
+         "r": {
+          "j": "matched",
+          "m": "Q4"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "Paris"
+        },
+        {
+         "v": "Hilton"
+        },
+        {
+         "v": "US"
+        },
+        {
+         "v": "New York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Ada Lovelace",
+         "r": {
+          "j": "matched",
+          "m": "Q3"
+         }
+        },
+        {
+         "v": "auto|1|0|true"
+        },
+        {
+         "v": "Ada"
+        },
+        {
+         "v": "Lovelace"
+        },
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Lovelace",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        {
+         "v": "unknown|1|-1|false"
+        },
+        {
+         "v": "Lovelace"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        null
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        null,
+        null,
+        null,
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "York"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Nobody Known",
+         "r": {
+          "j": "none",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "Nobody"
+        },
+        {
+         "v": "Known"
+        },
+        {
+         "v": "XX"
+        },
+        {
+         "v": "Nowhere"
+        }
+       ]
+      },
+      {
+       "starred": false,
+       "flagged": false,
+       "cells": [
+        {
+         "v": "Broken",
+         "r": {
+          "j": "error",
+          "m": null
+         }
+        },
+        null,
+        {
+         "v": "Broken"
+        },
+        null,
+        {
+         "v": "UK"
+        },
+        {
+         "v": "London"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "recon: undo leaves future steps",
+   "archive": "135.openrefine.tar.gz",
    "history": [
     "Reconcile cells in column name to type Q5",
     "Remove 4 rows",

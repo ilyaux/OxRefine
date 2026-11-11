@@ -623,10 +623,14 @@ fn jackson(v: &Value) -> String {
 /// Redirects as OpenRefine's HttpClient follows them: 307/308 send the form again to the new
 /// address, 301/302/303 turn into a GET (ureq itself won't resend a body).
 fn post(agent: &ureq::Agent, url: &str, queries: &str) -> std::result::Result<String, String> {
+    post_field(agent, url, "queries", queries)
+}
+
+fn post_field(agent: &ureq::Agent, url: &str, field: &str, value: &str) -> std::result::Result<String, String> {
     let mut url = url.to_string();
     let mut res = None;
     for _ in 0..10 {
-        let r = agent.post(&url).config().max_redirects(0).build().send_form([("queries", queries)]).map_err(|e| e.to_string())?;
+        let r = agent.post(&url).config().max_redirects(0).build().send_form([(field, value)]).map_err(|e| e.to_string())?;
         let next = r.headers().get("location").and_then(|l| l.to_str().ok()).and_then(|l| url::Url::parse(&url).ok()?.join(l).ok());
         match (r.status().as_u16(), next) {
             (307 | 308, Some(next)) => url = next.to_string(),
@@ -735,6 +739,24 @@ pub fn manifest(url: &str) -> Result<J> {
         return Err(format!("{url} doesn't answer like a reconciliation service (its manifest has no identifierSpace)"));
     }
     Ok(j)
+}
+
+/// Properties the service proposes for a type (its manifest's extend.propose_properties).
+pub fn propose_properties(service: &str, type_id: Option<&str>) -> Result<J> {
+    let m = manifest(service)?;
+    let Some(p) = m.get("extend").and_then(|e| e.get("propose_properties")) else {
+        return Ok(json!({ "properties": [], "manifest": m }));
+    };
+    let base = p.get("service_url").and_then(J::as_str).unwrap_or(service);
+    let mut url = url::Url::parse(&format!("{base}{}", p.get("service_path").and_then(J::as_str).unwrap_or(""))).map_err(|e| e.to_string())?;
+    if let Some(t) = type_id {
+        url.query_pairs_mut().append_pair("type", t);
+    }
+    url.query_pairs_mut().append_pair("limit", "50");
+    let mut res = agent().get(url.as_str()).call().map_err(|e| format!("{url}: {e}"))?;
+    let body = res.body_mut().read_to_string().map_err(|e| e.to_string())?;
+    let j: J = serde_json::from_str(&body).map_err(|_| "the service's property proposals aren't JSON".to_string())?;
+    Ok(json!({ "properties": j.get("properties").cloned().unwrap_or(json!([])), "manifest": m }))
 }
 
 /// GuessTypesOfColumnCommand: the first 10 distinct values asked without a type (3 results each);
@@ -1105,6 +1127,185 @@ pub fn judge_one(col: &Column, row: usize, judgment: Judgment, matched: Option<C
         }
     }
     Ok(Arc::new(n))
+}
+
+// ---------------------------------------------------------------- data extension
+
+/// ReconciledDataExtensionJob: the service's values for the matched cells of `column` among the
+/// selected rows, asked for 10 distinct items at a time. Returns {"columns": the service's meta,
+/// "rows": [[row, [[value per column] per data row]]]} with values as the service sent them, so a
+/// replay builds the same table without asking again. A batch that fails gives its rows nothing.
+pub fn extend_fetch(t: &Table, column: &str, endpoint: &str, properties: &J, sel: Option<&[bool]>) -> Result<J> {
+    let col = &t.columns[t.col(column)?];
+    let rows: Vec<(usize, String)> = (0..t.rows)
+        .filter(|&r| sel.is_none_or(|s| s[r]))
+        .filter_map(|r| col.recon(r).and_then(|rc| rc.matched.as_ref()).map(|m| (r, m.id.clone())))
+        .collect();
+    let agent = agent();
+    let mut meta: Option<Vec<J>> = None;
+    let mut out = vec![];
+    crate::jobs::progress(&format!("Adding columns from the items matched in {column}"), rows.len() as u64);
+    let mut start = 0;
+    while start < rows.len() {
+        crate::jobs::tick(0)?;
+        let mut ids: Vec<&str> = vec![];
+        let mut end = start;
+        while end < rows.len() && ids.len() < 10 {
+            if !ids.contains(&rows[end].1.as_str()) {
+                ids.push(&rows[end].1);
+            }
+            end += 1;
+        }
+        let body = json!({ "ids": ids, "properties": properties }).to_string();
+        let answer = post_field(&agent, endpoint, "extend", &body).ok().and_then(|text| serde_json::from_str::<J>(&text).ok()).filter(J::is_object);
+        if let Some(a) = &answer {
+            if meta.is_none() {
+                meta = a.get("meta").and_then(J::as_array).cloned();
+            }
+        }
+        let columns = meta.clone().unwrap_or_default();
+        for (r, id) in &rows[start..end] {
+            let data = answer.as_ref().and_then(|a| a.get("rows")).and_then(|rows| rows.get(id)).filter(|x| x.is_object()).map(|row| {
+                // each column's values go down the data rows: the i-th value of every column in row i
+                let mut data: Vec<Vec<J>> = vec![];
+                for (ci, c) in columns.iter().enumerate() {
+                    let key = c.get("id").and_then(J::as_str).unwrap_or_default();
+                    for (i, v) in row.get(key).and_then(J::as_array).into_iter().flatten().enumerate() {
+                        if !["id", "str", "float", "int", "date", "bool"].iter().any(|k| v.get(k).is_some()) {
+                            continue;
+                        }
+                        while data.len() <= i {
+                            data.push(vec![J::Null; columns.len()]);
+                        }
+                        data[i][ci] = v.clone();
+                    }
+                }
+                data
+            });
+            if let Some(d) = data {
+                out.push(json!([r, d]));
+            }
+        }
+        crate::jobs::tick((end - start) as u64)?;
+        start = end;
+    }
+    Ok(json!({ "columns": meta.unwrap_or_default(), "rows": out }))
+}
+
+/// DataExtensionChange: the extension's columns go in at `at`, each matched row takes its first data
+/// row; the others fill the following rows of the record while their base and key cells are blank,
+/// then new rows. Items come back matched (one Recon per item), with the service's config on their
+/// columns.
+pub fn extend_apply(t: &Table, base: &str, ext: &J, at: usize, names: Option<&[String]>, service: &str, identifier_space: &str, schema_space: &str) -> Result<Table> {
+    let bi = t.col(base)?;
+    let key = t.key_index();
+    let columns = ext.get("columns").and_then(J::as_array).cloned().unwrap_or_default();
+    let data: std::collections::HashMap<usize, Vec<Vec<J>>> = ext
+        .get("rows")
+        .and_then(J::as_array)
+        .into_iter()
+        .flatten()
+        .filter_map(|x| Some((x.get(0)?.as_u64()? as usize, serde_json::from_value(x.get(1)?.clone()).ok()?)))
+        .collect();
+    let blank = |c: usize, r: usize| t.columns[c].get(r).is_blank();
+    // output rows: an old row (or a new one) and the data row it takes
+    let mut plan: Vec<(Option<u32>, Option<(usize, usize)>)> = Vec::with_capacity(t.rows);
+    let mut r = 0;
+    while r < t.rows {
+        match data.get(&r).filter(|d| !d.is_empty()) {
+            None => plan.push((Some(r as u32), None)),
+            Some(d) => {
+                plan.push((Some(r as u32), Some((r, 0))));
+                let mut next = r + 1;
+                for j in 1..d.len() {
+                    if next < t.rows && blank(bi, next) && blank(key, next) {
+                        plan.push((Some(next as u32), Some((r, j))));
+                        next += 1;
+                    } else {
+                        plan.push((None, Some((r, j))));
+                    }
+                }
+                r = next - 1;
+            }
+        }
+        r += 1;
+    }
+    let mut out = t.pick_rows(&plan.iter().map(|p| p.0).collect::<Vec<_>>());
+    let h = history_entry();
+    let mut recons: std::collections::HashMap<String, Arc<Recon>> = Default::default();
+    for (c, meta) in columns.iter().enumerate() {
+        let mut values = Vec::with_capacity(plan.len());
+        let mut cells = Vec::with_capacity(plan.len());
+        for (_, take) in &plan {
+            let v = take.and_then(|(r, j)| data[&r].get(j)).and_then(|row| row.get(c)).cloned().unwrap_or(J::Null);
+            let (value, recon) = if let Some(id) = v.get("id") {
+                let id = match id {
+                    J::String(s) => s.clone(),
+                    other => other.to_string(),
+                };
+                let name = v.get("name").and_then(J::as_str).unwrap_or_default().to_string();
+                let recon = recons.entry(id.clone()).or_insert_with(|| {
+                    let types = v.get("type").and_then(J::as_array).map(|a| a.iter().map(|x| x.as_str().unwrap_or_default().to_string()).collect()).unwrap_or_default();
+                    let m = Candidate { id, name: name.clone(), types, score: 100.0 };
+                    Arc::new(Recon {
+                        service: service.into(),
+                        candidates: Some(vec![m.clone()]),
+                        matched: Some(m),
+                        match_rank: 0,
+                        judgment: Judgment::Matched,
+                        judgment_action: "auto".into(),
+                        batch_size: 1,
+                        ..Recon::new(h, identifier_space, schema_space)
+                    })
+                });
+                (Value::Str(name), Some(recon.clone()))
+            } else if let Some(s) = v.get("str") {
+                (Value::Str(s.as_str().map_or_else(|| s.to_string(), String::from)), None)
+            } else if let Some(n) = v.get("float") {
+                (n.as_f64().map_or(Value::Null, Value::Num), None)
+            } else if let Some(n) = v.get("int") {
+                (n.as_i64().map_or(Value::Null, |i| Value::Int(i as i32 as i64)), None)
+            } else if let Some(d) = v.get("date") {
+                let s = d.as_str().unwrap_or_default();
+                (chrono::DateTime::parse_from_rfc3339(s).map_or_else(|_| Value::Str(s.into()), |d| Value::Date(d.naive_utc())), None)
+            } else if let Some(b) = v.get("bool") {
+                (b.as_bool().map_or(Value::Null, Value::Bool), None)
+            } else {
+                (Value::Null, None)
+            };
+            values.push(value);
+            cells.push(recon);
+        }
+        let mut col = Column::from_values(values);
+        let ty = meta.get("type").filter(|t| t.is_object());
+        let mut config = serde_json::Map::new();
+        config.insert("mode".into(), json!("standard-service"));
+        if let Some(ty) = ty {
+            config.insert("type".into(), json!({ "id": ty.get("id"), "name": ty.get("name") }));
+        }
+        config.insert("service".into(), json!(service));
+        config.insert("identifierSpace".into(), json!(identifier_space));
+        config.insert("schemaSpace".into(), json!(schema_space));
+        config.insert("autoMatch".into(), json!(true));
+        config.insert("columnDetails".into(), json!([]));
+        config.insert("limit".into(), json!(0));
+        let mut rc = ReconCol { cells, config: Some(J::Object(config)), stats: None };
+        let stats = rc.count(&col);
+        // OpenRefine keeps stats only on columns that got items
+        rc.stats = (stats["matchedTopics"].as_i64().unwrap_or(0) > 0).then_some(stats);
+        col.recon = Some(Arc::new(rc));
+        let wanted = names.and_then(|n| n.get(c)).cloned().unwrap_or_else(|| meta.get("name").and_then(J::as_str).unwrap_or_default().to_string());
+        let mut name = wanted.clone();
+        let mut k = 2;
+        while out.names.contains(&name) {
+            name = format!("{wanted}{k}");
+            k += 1;
+        }
+        let i = (at + c).min(out.names.len());
+        out.names.insert(i, name);
+        out.columns.insert(i, Arc::new(col));
+    }
+    Ok(out)
 }
 
 #[cfg(test)]

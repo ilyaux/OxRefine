@@ -30,7 +30,7 @@ fn form_value(body: &str, key: &str) -> Option<String> {
 }
 
 /// The service: recorded answers by query; /svc500 fails; /svcnull answers null.
-fn serve(answers: Arc<HashMap<String, J>>, manifest: J) -> String {
+fn serve(answers: Arc<HashMap<String, J>>, extensions: Arc<HashMap<String, J>>, manifest: J) -> String {
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let base = format!("http://{}", listener.local_addr().unwrap());
     std::thread::spawn(move || {
@@ -57,6 +57,19 @@ fn serve(answers: Arc<HashMap<String, J>>, manifest: J) -> String {
             let (status, out) = match path.as_str() {
                 "/svc500" => (500, json!({ "error": "down" }).to_string()),
                 "/svcnull" => (200, "null".into()),
+                "/svc" if form_value(&body, "extend").is_some() => {
+                    // data extension: rows per item and property list, meta per property
+                    let q: J = serde_json::from_str(&form_value(&body, "extend").unwrap()).unwrap();
+                    let pids: Vec<J> = q["properties"].as_array().unwrap().iter().map(|p| p["id"].clone()).collect();
+                    let meta: Vec<J> = pids.iter().map(|p| extensions.get(&json!(["meta", p]).to_string()).cloned().unwrap_or(J::Null)).collect();
+                    let rows: serde_json::Map<String, J> = q["ids"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .filter_map(|id| extensions.get(&json!([id, pids]).to_string()).filter(|r| !r.is_null()).map(|r| (id.as_str().unwrap().to_string(), r.clone())))
+                        .collect();
+                    (200, json!({ "meta": meta, "rows": rows }).to_string())
+                }
                 "/svc" => match form_value(&body, "queries") {
                     None => (200, manifest.to_string()),
                     Some(q) => {
@@ -101,6 +114,7 @@ fn cell(v: &Value) -> J {
         Value::Int(i) => json!({ "v": i }),
         Value::Num(n) => json!({ "v": n }),
         Value::Bool(b) => json!({ "v": b }),
+        Value::Date(d) => json!({ "v": ox_core::grel::value::fmt_date(d), "t": "date" }),
         Value::Error(e) => json!({ "e": e }),
         other => json!({ "v": other.to_java_string() }),
     }
@@ -121,7 +135,8 @@ fn reconciliation_matches_openrefine() {
     let corpus = dir.join("corpus.csv");
     std::fs::write(&corpus, fx["corpus"].as_str().unwrap()).unwrap();
     let answers: HashMap<String, J> = fx["answers"].as_object().unwrap().iter().map(|(k, v)| (k.clone(), v.clone())).collect();
-    let base = serve(Arc::new(answers), fx["manifest"].clone());
+    let extensions: HashMap<String, J> = fx["extensions"].as_object().unwrap().iter().map(|(k, v)| (k.clone(), v.clone())).collect();
+    let base = serve(Arc::new(answers), Arc::new(extensions), fx["manifest"].clone());
 
     let cases = fx["cases"].as_array().unwrap();
     let (mut failing, mut report) = (BTreeSet::new(), vec![]);

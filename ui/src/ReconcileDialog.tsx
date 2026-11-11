@@ -255,3 +255,96 @@ export function ReconcileDialog({
     </Dialog>
   )
 }
+
+type Proposal = { properties: { id: string; name: string }[]; manifest: Manifest; service: string }
+
+/** OpenRefine's "Add columns from reconciled values": properties of the matched items as new columns. */
+export function ExtendDialog({
+  column,
+  columns,
+  engine,
+  onApply,
+  onClose,
+}: {
+  column: string
+  columns: string[]
+  engine: Engine
+  onApply: (op: Op) => Promise<void>
+  onClose: () => void
+}) {
+  const [proposal, setProposal] = useState<Proposal | null>(null)
+  const [chosen, setChosen] = useState<string[]>([])
+  const [more, setMore] = useState("")
+  const [error, setError] = useState("")
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    call<Proposal>("recon_propose", { column }, { quiet: true }).then(({ data }) => setProposal(data), (e) => setError(String((e as Error).message ?? e)))
+  }, [column])
+
+  const extra = more.split(",").map((s) => s.trim()).filter(Boolean)
+  const ids = [...chosen, ...extra.filter((x) => !chosen.includes(x))]
+  const nameOf = (id: string) => proposal?.properties.find((p) => p.id === id)?.name ?? id
+  const apply = async () => {
+    if (!proposal) return
+    setBusy(true)
+    await onApply({
+      op: "core/extend-reconciled-data",
+      engineConfig: engine,
+      baseColumnName: column,
+      endpoint: proposal.service,
+      identifierSpace: proposal.manifest.identifierSpace,
+      schemaSpace: proposal.manifest.schemaSpace,
+      extension: { properties: ids.map((id) => ({ id, name: nameOf(id) })) },
+      columnInsertIndex: columns.indexOf(column) + 1,
+    }).then(onClose, (e) => setError(String((e as Error).message ?? e)))
+    setBusy(false)
+  }
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Add columns from the items matched in “{column}”</DialogTitle>
+          <DialogDescription>Each property becomes a column after this one; items with several values get extra rows in their record.</DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="max-h-[60vh]">
+          <FieldGroup className="pr-3">
+            <FieldSet>
+              <FieldLegend variant="label">Properties the service suggests</FieldLegend>
+              {!proposal && !error && (
+                <FieldDescription className="flex items-center gap-2">
+                  <Spinner />
+                  Asking the service…
+                </FieldDescription>
+              )}
+              {proposal?.properties.length === 0 && <FieldDescription>The service suggests none; type their ids below.</FieldDescription>}
+              {proposal?.properties.map((p) => (
+                <Field key={p.id} orientation="horizontal">
+                  <Checkbox id={`ext-${p.id}`} checked={chosen.includes(p.id)} onCheckedChange={(v) => setChosen((c) => (v ? [...c, p.id] : c.filter((x) => x !== p.id)))} />
+                  <FieldLabel htmlFor={`ext-${p.id}`} className="font-normal">
+                    {p.name} <span className="text-muted-foreground">({p.id})</span>
+                  </FieldLabel>
+                </Field>
+              ))}
+            </FieldSet>
+            <Field>
+              <FieldLabel htmlFor="ext-more">Other properties</FieldLabel>
+              <Input id="ext-more" placeholder="Property ids, separated by commas (P31, P625)" value={more} onChange={(e) => setMore(e.target.value)} />
+            </Field>
+            {error && <FieldError>{error}</FieldError>}
+          </FieldGroup>
+        </ScrollArea>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={apply} disabled={!proposal || ids.length === 0 || busy}>
+            {busy && <Spinner data-icon="inline-start" />}
+            Add {ids.length || ""} column{ids.length === 1 ? "" : "s"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}

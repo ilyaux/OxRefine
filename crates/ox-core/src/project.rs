@@ -423,6 +423,16 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         "facets" => json!(engine::facet_counts(p.table(), &a.engine)?),
         "recon_guess_types" => crate::recon::guess_types(p.table(), &a.column, &a.url)?,
+        // what the column's service can add: its proposed properties for the column's type
+        "recon_propose" => {
+            let t = p.table();
+            let rc = t.columns[t.col(&a.column)?].recon.as_ref().and_then(|rc| rc.config.clone()).unwrap_or_default();
+            let service = rc.get("service").and_then(Value::as_str).ok_or("this column hasn't been reconciled")?;
+            let ty = rc.get("type").and_then(|t| t.get("id")).and_then(Value::as_str);
+            let mut out = crate::recon::propose_properties(service, ty)?;
+            out["service"] = json!(service);
+            out
+        }
         // one cell's Recon in full (`index` is the row), for judging it
         "recon_cell" => {
             let t = p.table();

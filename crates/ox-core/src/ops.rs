@@ -236,6 +236,23 @@ pub enum OpKind {
         results: Option<serde_json::Value>,
     },
 
+    #[serde(rename = "core/extend-reconciled-data", rename_all = "camelCase")]
+    ExtendReconciledData {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        base_column_name: String,
+        endpoint: String,
+        identifier_space: String,
+        schema_space: String,
+        /// {"properties": [{"id", "name", "settings"?}], ...}
+        extension: serde_json::Value,
+        column_insert_index: usize,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        result_column_names: Option<Vec<String>>,
+        /// What the service answered (recon::extend_fetch), so replaying doesn't ask again.
+        #[serde(rename = "ox:extended", default, skip_serializing_if = "Option::is_none")]
+        results: Option<serde_json::Value>,
+    },
     #[serde(rename = "core/recon-match-best-candidates", rename_all = "camelCase")]
     ReconMatchBestCandidates {
         #[serde(default)]
@@ -759,6 +776,17 @@ impl Op {
             types: m.get("types").and_then(|v| v.as_array()).map(|a| a.iter().filter_map(|x| x.as_str().map(String::from)).collect()).unwrap_or_default(),
             score: m.get("score").and_then(|v| v.as_f64()).unwrap_or(score),
         };
+        if let OpKind::ExtendReconciledData { engine_config, base_column_name, endpoint, identifier_space, schema_space, extension, column_insert_index, result_column_names, results } = &mut self.kind {
+            let mut run = || -> Result<Table> {
+                if results.is_none() {
+                    let sel = engine::mask(t, engine_config)?;
+                    let properties = extension.get("properties").cloned().unwrap_or(serde_json::json!([]));
+                    *results = Some(rc::extend_fetch(t, base_column_name, endpoint, &properties, sel.as_deref())?);
+                }
+                rc::extend_apply(t, base_column_name, results.as_ref().unwrap(), *column_insert_index, result_column_names.as_deref(), endpoint, identifier_space, schema_space)
+            };
+            return Some(run());
+        }
         let run = || -> Result<Option<Table>> {
             Ok(Some(match &self.kind {
                 OpKind::ReconMatchBestCandidates { engine_config, column_name } => {
@@ -969,6 +997,7 @@ impl Op {
                 format!("Reconcile cells in column {column_name} to type {ty}")
             }
             ReconMatchBestCandidates { column_name, .. } => format!("Match each cell to its best recon candidate in column {column_name}"),
+            ExtendReconciledData { base_column_name, column_insert_index, .. } => format!("Extend data at index {column_insert_index} based on column {base_column_name}"),
             ReconMarkNewTopics { column_name, share_new_topics: true, .. } => {
                 format!("Mark to create new items for cells in column {column_name}, one item for each group of similar cells")
             }
@@ -1075,6 +1104,7 @@ impl Op {
             ColumnAdditionByFetchingUrls { .. } | OpKind::Recon { .. } => unreachable!(),
             // the operations on Recons, in recon_action
             ReconMatchBestCandidates { .. }
+            | ExtendReconciledData { .. }
             | ReconMarkNewTopics { .. }
             | ReconMatchSpecificTopic { .. }
             | ReconDiscardJudgments { .. }

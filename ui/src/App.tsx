@@ -3,7 +3,7 @@ import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIc
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
-import { loadServices, ReconcileDialog } from "@/ReconcileDialog"
+import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
@@ -31,6 +31,7 @@ type Modal =
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "reconcile"; column: string }
+  | { kind: "extend"; column: string }
   | { kind: "export"; format: ExportFormat }
   | { kind: "extract" }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onUpload?: (f: File) => Promise<void>; onSubmit: (v: string) => Promise<void> }
@@ -244,6 +245,7 @@ export function App() {
           await mass("recon-use-values-as-identifiers", { service: url.trim(), identifierSpace: data.identifierSpace, schemaSpace: data.schemaSpace })
         },
       })
+    else if (kind === "recon-extend") setModal({ kind: "extend", column: c })
     else if (kind === "recon-add-ids")
       setModal({
         kind: "ask",
@@ -537,6 +539,9 @@ export function App() {
           }}
           onClose={() => setModal(null)}
         />
+      )}
+      {modal?.kind === "extend" && summary && (
+        <ExtendDialog column={modal.column} columns={summary.columns} engine={engine} onApply={apply} onClose={() => setModal(null)} />
       )}
       {modal?.kind === "transpose" && summary && (
         <TransposeDialog column={modal.column} columns={summary.columns} mode={modal.mode} onApply={apply} onClose={() => setModal(null)} />

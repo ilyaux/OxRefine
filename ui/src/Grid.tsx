@@ -120,7 +120,7 @@ export type ColumnAction =
         | "numeric-facet" | "timeline-facet" | "custom-list-facet" | "custom-range-facet"
         | "fetch" | "transpose-columns" | "transpose-rows" | "columnize" | "reconcile"
         | "recon-best" | "recon-new-each" | "recon-new-shared" | "recon-match-all" | "recon-discard" | "recon-clear"
-        | "recon-copy" | "recon-use-ids" | "recon-add-ids"
+        | "recon-copy" | "recon-use-ids" | "recon-add-ids" | "recon-extend"
       column: string
     }
   | { kind: "preset-facet"; column: string; facet: "list" | "range"; expression: string }
@@ -442,6 +442,7 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
           <DropdownMenuItem onClick={act("split")}>Split into several columns…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("add-column")}>Add column based on this…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("fetch")}>Add column by fetching URLs…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("recon-extend")}>Add columns from reconciled values…</DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Reconcile</DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="w-56">

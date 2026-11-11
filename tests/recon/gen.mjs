@@ -7,7 +7,7 @@ import { join } from "node:path"
 import { tmpdir } from "node:os"
 import { startOpenRefine } from "../../tools/openrefine.mjs"
 import { CASES, CORPUS } from "./cases.mjs"
-import { serve, MANIFEST } from "./service.mjs"
+import { serve, MANIFEST, extend } from "./service.mjs"
 import { withBase } from "../ops/server.mjs"
 
 const svc = await serve()
@@ -54,9 +54,16 @@ try {
   const sorted = (v) => (Array.isArray(v) ? v.map(sorted) : v && typeof v === "object" ? Object.fromEntries(Object.keys(v).sort().map((k) => [k, sorted(v[k])])) : v)
   const answers = {}
   for (const { query, answer } of svc.seen) answers[JSON.stringify(sorted(query))] = answer
+  // extend answers per id and property list, so a request batched differently gets the same rows
+  const extensions = {}
+  for (const q of svc.extended) {
+    const a = extend(q)
+    for (const id of q.ids) extensions[JSON.stringify([id, q.properties.map((p) => p.id)])] = a.rows[id] ?? null
+    for (const m of a.meta) extensions[JSON.stringify(["meta", m.id])] = m
+  }
   writeFileSync(
     new URL("fixtures.json", import.meta.url),
-    JSON.stringify({ openrefine: "3.10.1", corpus: CORPUS, manifest: MANIFEST("{BASE}"), answers, cases: out }, null, 1) + "\n",
+    JSON.stringify({ openrefine: "3.10.1", corpus: CORPUS, manifest: MANIFEST("{BASE}"), answers, extensions, cases: out }, null, 1) + "\n",
   )
   console.log(`${out.length} cases, ${Object.keys(answers).length} queries -> tests/recon/fixtures.json`)
 } finally {

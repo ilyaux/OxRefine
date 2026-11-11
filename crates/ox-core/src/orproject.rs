@@ -344,6 +344,8 @@ enum Change {
     Split { at: usize, col: Col, remove: bool, first: usize, names: Vec<String>, rows: Vec<usize>, new: Vec<Row>, old: Vec<Row> },
     Rows { new: Vec<Row>, old: Vec<Row> },
     RowsAndColumns { new_cols: Vec<Col>, old_cols: Vec<Col>, new: Vec<Row>, old: Vec<Row> },
+    /// DataExtensionChange: whole rows before and after, the new columns' names, cell indexes and place
+    Extend { at: usize, first: usize, names: Vec<String>, new: Vec<Row>, old: Vec<Row> },
     RemoveRows { at: Vec<usize>, rows: Vec<Row> },
     Order(Vec<usize>),
 }
@@ -483,6 +485,13 @@ fn parse(p: &mut Lines) -> Result<Change> {
         },
         "MassRowChange" => Change::Rows { new: rows_b, old: rows_a },
         "MassRowColumnChange" => Change::RowsAndColumns { new_cols: cols_b, old_cols: cols_a, new: rows_b, old: rows_a },
+        "DataExtensionChange" => Change::Extend {
+            at: num(get("columnInsertIndex")?)?,
+            first: num(get("firstNewCellIndex")?)?,
+            names,
+            new: rows_b,
+            old: rows_a,
+        },
         "RowRemovalChange" => Change::RemoveRows { at: ints, rows: rows_a },
         "RowReorderChange" => Change::Order(ints),
         _ => return Err(format!("OxRefine can't read OpenRefine's {kind} yet")),
@@ -617,6 +626,17 @@ impl Change {
                 }
             }
             Change::Rows { new, old } => from_rows(s.cols.clone(), if forward { new } else { old }, s.key.clone()),
+            Change::Extend { at, first, names, new, old, .. } => {
+                let mut cols = s.cols.clone();
+                if forward {
+                    for (i, n) in names.iter().enumerate() {
+                        cols.insert((at + i).min(cols.len()), Col { cell: first + i, name: n.clone(), recon: None, stats: None });
+                    }
+                } else {
+                    cols.retain(|c| !(*first..first + names.len()).contains(&c.cell));
+                }
+                from_rows(cols, if forward { new } else { old }, s.key.clone())
+            }
             Change::RowsAndColumns { new_cols, old_cols, new, old } => {
                 let cols = if forward { new_cols } else { old_cols };
                 let key = s.key.clone().filter(|k| cols.iter().any(|c| &c.name == k));
@@ -937,6 +957,18 @@ impl Archive {
                         *results = Some(crate::recon::save_cells(&cells));
                     }
                 }
+                if let OpKind::ExtendReconciledData { base_column_name, extension, column_insert_index, results, .. } = &mut k {
+                    // the rows with a matched item, and the columns the step added
+                    let prev = self.states[i - 1].table();
+                    let n = extension.get("properties").and_then(J::as_array).map_or(0, Vec::len);
+                    let at = *column_insert_index;
+                    let names: Vec<String> = target.names.iter().skip(at).take(n).cloned().collect();
+                    let rows: Vec<usize> = prev.col(base_column_name).map_or_else(
+                        |_| vec![],
+                        |c| (0..prev.rows).filter(|&r| prev.columns[c].recon(r).is_some_and(|rc| rc.matched.is_some())).collect(),
+                    );
+                    *results = Some(extension_from(&prev, &target, base_column_name, at, &names, &rows, extension));
+                }
                 k
             });
             let replayed = kind.and_then(|kind| {
@@ -969,6 +1001,66 @@ impl Archive {
         p.goto(cursor.min(n - 1)).expect("cursor within the steps");
         (p, report)
     }
+}
+
+/// What the service answered for a data extension, read back from the table it made, so the step
+/// replays without asking: the extended rows' data rows are the target's rows from that row on, as
+/// long as they hold any of the new columns' values.
+fn extension_from(prev: &Table, target: &Table, base: &str, at: usize, names: &[String], rows: &[usize], extension: &J) -> J {
+    let props = extension.get("properties").and_then(J::as_array).cloned().unwrap_or_default();
+    let columns: Vec<J> = names
+        .iter()
+        .enumerate()
+        .map(|(i, n)| json!({ "id": props.get(i).and_then(|p| p.get("id")).cloned().unwrap_or(json!(n)), "name": n }))
+        .collect();
+    let (Ok(pb), Ok(tb)) = (prev.col(base), target.col(base)) else { return json!({ "columns": columns, "rows": [] }) };
+    let (pk, tk) = (prev.key_index(), target.key_index());
+    let new_cols: Vec<usize> = (0..names.len()).map(|i| at + i).filter(|&c| c < target.names.len()).collect();
+    let value = |c: usize, r: usize| -> J {
+        let col = &target.columns[c];
+        if let Some(m) = col.recon(r).and_then(|rc| rc.matched.as_ref()) {
+            return json!({ "id": m.id, "name": m.name, "type": m.types });
+        }
+        match col.get(r) {
+            Value::Null => J::Null,
+            Value::Str(s) => json!({ "str": s }),
+            Value::Int(i) => json!({ "int": i }),
+            Value::Num(n) => json!({ "float": n }),
+            Value::Bool(b) => json!({ "bool": b }),
+            Value::Date(d) => json!({ "date": format!("{}+00:00", d.format("%Y-%m-%dT%H:%M:%S")) }),
+            other => json!({ "str": other.to_java_string() }),
+        }
+    };
+    let filled = |r: usize| new_cols.iter().any(|&c| !target.columns[c].get(r).is_null());
+    let row = |r: usize| new_cols.iter().map(|&c| value(c, r)).collect::<Vec<_>>();
+    let blank = |t: &Table, c: usize, r: usize| t.columns[c].get(r).is_blank();
+    let mut out = vec![];
+    let (mut p, mut q) = (0usize, 0usize);
+    while p < prev.rows && q < target.rows {
+        if rows.contains(&p) && filled(q) {
+            // the extended row, then the rows its other values went to (blank base and key cells)
+            let mut data = vec![row(q)];
+            let mut k = q + 1;
+            while k < target.rows && filled(k) && blank(target, tb, k) && blank(target, tk, k) {
+                data.push(row(k));
+                k += 1;
+            }
+            // the old rows those values took, by OpenRefine's rule; the rest were new rows
+            let mut next = p + 1;
+            for _ in 1..data.len() {
+                if next < prev.rows && blank(prev, pb, next) && blank(prev, pk, next) {
+                    next += 1;
+                }
+            }
+            out.push(json!([p, data]));
+            p = next;
+            q = k;
+        } else {
+            p += 1;
+            q += 1;
+        }
+    }
+    json!({ "columns": columns, "rows": out })
 }
 
 /// A fetched cell as an operation keeps it: null | text | {"e": message}.

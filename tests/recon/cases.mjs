@@ -38,6 +38,12 @@ const withHidden = (cases) => cases.map((c) => ({ ...c, ops: [...c.ops, hidden] 
 const uk = text("country", "uk")
 const paris = { id: "Q10", name: "Paris", types: ["Q515"], score: 70 }
 const op = (name, extra = {}, engineConfig = all) => ({ op: `core/${name}`, engineConfig, columnName: "name", ...extra })
+const extendOp = (base, properties, at = 1, engineConfig = all, resultColumnNames) => ({
+  op: "core/extend-reconciled-data", engineConfig, baseColumnName: base, endpoint: "{BASE}/svc",
+  identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/",
+  extension: { properties: properties.map((id) => ({ id, name: id })) }, columnInsertIndex: at,
+  ...(resultColumnNames ? { resultColumnNames } : {}),
+})
 const qids = addColumn("qid", 'if(value == "London", "Q12", if(value == "Paris", "http://ox.test/entity/Q10", value))', "city")
 
 export const CASES = [
@@ -110,6 +116,12 @@ export const CASES = [
     { name: "judge one cell: none", ops: [recon("name", human), { op: "ox/recon-judge-one-cell", row: 3, columnName: "name", judgment: "none" }] },
     { name: "judge one cell: unreconciled", ops: [{ op: "ox/recon-judge-one-cell", row: 0, columnName: "city", judgment: "matched", match: { id: "Q12", name: "London", types: ["Q515"], score: 100 } }] },
     { name: "clear one cell", ops: [recon("name", human), { op: "ox/recon-clear-one-cell", row: 4, columnName: "name" }] },
+    // ---------------------------------------------------------------- adding columns from reconciled values
+    { name: "extend: entity and strings", ops: [recon("name", human), extendOp("name", ["P17", "P742"])] },
+    { name: "extend: numbers, dates, booleans", ops: [recon("name", human), extendOp("name", ["P569", "P2", "P3"])] },
+    { name: "extend: city population, in facet", ops: [recon("city", city), extendOp("city", ["P1082", "P742"], 3, text("country", "u"))] },
+    { name: "extend: unknown id", ops: [op("recon-match-specific-topic-to-cells", { columnName: "city", match: { id: "Q404", name: "Nowhere", types: [] }, identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/" }, text("city", "nowhere")), recon("city", city), extendOp("city", ["P1082"])] },
+    { name: "extend: result column names", ops: [recon("name", human), extendOp("name", ["P17"], 1, all, ["home"])] },
     // ---------------------------------------------------------------- Recons through other steps
     { name: "fill down copies recon", ops: [recon("name", human), { op: "core/fill-down", engineConfig: all, columnName: "name" }] },
     { name: "blank down drops recon", ops: [recon("name", human), { op: "core/blank-down", engineConfig: all, columnName: "name" }] },

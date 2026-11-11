@@ -31,8 +31,8 @@ try {
     const merged = c.history.length - steps.length
     const ok = JSON.stringify(steps.map((e) => e.description)) === JSON.stringify(c.history.slice(merged)) && h.past.length === c.cursor - merged
     if (!ok) fail(`history ${JSON.stringify(steps.map((e) => e.description))} at ${h.past.length}`)
-    // OpenRefine reads each operation back (Extract lists all but single-cell and single-row edits)
-    const single = /^(Edit single cell|Star row|Unstar row|Flag row|Unflag row) /
+    // OpenRefine reads each operation back (Extract lists all but single-cell and single-row edits and judgments)
+    const single = /^(Edit single cell|Star row|Unstar row|Flag row|Unflag row) | single cell on row /
     const ops = (await or.get(`/command/core/get-operations?project=${project}`)).entries.filter((e) => e.operation).length
     if (ops !== h.past.filter((e) => !single.test(e.description)).length) fail(`${ops} extracted operations`)
     for (let n = 0; n <= steps.length; n++) {
