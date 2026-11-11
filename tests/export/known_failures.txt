@@ -1,0 +1,2 @@
+# Cases where OxRefine deliberately differs from OpenRefine 3.10.1. Format: <case name> # <reason>
+sql # OpenRefine 3.10 drops numeric and null values from INSERT rows (shifting columns); we write NULL and unquoted numbers so the dump loads

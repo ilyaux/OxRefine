@@ -154,6 +154,7 @@ struct Args {
     index: usize,
     op: Option<Op>,
     ops: Vec<Op>,
+    params: Value,
 }
 
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
@@ -266,10 +267,19 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             });
             json!(pairs.collect::<Vec<_>>())
         }
-        "export_csv" => {
+        // writes the file at `path`; without a path returns the text of the first `limit` rows (previews)
+        "export" => {
             let rows = p.rows(&a.engine)?;
-            p.table().write_csv(Path::new(&a.path), &rows)?;
-            json!(rows.len())
+            let format = a.format.as_deref().unwrap_or_else(|| crate::export::format_for(&a.path));
+            if a.path.is_empty() {
+                let rows = &rows[..rows.len().min(if a.limit == 0 { usize::MAX } else { a.limit })];
+                let bytes = crate::export::export(p.table(), rows, format, &a.params, &p.name)?;
+                json!(String::from_utf8_lossy(&bytes))
+            } else {
+                let bytes = crate::export::export(p.table(), &rows, format, &a.params, &p.name)?;
+                std::fs::write(&a.path, bytes).map_err(|e| format!("{}: {e}", a.path))?;
+                json!(rows.len())
+            }
         }
         "export_recipe" => {
             let r = json!(p.recipe());

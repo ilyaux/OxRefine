@@ -91,9 +91,10 @@ export async function call<T = unknown>(cmd: string, args: object = {}): Promise
 }
 
 /** Native file dialogs in the desktop app; null in the browser (caller asks for a path). */
-export async function pickFile(kind: "open-csv" | "save-csv" | "save-json"): Promise<string | null | undefined> {
+/** `"open"` picks a data file to import; anything else is the extension of a file to save. */
+export async function pickFile(kind: string): Promise<string | null | undefined> {
   if (!isTauri) return undefined
-  if (kind === "open-csv") {
+  if (kind === "open") {
     const p = await open({
       filters: [
         { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson"] },
@@ -102,6 +103,5 @@ export async function pickFile(kind: "open-csv" | "save-csv" | "save-json"): Pro
     })
     return typeof p === "string" ? p : null
   }
-  const ext = kind === "save-csv" ? "csv" : "json"
-  return save({ filters: [{ name: ext.toUpperCase(), extensions: [ext] }] })
+  return save({ filters: [{ name: kind.toUpperCase(), extensions: [kind] }] })
 }

@@ -63,7 +63,7 @@ async function runOx(csv, out) {
     t = now(); const f = await ox("facets", { engine: countryFacet }); r.facet = now() - t; r.facetChoices = f[0].distinct
     t = now(); const c = await ox("cluster", { engine: noFacets, column: "city", method: "fingerprint" }); r.cluster = now() - t; r.clusters = c.length ?? console.log("cluster response", JSON.stringify(c).slice(0, 500))
     t = now(); await ox("apply_recipe", { ops: recipe }); r.recipe = now() - t
-    t = now(); await ox("export_csv", { engine: noFacets, path: out }); r.export = now() - t
+    t = now(); await ox("export", { engine: noFacets, path: out }); r.export = now() - t
     r.peak = peakMB(p.pid)
     return r
   } finally { kill(p) }

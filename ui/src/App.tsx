@@ -4,6 +4,7 @@ import { call, listFacet, pickFile, rangeFacet, type Engine, type Facet, type Fa
 import { AskDialog, ClusterDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
+import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Facets, History } from "@/Sidebar"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -24,6 +26,7 @@ import { Toaster, toast } from "@/components/ui/toast"
 
 type Modal =
   | { kind: "transform" | "add" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
+  | { kind: "export"; format: ExportFormat }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; onSubmit: (v: string) => Promise<void> }
   | null
 
@@ -62,12 +65,12 @@ export function App() {
   const goto = (index: number) => run("history", "goto", { index }).catch(fail)
 
   // Desktop: native dialogs. Browser (`ox serve`): the server reads/writes paths on its own machine.
-  const withPath = async (kind: "open-csv" | "save-csv" | "save-json", title: string, then: (p: string) => Promise<void>) => {
+  const withPath = async (kind: string, title: string, then: (p: string) => Promise<void>) => {
     const p = await pickFile(kind)
     if (p) return then(p).catch(fail)
     if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
   }
-  const openFile = () => withPath("open-csv", "Import a file", async (path) => setImportPath(path))
+  const openFile = () => withPath("open", "Import a file", async (path) => setImportPath(path))
   const openProject = (id: string) => {
     setFacets([])
     run("open", "open_project", { id }).catch(fail)
@@ -84,14 +87,14 @@ export function App() {
         done()
       },
     })
-  const exportCsv = () =>
-    withPath("save-csv", "Export matching rows as CSV", async (path) => {
-      const { data, ms } = await call<number>("export_csv", { engine, path })
+  const exportRows = (format: string, ext: string, params: object = {}) =>
+    withPath(ext, `Export matching rows as .${ext}`, async (path) => {
+      const { data, ms } = await call<number>("export", { format, params, engine, path })
       setLastMs({ what: "export", ms })
       toast.add({ title: `Exported ${data.toLocaleString()} rows`, description: path, type: "success" })
     })
   const saveRecipe = () =>
-    withPath("save-json", "Save recipe JSON", async (path) => {
+    withPath("json", "Save recipe JSON", async (path) => {
       await call("export_recipe", { path })
       toast.add({ title: "Recipe saved", description: path, type: "success" })
     })
@@ -256,7 +259,18 @@ export function App() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={exportCsv}>Matching rows as CSV…</DropdownMenuItem>
+                  <DropdownMenuLabel>Matching rows</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => exportRows("csv", "csv")}>CSV…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportRows("tsv", "tsv")}>TSV…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportRows("xlsx", "xlsx")}>Excel (.xlsx)…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportRows("html", "html")}>HTML table…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "*sv" })}>Custom tabular…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "template" })}>Templating…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "sql" })}>SQL…</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Operation history</DropdownMenuLabel>
                   <DropdownMenuItem onClick={saveRecipe}>Recipe JSON…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -335,6 +349,18 @@ export function App() {
           engine={engine}
           onApply={apply}
           onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.kind === "export" && summary && (
+        <ExportDialog
+          format={modal.format}
+          columns={summary.columns}
+          engine={engine}
+          onExport={(params) => {
+            setModal(null)
+            exportRows(modal.format, EXTENSION[modal.format], params)
+          }}
           onClose={() => setModal(null)}
         />
       )}

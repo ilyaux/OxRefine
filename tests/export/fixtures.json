@@ -1,0 +1,242 @@
+{
+ "openrefine": "3.10.1",
+ "project": "people",
+ "corpus": "id,name,tags,city,score,joined,note\n1,Alice Smith,red|green,New York,10,2024-01-15,first\n,,blue,new york,,2024-02-01,\n2,bob jones,green,Boston,7.5,2023-12-31,\n3,Carol King,,boston ,12,,dup\n3,Carol King,,boston ,12,,dup\n,,red|blue|green,Chicago,x,2024-03-10,\n4,Dan  Brown,blue,  Chicago,3,not a date,last\n5,,red,,0,2024-01-15,\n6,Eve Adams,green|red,New-York,-2,2022-06-30,\"quoted, comma\"\n",
+ "setup": [
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "score",
+   "expression": "grel:value.toNumber()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "joined",
+   "expression": "grel:value.toDate()",
+   "onError": "store-error",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "tags",
+   "expression": "grel:if(value == 'blue', '<b>blue</b> & \"co\"', value)",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/row-star",
+   "engineConfig": {
+    "facets": [
+     {
+      "type": "text",
+      "name": "city",
+      "columnName": "city",
+      "query": "york",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "starred": true
+  }
+ ],
+ "cases": [
+  {
+   "name": "csv",
+   "format": "csv",
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "id,name,tags,city,score,joined,note\r\n1,Alice Smith,red|green,New York,10,2024-01-15T00:00:00Z,first\r\n,,\"<b>blue</b> & \"\"co\"\"\",new york,,2024-02-01T00:00:00Z,\r\n2,bob jones,green,Boston,7.5,2023-12-31T00:00:00Z,\r\n3,Carol King,,boston,12,Unable to parse as date,dup\r\n3,Carol King,,boston,12,Unable to parse as date,dup\r\n,,red|blue|green,Chicago,x,2024-03-10T00:00:00Z,\r\n4,Dan  Brown,\"<b>blue</b> & \"\"co\"\"\",Chicago,3,Unable to convert to date,last\r\n5,,red,,0,2024-01-15T00:00:00Z,\r\n6,Eve Adams,green|red,New-York,-2,2022-06-30T00:00:00Z,\"quoted, comma\"\r\n"
+  },
+  {
+   "name": "csv of facet rows",
+   "format": "csv",
+   "engine": {
+    "facets": [
+     {
+      "type": "text",
+      "name": "city",
+      "columnName": "city",
+      "query": "york",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "output": "id,name,tags,city,score,joined,note\r\n1,Alice Smith,red|green,New York,10,2024-01-15T00:00:00Z,first\r\n,,\"<b>blue</b> & \"\"co\"\"\",new york,,2024-02-01T00:00:00Z,\r\n6,Eve Adams,green|red,New-York,-2,2022-06-30T00:00:00Z,\"quoted, comma\"\r\n"
+  },
+  {
+   "name": "tsv",
+   "format": "tsv",
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "id\tname\ttags\tcity\tscore\tjoined\tnote\r\n1\tAlice Smith\tred|green\tNew York\t10\t2024-01-15T00:00:00Z\tfirst\r\n\t\t<b>blue</b> & \"co\"\tnew york\t\t2024-02-01T00:00:00Z\t\r\n2\tbob jones\tgreen\tBoston\t7.5\t2023-12-31T00:00:00Z\t\r\n3\tCarol King\t\tboston\t12\tUnable to parse as date\tdup\r\n3\tCarol King\t\tboston\t12\tUnable to parse as date\tdup\r\n\t\tred|blue|green\tChicago\tx\t2024-03-10T00:00:00Z\t\r\n4\tDan  Brown\t<b>blue</b> & \"co\"\tChicago\t3\tUnable to convert to date\tlast\r\n5\t\tred\t\t0\t2024-01-15T00:00:00Z\t\r\n6\tEve Adams\tgreen|red\tNew-York\t-2\t2022-06-30T00:00:00Z\tquoted, comma\r\n"
+  },
+  {
+   "name": "html",
+   "format": "html",
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "<html>\n<head>\n<title>people</title>\n<meta charset=\"utf-8\" />\n</head>\n<body>\n<table>\n<tr><th>id</th><th>name</th><th>tags</th><th>city</th><th>score</th><th>joined</th><th>note</th></tr>\n<tr><td>1</td><td>Alice Smith</td><td>red|green</td><td>New York</td><td>10</td><td>2024-01-15T00:00:00Z</td><td>first</td></tr>\n<tr><td></td><td></td><td>&lt;b&gt;blue&lt;/b&gt; &amp; &quot;co&quot;</td><td>new york</td><td></td><td>2024-02-01T00:00:00Z</td><td></td></tr>\n<tr><td>2</td><td>bob jones</td><td>green</td><td>Boston</td><td>7.5</td><td>2023-12-31T00:00:00Z</td><td></td></tr>\n<tr><td>3</td><td>Carol King</td><td></td><td>boston </td><td>12</td><td>Unable to parse as date</td><td>dup</td></tr>\n<tr><td>3</td><td>Carol King</td><td></td><td>boston </td><td>12</td><td>Unable to parse as date</td><td>dup</td></tr>\n<tr><td></td><td></td><td>red|blue|green</td><td>Chicago</td><td>x</td><td>2024-03-10T00:00:00Z</td><td></td></tr>\n<tr><td>4</td><td>Dan  Brown</td><td>&lt;b&gt;blue&lt;/b&gt; &amp; &quot;co&quot;</td><td>  Chicago</td><td>3</td><td>Unable to convert to date</td><td>last</td></tr>\n<tr><td>5</td><td></td><td>red</td><td></td><td>0</td><td>2024-01-15T00:00:00Z</td><td></td></tr>\n<tr><td>6</td><td>Eve Adams</td><td>green|red</td><td>New-York</td><td>-2</td><td>2022-06-30T00:00:00Z</td><td>quoted, comma</td></tr>\n</table>\n</body>\n</html>\n"
+  },
+  {
+   "name": "template custom",
+   "format": "template",
+   "params": {
+    "template": "{{rowIndex}}:{{value}}|{{cells.city.value}}|{{row.starred}}|{{cells.score.value * 2}}",
+    "prefix": "BEGIN\n",
+    "suffix": "\nEND",
+    "separator": "\n"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "BEGIN\n0:null|New York|true|20\n1:null|new york|true|null\n2:null|Boston|false|15.0\n3:null|boston |false|24\n4:null|boston |false|24\n5:null|Chicago|false|null\n6:null|  Chicago|false|6\n7:null|null|false|0\n8:null|New-York|true|-4\nEND"
+  },
+  {
+   "name": "template default json",
+   "format": "template",
+   "params": {
+    "prefix": "{\n  \"rows\" : [\n",
+    "template": "    {\n      \"id\" : {{jsonize(cells[\"id\"].value)}},\n      \"name\" : {{jsonize(cells[\"name\"].value)}},\n      \"tags\" : {{jsonize(cells[\"tags\"].value)}},\n      \"city\" : {{jsonize(cells[\"city\"].value)}},\n      \"score\" : {{jsonize(cells[\"score\"].value)}},\n      \"joined\" : {{jsonize(cells[\"joined\"].value)}},\n      \"note\" : {{jsonize(cells[\"note\"].value)}}\n    }",
+    "separator": ",\n",
+    "suffix": "\n  ]\n}"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "{\n  \"rows\" : [\n    {\n      \"id\" : \"1\",\n      \"name\" : \"Alice Smith\",\n      \"tags\" : \"red|green\",\n      \"city\" : \"New York\",\n      \"score\" : 10,\n      \"joined\" : \"2024-01-15T00:00:00Z\",\n      \"note\" : \"first\"\n    },\n    {\n      \"id\" : null,\n      \"name\" : null,\n      \"tags\" : \"<b>blue</b> & \\\"co\\\"\",\n      \"city\" : \"new york\",\n      \"score\" : null,\n      \"joined\" : \"2024-02-01T00:00:00Z\",\n      \"note\" : null\n    },\n    {\n      \"id\" : \"2\",\n      \"name\" : \"bob jones\",\n      \"tags\" : \"green\",\n      \"city\" : \"Boston\",\n      \"score\" : 7.5,\n      \"joined\" : \"2023-12-31T00:00:00Z\",\n      \"note\" : null\n    },\n    {\n      \"id\" : \"3\",\n      \"name\" : \"Carol King\",\n      \"tags\" : null,\n      \"city\" : \"boston \",\n      \"score\" : 12,\n      \"joined\" : null,\n      \"note\" : \"dup\"\n    },\n    {\n      \"id\" : \"3\",\n      \"name\" : \"Carol King\",\n      \"tags\" : null,\n      \"city\" : \"boston \",\n      \"score\" : 12,\n      \"joined\" : null,\n      \"note\" : \"dup\"\n    },\n    {\n      \"id\" : null,\n      \"name\" : null,\n      \"tags\" : \"red|blue|green\",\n      \"city\" : \"Chicago\",\n      \"score\" : \"x\",\n      \"joined\" : \"2024-03-10T00:00:00Z\",\n      \"note\" : null\n    },\n    {\n      \"id\" : \"4\",\n      \"name\" : \"Dan  Brown\",\n      \"tags\" : \"<b>blue</b> & \\\"co\\\"\",\n      \"city\" : \"  Chicago\",\n      \"score\" : 3,\n      \"joined\" : null,\n      \"note\" : \"last\"\n    },\n    {\n      \"id\" : \"5\",\n      \"name\" : null,\n      \"tags\" : \"red\",\n      \"city\" : null,\n      \"score\" : 0,\n      \"joined\" : \"2024-01-15T00:00:00Z\",\n      \"note\" : null\n    },\n    {\n      \"id\" : \"6\",\n      \"name\" : \"Eve Adams\",\n      \"tags\" : \"green|red\",\n      \"city\" : \"New-York\",\n      \"score\" : -2,\n      \"joined\" : \"2022-06-30T00:00:00Z\",\n      \"note\" : \"quoted, comma\"\n    }\n  ]\n}"
+  },
+  {
+   "name": "template of facet rows",
+   "format": "template",
+   "engine": {
+    "facets": [
+     {
+      "type": "text",
+      "name": "city",
+      "columnName": "city",
+      "query": "york",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "params": {
+    "template": "{{jsonize(cells.name.value)}}",
+    "prefix": "[",
+    "suffix": "]",
+    "separator": ","
+   },
+   "output": "[\"Alice Smith\",null,\"Eve Adams\"]"
+  },
+  {
+   "name": "custom columns and separator",
+   "format": "*sv",
+   "params": {
+    "options": "{\"separator\":\";\",\"lineSeparator\":\"\\n\",\"outputColumnHeaders\":true,\"outputBlankRows\":false,\"columns\":[{\"name\":\"name\"},{\"name\":\"score\"},{\"name\":\"joined\"}]}"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "name;score;joined\nAlice Smith;10;2024-01-15T00:00:00Z\n;;2024-02-01T00:00:00Z\nbob jones;7.5;2023-12-31T00:00:00Z\nCarol King;12;Unable to parse as date\nCarol King;12;Unable to parse as date\n;x;2024-03-10T00:00:00Z\nDan  Brown;3;Unable to convert to date\n;0;2024-01-15T00:00:00Z\nEve Adams;-2;2022-06-30T00:00:00Z\n"
+  },
+  {
+   "name": "custom quote all, no header, blank rows",
+   "format": "*sv",
+   "params": {
+    "options": "{\"separator\":\",\",\"lineSeparator\":\"\\n\",\"quoteAll\":true,\"outputColumnHeaders\":false,\"outputBlankRows\":true,\"columns\":[{\"name\":\"city\"},{\"name\":\"note\"}]}"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "\"New York\",\"first\"\n\"new york\",\"\"\n\"Boston\",\"\"\n\"boston\",\"dup\"\n\"boston\",\"dup\"\n\"Chicago\",\"\"\n\"Chicago\",\"last\"\n\"\",\"\"\n\"New-York\",\"quoted, comma\"\n"
+  },
+  {
+   "name": "custom skip blank rows",
+   "format": "*sv",
+   "params": {
+    "options": "{\"separator\":\"|\",\"lineSeparator\":\"\\r\\n\",\"outputColumnHeaders\":true,\"outputBlankRows\":false,\"columns\":[{\"name\":\"name\"},{\"name\":\"note\"}]}"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "name|note\r\nAlice Smith|first\r\nbob jones|\r\nCarol King|dup\r\nCarol King|dup\r\nDan  Brown|last\r\nEve Adams|quoted, comma\r\n"
+  },
+  {
+   "name": "xlsx",
+   "format": "xlsx",
+   "binary": true,
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "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"
+  },
+  {
+   "name": "xlsx of facet rows",
+   "format": "xlsx",
+   "engine": {
+    "facets": [
+     {
+      "type": "text",
+      "name": "city",
+      "columnName": "city",
+      "query": "york",
+      "mode": "text",
+      "caseSensitive": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "binary": true,
+   "output": "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"
+  },
+  {
+   "name": "sql",
+   "format": "sql",
+   "params": {
+    "options": "{\"tableName\":\"people\",\"includeStructure\":true,\"includeDropStatement\":true,\"includeContent\":true,\"includeIfExistWithDropStatement\":true,\"includeNullFieldValue\":true,\"convertNulltoEmptyString\":false,\"columns\":[{\"name\":\"id\",\"type\":\"VARCHAR\",\"size\":\"255\",\"allowNull\":true,\"defaultValue\":\"\",\"nullValueToEmptyStr\":false},{\"name\":\"name\",\"type\":\"VARCHAR\",\"size\":\"255\",\"allowNull\":true,\"defaultValue\":\"\",\"nullValueToEmptyStr\":false},{\"name\":\"score\",\"type\":\"DOUBLE\",\"size\":\"\",\"allowNull\":true,\"defaultValue\":\"\",\"nullValueToEmptyStr\":false},{\"name\":\"joined\",\"type\":\"VARCHAR\",\"size\":\"255\",\"allowNull\":true,\"defaultValue\":\"\",\"nullValueToEmptyStr\":false},{\"name\":\"note\",\"type\":\"VARCHAR\",\"size\":\"255\",\"allowNull\":true,\"defaultValue\":\"\",\"nullValueToEmptyStr\":false}]}"
+   },
+   "engine": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "output": "DROP TABLE IF EXISTS people;\nCREATE TABLE people (\n\"id\" VARCHAR(255) NULL,\n\"name\" VARCHAR(255) NULL,\n\"score\" DOUBLE NULL,\n\"joined\" VARCHAR(255) NULL,\n\"note\" VARCHAR(255) NULL\n);\nINSERT INTO people (\"id\",\"name\",\"score\",\"joined\",\"note\") VALUES \n( '1','Alice Smith',,'2024-01-15T00:00:00Z','first' ),\n( '2024-02-01T00:00:00Z' ),\n( '2','bob jones',,'2023-12-31T00:00:00Z' ),\n( '3','Carol King',,'Unable to parse as date','dup' ),\n( '3','Carol King',,'Unable to parse as date','dup' ),\n( ,'2024-03-10T00:00:00Z' ),\n( '4','Dan  Brown',,'Unable to convert to date','last' ),\n( '5',,'2024-01-15T00:00:00Z' ),\n( '6','Eve Adams',,'2022-06-30T00:00:00Z','quoted, comma' )"
+  }
+ ]
+}

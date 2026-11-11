@@ -1,4 +1,4 @@
-use crate::{err, grel, grel::Value, Result};
+use crate::{grel, grel::Value, Result};
 use std::{
     collections::HashMap,
     path::Path,
@@ -222,21 +222,4 @@ impl Table {
         crate::import::import(path, None, &crate::import::ImportOptions::default())
     }
 
-    pub fn write_csv(&self, path: &Path, rows: &[u32]) -> Result<()> {
-        let mut w = csv::Writer::from_path(path).map_err(err)?;
-        w.write_record(&self.names).map_err(err)?;
-        // render each distinct value once per column
-        let text: Vec<Vec<std::borrow::Cow<str>>> = self
-            .columns
-            .iter()
-            .map(|c| c.dict.iter().map(|v| match v {
-                Value::Str(s) => std::borrow::Cow::Borrowed(s.as_str()),
-                v => std::borrow::Cow::Owned(v.display()),
-            }).collect())
-            .collect();
-        for &r in rows {
-            w.write_record(self.columns.iter().zip(&text).map(|(c, t)| t[c.codes[r as usize] as usize].as_ref())).map_err(err)?;
-        }
-        w.flush().map_err(err)
-    }
 }

@@ -29,7 +29,7 @@ type Result = string | null | { error: string }
 const show = (r: Result) => (r !== null && typeof r === "object" ? `Error: ${r.error}` : vis(r))
 const grel = (e: string) => (e.trim().startsWith("grel:") ? e.trim() : `grel:${e.trim()}`)
 
-function useDebounced<T>(value: T, ms = 200) {
+export function useDebounced<T>(value: T, ms = 200) {
   const [v, setV] = useState(value)
   useEffect(() => {
     const t = setTimeout(() => setV(value), ms)

@@ -35,7 +35,9 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
     }
     eprintln!("apply   {:>9.1} ms   {} operations", ms(t), p.recipe().len());
     let t = Instant::now();
-    p.table().write_csv(out.as_ref(), &(0..rows as u32).collect::<Vec<_>>())?;
+    let t2 = p.table();
+    let bytes = ox_core::export::export(t2, &(0..t2.rows as u32).collect::<Vec<_>>(), ox_core::export::format_for(out), &serde_json::Value::Null, "data")?;
+    std::fs::write(out, bytes).map_err(|e| format!("{out}: {e}"))?;
     eprintln!("export  {:>9.1} ms   {out}", ms(t));
     Ok(())
 }
