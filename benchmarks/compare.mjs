@@ -2,74 +2,16 @@
 // node benchmarks/compare.mjs [rows...]   (defaults: 100000 250000 500000 1000000)
 // Each engine gets a fresh server process per dataset; peak RAM = OS peak working set of that process.
 import { spawn, execFileSync } from "node:child_process"
-import { existsSync, openAsBlob, openSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs"
+import { openAsBlob, readFileSync, writeFileSync, mkdirSync } from "node:fs"
 import { join, resolve } from "node:path"
+import { HERE, DATA, recipe, countryFacet, noFacets, sleep, peakMB, waitFor, kill, dataset, runOx } from "./ox.mjs"
 
-const HERE = import.meta.dirname
-const DATA = join(HERE, "data")
 const OR_HOME = resolve(HERE, "../../OpenRefine/openrefine-3.10.1")
 const OR_MEM = process.env.OR_MEM ?? "1400M" // refine.ini default (the .exe launcher uses 1024M)
-const OX = resolve(HERE, "../target/release/ox.exe")
 const sizes = process.argv.slice(2).map(Number)
 const SIZES = sizes.length ? sizes : [100_000, 250_000, 500_000, 1_000_000]
-const recipe = JSON.parse(readFileSync(join(HERE, "recipe.json"), "utf8"))
-const countryFacet = {
-  facets: [{ type: "list", name: "country", columnName: "country", expression: "value", omitBlank: false, omitError: false,
-    selection: [], selectBlank: false, selectError: false, invert: false }],
-  mode: "row-based",
-}
-const noFacets = { facets: [], mode: "row-based" }
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const now = () => performance.now()
 mkdirSync(DATA, { recursive: true })
-
-function peakMB(pid) {
-  const out = execFileSync("powershell", ["-NoProfile", "-Command", `(Get-Process -Id ${pid}).PeakWorkingSet64`]).toString()
-  return Math.round(Number(out.trim()) / 2 ** 20)
-}
-
-async function waitFor(url, init, ms = 120_000) {
-  const t = now()
-  while (now() - t < ms) {
-    try {
-      const r = await fetch(url, init)
-      if (r.status < 500) return
-    } catch {}
-    await sleep(200)
-  }
-  throw new Error(`server at ${url} did not come up`)
-}
-
-function kill(p) {
-  try { execFileSync("taskkill", ["/PID", String(p.pid), "/T", "/F"], { stdio: "ignore" }) } catch {}
-}
-
-// ---------------------------------------------------------------- OxRefine
-const OXURL = "http://127.0.0.1:3030/api"
-async function ox(cmd, args = {}) {
-  const r = await fetch(`${OXURL}/${cmd}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(args) })
-  const j = await r.json()
-  if (!r.ok) throw new Error(`ox ${cmd}: ${j}`)
-  return j.data
-}
-
-async function runOx(csv, out) {
-  // a library of its own, emptied each run, so runs don't fill the user's project library
-  rmSync(join(DATA, "ox-store"), { recursive: true, force: true })
-  const p = spawn(OX, ["serve", "--port", "3030", "--data", join(DATA, "ox-store")], { stdio: "ignore" })
-  try {
-    await waitFor(`${OXURL}/summary`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
-    const idle = peakMB(p.pid)
-    const r = { idle }
-    let t = now(); const s = await ox("open", { path: csv }); r.import = now() - t; r.rows = s.rows
-    t = now(); const f = await ox("facets", { engine: countryFacet }); r.facet = now() - t; r.facetChoices = f[0].distinct
-    t = now(); const c = await ox("cluster", { engine: noFacets, column: "city", method: "fingerprint" }); r.cluster = now() - t; r.clusters = c.length ?? console.log("cluster response", JSON.stringify(c).slice(0, 500))
-    t = now(); await ox("apply_recipe", { ops: recipe }); r.recipe = now() - t
-    t = now(); await ox("export", { engine: noFacets, path: out }); r.export = now() - t
-    r.peak = peakMB(p.pid)
-    return r
-  } finally { kill(p) }
-}
 
 // ---------------------------------------------------------------- OpenRefine
 const ORURL = "http://127.0.0.1:3333"
@@ -176,8 +118,7 @@ function diff(a, b) {
 // ---------------------------------------------------------------- main
 const results = []
 for (const n of SIZES) {
-  const csv = join(DATA, `people_${n}.csv`)
-  if (!existsSync(csv)) execFileSync(process.execPath, [join(HERE, "gen.mjs"), String(n)], { stdio: ["ignore", openSync(csv, "w"), "inherit"] })
+  const csv = dataset(n)
   const row = { rows: n, mb: Math.round(readFileSync(csv).length / 2 ** 20) }
   const oxOut = join(DATA, `ox_${n}.csv`), orOut = join(DATA, `or_${n}.csv`)
   console.log(`\n== ${n.toLocaleString()} rows (${row.mb} MB)`)

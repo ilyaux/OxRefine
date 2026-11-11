@@ -41,3 +41,26 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - run: npm ci
       - run: npm run build
+
+  bench:
+    name: Performance against the base build
+    # the same runner builds both, so the comparison holds whatever the machine
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build this change and the base
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          cargo build --release --locked -p ox-cli
+          git worktree add ../base "$BASE"
+          CARGO_TARGET_DIR=../base-target cargo build --release --locked -p ox-cli --manifest-path ../base/Cargo.toml
+      - name: Compare (fails on a clearly slower step or clearly more memory)
+        run: node benchmarks/check.mjs --base ../base-target/release/ox 250000 1000000

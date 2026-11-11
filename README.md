@@ -16,7 +16,7 @@ Both tools ran the same workflow through their own local HTTP API: import, a tex
 | 1M | 0.70 s | 16.5 s | 24× | 141 / 1,360 MB |
 | 2M | 1.3 s | out of memory | | 259 MB / OOM |
 
-At every size every output cell is identical (8,000,008 of 8,000,008 at 1M). Per step at 1M: import 0.43 s against 2.1 s, the facet 9 ms against 0.6 s, clustering 17 ms against 2.0 s, the recipe 32 ms against 10.3 s, export 0.21 s against 1.6 s. `node benchmarks/report.mjs` turns the results into `benchmarks/report/index.html`.
+At every size every output cell is identical (8,000,008 of 8,000,008 at 1M). Per step at 1M: import 0.43 s against 2.1 s, the facet 9 ms against 0.6 s, clustering 17 ms against 2.0 s, the recipe 32 ms against 10.3 s, export 0.21 s against 1.6 s. `node benchmarks/report.mjs` turns the results into `benchmarks/report/index.html`. To catch regressions, `node benchmarks/check.mjs --base <an older ox binary>` runs both builds through the same steps on this machine and fails when a step is clearly slower (over 1.3x and 15 ms) or peak RAM clearly higher (over 1.1x and 8 MB); CI does this on every push and pull request against the previous build.
 
 There was one run per size, so timings under about 20 ms are noisy. To reproduce, put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1`, then run:
 
