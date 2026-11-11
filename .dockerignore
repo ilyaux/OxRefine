@@ -4,4 +4,4 @@ ui/dist/
 benchmarks/
 tests/
 .git/
-.claude/
+.*

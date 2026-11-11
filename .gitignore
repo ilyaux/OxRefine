@@ -2,4 +2,3 @@ target/
 node_modules/
 dist/
 benchmarks/data/
-.claude/settings.local.json
