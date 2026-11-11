@@ -30,12 +30,17 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. Results go to `benchmarks/resul
 
 ## OpenRefine compatibility
 
-Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, including `engineConfig` facets, so a history moves between the two tools in both directions.
+Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, including `engineConfig` facets, so a history moves between the two tools in both directions. Behaviour is checked against fixtures generated from a real OpenRefine 3.10.1 (see [Tests](#tests)); every known difference is listed with its reason in a `known_failures.txt` next to the fixtures.
 
-- Operations: `core/text-transform`, `core/mass-edit`, `core/column-addition`, `core/column-rename`, `core/column-removal`
-- Facets: list (text) facets and text filters (substring or regex), with invert; rows mode only
-- GREL subset: `value`, `null`, string literals, and chains of `trim`, `strip`, `toLowercase`, `toUppercase`, `toTitlecase`, `toString`, `fingerprint`, `replace("a" | /re/, "b")`. This covers OpenRefine's *Common transforms* menu. Unsupported expressions fail with a clear error and are never silently skipped.
-- Clustering: key collision using `fingerprint` and `ngram-fingerprint`
+| Area | Cases matching OpenRefine |
+|---|---|
+| GREL expressions | 463 / 472 |
+| Operations (incl. single-cell edits, stars, flags) | 55 / 56 |
+| Facets (list, range, text, custom, records mode) | 22 / 22 |
+| Import options (CSV/TSV, Excel, ODS, JSON) | 22 / 24 |
+| Clipboard and web-address import (wizard defaults) | 13 / 13 |
+| Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
+| Exports (CSV/TSV, custom tabular, HTML, templating, Excel, SQL) | 12 / 13 |
 
 ## Run
 
@@ -54,13 +59,22 @@ cd ui && npm run dev
 ## Layout
 
 ```
-crates/ox-core   engine: table, facets (engine.rs), ops, GREL subset, clustering, history, JSON dispatch
+crates/ox-core   engine: table, import, facets, ops, GREL, export, clustering, history, jobs, JSON dispatch
 crates/ox-cli    `ox apply` (batch) and `ox serve` (local JSON API)
 ui/              React + shadcn/ui (virtualized grid, facets, history, transform and cluster dialogs)
 ui/src-tauri     desktop shell: one `ox` command that forwards to ox-core::dispatch
 benchmarks/      data generator, recipe, timing + peak-RAM script
 ```
 
+## Tests
+
+```bash
+cargo test --release          # unit tests + every OpenRefine conformance suite
+cd ui && npm run build        # UI typecheck and build
+```
+
+Each suite in `tests/<suite>/` has `cases.mjs` (what to try), `gen.mjs` (runs it through OpenRefine 3.10.1 and writes `fixtures.json`) and `known_failures.txt` (deliberate differences, each with a reason). A test fails on a new difference, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs the OpenRefine download next to the repo (`tools/openrefine.mjs`); `node tests/corpus/make.mjs` rewrites the corpus files. CI (`.github/workflows/ci.yml`) runs all of this on Windows, macOS and Linux.
+
 ## Not yet
 
-Excel/JSONL import, numeric/date facets, records mode, kNN clustering, reconciliation, the full GREL language, single-cell edits, and scrolling past about 1M rows in the grid (the browser's element-height limit).
+Reconciliation, kNN clustering, phonetic keyers, XML/fixed-width/RDF import, project archives, the timeline and scatterplot facets, and installers. The roadmap is in [ROADMAP.md](ROADMAP.md).

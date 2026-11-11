@@ -1,0 +1,32 @@
+// Messy-data corpus catalog. gen.mjs uploads each file to OpenRefine 3.10.1's import wizard and keeps
+// what it guessed (format, encoding, options) and the table it built with those defaults. `choose` is
+// what a user changes in the wizard; cases without it are the wizard's defaults untouched.
+export const CASES = [
+  { name: "utf-8 with BOM", file: "utf8-bom.csv" },
+  { name: "utf-8 without BOM", file: "utf8-no-bom.csv" },
+  { name: "utf-16le with BOM", file: "utf16le-bom.csv" },
+  { name: "utf-16be with BOM, tabs", file: "utf16be-bom.tsv" },
+  { name: "windows-1252", file: "windows-1252.csv" },
+  { name: "windows-1252 chosen", file: "windows-1252.csv", choose: { encoding: "windows-1252" } },
+  { name: "ragged rows", file: "ragged.csv" },
+  { name: "ragged rows, no blank rows", file: "ragged.csv", choose: { storeBlankRows: false } },
+  { name: "crlf with embedded newlines", file: "crlf-embedded-newlines.csv" },
+  { name: "cr-only line endings", file: "cr-only.csv" },
+  { name: "mixed line endings", file: "mixed-line-endings.csv" },
+  { name: "no final newline", file: "no-final-newline.csv" },
+  { name: "header only", file: "header-only.csv" },
+  { name: "duplicate and blank headers", file: "dup-blank-headers.csv" },
+  { name: "huge cell", file: "huge-cell.csv" },
+  { name: "500 columns", file: "wide.csv" },
+  { name: "mixed types as text", file: "mixed-types.csv" },
+  { name: "mixed types guessed", file: "mixed-types.csv", choose: { guessCellValueTypes: true } },
+  { name: "semicolons, decimal commas", file: "semicolon-decimal-comma.csv", choose: { guessCellValueTypes: true } },
+  { name: "broken quotes", file: "broken-quotes.csv" },
+  { name: "broken quotes as text", file: "broken-quotes.csv", choose: { processQuotes: false } },
+  { name: "unicode whitespace trimmed", file: "whitespace.csv" },
+  { name: "unicode whitespace kept", file: "whitespace.csv", choose: { trimStrings: false } },
+  { name: "pipe separated .txt", file: "pipe-separated.txt" },
+  { name: "messy json", file: "messy.json", choose: { recordPath: ["_", "_"] } },
+  { name: "messy json guessed and trimmed", file: "messy.json", choose: { recordPath: ["_", "_"], guessCellValueTypes: true, trimStrings: true } },
+  { name: "json big numbers", file: "big-numbers.json", choose: { recordPath: ["_", "_"] } },
+]

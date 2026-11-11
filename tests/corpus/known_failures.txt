@@ -1,0 +1,2 @@
+# Cases where OxRefine deliberately differs from OpenRefine 3.10.1. Format: <case name> # <reason>
+json big numbers # OpenRefine's wizard cannot read integers beyond 64 bits in JSON and creates no project; we import them as numbers

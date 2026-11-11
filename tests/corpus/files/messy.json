@@ -1,0 +1,1 @@
+[{"id":1,"name":"Ann","tags":["a","b"],"addr":{"city":"Paris"},"score":null},{"id":"2","name":" Bob ","extra":true,"f":1.5e+300,"empty":"","addr":{"city":"Lyon","zip":"69001"}},{"id":3,"name":"été ☃","nested":{"deep":{"deeper":[1,2,3]}}}]

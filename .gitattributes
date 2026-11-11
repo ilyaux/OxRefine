@@ -1,0 +1,9 @@
+# Test data is compared byte for byte with what OpenRefine read: never convert its line endings
+# (tests/corpus has CRLF, CR-only and mixed files on purpose).
+tests/**/*.csv -text
+tests/**/*.tsv -text
+tests/**/*.txt -text
+tests/**/*.json -text
+tests/**/*.fods -text
+tests/**/*.ods binary
+tests/**/*.xlsx binary

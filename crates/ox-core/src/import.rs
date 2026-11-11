@@ -132,6 +132,7 @@ pub fn inspect(path: &Path) -> Result<serde_json::Value> {
     let mut out = json!({});
     let declared = path.extension().is_some_and(|e| ["csv", "tsv", "tab"].iter().any(|x| e.eq_ignore_ascii_case(x)));
     let sep = if f == Format::Csv { guess_separator(path)? } else { None };
+    let encoding = guess_encoding(&read_head(path)?);
     if f == Format::Csv && sep.is_none() && !declared {
         f = Format::Lines;
     }
@@ -147,10 +148,10 @@ pub fn inspect(path: &Path) -> Result<serde_json::Value> {
             let sep = sep.unwrap_or(',');
             out["separator"] = json!(sep.to_string());
             // OpenRefine's wizard turns quote handling off for tab-separated text
-            merge(json!({ "separator": sep.to_string(), "encoding": "UTF-8", "processQuotes": sep != '\t', "quoteCharacter": "\"", "trimStrings": true, "guessCellValueTypes": false }))
+            merge(json!({ "separator": sep.to_string(), "encoding": encoding, "processQuotes": sep != '\t', "quoteCharacter": "\"", "trimStrings": true, "guessCellValueTypes": false }))
         }
-        Format::Lines => merge(json!({ "headerLines": 0, "linesPerRow": 1, "encoding": "UTF-8", "guessCellValueTypes": false })),
-        Format::Json | Format::JsonLines => json!({ "recordPath": ["_", "_"], "limit": -1, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true }),
+        Format::Lines => merge(json!({ "headerLines": 0, "linesPerRow": 1, "encoding": encoding, "guessCellValueTypes": false })),
+        Format::Json | Format::JsonLines => json!({ "recordPath": ["_", "_"], "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true }),
     };
     out["format"] = json!(f);
     Ok(out)
@@ -328,8 +329,9 @@ impl<'o> Builder<'o> {
         let names: Vec<String> = (0..width)
             .map(|c| self.header.iter().filter_map(|h| h.get(c)).filter(|s| !s.is_empty()).cloned().collect::<Vec<_>>().join(" "))
             .collect();
+        let named = self.header.iter().map(Vec::len).max().unwrap_or(0);
         let rows = self.rows;
-        Table::new(dedupe(names), self.cols.into_iter().map(|(b, codes)| Column { dict: b.finish(), codes }).collect(), rows)
+        Table::new(column_names(names, named), self.cols.into_iter().map(|(b, codes)| Column { dict: b.finish(), codes }).collect(), rows)
     }
 }
 
@@ -338,12 +340,14 @@ fn code(o: &ImportOptions, b: &mut Interner, f: Field) -> u32 {
     match f {
         Field::Val(v) => b.intern(v),
         Field::Text(f) => {
-            let s = if o.trim_strings { crate::grel::text::java_strip(f) } else { f };
+            // importers strip all Unicode whitespace (non-breaking and em spaces too), unlike GREL's trim()
+            let s = if o.trim_strings { f.trim() } else { f };
             if s.is_empty() {
                 return if o.store_blank_cells_as_nulls { b.intern(Value::Null) } else { b.intern_str("") };
             }
+            // OpenRefine's importers guess integers and finite decimals; "NaN" and "Infinity" stay text
             if o.guess_cell_value_types {
-                if let Some(n) = parse_number(s) {
+                if let Some(n) = parse_number(s).filter(|n| !matches!(n, Value::Num(x) if !x.is_finite())) {
                     return b.intern(n);
                 }
             }
@@ -352,22 +356,40 @@ fn code(o: &ImportOptions, b: &mut Interner, f: Field) -> u32 {
     }
 }
 
-/// Header names: blank ones become "Column N", repeats get " 2", " 3"...
-pub fn dedupe(names: Vec<String>) -> Vec<String> {
-    let mut seen = HashSet::new();
-    names
-        .into_iter()
-        .enumerate()
-        .map(|(i, n)| {
-            let base = if n.is_empty() { format!("Column {}", i + 1) } else { n };
-            let (mut name, mut k) = (base.clone(), 2);
-            while !seen.insert(name.clone()) {
-                name = format!("{base} {k}");
+/// OpenRefine's column names. The first `named` come from the header: trimmed, a blank one is
+/// "Column", and a repeat gets its count appended ("name2", or "first name 2" when the name has a
+/// space). Columns past the header are "Column N" by position.
+pub fn column_names(names: Vec<String>, named: usize) -> Vec<String> {
+    let mut counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+    let mut taken = HashSet::new();
+    let mut out = Vec::with_capacity(names.len());
+    for (i, n) in names.into_iter().enumerate() {
+        let name = if i < named {
+            let n = n.trim_matches(|c: char| c <= ' ');
+            let n = n.strip_prefix('"').and_then(|s| s.strip_suffix('"')).map_or(n, str::trim);
+            let n = if n.is_empty() { "Column" } else { n };
+            match counts.get_mut(n) {
+                Some(k) => {
+                    let name = if n.contains(' ') { format!("{n} {k}") } else { format!("{n}{k}") };
+                    *k += 1;
+                    name
+                }
+                None => {
+                    counts.insert(n.to_string(), 2);
+                    n.to_string()
+                }
+            }
+        } else {
+            let mut k = i + 1;
+            while taken.contains(&format!("Column {k}")) {
                 k += 1;
             }
-            name
-        })
-        .collect()
+            format!("Column {k}")
+        };
+        taken.insert(name.clone());
+        out.push(name);
+    }
+    out
 }
 
 // ---------------------------------------------------------------- delimited text
@@ -400,6 +422,7 @@ fn guess_separator(path: &Path) -> Result<Option<char>> {
 fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
     let text = decode(path, &o.encoding)?;
     let per = o.lines_per_row.max(1) as usize;
+    let text = plain_breaks(&text);
     let lines: Vec<&str> = text.lines().collect();
     let mut b = Builder::new(o);
     for chunk in lines.chunks(per) {
@@ -412,6 +435,98 @@ fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
 
 fn is_utf8(label: &str) -> bool {
     label.is_empty() || label.eq_ignore_ascii_case("utf-8") || label.eq_ignore_ascii_case("utf8")
+}
+
+/// OpenRefine's guess: a byte order mark, else UTF-8 when the bytes are valid UTF-8, else Windows-1252.
+fn guess_encoding(head: &[u8]) -> &'static str {
+    match head {
+        [0xEF, 0xBB, 0xBF, ..] => "UTF-8",
+        [0xFF, 0xFE, ..] => "UTF-16LE",
+        [0xFE, 0xFF, ..] => "UTF-16BE",
+        // a multi-byte character cut off at the end of the sample still counts as valid
+        _ => match std::str::from_utf8(head) {
+            Ok(_) => "UTF-8",
+            Err(e) if e.error_len().is_none() => "UTF-8",
+            Err(_) => "windows-1252",
+        },
+    }
+}
+
+/// How OpenRefine splits lines: by the file's first line break. After "\n" or "\r\n", a lone "\r" is
+/// data; after a lone "\r", every "\r" is a break. Line breaks inside quoted fields come out as "\n".
+fn cr_breaks(head: &[u8]) -> bool {
+    head.iter().position(|&b| b == b'\r' || b == b'\n').is_some_and(|i| head[i] == b'\r' && head.get(i + 1) != Some(&b'\n'))
+}
+
+/// Text with OpenRefine's line breaks made plain "\n" (see `cr_breaks`).
+fn plain_breaks(text: &str) -> std::borrow::Cow<'_, str> {
+    if !text.contains('\r') {
+        text.into()
+    } else if cr_breaks(text.as_bytes()) {
+        text.replace("\r\n", "\n").replace('\r', "\n").into()
+    } else {
+        text.replace("\r\n", "\n").into()
+    }
+}
+
+/// `plain_breaks` as a stream, for files read without decoding them first.
+struct PlainBreaks<R> {
+    inner: R,
+    cr: bool,
+    /// the last chunk ended in "\r"; the next byte decides what it was
+    carry: bool,
+    chunk: Vec<u8>,
+    out: Vec<u8>,
+    pos: usize,
+}
+
+impl<R: Read> Read for PlainBreaks<R> {
+    fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
+        while self.pos == self.out.len() {
+            self.out.clear();
+            self.pos = 0;
+            let n = self.inner.read(&mut self.chunk)?;
+            if n == 0 {
+                if !std::mem::take(&mut self.carry) {
+                    return Ok(0);
+                }
+                self.out.push(if self.cr { b'\n' } else { b'\r' });
+                break;
+            }
+            let mut rest = &self.chunk[..n];
+            if std::mem::take(&mut self.carry) {
+                if rest[0] == b'\n' {
+                    rest = &rest[1..];
+                    self.out.push(b'\n');
+                } else {
+                    self.out.push(if self.cr { b'\n' } else { b'\r' });
+                }
+            }
+            // copy the runs between "\r"s whole
+            while let Some(i) = rest.iter().position(|&b| b == b'\r') {
+                self.out.extend_from_slice(&rest[..i]);
+                match rest.get(i + 1) {
+                    Some(b'\n') => {
+                        self.out.push(b'\n');
+                        rest = &rest[i + 2..];
+                    }
+                    Some(_) => {
+                        self.out.push(if self.cr { b'\n' } else { b'\r' });
+                        rest = &rest[i + 1..];
+                    }
+                    None => {
+                        self.carry = true;
+                        rest = &[];
+                    }
+                }
+            }
+            self.out.extend_from_slice(rest);
+        }
+        let k = (self.out.len() - self.pos).min(buf.len());
+        buf[..k].copy_from_slice(&self.out[self.pos..self.pos + k]);
+        self.pos += k;
+        Ok(k)
+    }
 }
 
 fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
@@ -431,7 +546,7 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
     let mut b = Builder::new(o);
     if !o.process_quotes {
         let text = decode(path, &o.encoding)?;
-        loose_records(&text, sep, quote, |rec| b.push(rec.iter().map(|s| Field::Text(s))));
+        loose_records(&plain_breaks(&text), sep, quote, |rec| b.push(rec.iter().map(|s| Field::Text(s))));
         return Ok(b.finish());
     }
     if !sep.is_ascii() || !quote.is_ascii() {
@@ -439,7 +554,8 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
     }
     let builder = || {
         let mut r = csv::ReaderBuilder::new();
-        r.delimiter(sep as u8).quote(quote as u8).flexible(true).has_headers(false);
+        // line breaks reach the parser as plain "\n" (see `plain_breaks`), so a lone "\r" stays data
+        r.delimiter(sep as u8).quote(quote as u8).flexible(true).has_headers(false).terminator(csv::Terminator::Any(b'\n'));
         r
     };
     let mut rec = csv::ByteRecord::new();
@@ -454,11 +570,18 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
     if is_utf8(&o.encoding) {
         let f = File::open(path).map_err(err)?;
         crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
-        let file: Box<dyn Read> = Box::new(std::io::BufReader::with_capacity(1 << 20, crate::jobs::Counted(f)));
+        let reader = std::io::BufReader::with_capacity(1 << 20, crate::jobs::Counted(f));
+        // ponytail: line breaks are judged from the first 64 KB; a file whose first "\r" comes later keeps it as data
+        let head = read_head(path)?;
+        let file: Box<dyn Read> = if head.contains(&b'\r') {
+            Box::new(PlainBreaks { inner: reader, cr: cr_breaks(&head), carry: false, chunk: vec![0; 1 << 16], out: vec![], pos: 0 })
+        } else {
+            Box::new(reader)
+        };
         feed(&mut builder().from_reader(file))?;
     } else {
         let text = decode(path, &o.encoding)?;
-        let bytes: Box<dyn Read> = Box::new(std::io::Cursor::new(text.into_bytes()));
+        let bytes: Box<dyn Read> = Box::new(std::io::Cursor::new(plain_breaks(&text).into_owned().into_bytes()));
         feed(&mut builder().from_reader(bytes))?;
     }
     Ok(b.finish())
@@ -632,10 +755,10 @@ fn concat_by_name(tables: Vec<Table>) -> Table {
 
 #[derive(Default)]
 struct Group {
-    /// (local name, full column name, values seen) in discovery order
+    /// (local name, full column name, cells filled) in discovery order
     columns: Vec<(String, String, usize)>,
-    /// (local name, group, records it appeared in)
-    groups: Vec<(String, Group, usize)>,
+    /// (local name, group) in discovery order
+    groups: Vec<(String, Group)>,
 }
 
 impl Group {
@@ -649,20 +772,24 @@ impl Group {
         let i = match self.groups.iter().position(|g| g.0 == local) {
             Some(i) => i,
             None => {
-                self.groups.push((local.to_string(), Group::default(), 0));
+                self.groups.push((local.to_string(), Group::default()));
                 self.groups.len() - 1
             }
         };
-        self.groups[i].2 += 1;
         &mut self.groups[i].1
     }
-    /// OpenRefine's column order: a group's own columns, then its subgroups, each by how often they were filled.
+    /// A group weighs as much as its fullest column or subgroup (OpenRefine's tabulate()).
+    fn filled(&self) -> usize {
+        self.columns.iter().map(|c| c.2).chain(self.groups.iter().map(|g| g.1.filled())).max().unwrap_or(0)
+    }
+    /// OpenRefine's column order: a group's own columns, then its subgroups, each sorted by cells
+    /// filled, most first; ties keep the order they were found in.
     fn order(&self, out: &mut Vec<String>) {
         let mut cols: Vec<_> = self.columns.iter().collect();
         cols.sort_by_key(|c| std::cmp::Reverse(c.2));
         out.extend(cols.into_iter().map(|c| c.1.clone()));
         let mut groups: Vec<_> = self.groups.iter().collect();
-        groups.sort_by_key(|g| std::cmp::Reverse(g.2));
+        groups.sort_by_key(|g| std::cmp::Reverse(g.1.filled()));
         for g in groups {
             g.1.order(out);
         }
@@ -691,7 +818,7 @@ fn json_scalar(v: &serde_json::Value, o: &ImportOptions) -> Value {
                 return Value::Null;
             }
             if o.guess_cell_value_types {
-                if let Some(n) = parse_number(s) {
+                if let Some(n) = parse_number(s).filter(|n| !matches!(n, Value::Num(x) if !x.is_finite())) {
                     return n;
                 }
             }

@@ -1,0 +1,5 @@
+a,b
+"ok ""escaped""",1
+mid"quote,2
+"unclosed,3
+4,5

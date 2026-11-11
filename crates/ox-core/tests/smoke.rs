@@ -12,7 +12,7 @@ fn recipe_facets_cluster_history() {
     let mut call = |cmd: &str, args: serde_json::Value| dispatch(&mut slot, cmd, args).unwrap()["data"].clone();
 
     let s = call("open", json!({ "path": csv }));
-    assert_eq!(s["columns"], json!(["name", "city", "city 2"]), "BOM stripped, ';' sniffed, dup header renamed");
+    assert_eq!(s["columns"], json!(["name", "city", "city2"]), "BOM stripped, ';' sniffed, dup header renamed");
     assert_eq!(s["rows"], 4);
 
     // Recipe exactly as OpenRefine's "Extract operation history" emits it (subset of fields).
@@ -24,7 +24,7 @@ fn recipe_facets_cluster_history() {
         {"op": "core/text-transform", "engineConfig": city_facet, "columnName": "name", "expression": "value.toUppercase()"},
         {"op": "core/column-addition", "baseColumnName": "city", "newColumnName": "key", "columnInsertIndex": 2,
          "expression": "grel:value.fingerprint()"},
-        {"op": "core/column-removal", "columnName": "city 2"},
+        {"op": "core/column-removal", "columnName": "city2"},
     ]}));
     let rows = call("rows", json!({ "start": 0, "limit": 10 }));
     assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"], false, false, "sss"]));

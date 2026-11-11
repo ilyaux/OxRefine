@@ -75,5 +75,48 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
       await sleep(50)
     }
   }
-  return { url, pid: proc.pid, proc, command, get, createProject, idle, stop: () => kill(proc) }
+  /** A POST to the importing controller: multipart only when loading raw data (OpenRefine reads
+   * other bodies as urlencoded). Returns {} when the reply is not JSON. */
+  async function post(path, fields = {}, multipart = false) {
+    const form = multipart ? new FormData() : new URLSearchParams()
+    for (const [k, v] of Object.entries(fields)) form.append(k, typeof v === "string" || v instanceof Blob ? v : JSON.stringify(v))
+    const r = await fetch(`${url}/command/core/${path}${path.includes("?") ? "&" : "?"}csrf_token=${await token()}`, { method: "POST", body: form })
+    try {
+      return JSON.parse(await r.text())
+    } catch {
+      return {}
+    }
+  }
+  /**
+   * Run OpenRefine's import wizard the way its UI does with no changes: load the data
+   * (`{upload: File}`, `{clipboard: text}` or `{download: url}`), take the top-ranked format and its
+   * parser defaults, create the project. `choose` overrides options (a choice the wizard needs from
+   * the user, like a JSON record path). Returns what it guessed and the table it built, then deletes it.
+   */
+  async function wizard(source, choose = {}) {
+    const { jobID } = await post("create-importing-job")
+    const ctl = (sub, extra = "") => `importing-controller?controller=core%2Fdefault-importing-controller&jobID=${jobID}&subCommand=${sub}${extra}`
+    const status = async () => (await post(`get-importing-job-status?jobID=${jobID}`)).job?.config ?? {}
+    await post(ctl("load-raw-data"), source, true)
+    let cfg = await status()
+    while (cfg.state === "loading-raw-data") (await sleep(100), (cfg = await status()))
+    if (cfg.state === "error") throw new Error(`wizard: ${JSON.stringify(cfg).slice(0, 600)}`)
+    const format = cfg.rankedFormats[0]
+    const { options } = await post(ctl("initialize-parser-ui", `&format=${encodeURIComponent(format)}`))
+    delete options.dom
+    // the wizard page turns the sheet list into the `sheets` option the Excel parser reads
+    const sheets = options.sheetRecords?.filter((r) => r.selected).map(({ name, fileNameAndSheetIndex }) => ({ name, fileNameAndSheetIndex, selected: true }))
+    await post(ctl("create-project"), { format, options: { ...options, ...(sheets ? { sheets } : {}), ...choose, projectName: "wizard" } })
+    for (let i = 0; !(cfg = await status()).projectID; i++) {
+      if (cfg.state === "error" || i > 600) throw new Error(`wizard: no project: ${JSON.stringify(cfg).slice(0, 600)}`)
+      await sleep(100)
+    }
+    const project = cfg.projectID
+    const cols = (await get(`/command/core/get-models?project=${project}`)).columnModel.columns
+    const rows = (await get(`/command/core/get-rows?project=${project}&start=0&limit=10000`)).rows
+    await command("delete-project", { project })
+    const file = cfg.retrievalRecord.files[0]
+    return { fileName: file.fileName, format, options, columns: cols.map((x) => x.name), rows: rows.map((r) => cols.map((x) => r.cells[x.cellIndex] ?? null)) }
+  }
+  return { url, pid: proc.pid, proc, command, get, createProject, idle, wizard, stop: () => kill(proc) }
 }

@@ -1,0 +1,43 @@
+# Build and test on Windows, macOS and Linux: unit tests plus the OpenRefine conformance suites
+# (GREL, operations, facets, import, sources, the messy-data corpus, exports), which compare against
+# fixtures generated from OpenRefine 3.10.1 and committed under tests/. Then typecheck and build the UI.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  engine:
+    name: Engine (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # the desktop crate (ui/src-tauri) is not a default member; it needs the UI build and system WebView libraries
+      - name: Build
+        run: cargo build --release --locked
+      - name: Tests and OpenRefine conformance
+        run: cargo test --release --locked
+
+  ui:
+    name: UI typecheck and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+      - run: npm ci
+      - run: npm run build

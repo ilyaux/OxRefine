@@ -1,0 +1,21 @@
+label,value
+int,42
+negative,-7
+decimal,3.14
+exponent,1e5
+thousands,"1,234"
+leading zeros,007
+hex,0x1F
+padded," 42 "
+negative zero,-0
+beyond long,9223372036854775808
+nan,NaN
+infinity,Infinity
+bool,true
+bool caps,FALSE
+iso date,2024-01-15
+dmy date,15/01/2024
+iso datetime,2024-01-15T10:20:30Z
+percent,12%
+currency,$5.00
+blank,
