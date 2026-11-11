@@ -32,6 +32,14 @@ const addColumn = (name, expression, base = "name") => ({
   onError: "set-to-blank", newColumnName: name, columnInsertIndex: 1,
 })
 
+// the Recon fields get-rows leaves out, as a column: judgment action, batch size, match rank
+const hidden = addColumn("hidden", 'if(cell.recon == null, null, cell.recon.judgmentAction + "|" + cell.recon.judgmentBatchSize + "|" + cell.recon.matchRank + "|" + cell.recon.features.nameMatch)')
+const withHidden = (cases) => cases.map((c) => ({ ...c, ops: [...c.ops, hidden] }))
+const uk = text("country", "uk")
+const paris = { id: "Q10", name: "Paris", types: ["Q515"], score: 70 }
+const op = (name, extra = {}, engineConfig = all) => ({ op: `core/${name}`, engineConfig, columnName: "name", ...extra })
+const qids = addColumn("qid", 'if(value == "London", "Q12", if(value == "Paris", "http://ox.test/entity/Q10", value))', "city")
+
 export const CASES = [
   { name: "no type", ops: [recon("name")] },
   { name: "type human", ops: [recon("name", human)] },
@@ -67,4 +75,40 @@ export const CASES = [
     addColumn("copy", "value"),
     addColumn("copy cell", "cell"),
   ] },
+  // ---------------------------------------------------------------- operations on Recons
+  ...withHidden([
+    { name: "match best candidates", ops: [recon("name", { ...human, autoMatch: false }), op("recon-match-best-candidates")] },
+    { name: "match best candidates in facet", ops: [recon("name", { ...human, autoMatch: false }), op("recon-match-best-candidates", {}, uk)] },
+    { name: "mark new, one each", ops: [recon("name", human), op("recon-mark-new-topics", { shareNewTopics: false })] },
+    { name: "mark new, shared", ops: [recon("name", human), op("recon-mark-new-topics", { shareNewTopics: true })] },
+    { name: "mark new on unreconciled", ops: [op("recon-mark-new-topics", { columnName: "city", shareNewTopics: true, service: "{BASE}/svc", identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/" })] },
+    { name: "match specific topic", ops: [recon("name", human), op("recon-match-specific-topic-to-cells", { match: { id: "Q1", name: "Douglas Adams", types: ["Q5"] }, identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/" }, text("name", "doug"))] },
+    { name: "match specific topic, unreconciled", ops: [op("recon-match-specific-topic-to-cells", { columnName: "city", match: { id: "Q12", name: "London", types: ["Q515"] }, identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/" }, text("city", "london"))] },
+    { name: "discard judgments", ops: [recon("name", human), op("recon-discard-judgments", { clearData: false })] },
+    { name: "discard judgments and data", ops: [recon("name", human), op("recon-discard-judgments", { clearData: true }, uk)] },
+    { name: "clear similar cells", ops: [recon("name", human), op("recon-clear-similar-cells", { similarValue: "Paris" })] },
+    { name: "judge similar: match", ops: [recon("name", human), op("recon-judge-similar-cells", { similarValue: "Paris", judgment: "matched", match: paris, shareNewTopics: false })] },
+    { name: "judge similar: new, shared", ops: [recon("name", human), op("recon-judge-similar-cells", { similarValue: "Paris", judgment: "new", shareNewTopics: true })] },
+    { name: "judge similar: new each", ops: [recon("name", human), op("recon-judge-similar-cells", { similarValue: "Paris", judgment: "new", shareNewTopics: false })] },
+    { name: "judge similar: none", ops: [recon("name", human), op("recon-judge-similar-cells", { similarValue: "Douglas Adams", judgment: "none", shareNewTopics: false })] },
+    { name: "judge similar: none keeps errors", ops: [recon("name", human), op("recon-judge-similar-cells", { similarValue: "Broken", judgment: "none", shareNewTopics: false })] },
+    { name: "use values as identifiers", ops: [qids, op("recon-use-values-as-identifiers", { columnName: "qid", service: "{BASE}/svc", identifierSpace: "http://ox.test/entity/", schemaSpace: "http://ox.test/prop/" })] },
+    { name: "copy judgments across columns", ops: [
+      recon("city", city),
+      addColumn("city2", "value", "city"),
+      { op: "core/recon-copy-across-columns", engineConfig: all, fromColumnName: "city", toColumnNames: ["city2"], judgments: ["matched"], applyToJudgedCells: false },
+    ] },
+    { name: "copy unjudged too, over judged cells", ops: [
+      recon("city", city),
+      addColumn("city2", "value", "city"),
+      recon("city2", { ...city, autoMatch: false }),
+      { op: "core/recon-copy-across-columns", engineConfig: all, fromColumnName: "city", toColumnNames: ["city2"], judgments: ["matched", "none"], applyToJudgedCells: true },
+    ] },
+    // ---------------------------------------------------------------- judging one cell
+    { name: "judge one cell: match a candidate", ops: [recon("name", human), { op: "ox/recon-judge-one-cell", row: 5, columnName: "name", judgment: "matched", match: { id: "Q11", name: "Paris", types: ["Q515"], score: 70 } }] },
+    { name: "judge one cell: new", ops: [recon("name", human), { op: "ox/recon-judge-one-cell", row: 0, columnName: "name", judgment: "new" }] },
+    { name: "judge one cell: none", ops: [recon("name", human), { op: "ox/recon-judge-one-cell", row: 3, columnName: "name", judgment: "none" }] },
+    { name: "judge one cell: unreconciled", ops: [{ op: "ox/recon-judge-one-cell", row: 0, columnName: "city", judgment: "matched", match: { id: "Q12", name: "London", types: ["Q515"], score: 100 } }] },
+    { name: "clear one cell", ops: [recon("name", human), { op: "ox/recon-clear-one-cell", row: 4, columnName: "name" }] },
+  ]),
 ]

@@ -140,9 +140,10 @@ fn reconciliation_matches_openrefine() {
         let t = p.table();
         if why.is_none() {
             let steps: Vec<&str> = p.steps().iter().map(|o| o.description()).collect();
-            // only the reconcile steps: other operations' history wording (with row counts) isn't ours
-            let expected: Vec<String> = case["history"].as_array().unwrap().iter().map(|h| h.as_str().unwrap().to_string()).filter(|h| h.starts_with("Reconcile")).collect();
-            let steps: Vec<String> = steps.iter().map(|s| s.to_string()).filter(|h| h.starts_with("Reconcile")).collect();
+            // reconciling and single-cell judging: other history wording (with row counts) isn't ours
+            let ours = |h: &str| h.starts_with("Reconcile") || h.contains(" single cell on row ");
+            let expected: Vec<String> = case["history"].as_array().unwrap().iter().map(|h| h.as_str().unwrap().to_string()).filter(|h| ours(h)).collect();
+            let steps: Vec<String> = steps.iter().map(|s| s.to_string()).filter(|h| ours(h)).collect();
             if steps != expected {
                 why = Some(format!("history: expected {expected:?}, got {steps:?}"));
             }
@@ -181,7 +182,7 @@ fn reconciliation_matches_openrefine() {
                 let got = json!({
                     "name": ec["name"],
                     "reconConfig": rc.and_then(|rc| rc.config.clone()),
-                    "reconStats": rc.filter(|rc| rc.config.is_some()).map(|rc| rc.stats(c)),
+                    "reconStats": rc.and_then(|rc| rc.stats.clone()),
                 });
                 if norm(ec) != norm(&got) {
                     why = Some(format!("column {}:\n      expected {}\n      got      {}", ec["name"], norm(ec), norm(&got)));

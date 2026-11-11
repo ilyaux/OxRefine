@@ -129,6 +129,15 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
         const cell = cols.find((x) => x.name === op.columnName).cellIndex
         res = await command("edit-one-cell", { project, row: op.row, cell, value: op.value, type: op.type })
         i++
+      } else if (op.op === "ox/recon-judge-one-cell" || op.op === "ox/recon-clear-one-cell") {
+        const cols = (await get(`/command/core/get-models?project=${project}`)).columnModel.columns
+        const cell = cols.find((x) => x.name === op.columnName).cellIndex
+        const m = op.match
+        const fields = op.op === "ox/recon-clear-one-cell" ? { project, row: op.row, cell }
+          : { project, row: op.row, cell, judgment: op.judgment, ...(m ? { id: m.id, name: m.name, types: m.types.join(","), score: String(m.score) } : {}) }
+        res = await command(op.op.slice(3), fields)
+        if (res.code === "ok" || res.historyEntry) res = { code: "ok" }
+        i++
       } else if (op.op === "ox/row-annotate") {
         const { op: _, row, ...what } = op
         res = await command("annotate-one-row", { project, row, ...what })

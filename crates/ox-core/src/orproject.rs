@@ -52,6 +52,8 @@ struct Col {
     /// the last reconcile operation's config, kept by the column
     #[serde(rename = "reconConfig", default)]
     recon: Option<J>,
+    #[serde(rename = "reconStats", default)]
+    stats: Option<J>,
 }
 
 /// A cell: its value and Recon.
@@ -188,7 +190,7 @@ impl Builder {
             .into_iter()
             .enumerate()
             .map(|(c, (i, codes, recons))| {
-                let recon = recons.iter().any(Option::is_some).then(|| Arc::new(ReconCol { cells: recons, config: None }));
+                let recon = recons.iter().any(Option::is_some).then(|| Arc::new(ReconCol::new(recons)));
                 (c, Arc::new(Column { dict: i.finish(), codes: codes.into(), recon }))
             })
             .collect();
@@ -210,15 +212,13 @@ impl State {
             .iter()
             .map(|c| {
                 let col = self.data.get(&c.cell).cloned().unwrap_or_else(|| Arc::new(null_column(self.rows)));
-                // the column model keeps the reconConfig; OxRefine keeps it with the cells
-                match &c.recon {
-                    None => col,
-                    Some(config) => {
-                        let cells = col.recon.as_ref().map_or_else(|| vec![None; self.rows], |rc| rc.cells.clone());
-                        let recon = Some(Arc::new(ReconCol { cells, config: Some(config.clone()) }));
-                        Arc::new(Column { dict: col.dict.clone(), codes: col.codes.clone(), recon })
-                    }
+                // the column model keeps the reconConfig and stats; OxRefine keeps them with the cells
+                if c.recon.is_none() && c.stats.is_none() {
+                    return col;
                 }
+                let cells = col.recon.as_ref().map_or_else(|| vec![None; self.rows], |rc| rc.cells.clone());
+                let recon = Some(Arc::new(ReconCol { cells, config: c.recon.clone(), stats: c.stats.clone() }));
+                Arc::new(Column { dict: col.dict.clone(), codes: col.codes.clone(), recon })
             })
             .collect();
         Table {
@@ -321,7 +321,7 @@ fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Column {
         };
         Arc::make_mut(&mut col.codes)[r] = code;
     }
-    col.recon = recons.filter(|c| c.iter().any(Option::is_some)).map(|cells| Arc::new(ReconCol { cells, config: None }));
+    col.recon = recons.filter(|c| c.iter().any(Option::is_some)).map(|cells| Arc::new(ReconCol::new(cells)));
     col
 }
 
@@ -331,8 +331,8 @@ fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Column {
 enum Change {
     /// CellChange / MassCellChange: (row, cell index, old, new)
     Cells(Vec<(usize, usize, Cell, Cell)>),
-    /// ReconChange: cells of one column, and its reconConfig before and after
-    Recon { cells: Vec<(usize, usize, Cell, Cell)>, column: String, old: Option<J>, new: Option<J> },
+    /// ReconChange: cells of one column, and its reconConfig and reconStats before and after
+    Recon { cells: Vec<(usize, usize, Cell, Cell)>, column: String, old: (Option<J>, Option<J>), new: (Option<J>, Option<J>) },
     Star(usize, bool, bool),
     Flag(usize, bool, bool),
     Many(Vec<Change>),
@@ -452,7 +452,12 @@ fn parse(p: &mut Lines) -> Result<Change> {
         "MassCellChange" => Change::Cells(cells),
         "ReconChange" => {
             let config = |k: &str| f.get(k).filter(|v| !v.is_empty()).and_then(|v| serde_json::from_str::<J>(v).ok()).filter(|v| !v.is_null());
-            Change::Recon { cells, column: get("commonColumnName")?.into(), old: config("oldReconConfig"), new: config("newReconConfig") }
+            Change::Recon {
+                cells,
+                column: get("commonColumnName")?.into(),
+                old: (config("oldReconConfig"), config("oldReconStats")),
+                new: (config("newReconConfig"), config("newReconStats")),
+            }
         }
         "MassChange" => Change::Many(changes),
         "RowStarChange" => Change::Star(num(get("row")?)?, flag("oldStarred")?, flag("newStarred")?),
@@ -463,7 +468,7 @@ fn parse(p: &mut Lines) -> Result<Change> {
         "ColumnRemovalChange" => Change::RemoveColumn { at: num(get("oldColumnIndex")?)?, col: col("oldColumn")?, cells: at_cells },
         "ColumnAdditionChange" => Change::AddColumn {
             at: num(get("columnIndex")?)?,
-            col: Col { cell: num(get("newCellIndex")?)?, name: get("columnName")?.into(), recon: None },
+            col: Col { cell: num(get("newCellIndex")?)?, name: get("columnName")?.into(), recon: None, stats: None },
             cells: at_cells,
         },
         "ColumnSplitChange" => Change::Split {
@@ -506,8 +511,16 @@ impl Change {
             Change::Cells(v) => s.set_cells(v.iter().map(|(r, c, o, n)| (*r, *c, if forward { n } else { o }.clone())).collect::<Vec<_>>())?,
             Change::Recon { cells, column, old, new } => {
                 let mut out = s.set_cells(cells.iter().map(|(r, c, o, n)| (*r, *c, if forward { n } else { o }.clone())).collect::<Vec<_>>())?;
+                let (config, mut stats) = if forward { new } else { old }.clone();
+                // a ReconChange without stats counts them (ReconStats.create)
+                if stats.is_none() && forward {
+                    let at = out.cols.iter().find(|c| &c.name == column).map(|c| c.cell);
+                    if let Some(col) = at.and_then(|i| out.data.get(&i)) {
+                        stats = Some(col.recon.as_ref().map_or_else(|| ReconCol::new(vec![None; out.rows]).count(col), |rc| rc.count(col)));
+                    }
+                }
                 if let Some(c) = out.cols.iter_mut().find(|c| &c.name == column) {
-                    c.recon = if forward { new } else { old }.clone();
+                    (c.recon, c.stats) = (config, stats);
                 }
                 out
             }
@@ -586,7 +599,7 @@ impl Change {
                 if forward {
                     let mut out = s.put_rows(&rows.iter().copied().zip(new.iter()).collect::<Vec<_>>())?;
                     for (i, n) in names.iter().enumerate() {
-                        out.cols.insert((at + 1 + i).min(out.cols.len()), Col { cell: first + i, name: n.clone(), recon: None });
+                        out.cols.insert((at + 1 + i).min(out.cols.len()), Col { cell: first + i, name: n.clone(), recon: None, stats: None });
                     }
                     if *remove {
                         out.cols.remove(out.col_at(*at)?);
@@ -657,6 +670,27 @@ impl Change {
             Change::Star(row, _, n) => Some(OpKind::RowAnnotate { row: *row, starred: Some(*n), flagged: None }),
             Change::Flag(row, _, n) => Some(OpKind::RowAnnotate { row: *row, starred: None, flagged: Some(*n) }),
             Change::Many(v) if v.len() == 1 => v[0].single_edit(s),
+            // recon-judge-one-cell and recon-clear-one-cell
+            Change::Recon { cells, .. } if cells.len() == 1 => {
+                let (row, c, _, (_, new)) = &cells[0];
+                let column_name = s.cols.iter().find(|x| x.cell == *c)?.name.clone();
+                Some(match new {
+                    None => OpKind::ReconClearOneCell { row: *row, column_name },
+                    Some(r) => OpKind::ReconJudgeOneCell {
+                        row: *row,
+                        column_name,
+                        judgment: match r.judgment {
+                            crate::recon::Judgment::Matched => "matched",
+                            crate::recon::Judgment::New => "new",
+                            _ => "none",
+                        }
+                        .into(),
+                        r#match: r.matched.as_ref().map(|m| json!({ "id": m.id, "name": m.name, "types": m.types, "score": m.score })),
+                        identifier_space: r.identifier_space.clone(),
+                        schema_space: r.schema_space.clone(),
+                    },
+                })
+            }
             _ => None,
         }
     }
@@ -950,9 +984,13 @@ fn fetched_cell(v: &Value) -> J {
 
 fn col_json(i: usize, name: &str, col: &Column) -> String {
     let mut j = json!({ "cellIndex": i, "originalName": name, "name": name });
-    if let Some(rc) = col.recon.as_ref().filter(|rc| rc.config.is_some()) {
-        j["reconConfig"] = rc.config.clone().unwrap_or(J::Null);
-        j["reconStats"] = rc.stats(col);
+    if let Some(rc) = &col.recon {
+        if let Some(c) = &rc.config {
+            j["reconConfig"] = c.clone();
+        }
+        if let Some(s) = &rc.stats {
+            j["reconStats"] = s.clone();
+        }
     }
     j.to_string()
 }
@@ -1044,10 +1082,12 @@ fn change_text(a: &Table, b: &Table, op: &Op, pool: &mut PoolOut) -> String {
         OpKind::RowAnnotate { row: r, .. } => {
             return w + &format!("com.google.refine.model.changes.RowFlagChange\nrow={r}\nnewFlagged={}\noldFlagged={}\n/ec/\n", b.flagged[*r], a.flagged[*r]);
         }
-        OpKind::Recon { column_name, .. } if a.names == b.names && a.rows == b.rows => {
+        _ if op.recon_column().is_some() && a.names == b.names && a.rows == b.rows => {
+            let column_name = op.recon_column().unwrap_or_default();
             let i = a.names.iter().position(|n| n == column_name).unwrap_or(0);
             let (x, y) = (&a.columns[i], &b.columns[i]);
-            let config = |c: &Column| c.recon.as_ref().and_then(|rc| rc.config.as_ref().map(|j| (j.to_string(), rc.stats(c).to_string()))).unwrap_or_default();
+            let field = |j: &Option<J>| j.as_ref().map(J::to_string).unwrap_or_default();
+            let config = |c: &Column| c.recon.as_ref().map(|rc| (field(&rc.config), field(&rc.stats))).unwrap_or_default();
             let ((old_config, old_stats), (new_config, new_stats)) = (config(x), config(y));
             let d = diffs(pool, i, x, y);
             return w + &format!(

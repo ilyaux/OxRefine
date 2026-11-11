@@ -123,7 +123,7 @@ impl Column {
         };
         let recon = self.recon.as_ref().map(|rc| {
             let cells = rows.iter().map(|r| r.and_then(|r| rc.cells[r as usize].clone())).collect();
-            Arc::new(crate::recon::ReconCol { cells, config: rc.config.clone() })
+            Arc::new(crate::recon::ReconCol { cells, config: rc.config.clone(), stats: rc.stats.clone() })
         });
         Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect::<Vec<u32>>().into(), recon }
     }

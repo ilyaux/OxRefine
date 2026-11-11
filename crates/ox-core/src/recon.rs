@@ -38,8 +38,8 @@ pub struct Recon {
     pub id: i64,
     pub history_entry: i64,
     pub service: String,
-    pub identifier_space: String,
-    pub schema_space: String,
+    pub identifier_space: Option<String>,
+    pub schema_space: Option<String>,
     pub features: Features,
     /// None until a candidate is added (GREL sees null, JSON an empty list)
     pub candidates: Option<Vec<Candidate>>,
@@ -66,8 +66,8 @@ impl Recon {
             id: new_id(),
             history_entry,
             service: "unknown".into(),
-            identifier_space: identifier_space.into(),
-            schema_space: schema_space.into(),
+            identifier_space: Some(identifier_space.into()),
+            schema_space: Some(schema_space.into()),
             features: Features::default(),
             candidates: None,
             judgment: Judgment::None,
@@ -84,6 +84,16 @@ impl Recon {
         r.error = Some(msg.into());
         r.judgment = Judgment::Error;
         r
+    }
+
+    /// A Recon with no identifier or schema space (OpenRefine's `new Recon(id, null, null)`).
+    pub fn bare(history_entry: i64) -> Recon {
+        Recon { identifier_space: None, schema_space: None, ..Recon::new(history_entry, "", "") }
+    }
+
+    /// Recon.dup: the same judgment data under a new id, for a new history step.
+    pub fn dup(&self, history_entry: i64) -> Recon {
+        Recon { id: new_id(), history_entry, ..self.clone() }
     }
 
     pub fn best(&self) -> Option<&Candidate> {
@@ -131,8 +141,8 @@ impl Recon {
             id: j.get("id").and_then(as_long).unwrap_or_else(new_id),
             history_entry: j.get("judgmentHistoryEntry").and_then(as_long).unwrap_or(0),
             service: s("service").unwrap_or_else(|| "unknown".into()),
-            identifier_space: s("identifierSpace").unwrap_or_default(),
-            schema_space: s("schemaSpace").unwrap_or_default(),
+            identifier_space: s("identifierSpace"),
+            schema_space: s("schemaSpace"),
             features: Features {
                 type_match: at(0).and_then(J::as_bool),
                 name_match: at(1).and_then(J::as_bool),
@@ -177,8 +187,8 @@ impl Recon {
             "matchRank" => Value::Int(self.match_rank),
             "features" => View::Features(self.clone()).into(),
             "service" => s(&self.service),
-            "identifierSpace" => s(&self.identifier_space),
-            "schemaSpace" => s(&self.schema_space),
+            "identifierSpace" => self.identifier_space.as_deref().map_or(Value::Null, s),
+            "schemaSpace" => self.schema_space.as_deref().map_or(Value::Null, s),
             _ => Value::Null,
         }
     }
@@ -186,6 +196,16 @@ impl Recon {
 
 fn as_long(v: &J) -> Option<i64> {
     v.as_i64().or_else(|| v.as_str().and_then(|s| s.parse().ok()))
+}
+
+/// Recon.stringToJudgment.
+pub fn judgment_of(s: &str) -> Judgment {
+    match s {
+        "matched" => Judgment::Matched,
+        "new" => Judgment::New,
+        "error" => Judgment::Error,
+        _ => Judgment::None,
+    }
 }
 
 fn judgment_json(j: Judgment) -> &'static str {
@@ -201,7 +221,7 @@ fn candidate_json(c: &Candidate) -> J {
     json!({ "id": c.id, "name": c.name, "types": c.types, "score": c.score })
 }
 
-fn candidate_from_json(j: &J) -> Candidate {
+pub fn candidate_from_json(j: &J) -> Candidate {
     Candidate {
         id: j.get("id").and_then(J::as_str).unwrap_or_default().into(),
         name: j.get("name").and_then(J::as_str).unwrap_or_default().into(),
@@ -264,17 +284,37 @@ impl View {
     }
 }
 
-/// A column's reconciliation layer: each row's Recon (cells with equal queries share one) and the
-/// column's reconConfig, as the last reconcile operation left it.
+/// A column's reconciliation layer: each row's Recon (cells with equal queries share one), and the
+/// column's reconConfig and reconStats as the last step on Recons left them. OpenRefine keeps the
+/// stats rather than counting: other steps (copying Recons across columns, removing rows) leave them
+/// as they were.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct ReconCol {
     pub cells: Vec<Option<Arc<Recon>>>,
     pub config: Option<J>,
+    pub stats: Option<J>,
+}
+
+/// What a step does to a column's reconStats.
+pub enum Stats {
+    Keep,
+    /// count them on the new cells (ReconStats.create)
+    Count,
+    Set(J),
 }
 
 impl ReconCol {
-    /// OpenRefine's ReconStats for the column.
+    pub fn new(cells: Vec<Option<Arc<Recon>>>) -> ReconCol {
+        ReconCol { cells, config: None, stats: None }
+    }
+
+    /// The stats as kept, else counted.
     pub fn stats(&self, col: &Column) -> J {
+        self.stats.clone().unwrap_or_else(|| self.count(col))
+    }
+
+    /// ReconStats.create: the column's cells counted by judgment.
+    pub fn count(&self, col: &Column) -> J {
         let (mut non_blanks, mut new, mut matched, mut errors) = (0, 0, 0, 0);
         for (r, recon) in self.cells.iter().enumerate() {
             if !crate::grel::value::is_non_blank(col.get(r)) {
@@ -403,6 +443,26 @@ impl StandardConfig {
         );
         m.insert("limit".into(), json!(self.limit));
         J::Object(m)
+    }
+
+    /// createNewRecon: an empty Recon for this service.
+    pub fn new_recon(&self, history_entry: i64) -> Recon {
+        Recon { service: self.service.clone(), ..Recon::new(history_entry, &self.identifier_space, &self.schema_space) }
+    }
+
+    /// The config OpenRefine makes for a column marked or matched without reconciling first.
+    pub fn bare(service: &str, identifier_space: &str, schema_space: &str, auto_match: bool) -> StandardConfig {
+        StandardConfig {
+            service: service.into(),
+            identifier_space: identifier_space.into(),
+            schema_space: schema_space.into(),
+            type_id: None,
+            type_name: None,
+            auto_match,
+            batch_size: None,
+            columns: vec![],
+            limit: 0,
+        }
     }
 
     fn batch_size(&self, rows: usize) -> usize {
@@ -781,6 +841,251 @@ pub fn reconcile(t: &Table, column: &str, cfg: &StandardConfig, sel: Option<&[bo
         crate::jobs::tick(batch.len() as u64)?;
     }
     Ok(out)
+}
+
+// ---------------------------------------------------------------- operations on Recons
+
+/// A history step's id, as OpenRefine's Recons record it (judgmentHistoryEntry).
+pub fn history_entry() -> i64 {
+    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_millis() as i64)
+}
+
+/// The rows' new Recons for one column: `Some(None)` clears a cell's Recon, `None` leaves it.
+pub type Edits = Vec<Option<Option<Arc<Recon>>>>;
+
+/// The column with `edits` applied, its reconConfig replaced when given, and its stats as `stats` says.
+pub fn apply_edits(col: &Column, edits: &Edits, config: Option<Option<J>>, stats: Stats) -> Column {
+    let old = col.recon.as_ref();
+    let cells: Vec<Option<Arc<Recon>>> = (0..col.codes.len()).map(|r| match &edits[r] {
+        Some(new) => new.clone(),
+        None => col.recon(r).cloned(),
+    }).collect();
+    let config = config.unwrap_or_else(|| old.and_then(|rc| rc.config.clone()));
+    let mut rc = ReconCol { cells, config, stats: old.and_then(|rc| rc.stats.clone()) };
+    let mut out = Column { dict: col.dict.clone(), codes: col.codes.clone(), recon: None };
+    rc.stats = match stats {
+        Stats::Keep => rc.stats,
+        Stats::Count => Some(rc.count(&out)),
+        Stats::Set(j) => Some(j),
+    };
+    out.recon = (rc.cells.iter().any(Option::is_some) || rc.config.is_some() || rc.stats.is_some()).then(|| Arc::new(rc));
+    out
+}
+
+/// The stats after judging or clearing one cell, as OpenRefine's one-cell commands work them out:
+/// counted before the change when the column has none, else adjusted by the change (clearing a cell
+/// adds one to nonBlanks, as OpenRefine does).
+pub fn one_cell_stats(col: &Column, old: Option<&Recon>, new: Option<&Recon>) -> J {
+    let Some(stats) = col.recon.as_ref().and_then(|rc| rc.stats.clone()) else {
+        return col.recon.as_ref().map_or_else(|| ReconCol::new(vec![None; col.codes.len()]).count(col), |rc| rc.count(col));
+    };
+    let n = |k: &str| stats.get(k).and_then(J::as_i64).unwrap_or(0);
+    let delta = |j: Judgment| -> i64 { old.is_some_and(|o| o.judgment == j) as i64 * -1 + new.is_some_and(|x| x.judgment == j) as i64 };
+    json!({
+        "nonBlanks": n("nonBlanks") + new.is_none() as i64,
+        "newTopics": n("newTopics") + delta(Judgment::New),
+        "matchedTopics": n("matchedTopics") + delta(Judgment::Matched),
+        "errorTopics": n("errorTopics") + delta(Judgment::Error),
+    })
+}
+
+/// One new Recon per key (OpenRefine's `dupReconMap` and shared new items): cells with the same key
+/// get the same Recon.
+#[derive(Default)]
+struct Shared(std::collections::HashMap<String, Arc<Recon>>);
+
+impl Shared {
+    fn get(&mut self, key: impl ToString, make: impl FnOnce() -> Recon) -> Option<Option<Arc<Recon>>> {
+        Some(Some(self.0.entry(key.to_string()).or_insert_with(|| Arc::new(make())).clone()))
+    }
+}
+
+/// judgmentBatchSize: how many of the edited cells got each new Recon.
+fn count_batches(edits: &mut Edits) {
+    let mut n: std::collections::HashMap<i64, i64> = Default::default();
+    for r in edits.iter().flatten().flatten() {
+        *n.entry(r.id).or_default() += 1;
+    }
+    let mut done: std::collections::HashMap<i64, Arc<Recon>> = Default::default();
+    for e in edits.iter_mut().flatten().flatten() {
+        *e = done.entry(e.id).or_insert_with(|| Arc::new(Recon { batch_size: n[&e.id], ..(**e).clone() })).clone();
+    }
+}
+
+fn candidate_rank(r: &Recon, id: &str) -> i64 {
+    r.candidates.as_ref().and_then(|c| c.iter().position(|c| c.id == id)).map_or(-1, |i| i as i64)
+}
+
+/// The mass operations of OpenRefine's Reconcile → Actions menu, over the selected rows.
+pub enum Action<'a> {
+    MatchBest,
+    MarkNew { shared: bool, config: Option<&'a StandardConfig> },
+    MatchSpecific { candidate: Candidate, identifier_space: Option<&'a str>, schema_space: Option<&'a str> },
+    Discard { clear: bool },
+    ClearSimilar(&'a str),
+    JudgeSimilar { value: &'a str, judgment: Judgment, matched: Option<Candidate>, shared: bool, config: Option<StandardConfig> },
+    UseValuesAsIds(&'a StandardConfig),
+}
+
+pub fn mass(col: &Column, rows: &[usize], action: Action) -> Result<Edits> {
+    let h = history_entry();
+    let mut edits: Edits = vec![None; col.codes.len()];
+    let mut shared = Shared::default();
+    for &r in rows {
+        let v = col.get(r);
+        let recon = col.recon(r);
+        let text = v.to_java_string();
+        edits[r] = match &action {
+            Action::MatchBest => recon.and_then(|old| {
+                let best = old.best()?.clone();
+                shared.get(old.id, || Recon { matched: Some(best), match_rank: 0, judgment: Judgment::Matched, judgment_action: "mass".into(), ..old.dup(h) })
+            }),
+            Action::MarkNew { shared: true, config } if !v.is_null() => shared.get(text, || {
+                let base = config.map_or_else(|| Recon::bare(h), |c| c.new_recon(h));
+                Recon { judgment: Judgment::New, judgment_action: "mass".into(), ..base }
+            }),
+            Action::MarkNew { shared: false, config } if !v.is_null() => {
+                let base = match recon {
+                    Some(old) => old.dup(h),
+                    None => config.map_or_else(|| Recon::bare(h), |c| c.new_recon(h)),
+                };
+                Some(Some(Arc::new(Recon { matched: None, match_rank: -1, judgment: Judgment::New, judgment_action: "mass".into(), ..base })))
+            }
+            Action::MarkNew { .. } => None,
+            Action::MatchSpecific { candidate, identifier_space, schema_space } if !v.is_null() => {
+                let key = recon.map_or(0, |r| r.id);
+                let make = || {
+                    let base = match recon {
+                        Some(old) => old.dup(h),
+                        None => match (identifier_space, schema_space) {
+                            (Some(i), Some(s)) => Recon::new(h, i, s),
+                            _ => Recon { identifier_space: identifier_space.map(String::from), schema_space: schema_space.map(String::from), ..Recon::bare(h) },
+                        },
+                    };
+                    Recon { matched: Some(candidate.clone()), match_rank: -1, judgment: Judgment::Matched, judgment_action: "mass".into(), ..base }
+                };
+                shared.get(key, make)
+            }
+            Action::MatchSpecific { .. } => None,
+            Action::Discard { clear: true } => recon.map(|_| None),
+            Action::Discard { clear: false } => recon.and_then(|old| {
+                shared.get(old.id, || Recon { matched: None, match_rank: -1, judgment: Judgment::None, judgment_action: "mass".into(), ..old.dup(h) })
+            }),
+            Action::ClearSimilar(value) => recon.filter(|_| &text == value).map(|_| None),
+            Action::JudgeSimilar { value, judgment, matched, shared: share, config } if crate::grel::value::is_non_blank(v) && &text == value => {
+                if *judgment == Judgment::Error {
+                    return Err("Cannot manually set judgment to 'error'".into());
+                }
+                if *judgment == Judgment::New && *share {
+                    shared.get("new", || {
+                        let base = config.as_ref().map_or_else(|| Recon::bare(h), |c| c.new_recon(h));
+                        Recon { judgment: Judgment::New, judgment_action: "similar".into(), ..base }
+                    })
+                } else {
+                    let old = recon.ok_or_else(|| format!("the cell in row {} has no reconciliation data to judge", r + 1))?;
+                    shared.get(old.id, || {
+                        let mut n = Recon { match_rank: -1, judgment_action: "similar".into(), ..old.dup(h) };
+                        match judgment {
+                            Judgment::Matched => {
+                                let m = matched.clone().unwrap_or_else(|| Candidate { id: String::new(), name: String::new(), types: vec![], score: 100.0 });
+                                n.match_rank = candidate_rank(&n, &m.id);
+                                n.matched = Some(m);
+                                n.judgment = Judgment::Matched;
+                            }
+                            Judgment::New => {
+                                n.judgment = Judgment::New;
+                                n.matched = None;
+                            }
+                            _ => {
+                                n.judgment = if n.error.is_none() { Judgment::None } else { Judgment::Error };
+                                n.matched = None;
+                            }
+                        }
+                        n
+                    })
+                }
+            }
+            Action::JudgeSimilar { .. } => None,
+            Action::UseValuesAsIds(cfg) if crate::grel::value::is_non_blank(v) => {
+                let id = text.strip_prefix(cfg.identifier_space.as_str()).unwrap_or(&text).to_string();
+                let m = Candidate { id: id.clone(), name: id, types: vec![], score: 100.0 };
+                Some(Some(Arc::new(Recon {
+                    matched: Some(m.clone()),
+                    candidates: Some(vec![m]),
+                    match_rank: -1,
+                    judgment: Judgment::Matched,
+                    judgment_action: "mass".into(),
+                    ..cfg.new_recon(h)
+                })))
+            }
+            Action::UseValuesAsIds(_) => None,
+        };
+    }
+    count_batches(&mut edits);
+    Ok(edits)
+}
+
+/// ReconCopyAcrossColumnsOperation: the Recons of `from` cells with one of `judgments`, by cell value,
+/// onto equal values in each `to` column (cells already judged only with `over_judged`).
+pub fn copy_across(t: &Table, rows: &[usize], from: usize, to: &[usize], judgments: &[Judgment], over_judged: bool) -> Vec<Edits> {
+    let col = &t.columns[from];
+    let mut by_value: std::collections::HashMap<&Value, Arc<Recon>> = Default::default();
+    for &r in rows {
+        let v = col.get(r);
+        if let Some(rc) = col.recon(r).filter(|rc| !v.is_null() && judgments.contains(&rc.judgment)) {
+            by_value.insert(v, rc.clone());
+        }
+    }
+    to.iter()
+        .map(|&c| {
+            let target = &t.columns[c];
+            let mut edits: Edits = vec![None; t.rows];
+            for &r in rows {
+                let v = target.get(r);
+                let judged = target.recon(r).is_some_and(|rc| rc.judgment != Judgment::None);
+                if let Some(rc) = by_value.get(v).filter(|_| !v.is_null() && (!judged || over_judged)) {
+                    edits[r] = Some(Some(rc.clone()));
+                }
+            }
+            edits
+        })
+        .collect()
+}
+
+/// ReconJudgeOneCellCommand: one cell matched to a candidate, marked new, or its judgment discarded.
+pub fn judge_one(col: &Column, row: usize, judgment: Judgment, matched: Option<Candidate>, spaces: (Option<&str>, Option<&str>)) -> Result<Arc<Recon>> {
+    let v = col.get(row);
+    if !crate::grel::value::is_non_blank(v) {
+        return Err("Cell is blank or error".into());
+    }
+    let h = history_entry();
+    let config = col.recon.as_ref().and_then(|rc| rc.config.as_ref()).and_then(|j| StandardConfig::from_json(j).ok());
+    let mut n = match (col.recon(row), spaces) {
+        (Some(old), _) => old.dup(h),
+        (None, (Some(i), Some(s))) => Recon::new(h, i, s),
+        (None, _) => config.map_or_else(|| Recon::bare(h), |c| c.new_recon(h)),
+    };
+    n.match_rank = -1;
+    n.judgment_action = "single".into();
+    n.batch_size = 1;
+    match judgment {
+        Judgment::None => {
+            n.judgment = if n.error.is_none() { Judgment::None } else { Judgment::Error };
+            n.matched = None;
+        }
+        Judgment::Error => return Err("Cannot manually set judgment to 'error'".into()),
+        Judgment::New => {
+            n.judgment = Judgment::New;
+            n.matched = None;
+        }
+        Judgment::Matched => {
+            let m = matched.ok_or("matching a cell needs the item to match")?;
+            n.match_rank = candidate_rank(&n, &m.id);
+            n.matched = Some(m);
+            n.judgment = Judgment::Matched;
+        }
+    }
+    Ok(Arc::new(n))
 }
 
 #[cfg(test)]

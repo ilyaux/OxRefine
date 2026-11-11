@@ -423,6 +423,12 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         "facets" => json!(engine::facet_counts(p.table(), &a.engine)?),
         "recon_guess_types" => crate::recon::guess_types(p.table(), &a.column, &a.url)?,
+        // one cell's Recon in full (`index` is the row), for judging it
+        "recon_cell" => {
+            let t = p.table();
+            let c = &t.columns[t.col(&a.column)?];
+            json!(c.recon(a.index).map(|r| r.to_json(true)))
+        }
         "apply" => {
             p.apply(a.op.ok_or("missing op")?)?;
             p.save(store)?;

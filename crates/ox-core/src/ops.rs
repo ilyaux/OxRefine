@@ -236,7 +236,105 @@ pub enum OpKind {
         results: Option<serde_json::Value>,
     },
 
+    #[serde(rename = "core/recon-match-best-candidates", rename_all = "camelCase")]
+    ReconMatchBestCandidates {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+    },
+    #[serde(rename = "core/recon-mark-new-topics", rename_all = "camelCase")]
+    ReconMarkNewTopics {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        #[serde(default)]
+        share_new_topics: bool,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        service: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        identifier_space: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        schema_space: Option<String>,
+    },
+    #[serde(rename = "core/recon-match-specific-topic-to-cells", rename_all = "camelCase")]
+    ReconMatchSpecificTopic {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        /// {id, name, types}
+        r#match: serde_json::Value,
+        #[serde(default)]
+        identifier_space: Option<String>,
+        #[serde(default)]
+        schema_space: Option<String>,
+    },
+    #[serde(rename = "core/recon-discard-judgments", rename_all = "camelCase")]
+    ReconDiscardJudgments {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        #[serde(default)]
+        clear_data: bool,
+    },
+    #[serde(rename = "core/recon-clear-similar-cells", rename_all = "camelCase")]
+    ReconClearSimilarCells {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        similar_value: String,
+    },
+    #[serde(rename = "core/recon-judge-similar-cells", rename_all = "camelCase")]
+    ReconJudgeSimilarCells {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        similar_value: String,
+        /// matched | new | none
+        judgment: String,
+        /// {id, name, types, score} for "matched"
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        r#match: Option<serde_json::Value>,
+        #[serde(default)]
+        share_new_topics: bool,
+    },
+    #[serde(rename = "core/recon-use-values-as-identifiers", rename_all = "camelCase")]
+    ReconUseValuesAsIdentifiers {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        #[serde(default)]
+        service: Option<String>,
+        identifier_space: String,
+        schema_space: String,
+    },
+    #[serde(rename = "core/recon-copy-across-columns", rename_all = "camelCase")]
+    ReconCopyAcrossColumns {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        from_column_name: String,
+        to_column_names: Vec<String>,
+        judgments: Vec<String>,
+        #[serde(default)]
+        apply_to_judged_cells: bool,
+    },
+
     // ------------------------------------------------------------ single-cell and single-row edits
+    /// OpenRefine's recon-judge-one-cell: match a cell to an item, mark it new, or discard its judgment.
+    #[serde(rename = "ox/recon-judge-one-cell", rename_all = "camelCase")]
+    ReconJudgeOneCell {
+        row: usize,
+        column_name: String,
+        judgment: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        r#match: Option<serde_json::Value>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        identifier_space: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        schema_space: Option<String>,
+    },
+    /// OpenRefine's recon-clear-one-cell.
+    #[serde(rename = "ox/recon-clear-one-cell", rename_all = "camelCase")]
+    ReconClearOneCell { row: usize, column_name: String },
     // OpenRefine records these in history but not in the operations JSON it extracts ("ox/" ops
     // stay out of recipes the same way).
     #[serde(rename = "ox/cell-edit", rename_all = "camelCase")]
@@ -429,7 +527,7 @@ fn eval_column(t: &Table, ci: usize, sel: Option<&[bool]>, new_column: bool, p: 
             run(p, v, &fallback(v), &row, on_error, times)
         });
         if recons.iter().any(Option::is_some) {
-            out.recon = Some(Arc::new(crate::recon::ReconCol { cells: recons, config: None }));
+            out.recon = Some(Arc::new(crate::recon::ReconCol::new(recons)));
         }
         out
     } else {
@@ -630,15 +728,132 @@ impl Op {
             }
         };
         let old = &t.columns[ci];
-        let cells = (0..t.rows).map(|r| new[r].clone().or_else(|| old.recon(r).cloned())).collect();
-        let col = Column {
-            dict: old.dict.clone(),
-            codes: old.codes.clone(),
-            recon: Some(Arc::new(crate::recon::ReconCol { cells, config: Some(cfg.to_json()) })),
-        };
+        let cells: Vec<_> = (0..t.rows).map(|r| new[r].clone().or_else(|| old.recon(r).cloned())).collect();
+        let edits: crate::recon::Edits = cells.into_iter().map(Some).collect();
+        let col = crate::recon::apply_edits(old, &edits, Some(Some(cfg.to_json())), crate::recon::Stats::Count);
         let mut out = t.clone();
         out.columns[ci] = Arc::new(col);
         Ok(out)
+    }
+
+    /// The operations on Recons (Reconcile → Actions, judging cells), each in OpenRefine's wording.
+    fn recon_action(&mut self, t: &Table) -> Option<Result<Table>> {
+        use crate::recon::{self as rc, Action};
+        let rows = |e: &EngineConfig| -> Result<Vec<usize>> {
+            let sel = engine::mask(t, e)?;
+            Ok((0..t.rows).filter(|&r| sel.as_ref().is_none_or(|s| s[r])).collect())
+        };
+        let column_config = |c: &Column| c.recon.as_ref().and_then(|x| x.config.as_ref()).and_then(|j| rc::StandardConfig::from_json(j).ok());
+        let set_stats = |column: &str, edits: rc::Edits, config: Option<Option<serde_json::Value>>, stats: rc::Stats| -> Result<Table> {
+            let ci = t.col(column)?;
+            let mut out = t.clone();
+            out.columns[ci] = Arc::new(rc::apply_edits(&t.columns[ci], &edits, config, stats));
+            Ok(out)
+        };
+        // a ReconChange: the stats are counted again
+        let set = |column: &str, edits: rc::Edits, config: Option<Option<serde_json::Value>>| set_stats(column, edits, config, rc::Stats::Count);
+        let col = |name: &str| t.col(name).map(|i| &t.columns[i]);
+        let candidate = |m: &serde_json::Value, score: f64| rc::Candidate {
+            id: m.get("id").and_then(|v| v.as_str()).unwrap_or("").into(),
+            name: m.get("name").and_then(|v| v.as_str()).unwrap_or("").into(),
+            types: m.get("types").and_then(|v| v.as_array()).map(|a| a.iter().filter_map(|x| x.as_str().map(String::from)).collect()).unwrap_or_default(),
+            score: m.get("score").and_then(|v| v.as_f64()).unwrap_or(score),
+        };
+        let run = || -> Result<Option<Table>> {
+            Ok(Some(match &self.kind {
+                OpKind::ReconMatchBestCandidates { engine_config, column_name } => {
+                    set(column_name, rc::mass(col(column_name)?, &rows(engine_config)?, Action::MatchBest)?, None)?
+                }
+                OpKind::ReconMarkNewTopics { engine_config, column_name, share_new_topics, service, identifier_space, schema_space } => {
+                    let c = col(column_name)?;
+                    let cfg = column_config(c).unwrap_or_else(|| {
+                        rc::StandardConfig::bare(service.as_deref().unwrap_or(""), identifier_space.as_deref().unwrap_or(""), schema_space.as_deref().unwrap_or(""), false)
+                    });
+                    let edits = rc::mass(c, &rows(engine_config)?, Action::MarkNew { shared: *share_new_topics, config: Some(&cfg) })?;
+                    set(column_name, edits, Some(Some(cfg.to_json())))?
+                }
+                OpKind::ReconMatchSpecificTopic { engine_config, column_name, r#match, identifier_space, schema_space } => {
+                    let action = Action::MatchSpecific { candidate: candidate(r#match, 100.0), identifier_space: identifier_space.as_deref(), schema_space: schema_space.as_deref() };
+                    set(column_name, rc::mass(col(column_name)?, &rows(engine_config)?, action)?, None)?
+                }
+                OpKind::ReconDiscardJudgments { engine_config, column_name, clear_data } => {
+                    set(column_name, rc::mass(col(column_name)?, &rows(engine_config)?, Action::Discard { clear: *clear_data })?, None)?
+                }
+                OpKind::ReconClearSimilarCells { engine_config, column_name, similar_value } => {
+                    set(column_name, rc::mass(col(column_name)?, &rows(engine_config)?, Action::ClearSimilar(similar_value))?, None)?
+                }
+                OpKind::ReconJudgeSimilarCells { engine_config, column_name, similar_value, judgment, r#match, share_new_topics } => {
+                    let c = col(column_name)?;
+                    let action = Action::JudgeSimilar {
+                        value: similar_value,
+                        judgment: rc::judgment_of(judgment),
+                        matched: r#match.as_ref().map(|m| candidate(m, 100.0)),
+                        shared: *share_new_topics,
+                        config: column_config(c),
+                    };
+                    set(column_name, rc::mass(c, &rows(engine_config)?, action)?, None)?
+                }
+                OpKind::ReconUseValuesAsIdentifiers { engine_config, column_name, service, identifier_space, schema_space } => {
+                    let cfg = rc::StandardConfig::bare(service.as_deref().unwrap_or(""), identifier_space, schema_space, true);
+                    let edits = rc::mass(col(column_name)?, &rows(engine_config)?, Action::UseValuesAsIds(&cfg))?;
+                    set(column_name, edits, Some(Some(cfg.to_json())))?
+                }
+                OpKind::ReconCopyAcrossColumns { engine_config, from_column_name, to_column_names, judgments, apply_to_judged_cells } => {
+                    let from = t.col(from_column_name)?;
+                    let to: Vec<usize> = to_column_names.iter().filter_map(|n| t.col(n).ok()).collect();
+                    let judgments: Vec<rc::Judgment> = judgments.iter().map(|j| rc::judgment_of(j)).collect();
+                    let mut out = t.clone();
+                    for (&c, edits) in to.iter().zip(rc::copy_across(t, &rows(engine_config)?, from, &to, &judgments, *apply_to_judged_cells)) {
+                        out.columns[c] = Arc::new(rc::apply_edits(&t.columns[c], &edits, None, rc::Stats::Keep));
+                    }
+                    out
+                }
+                OpKind::ReconJudgeOneCell { row, column_name, judgment, r#match, identifier_space, schema_space } => {
+                    let c = col(column_name)?;
+                    if *row >= t.rows {
+                        return Err(format!("no row {}", row + 1));
+                    }
+                    let recon = rc::judge_one(c, *row, rc::judgment_of(judgment), r#match.as_ref().map(|m| candidate(m, 100.0)), (identifier_space.as_deref(), schema_space.as_deref()))?;
+                    let stats = rc::one_cell_stats(c, c.recon(*row).map(|r| &**r), Some(&recon));
+                    let mut edits: rc::Edits = vec![None; t.rows];
+                    edits[*row] = Some(Some(recon));
+                    set_stats(column_name, edits, None, rc::Stats::Set(stats))?
+                }
+                OpKind::ReconClearOneCell { row, column_name } => {
+                    if *row >= t.rows {
+                        return Err(format!("no row {}", row + 1));
+                    }
+                    let c = col(column_name)?;
+                    let stats = rc::one_cell_stats(c, c.recon(*row).map(|r| &**r), None);
+                    let mut edits: rc::Edits = vec![None; t.rows];
+                    edits[*row] = Some(None);
+                    set_stats(column_name, edits, None, rc::Stats::Set(stats))?
+                }
+                _ => return Ok(None),
+            }))
+        };
+        let out = run().transpose()?;
+        // single-cell judgments are described by the cell, as OpenRefine's history shows them
+        let at = |row: &usize, column_name: &str| {
+            let cell = t.col(column_name).map(|c| t.columns[c].get(*row).to_java_string()).unwrap_or_default();
+            format!("single cell on row {}, column {column_name}, containing \"{cell}\"", row + 1)
+        };
+        let described = match (&self.kind, &out) {
+            (OpKind::ReconClearOneCell { row, column_name }, Ok(_)) => Some(format!("Clear recon data for {}", at(row, column_name))),
+            (OpKind::ReconJudgeOneCell { row, column_name, judgment, r#match, .. }, Ok(_)) => Some(match judgment.as_str() {
+                "matched" => {
+                    let s = |k: &str| r#match.as_ref().and_then(|m| m.get(k)).and_then(|v| v.as_str()).unwrap_or("").to_string();
+                    format!("Match {} ({}) to {}", s("name"), s("id"), at(row, column_name))
+                }
+                "new" => format!("Mark to create new item for {}", at(row, column_name)),
+                _ => format!("Discard recon judgment for {}", at(row, column_name)),
+            }),
+            _ => None,
+        };
+        if let Some(d) = described {
+            self.description = d;
+        }
+        Some(out)
     }
 
     /// OpenRefine's ColumnAdditionByFetchingURLsOperation: one request per matching row, one after
@@ -722,8 +937,26 @@ impl Op {
     }
 
     /// Whether OpenRefine would list this step in an extracted operation history.
+    /// The column a step on Recons works on, written as OpenRefine's ReconChange in project archives.
+    pub fn recon_column(&self) -> Option<&str> {
+        use OpKind::*;
+        match &self.kind {
+            Recon { column_name, .. }
+            | ReconMatchBestCandidates { column_name, .. }
+            | ReconMarkNewTopics { column_name, .. }
+            | ReconMatchSpecificTopic { column_name, .. }
+            | ReconDiscardJudgments { column_name, .. }
+            | ReconClearSimilarCells { column_name, .. }
+            | ReconJudgeSimilarCells { column_name, .. }
+            | ReconUseValuesAsIdentifiers { column_name, .. }
+            | ReconJudgeOneCell { column_name, .. }
+            | ReconClearOneCell { column_name, .. } => Some(column_name),
+            _ => None,
+        }
+    }
+
     pub fn in_recipe(&self) -> bool {
-        !matches!(self.kind, OpKind::CellEdit { .. } | OpKind::RowAnnotate { .. })
+        !matches!(self.kind, OpKind::CellEdit { .. } | OpKind::RowAnnotate { .. } | OpKind::ReconJudgeOneCell { .. } | OpKind::ReconClearOneCell { .. })
     }
 
     /// Default description, in OpenRefine's wording, for operations that arrive without one.
@@ -735,6 +968,30 @@ impl Op {
                 let ty = config.get("type").and_then(|t| t.get("id")).and_then(|t| t.as_str()).unwrap_or("null");
                 format!("Reconcile cells in column {column_name} to type {ty}")
             }
+            ReconMatchBestCandidates { column_name, .. } => format!("Match each cell to its best recon candidate in column {column_name}"),
+            ReconMarkNewTopics { column_name, share_new_topics: true, .. } => {
+                format!("Mark to create new items for cells in column {column_name}, one item for each group of similar cells")
+            }
+            ReconMarkNewTopics { column_name, .. } => format!("Mark to create new items for cells in column {column_name}, one item for each cell"),
+            ReconMatchSpecificTopic { column_name, r#match, .. } => {
+                let s = |k: &str| r#match.get(k).and_then(|v| v.as_str()).unwrap_or("").to_string();
+                format!("Match specific item {} ({}) to cells in column {column_name}", s("name"), s("id"))
+            }
+            ReconDiscardJudgments { column_name, clear_data: true, .. } => format!("Discard recon judgments and clear recon data for cells in column {column_name}"),
+            ReconDiscardJudgments { column_name, .. } => format!("Discard recon judgments for cells in column {column_name}"),
+            ReconClearSimilarCells { column_name, similar_value, .. } => format!("Clear recon data for cells containing \"{similar_value}\" in column {column_name}"),
+            ReconJudgeSimilarCells { column_name, similar_value, judgment, r#match, share_new_topics, .. } => match judgment.as_str() {
+                "matched" => {
+                    let s = |k: &str| r#match.as_ref().and_then(|m| m.get(k)).and_then(|v| v.as_str()).unwrap_or("").to_string();
+                    format!("Match item {} ({}) for cells containing \"{similar_value}\" in column {column_name}", s("name"), s("id"))
+                }
+                "new" if *share_new_topics => format!("Mark to create one single new item for all cells containing \"{similar_value}\" in column {column_name}"),
+                "new" => format!("Mark to create one new item for each cell containing {similar_value} in column {column_name}"),
+                _ => format!("Discard recon judgments for cells containing \"{similar_value}\" in column {column_name}"),
+            },
+            ReconUseValuesAsIdentifiers { column_name, .. } => format!("Use values as reconciliation identifiers in column {column_name}"),
+            ReconCopyAcrossColumns { from_column_name, to_column_names, .. } => format!("Copy recon judgments from column {from_column_name} to {}", to_column_names.join(", ")),
+            ReconJudgeOneCell { row, column_name, .. } | ReconClearOneCell { row, column_name } => format!("Judge one cell's recon result (row {}, column {column_name})", row + 1),
             MassEdit { column_name, .. } => format!("Mass edit cells in column {column_name}"),
             FillDown { column_name, .. } => format!("Fill down cells in column {column_name}"),
             BlankDown { column_name, .. } => format!("Blank down cells in column {column_name}"),
@@ -800,6 +1057,9 @@ impl Op {
         if matches!(self.kind, OpKind::Recon { .. }) {
             return self.reconcile(t);
         }
+        if let Some(out) = self.recon_action(t) {
+            return out;
+        }
         Ok(match &self.kind {
             TransposeColumnsIntoRows {
                 start_column_name, column_count, ignore_blank_cells, fill_down, combined_column_name, prepend_column_name, separator, key_column_name, value_column_name,
@@ -813,6 +1073,17 @@ impl Op {
                 crate::reshape::key_value_columnize(t, key_column_name, value_column_name, note_column_name.as_deref().filter(|n| !n.is_empty()))?
             }
             ColumnAdditionByFetchingUrls { .. } | OpKind::Recon { .. } => unreachable!(),
+            // the operations on Recons, in recon_action
+            ReconMatchBestCandidates { .. }
+            | ReconMarkNewTopics { .. }
+            | ReconMatchSpecificTopic { .. }
+            | ReconDiscardJudgments { .. }
+            | ReconClearSimilarCells { .. }
+            | ReconJudgeSimilarCells { .. }
+            | ReconUseValuesAsIdentifiers { .. }
+            | ReconCopyAcrossColumns { .. }
+            | ReconJudgeOneCell { .. }
+            | ReconClearOneCell { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;
