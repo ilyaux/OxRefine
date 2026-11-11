@@ -31,6 +31,8 @@ type Modal =
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onSubmit: (v: string) => Promise<void> }
   | null
 
+type Staged = { path: string; name?: string; origin?: string }
+
 const fail = (e: unknown) => void toast.add({ title: "Something went wrong", description: String((e as Error).message ?? e), type: "error" })
 
 export function App() {
@@ -41,7 +43,8 @@ export function App() {
   const [total, setTotal] = useState(0)
   const [lastMs, setLastMs] = useState<{ what: string; ms: number } | null>(null)
   const [modal, setModal] = useState<Modal>(null)
-  const [importPath, setImportPath] = useState<string | null>(null)
+  // a file to import: picked from disk, or pasted / downloaded and staged by the engine
+  const [staged, setStaged] = useState<Staged | null>(null)
 
   const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
   const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
@@ -71,7 +74,22 @@ export function App() {
     if (p) return then(p).catch(fail)
     if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
   }
-  const openFile = () => withPath("open", "Import a file", async (path) => setImportPath(path))
+  const openFile = () => withPath("open", "Import a file", async (path) => setStaged({ path }))
+  const pasteData = () =>
+    setModal({
+      kind: "ask",
+      title: "Paste data",
+      label: "Rows copied from a spreadsheet, CSV text, or plain lines",
+      multiline: true,
+      onSubmit: (text) => call<Staged>("paste", { text }).then(({ data }) => setStaged(data), fail),
+    })
+  const fromUrl = () =>
+    setModal({
+      kind: "ask",
+      title: "Import from a web address",
+      label: "URL of a CSV, TSV, Excel, OpenDocument or JSON file",
+      onSubmit: (url) => call<Staged>("fetch_url", { url: url.trim() }).then(({ data }) => setStaged(data), fail),
+    })
   const openProject = (id: string) => {
     setFacets([])
     run("open", "open_project", { id }).catch(fail)
@@ -279,10 +297,19 @@ export function App() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button onClick={openFile}>
-              <FolderOpenIcon data-icon="inline-start" />
-              Import
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button />}>
+                <FolderOpenIcon data-icon="inline-start" />
+                Import
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={pasteData}>Paste data…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={fromUrl}>Web address…</DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
@@ -309,7 +336,7 @@ export function App() {
             </main>
           </div>
         ) : (
-          <Home onImport={openFile} onOpen={openProject} onRename={renameProject} onError={fail} />
+          <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpen={openProject} onRename={renameProject} onError={fail} />
         )}
 
         <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">
@@ -333,14 +360,14 @@ export function App() {
       </div>
 
       {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
-      {importPath && (
+      {staged && (
         <ImportDialog
-          path={importPath}
-          onClose={() => setImportPath(null)}
+          {...staged}
+          onClose={() => setStaged(null)}
           onCreate={async (args) => {
-            await run("import", "open", args)
+            await run("import", "open", { ...args, origin: staged.origin })
             setFacets([])
-            setImportPath(null)
+            setStaged(null)
           }}
         />
       )}

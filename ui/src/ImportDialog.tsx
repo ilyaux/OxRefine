@@ -19,35 +19,32 @@ import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
-type Info = { format: "csv" | "excel" | "ods" | "json" | "jsonlines"; sheets?: string[]; separator?: string }
+/** The guessed format and OpenRefine's wizard defaults for it. */
+type Info = { format: "csv" | "lines" | "excel" | "ods" | "json" | "jsonlines"; sheets?: string[]; separator?: string; options: Options }
 type Options = Record<string, unknown>
 type Preview = { columns: string[]; rows: [number, (string | null)[], boolean, boolean][] }
 
 const ENCODINGS = ["UTF-8", "windows-1252", "ISO-8859-1", "UTF-16LE", "UTF-16BE", "windows-1251", "KOI8-R", "Shift_JIS", "GBK"]
 const SEPARATORS: [string, string][] = [[",", "Comma"], [";", "Semicolon"], ["\t", "Tab"], ["|", "Pipe"]]
 
-function defaults(info: Info): Options {
-  const lines = { headerLines: 1, ignoreLines: 0, skipDataLines: 0, limit: -1, storeBlankRows: true, storeBlankCellsAsNulls: true }
-  if (info.format === "csv")
-    return { ...lines, separator: info.separator ?? ",", encoding: "UTF-8", processQuotes: true, quoteCharacter: '"', trimStrings: false, guessCellValueTypes: false }
-  if (info.format === "json" || info.format === "jsonlines") return { recordPath: ["_", "_"], limit: -1, trimStrings: false, guessCellValueTypes: false, storeEmptyStrings: true }
-  return { ...lines, sheets: [{ name: info.sheets?.[0] ?? "", fileNameAndSheetIndex: "file#0", selected: true }] }
-}
-
 const baseName = (p: string) => p.split(/[\\/]/).pop() ?? p
 
 export function ImportDialog({
   path,
+  name: initialName,
   onCreate,
   onClose,
 }: {
   path: string
+  /** project name to suggest; defaults to the file name */
+  name?: string
   onCreate: (args: { path: string; name: string; format: string; options: Options }) => Promise<void>
   onClose: () => void
 }) {
   const [info, setInfo] = useState<Info | null>(null)
   const [options, setOptions] = useState<Options>({})
-  const [name, setName] = useState(baseName(path))
+  const label = initialName ?? baseName(path)
+  const [name, setName] = useState(label)
   const [preview, setPreview] = useState<Preview | null>(null)
   const [error, setError] = useState("")
   const [busy, setBusy] = useState(false)
@@ -56,7 +53,7 @@ export function ImportDialog({
     call<Info>("inspect", { path })
       .then(({ data }) => {
         setInfo(data)
-        setOptions(defaults(data))
+        setOptions(data.options)
       })
       .catch((e) => setError(e.message))
   }, [path])
@@ -79,7 +76,7 @@ export function ImportDialog({
         id={`imp-${key}`}
         type="number"
         min={key === "limit" ? undefined : 0}
-        value={key === "limit" && Number(options[key]) < 0 ? "" : String(options[key] ?? 0)}
+        value={key === "limit" ? (Number(options[key]) < 0 ? "" : String(options[key])) : String(Math.max(0, Number(options[key] ?? 0)))}
         placeholder={key === "limit" ? "All rows" : undefined}
         onChange={(e) => set({ [key]: e.target.value === "" ? (key === "limit" ? -1 : 0) : Number(e.target.value) })}
       />
@@ -98,7 +95,7 @@ export function ImportDialog({
   const create = async () => {
     setBusy(true)
     try {
-      await onCreate({ path, name: name.trim() || baseName(path), format: info!.format, options })
+      await onCreate({ path, name: name.trim() || label, format: info!.format, options })
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -110,9 +107,11 @@ export function ImportDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-6xl">
         <DialogHeader>
-          <DialogTitle>Import {baseName(path)}</DialogTitle>
+          <DialogTitle>Import {label}</DialogTitle>
           <DialogDescription>
-            {info ? `Detected ${info.format === "csv" ? "delimited text" : info.format.toUpperCase()}. The preview updates as you change the options.` : "Reading the file…"}
+            {info
+              ? `Detected ${{ csv: "delimited text", lines: "plain lines (one row per line)" }[info.format as string] ?? info.format.toUpperCase()}. The preview updates as you change the options.`
+              : "Reading the file…"}
           </DialogDescription>
         </DialogHeader>
         <div className="grid min-h-0 gap-6 md:grid-cols-[18rem_minmax(0,1fr)]">
@@ -189,6 +188,7 @@ export function ImportDialog({
                   <FieldDescription>Field names from the top, with _ for the items of an array. A list of objects is “_, _”.</FieldDescription>
                 </Field>
               )}
+              {info?.format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
               {info && info.format !== "json" && info.format !== "jsonlines" && (
                 <>
                   {num("ignoreLines", "Lines to ignore at the top")}

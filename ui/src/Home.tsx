@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { FolderOpenIcon, TableIcon } from "lucide-react"
+import { ClipboardPasteIcon, FolderOpenIcon, GlobeIcon, TableIcon } from "lucide-react"
 import { call } from "@/api"
 import {
   AlertDialog,
@@ -26,11 +26,15 @@ const when = (iso: string) => {
 
 export function Home({
   onImport,
+  onPaste,
+  onUrl,
   onOpen,
   onRename,
   onError,
 }: {
   onImport: () => void
+  onPaste: () => void
+  onUrl: () => void
   onOpen: (id: string) => void
   onRename: (p: ProjectMeta, done: () => void) => void
   onError: (e: unknown) => void
@@ -54,9 +58,18 @@ export function Home({
         <CardHeader>
           <CardTitle>New project</CardTitle>
           <CardDescription>
-            Import CSV, TSV, Excel (.xlsx, .xls), OpenDocument (.ods) or JSON. Options and a preview come next; the original file is never changed.
+            Import CSV, TSV, Excel (.xlsx, .xls), OpenDocument (.ods), JSON or plain text from a file, the clipboard or a web address.
+            Options and a preview come next; the original is never changed.
           </CardDescription>
-          <CardAction>
+          <CardAction className="flex gap-2">
+            <Button variant="outline" onClick={onPaste}>
+              <ClipboardPasteIcon data-icon="inline-start" />
+              Paste data
+            </Button>
+            <Button variant="outline" onClick={onUrl}>
+              <GlobeIcon data-icon="inline-start" />
+              Web address
+            </Button>
             <Button onClick={onImport}>
               <FolderOpenIcon data-icon="inline-start" />
               Choose a file

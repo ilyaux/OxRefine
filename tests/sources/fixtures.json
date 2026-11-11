@@ -1,0 +1,645 @@
+{
+ "openrefine": "3.10.1",
+ "files": {
+  "/people.csv": [
+   "text/csv",
+   "id,name,city\n1, Ann ,Paris\n2,Bob,\"New York, NY\"\n"
+  ],
+  "/data": [
+   "text/tab-separated-values",
+   "a\tb\n1\t\"two words\"\n3\t4\n"
+  ],
+  "/noext": [
+   "application/octet-stream",
+   "x;y\n1;2\n"
+  ],
+  "/rows.json": [
+   "application/json",
+   "[{\"a\":1,\"b\":\"x\"},{\"a\":2,\"b\":\" y \"}]"
+  ],
+  "/api/export?format=csv": [
+   "text/csv; charset=utf-8",
+   "k,v\n1,2\n"
+  ],
+  "/notes.txt": [
+   "text/plain",
+   "first line\nsecond line\n"
+  ],
+  "/sheet.xlsx": [
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "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",
+   "base64"
+  ]
+ },
+ "cases": [
+  {
+   "name": "clipboard tab separated",
+   "clipboard": "name\tcity\nAnn\tParis\nBob\t\"New York\"\n",
+   "fileName": "(clipboard)",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\t",
+    "guessCellValueTypes": false,
+    "processQuotes": false,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Ann"
+     },
+     {
+      "v": "Paris"
+     }
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "\"New York\""
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clipboard comma separated",
+   "clipboard": "a,b\n1, two \n3,\"4,5\"\n",
+   "fileName": "(clipboard)",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ",",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "a",
+    "b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "two"
+     }
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "4,5"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clipboard semicolons",
+   "clipboard": "x;y;z\n1;2;3\n",
+   "fileName": "(clipboard)",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ";",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "x",
+    "y",
+    "z"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "2"
+     },
+     {
+      "v": "3"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clipboard one line",
+   "clipboard": "one line only",
+   "fileName": "(clipboard)",
+   "format": "text/line-based",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\r?\\n",
+    "linesPerRow": 1,
+    "guessCellValueTypes": false
+   },
+   "columns": [
+    "Column 1"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one line only"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clipboard lines with blanks",
+   "clipboard": "  spaced  \n\n\nlast\n",
+   "fileName": "(clipboard)",
+   "format": "text/line-based",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\r?\\n",
+    "linesPerRow": 1,
+    "guessCellValueTypes": false
+   },
+   "columns": [
+    "Column 1"
+   ],
+   "rows": [
+    [
+     {
+      "v": "  spaced  "
+     }
+    ],
+    [
+     null
+    ],
+    [
+     null
+    ],
+    [
+     {
+      "v": "last"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "clipboard json text",
+   "clipboard": "[{\"a\":1}]",
+   "fileName": "(clipboard)",
+   "format": "text/line-based",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\r?\\n",
+    "linesPerRow": 1,
+    "guessCellValueTypes": false
+   },
+   "columns": [
+    "Column 1"
+   ],
+   "rows": [
+    [
+     {
+      "v": "[{\"a\":1}]"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url csv",
+   "url": "/people.csv",
+   "fileName": "people.csv",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ",",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "id",
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "Ann"
+     },
+     {
+      "v": "Paris"
+     }
+    ],
+    [
+     {
+      "v": "2"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "New York, NY"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url tsv by content type",
+   "url": "/data",
+   "fileName": "data",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\t",
+    "guessCellValueTypes": false,
+    "processQuotes": false,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "a",
+    "b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "\"two words\""
+     }
+    ],
+    [
+     {
+      "v": "3"
+     },
+     {
+      "v": "4"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url without extension",
+   "url": "/noext",
+   "fileName": "noext",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ";",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "x",
+    "y"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "2"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url json",
+   "url": "/rows.json",
+   "choose": {
+    "recordPath": [
+     "_",
+     "_"
+    ]
+   },
+   "fileName": "rows.json",
+   "format": "text/json",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true
+   },
+   "columns": [
+    "_ - a",
+    "_ - b"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "x"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": " y "
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url with query",
+   "url": "/api/export?format=csv",
+   "fileName": "export",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ",",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "k",
+    "v"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1"
+     },
+     {
+      "v": "2"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url plain text",
+   "url": "/notes.txt",
+   "fileName": "notes.txt",
+   "format": "text/line-based",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": "\\r?\\n",
+    "linesPerRow": 1,
+    "guessCellValueTypes": false
+   },
+   "columns": [
+    "Column 1"
+   ],
+   "rows": [
+    [
+     {
+      "v": "first line"
+     }
+    ],
+    [
+     {
+      "v": "second line"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url excel, all sheets",
+   "url": "/sheet.xlsx",
+   "fileName": "sheet.xlsx",
+   "format": "binary/text/xml/xls/xlsx",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "forceText": false,
+    "sheetRecords": [
+     {
+      "name": "sheet.xlsx#People",
+      "fileNameAndSheetIndex": "sheet.xlsx#0",
+      "rows": 5,
+      "selected": true
+     },
+     {
+      "name": "sheet.xlsx#Cities",
+      "fileNameAndSheetIndex": "sheet.xlsx#1",
+      "rows": 3,
+      "selected": true
+     }
+    ]
+   },
+   "columns": [
+    "name",
+    "age",
+    "score",
+    "joined",
+    "active",
+    "note",
+    "city",
+    "population"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice Smith"
+     },
+     {
+      "v": 34
+     },
+     {
+      "v": 7.25
+     },
+     {
+      "v": "2024-01-15"
+     },
+     {
+      "v": 1
+     },
+     {
+      "v": " padded "
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Bob Jones"
+     },
+     {
+      "v": 51
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": "2023-12-31"
+     },
+     {
+      "v": 0
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "n/a"
+     },
+     {
+      "v": 41.25
+     },
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "1,234.5"
+     },
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "Zürich"
+     },
+     {
+      "v": 421878
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "Kraków"
+     },
+     {
+      "v": 804237.5
+     }
+    ]
+   ]
+  }
+ ]
+}

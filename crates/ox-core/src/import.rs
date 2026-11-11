@@ -1,4 +1,5 @@
-//! Importers with OpenRefine's options: delimited text, Excel/ODS and JSON.
+//! Importers with OpenRefine's options: delimited text, plain lines, Excel/ODS and JSON, plus the
+//! clipboard and web-address sources (staged as files, then imported like any other file).
 //! Behaviour is pinned to OpenRefine 3.10.1 by tests/import_conformance.rs.
 use crate::{
     err,
@@ -32,6 +33,8 @@ pub struct ImportOptions {
     /// JSON path to the records, e.g. ["_", "_"] for a top-level array of objects.
     pub record_path: Vec<String>,
     pub store_empty_strings: bool,
+    /// Line-based text: how many lines make one row.
+    pub lines_per_row: i64,
 }
 
 impl Default for ImportOptions {
@@ -52,6 +55,7 @@ impl Default for ImportOptions {
             sheets: vec![],
             record_path: vec!["_".into(), "_".into()],
             store_empty_strings: true,
+            lines_per_row: 1,
         }
     }
 }
@@ -74,6 +78,8 @@ impl Default for SheetChoice {
 #[serde(rename_all = "lowercase")]
 pub enum Format {
     Csv,
+    /// one line per row, no separator ("text/line-based")
+    Lines,
     Excel,
     Ods,
     Json,
@@ -84,6 +90,7 @@ pub enum Format {
 pub fn format_for(path: &Path, format: Option<&str>) -> Format {
     match format.unwrap_or("") {
         "text/line-based/*sv" | "csv" | "tsv" => return Format::Csv,
+        "text/line-based" | "lines" => return Format::Lines,
         "binary/text/xml/xls/xlsx" | "excel" => return Format::Excel,
         "text/xml/ods" | "ods" => return Format::Ods,
         "text/json" | "json" => return Format::Json,
@@ -103,25 +110,107 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
     match format_for(path, format) {
         Format::Csv => import_text(path, o),
+        Format::Lines => import_lines(path, o),
         Format::Excel | Format::Ods => import_sheets(path, o),
         Format::Json | Format::JsonLines => import_json(path, format_for(path, format) == Format::JsonLines, o),
     }
 }
 
-/// What the import wizard needs before options are chosen.
+/// What the import wizard needs before options are chosen: the guessed format and OpenRefine's
+/// wizard defaults for it (`options`). Text with no separator in its first line is line-based,
+/// unless the file says it is CSV/TSV.
 pub fn inspect(path: &Path) -> Result<serde_json::Value> {
-    let f = format_for(path, None);
-    let mut out = serde_json::json!({ "format": f });
-    match f {
+    use serde_json::json;
+    let mut f = format_for(path, None);
+    let lines = json!({ "ignoreLines": -1, "headerLines": 1, "skipDataLines": 0, "limit": -1, "storeBlankRows": true, "storeBlankCellsAsNulls": true });
+    let merge = |extra: serde_json::Value| {
+        let mut o = lines.clone();
+        o.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+        o
+    };
+    let mut out = json!({});
+    let declared = path.extension().is_some_and(|e| ["csv", "tsv", "tab"].iter().any(|x| e.eq_ignore_ascii_case(x)));
+    let sep = if f == Format::Csv { guess_separator(path)? } else { None };
+    if f == Format::Csv && sep.is_none() && !declared {
+        f = Format::Lines;
+    }
+    out["options"] = match f {
         Format::Excel | Format::Ods => {
             use calamine::Reader;
-            let wb = calamine::open_workbook_auto(path).map_err(err)?;
-            out["sheets"] = serde_json::json!(wb.sheet_names());
+            let names = calamine::open_workbook_auto(path).map_err(err)?.sheet_names();
+            let sheets: Vec<_> = names.iter().enumerate().map(|(i, n)| json!({ "name": n, "fileNameAndSheetIndex": format!("file#{i}"), "selected": true })).collect();
+            out["sheets"] = json!(names);
+            merge(json!({ "sheets": sheets }))
         }
-        Format::Csv => out["separator"] = serde_json::json!(sniff_separator(path)?.to_string()),
-        _ => {}
-    }
+        Format::Csv => {
+            let sep = sep.unwrap_or(',');
+            out["separator"] = json!(sep.to_string());
+            // OpenRefine's wizard turns quote handling off for tab-separated text
+            merge(json!({ "separator": sep.to_string(), "encoding": "UTF-8", "processQuotes": sep != '\t', "quoteCharacter": "\"", "trimStrings": true, "guessCellValueTypes": false }))
+        }
+        Format::Lines => merge(json!({ "headerLines": 0, "linesPerRow": 1, "encoding": "UTF-8", "guessCellValueTypes": false })),
+        Format::Json | Format::JsonLines => json!({ "recordPath": ["_", "_"], "limit": -1, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true }),
+    };
+    out["format"] = json!(f);
     Ok(out)
+}
+
+/// Where pasted text and downloads wait for the import wizard: next to the store's `projects`
+/// folder (given as `projects`), else in the temp folder.
+pub fn staging_dir(projects: Option<&Path>) -> std::path::PathBuf {
+    projects.map_or_else(|| std::env::temp_dir().join("oxrefine-staging"), |p| p.parent().unwrap_or(p).join("staging"))
+}
+
+/// A fresh folder under `dir`; staged files older than a day are cleared on the way.
+fn stage_folder(dir: &Path) -> Result<std::path::PathBuf> {
+    if let Ok(entries) = std::fs::read_dir(dir) {
+        let day = std::time::Duration::from_secs(86_400);
+        for e in entries.flatten() {
+            if e.metadata().and_then(|m| m.modified()).is_ok_and(|t| t.elapsed().unwrap_or_default() > day) {
+                let _ = std::fs::remove_dir_all(e.path());
+            }
+        }
+    }
+    let nanos = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_nanos();
+    let folder = dir.join(nanos.to_string());
+    std::fs::create_dir_all(&folder).map_err(|e| format!("{}: {e}", folder.display()))?;
+    Ok(folder)
+}
+
+/// OpenRefine's Clipboard tab: the pasted text becomes a file to import.
+pub fn stage_text(dir: &Path, text: &str) -> Result<std::path::PathBuf> {
+    let path = stage_folder(dir)?.join("clipboard.txt");
+    std::fs::write(&path, text).map_err(err)?;
+    Ok(path)
+}
+
+/// OpenRefine's Web Addresses tab: download `url` into a staged file. Returns the file and the name
+/// OpenRefine gives it (the last path segment). A name without an extension gets one from the
+/// Content-Type, so the format is guessed as OpenRefine does.
+pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
+    let parsed = url::Url::parse(url.trim()).map_err(|e| format!("{url}: {e}"))?;
+    if !matches!(parsed.scheme(), "http" | "https") {
+        return Err(format!("{url}: only http and https addresses can be imported"));
+    }
+    let mut res = ureq::get(parsed.as_str()).call().map_err(|e| format!("{url}: {e}"))?;
+    let name = parsed.path_segments().and_then(|mut s| s.next_back()).filter(|s| !s.is_empty()).unwrap_or("download");
+    let name: String = name.chars().map(|c| if "\\/:*?\"<>|".contains(c) { '_' } else { c }).collect();
+    let mime = res.headers().get("content-type").and_then(|v| v.to_str().ok()).unwrap_or("").split(';').next().unwrap_or("").trim().to_ascii_lowercase();
+    let ext = match mime.as_str() {
+        _ if Path::new(&name).extension().is_some() => "",
+        "text/csv" => ".csv",
+        "text/tab-separated-values" => ".tsv",
+        "application/json" => ".json",
+        "application/x-ndjson" | "application/jsonl" => ".jsonl",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => ".xlsx",
+        "application/vnd.ms-excel" => ".xls",
+        "application/vnd.oasis.opendocument.spreadsheet" => ".ods",
+        _ => "",
+    };
+    let path = stage_folder(dir)?.join(format!("{name}{ext}"));
+    let mut file = File::create(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+    std::io::copy(&mut res.body_mut().as_reader(), &mut file).map_err(|e| format!("{url}: {e}"))?;
+    Ok((path, name))
 }
 
 // ---------------------------------------------------------------- tabular phases
@@ -282,14 +371,35 @@ fn read_head(path: &Path) -> Result<Vec<u8>> {
     Ok(head)
 }
 
-/// Most frequent of , ; tab | in the first line (ties go to ',').
+/// Most frequent of , ; tab | in the first line (ties go to ','); ',' when there is none.
 pub fn sniff_separator(path: &Path) -> Result<char> {
+    Ok(guess_separator(path)?.unwrap_or(','))
+}
+
+/// Like `sniff_separator`, but None when the first line has none of them.
+fn guess_separator(path: &Path) -> Result<Option<char>> {
     if path.extension().is_some_and(|e| e.eq_ignore_ascii_case("tsv") || e.eq_ignore_ascii_case("tab")) {
-        return Ok('\t');
+        return Ok(Some('\t'));
     }
     let head = read_head(path)?;
     let first = head.split(|&b| b == b'\n').next().unwrap_or_default();
-    Ok(*[b'|', b';', b'\t', b','].iter().max_by_key(|d| first.iter().filter(|b| b == d).count()).unwrap() as char)
+    let count = |d: &u8| first.iter().filter(|b| *b == d).count();
+    let best = [b'|', b';', b'\t', b','].into_iter().max_by_key(count).unwrap();
+    Ok((count(&best) > 0).then_some(best as char))
+}
+
+/// OpenRefine's line-based importer: every `linesPerRow` lines make one row.
+fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
+    let text = decode(path, &o.encoding)?;
+    let per = o.lines_per_row.max(1) as usize;
+    let lines: Vec<&str> = text.lines().collect();
+    let mut b = Builder::new(o);
+    for chunk in lines.chunks(per) {
+        if !b.push(chunk.iter().map(|s| Field::Text(s))) {
+            break;
+        }
+    }
+    Ok(b.finish())
 }
 
 fn is_utf8(label: &str) -> bool {

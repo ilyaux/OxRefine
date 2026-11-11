@@ -187,6 +187,10 @@ struct Args {
     ops: Vec<Op>,
     params: Value,
     steps: Vec<usize>,
+    /// clipboard text to stage (`paste`), or where a staged file came from (`open`)
+    text: String,
+    url: String,
+    origin: String,
 }
 
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
@@ -201,6 +205,15 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     // ---------------------------------------------------------- no project needed
     match cmd {
         "inspect" => return import::inspect(Path::new(&a.path)),
+        // Clipboard and Web Addresses: stage the data as a file, then the usual import wizard runs on it
+        "paste" => {
+            let path = import::stage_text(&import::staging_dir(store.map(|s| s.root())), &a.text)?;
+            return Ok(json!({ "path": path, "name": "Clipboard", "origin": "(clipboard)" }));
+        }
+        "fetch_url" => {
+            let (path, name) = import::download(&import::staging_dir(store.map(|s| s.root())), &a.url)?;
+            return Ok(json!({ "path": path, "name": name, "origin": a.url.trim() }));
+        }
         "preview_import" => {
             let mut o = a.options.clone();
             o.limit = if a.limit == 0 { 100 } else { a.limit as i64 };
@@ -214,8 +227,13 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let name = if a.name.trim().is_empty() { file_name(path) } else { a.name.trim().to_string() };
             let mut p = Project::new(name.clone(), table);
             if let Some(st) = store {
-                let source = Source { path: a.path.clone(), format: a.format.clone(), options: a.options.clone() };
+                let origin = if a.origin.is_empty() { a.path.clone() } else { a.origin.clone() };
+                let source = Source { path: origin, format: a.format.clone(), options: a.options.clone() };
                 p.meta = Some(st.create(&name, p.table(), Some(source))?);
+            }
+            // a staged paste or download is in the project now
+            if path.starts_with(import::staging_dir(store.map(|s| s.root()))) {
+                let _ = std::fs::remove_dir_all(path.parent().unwrap_or(path));
             }
             s.project = Some(p);
         }

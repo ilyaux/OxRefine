@@ -81,6 +81,10 @@ impl Store {
         base.unwrap_or_else(std::env::temp_dir).join(if cfg!(any(windows, target_os = "macos")) { "OxRefine" } else { "oxrefine" })
     }
 
+    pub fn root(&self) -> &Path {
+        &self.root
+    }
+
     pub fn open(root: impl Into<PathBuf>) -> Result<Store> {
         let root = root.into().join("projects");
         std::fs::create_dir_all(&root).map_err(|e| format!("{}: {e}", root.display()))?;
