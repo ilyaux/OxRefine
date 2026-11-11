@@ -3,7 +3,7 @@ import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIc
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
-import { ReconcileDialog } from "@/ReconcileDialog"
+import { loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
@@ -200,6 +200,61 @@ export function App() {
       },
     })
 
+  // Reconcile → Actions, with OpenRefine's operations and defaults
+  const reconAction = (kind: string, c: string) => {
+    const mass = (op: string, extra: object = {}) => apply({ op: `core/${op}`, engineConfig: engine, columnName: c, ...extra }).catch(() => {})
+    if (kind === "recon-best") mass("recon-match-best-candidates")
+    else if (kind === "recon-new-each" || kind === "recon-new-shared") mass("recon-mark-new-topics", { shareNewTopics: kind === "recon-new-shared" })
+    else if (kind === "recon-discard") mass("recon-discard-judgments", { clearData: false })
+    else if (kind === "recon-clear") mass("recon-discard-judgments", { clearData: true })
+    else if (kind === "recon-match-all")
+      setModal({
+        kind: "ask",
+        title: `Match the filtered cells of “${c}” to one item`,
+        label: "The item's id, then its name (Q42 Douglas Adams)",
+        onSubmit: async (v) => {
+          const [id, ...name] = v.trim().split(/\s+/)
+          if (id) await mass("recon-match-specific-topic-to-cells", { match: { id, name: name.join(" ") || id, types: [] } })
+        },
+      })
+    else if (kind === "recon-copy")
+      setModal({
+        kind: "ask",
+        title: `Copy reconciliation data from “${c}”`,
+        label: "To columns (separated by commas)",
+        initial: summary!.columns.filter((x) => x !== c).join(", "),
+        onSubmit: (v) =>
+          apply({
+            op: "core/recon-copy-across-columns",
+            engineConfig: engine,
+            fromColumnName: c,
+            toColumnNames: v.split(",").map((s) => s.trim()).filter(Boolean),
+            judgments: ["matched", "new"],
+            applyToJudgedCells: true,
+          }).catch(() => {}),
+      })
+    else if (kind === "recon-use-ids")
+      setModal({
+        kind: "ask",
+        title: `Use the values of “${c}” as identifiers`,
+        label: "Reconciliation service",
+        initial: loadServices()[0].url,
+        onSubmit: async (url) => {
+          const { data } = await call<{ identifierSpace: string; schemaSpace: string }>("recon_service", { url: url.trim() })
+          await mass("recon-use-values-as-identifiers", { service: url.trim(), identifierSpace: data.identifierSpace, schemaSpace: data.schemaSpace })
+        },
+      })
+    else if (kind === "recon-add-ids")
+      setModal({
+        kind: "ask",
+        title: `Add a column of the items matched in “${c}”`,
+        label: "New column name",
+        initial: `${c} id`,
+        onSubmit: (name) =>
+          apply({ op: "core/column-addition", engineConfig: engine, baseColumnName: c, newColumnName: name.trim(), columnInsertIndex: summary!.columns.indexOf(c) + 1, expression: "grel:cell.recon.match.id", onError: "set-to-blank" }).catch(() => {}),
+      })
+  }
+
   const onAction = (a: ColumnAction) => {
     const c = a.column
     setFocusCol(c)
@@ -215,6 +270,7 @@ export function App() {
       apply({ op: "core/text-transform", engineConfig: engine, columnName: c, expression: `grel:${a.expression}`, onError: "keep-original", repeat: false, repeatCount: 10 }).catch(() => {})
     else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
     else if (a.kind === "reconcile") setModal({ kind: "reconcile", column: c })
+    else if (a.kind.startsWith("recon-")) reconAction(a.kind, c)
     else if (a.kind === "add-column" || a.kind === "fetch") setModal({ kind: a.kind === "fetch" ? "fetch" : "add", column: c })
     else if (a.kind === "transpose-columns" || a.kind === "transpose-rows" || a.kind === "columnize")
       setModal({ kind: "transpose", column: c, mode: a.kind === "columnize" ? "columnize" : a.kind === "transpose-rows" ? "rows" : "columns" })

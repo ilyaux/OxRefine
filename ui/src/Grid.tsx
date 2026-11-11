@@ -20,6 +20,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cn } from "cn"
+import { ReconPanel, type Judging } from "@/ReconPanel"
 
 /** [row, cells, starred, flagged, cell types (one letter each), record number when the row starts a record] */
 type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?, Record<string, Recon>?]
@@ -118,6 +119,8 @@ export type ColumnAction =
         | "move-first" | "move-left" | "move-right" | "move-last"
         | "numeric-facet" | "timeline-facet" | "custom-list-facet" | "custom-range-facet"
         | "fetch" | "transpose-columns" | "transpose-rows" | "columnize" | "reconcile"
+        | "recon-best" | "recon-new-each" | "recon-new-shared" | "recon-match-all" | "recon-discard" | "recon-clear"
+        | "recon-copy" | "recon-use-ids" | "recon-add-ids"
       column: string
     }
   | { kind: "preset-facet"; column: string; facet: "list" | "range"; expression: string }
@@ -148,6 +151,7 @@ export function Grid({
   const [blocks, setBlocks] = useState(() => new Map<number, Row[]>())
   const [widths, setWidths] = useState<Record<string, number>>({})
   const [editing, setEditing] = useState<Editing | null>(null)
+  const [judging, setJudging] = useState<Judging | null>(null)
   const pending = useRef(new Set<number>())
   const current = useRef(version)
   const records = engine.mode === "record-based"
@@ -292,7 +296,16 @@ export function Grid({
                   return (
                     <TableCell key={c} className={cn("group/cell relative truncate", TYPE_CLASS[type])} title={recon ? undefined : (text ?? undefined)}>
                       {text}
-                      {recon && <ReconMark r={recon} text={text} />}
+                      {recon && row && (
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          aria-label={`Judge ${c} in row ${row[0] + 1}`}
+                          onClick={(e) => (onFocusColumn?.(c), setJudging({ row: row[0], column: c, value: text ?? "", anchor: e.currentTarget.parentElement! }))}
+                        >
+                          <ReconMark r={recon} text={text} />
+                        </Button>
+                      )}
                       {row && (
                         <Button
                           variant="secondary"
@@ -314,6 +327,7 @@ export function Grid({
         </TableBody>
       </Table>
       {editing && <CellEditor editing={editing} engine={engine} onApply={onApply} onClose={() => setEditing(null)} />}
+      {judging && <ReconPanel judging={judging} engine={engine} onApply={onApply} onClose={() => setJudging(null)} />}
     </div>
   )
 }
@@ -433,6 +447,19 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
             <DropdownMenuSubContent className="w-56">
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={act("reconcile")}>Start reconciling…</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem onClick={act("recon-best")}>Match each cell to its best candidate</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-new-each")}>Create a new item for each cell</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-new-shared")}>Create one new item for similar cells</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-match-all")}>Match all filtered cells to…</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-discard")}>Discard reconciliation judgments</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-clear")}>Clear reconciliation data</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-copy")}>Copy reconciliation data to other columns…</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-use-ids")}>Use values as identifiers…</DropdownMenuItem>
+                <DropdownMenuItem onClick={act("recon-add-ids")}>Add entity identifiers column…</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
