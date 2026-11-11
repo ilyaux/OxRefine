@@ -40,7 +40,7 @@ Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, inclu
 | Import options (CSV/TSV, fixed-width, Excel, ODS, JSON, XML, zip/tar/gzip archives) | 40 / 42 |
 | Clipboard and web-address import (wizard defaults, archives, XML) | 17 / 17 |
 | Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
-| Exports (CSV/TSV, custom tabular, HTML, templating, Excel, SQL) | 12 / 13 |
+| Exports (CSV/TSV, custom tabular, HTML, templating, Excel, ODS, SQL) | 14 / 15 |
 | Clustering and GREL phonetic() (6 keyers, Levenshtein kNN, 9 encoders × 127 values) | 1148 / 1157 |
 | OpenRefine project archives, opened with their full history (and written back) | 86 / 86 |
 

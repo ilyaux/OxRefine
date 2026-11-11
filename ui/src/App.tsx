@@ -336,6 +336,7 @@ export function App() {
                   <DropdownMenuItem onClick={() => exportRows("csv", "csv")}>CSV…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => exportRows("tsv", "tsv")}>TSV…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => exportRows("xlsx", "xlsx")}>Excel (.xlsx)…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportRows("ods", "ods")}>OpenDocument (.ods)…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => exportRows("html", "html")}>HTML table…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "*sv" })}>Custom tabular…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "template" })}>Templating…</DropdownMenuItem>
@@ -442,6 +443,7 @@ export function App() {
                 { label: "Copy recipe JSON", run: () => void copyRecipe().catch(fail) },
                 { label: "Export matching rows as CSV…", run: () => exportRows("csv", "csv") },
                 { label: "Export matching rows as Excel…", run: () => exportRows("xlsx", "xlsx") },
+                { label: "Export matching rows as OpenDocument…", run: () => exportRows("ods", "ods") },
                 { label: "Export as an OpenRefine project…", run: exportProject },
                 { label: "Back to projects", run: goHome },
               ]

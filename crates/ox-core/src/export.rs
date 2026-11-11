@@ -116,17 +116,19 @@ pub fn export(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &
             sql(t, rows, &o)?.into_bytes()
         }
         "xlsx" => xlsx(t, rows, project_name)?,
-        f => return Err(format!("unknown export format `{f}` (csv, tsv, *sv, html, template, sql, xlsx)")),
+        "ods" => ods(t, rows, project_name)?,
+        f => return Err(format!("unknown export format `{f}` (csv, tsv, *sv, html, template, sql, xlsx, ods)")),
     })
 }
 
-/// Export format from a file name: .tsv, .html/.htm, .xlsx, .sql, anything else CSV.
+/// Export format from a file name: .tsv, .html/.htm, .xlsx, .ods, .sql, anything else CSV.
 pub fn format_for(path: &str) -> &'static str {
     let ext = path.rsplit_once('.').map(|(_, e)| e.to_ascii_lowercase()).unwrap_or_default();
     match ext.as_str() {
         "tsv" | "tab" => "tsv",
         "html" | "htm" => "html",
         "xlsx" => "xlsx",
+        "ods" => "ods",
         "sql" => "sql",
         _ => "csv",
     }
@@ -343,4 +345,67 @@ pub fn xlsx(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
         }
     }
     wb.save_to_buffer().map_err(err)
+}
+
+fn xml_escape(s: &str) -> String {
+    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
+}
+
+/// OpenRefine's ODS export: one sheet named after the project, a header row, then text, numbers
+/// (floats), booleans and dates as typed cells; blank cells stay empty.
+pub fn ods(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
+    use std::io::Write;
+    let cell = |v: &Value| -> String {
+        match v {
+            Value::Null => "<table:table-cell/>".into(),
+            Value::Int(n) => format!("<table:table-cell office:value-type=\"float\" office:value=\"{n}\"><text:p>{n}</text:p></table:table-cell>"),
+            Value::Num(n) => {
+                let s = crate::grel::value::java_double(*n);
+                format!("<table:table-cell office:value-type=\"float\" office:value=\"{s}\"><text:p>{s}</text:p></table:table-cell>")
+            }
+            Value::Bool(b) => format!("<table:table-cell office:value-type=\"boolean\" office:boolean-value=\"{b}\"><text:p>{b}</text:p></table:table-cell>"),
+            Value::Date(d) => {
+                let s = if d.time() == chrono::NaiveTime::MIN { d.format("%Y-%m-%d").to_string() } else { d.format("%Y-%m-%dT%H:%M:%S").to_string() };
+                format!("<table:table-cell office:value-type=\"date\" office:date-value=\"{s}\"><text:p>{s}</text:p></table:table-cell>")
+            }
+            v => {
+                let s = xml_escape(&v.display());
+                format!("<table:table-cell office:value-type=\"string\" office:string-value=\"{s}\"><text:p>{s}</text:p></table:table-cell>")
+            }
+        }
+    };
+    let sheet = if name.trim().is_empty() { "Sheet1".to_string() } else { xml_escape(name) };
+    let mut body = format!("<table:table table:name=\"{sheet}\"><table:table-column table:number-columns-repeated=\"{}\"/>", t.names.len().max(1));
+    body += "<table:table-row>";
+    for n in &t.names {
+        body += &cell(&Value::Str(n.clone()));
+    }
+    body += "</table:table-row>";
+    for &r in rows {
+        body += "<table:table-row>";
+        for c in &t.columns {
+            body += &cell(c.get(r as usize));
+        }
+        body += "</table:table-row>";
+    }
+    body += "</table:table>";
+    let content = format!(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><office:document-content xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" \
+         xmlns:table=\"urn:oasis:names:tc:opendocument:xmlns:table:1.0\" xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\" \
+         office:version=\"1.2\"><office:body><office:spreadsheet>{body}</office:spreadsheet></office:body></office:document-content>"
+    );
+    let manifest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\" manifest:version=\"1.2\">\
+        <manifest:file-entry manifest:full-path=\"/\" manifest:media-type=\"application/vnd.oasis.opendocument.spreadsheet\"/>\
+        <manifest:file-entry manifest:full-path=\"content.xml\" manifest:media-type=\"text/xml\"/></manifest:manifest>";
+    let mut z = zip::ZipWriter::new(std::io::Cursor::new(vec![]));
+    // the mimetype comes first and uncompressed, so tools can tell the file type from its first bytes
+    let stored = zip::write::SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
+    let deflated = zip::write::SimpleFileOptions::default();
+    z.start_file("mimetype", stored).map_err(err)?;
+    z.write_all(b"application/vnd.oasis.opendocument.spreadsheet").map_err(err)?;
+    z.start_file("META-INF/manifest.xml", deflated).map_err(err)?;
+    z.write_all(manifest.as_bytes()).map_err(err)?;
+    z.start_file("content.xml", deflated).map_err(err)?;
+    z.write_all(content.as_bytes()).map_err(err)?;
+    Ok(z.finish().map_err(err)?.into_inner())
 }

@@ -1,7 +1,7 @@
 //! Every case in tests/export/fixtures.json must export the same bytes as OpenRefine 3.10.1
 //! (Excel files: the same cells, read back with calamine). Exceptions live in known_failures.txt.
 use base64::Engine as _;
-use calamine::{Data, Reader, Xlsx};
+use calamine::{Data, Reader};
 use ox_core::{
     engine::{filter, EngineConfig},
     export::export,
@@ -14,7 +14,7 @@ use std::io::Cursor;
 
 /// Cells of the first sheet as text, so ours and OpenRefine's compare whatever number types each picked.
 fn sheet(bytes: &[u8]) -> Vec<Vec<String>> {
-    let mut wb = Xlsx::new(Cursor::new(bytes.to_vec())).unwrap();
+    let mut wb = calamine::open_workbook_auto_from_rs(Cursor::new(bytes.to_vec())).unwrap();
     let range = wb.worksheet_range_at(0).unwrap().unwrap();
     range
         .rows()
