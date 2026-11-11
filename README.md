@@ -113,9 +113,8 @@ Each area is checked against fixtures produced by running the same cases through
 
 **[Get the latest release](https://github.com/ilyaux/OxRefine/releases/latest).** It includes:
 
-- the Windows installer (`.exe`, or `.msi`);
-- the `ox` command line for Windows;
-- builds for macOS and Linux, which are on their way.
+- installers for Windows (`.exe` or `.msi`), macOS (universal `.dmg`) and Linux (`.AppImage`, `.deb`, `.rpm`);
+- the `ox` command line for each of them.
 
 The desktop app checks for updates when it starts and offers to install them.
 
@@ -185,7 +184,6 @@ benchmarks/      data generator, recipe, comparison against OpenRefine, regressi
 
 These aren't in OxRefine yet:
 
-- installers for macOS and Linux (Windows is available now);
 - RDF, MARC and wikitext import;
 - the scatterplot facet;
 - the PPM clustering distance;
