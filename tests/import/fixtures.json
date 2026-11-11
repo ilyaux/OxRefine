@@ -3549,6 +3549,176 @@
      }
     ]
    ]
+  },
+  {
+   "name": "tar.bz2 of csv files",
+   "file": "bundle.tar.bz2",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": true,
+    "includeArchiveFileName": true,
+    "trimStrings": false
+   },
+   "columns": [
+    "Archive",
+    "File",
+    "name",
+    "city",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "bundle.tar.bz2"
+     },
+     {
+      "v": "a.csv"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.tar.bz2"
+     },
+     {
+      "v": "a.csv"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.tar.bz2"
+     },
+     {
+      "v": "b.csv"
+     },
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Rome"
+     },
+     {
+      "v": "3"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "bzip2 csv",
+   "file": "single.csv.bz2",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     }
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "bzip2 csv with file name",
+   "file": "single.csv.bz2",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": true,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "File",
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "single.csv.bz2"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     }
+    ],
+    [
+     {
+      "v": "single.csv.bz2"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     }
+    ]
+   ]
   }
  ]
 }

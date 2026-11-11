@@ -48,6 +48,11 @@
    "application/gzip",
    "H4sICFBF9GoC/2J1bmRsZS50YXIA7dMxCoMwFIDhzDlFDxBKxKhz7QVKbxBDBsEaSNKCt29wKbhXpP2/5T3e8qbfnl16ie/SRWvMOovt1NpUn329t23XiJMWO3imbGN5Kf7TbB9euTEv8jKNzqs+pBxm2YdB3WwckxT4ZcMR+q+bbf+druh/1/5VciF6ebUxTOoeyrWmfQAAAAAAAAAAAAAAgON7A6+spF4AKAAA",
    "base64"
+  ],
+  "/single.csv.bz2": [
+   "application/x-bzip2",
+   "QlpoOTFBWSZTWZhTMpQAAAvXgAAQAAQwAEAAOiecICAAMU0yMTExCmjagaabSS5biCmKDcOrxBv46YyisDYfF3JFOFCQmFMylA==",
+   "base64"
   ]
  },
  "cases": [
@@ -1002,6 +1007,50 @@
    "name": "url gzip csv",
    "url": "/single.csv.gz",
    "fileName": "single.csv.gz",
+   "format": "text/line-based/*sv",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "separator": ",",
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "trimStrings": true
+   },
+   "columns": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     }
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "url bzip2 csv",
+   "url": "/single.csv.bz2",
+   "fileName": "single.csv.bz2",
    "format": "text/line-based/*sv",
    "options": {
     "includeFileSources": false,

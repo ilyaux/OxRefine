@@ -69,4 +69,7 @@ export const CASES = [
   { name: "tar.gz of csv files", ...archive("bundle.tar.gz") },
   { name: "gzip csv", ...csv("single.csv.gz") },
   { name: "gzip csv with file name", ...csv("single.csv.gz", { includeFileSources: true }) },
+  { name: "tar.bz2 of csv files", ...archive("bundle.tar.bz2") },
+  { name: "bzip2 csv", ...csv("single.csv.bz2") },
+  { name: "bzip2 csv with file name", ...csv("single.csv.bz2", { includeFileSources: true }) },
 ]

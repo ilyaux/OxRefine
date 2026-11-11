@@ -15,6 +15,7 @@ export const FILES = {
   "/bundle.zip": ["application/zip", readFileSync(new URL("../import/bundle.zip", import.meta.url)).toString("base64"), "base64"],
   "/single.csv.gz": ["application/gzip", readFileSync(new URL("../import/single.csv.gz", import.meta.url)).toString("base64"), "base64"],
   "/bundle.tar.gz": ["application/gzip", readFileSync(new URL("../import/bundle.tar.gz", import.meta.url)).toString("base64"), "base64"],
+  "/single.csv.bz2": ["application/x-bzip2", readFileSync(new URL("../import/single.csv.bz2", import.meta.url)).toString("base64"), "base64"],
 }
 
 export const CASES = [
@@ -38,4 +39,5 @@ export const CASES = [
   { name: "url zip of csv files", url: "/bundle.zip" },
   { name: "url tar.gz of csv files", url: "/bundle.tar.gz" },
   { name: "url gzip csv", url: "/single.csv.gz" },
+  { name: "url bzip2 csv", url: "/single.csv.bz2" },
 ]

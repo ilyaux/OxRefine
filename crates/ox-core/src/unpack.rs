@@ -1,5 +1,5 @@
 //! The files a path stands for when importing: the file itself, the files inside a zip, tar or
-//! gzip archive, or the files in a folder (OpenRefine's archive handling and multi-file uploads).
+//! gzip or bzip2 archive, or the files in a folder (OpenRefine's archive handling and multi-file uploads).
 use crate::{err, Result};
 use std::{
     io::Read,
@@ -105,18 +105,26 @@ pub fn unpack(path: &Path) -> Result<Unpacked> {
         }
         return Ok(Unpacked { files, archive: Some(name), tmp: Some(tmp) });
     }
-    if head.starts_with(&[0x1f, 0x8b]) {
+    // gzip or bzip2: a tar inside is an archive, anything else one compressed file
+    let decoder: Option<(&str, Box<dyn Fn() -> Result<Box<dyn Read>>>)> = if head.starts_with(&[0x1f, 0x8b]) {
+        Some((".gz", Box::new(|| Ok(Box::new(flate2::read::MultiGzDecoder::new(open()?)) as Box<dyn Read>))))
+    } else if head.starts_with(b"BZh") {
+        Some((".bz2", Box::new(|| Ok(Box::new(bzip2::read::MultiBzDecoder::new(open()?)) as Box<dyn Read>))))
+    } else {
+        None
+    };
+    if let Some((ext, decode)) = decoder {
         let tmp = temp_dir()?;
         let mut inner_head = vec![0u8; 512];
-        let k = flate2::read::GzDecoder::new(open()?).read(&mut inner_head).unwrap_or(0);
+        let k = decode()?.read(&mut inner_head).unwrap_or(0);
         inner_head.truncate(k);
         if is_tar(&inner_head) {
-            let files = untar(&tmp, flate2::read::GzDecoder::new(open()?))?;
+            let files = untar(&tmp, decode()?)?;
             return Ok(Unpacked { files, archive: Some(name), tmp: Some(tmp) });
         }
-        // one compressed file: OpenRefine names it after the .gz file itself
-        let inner = name.strip_suffix(".gz").or_else(|| name.strip_suffix(".GZ")).unwrap_or(&name).to_string();
-        let file = extract(&tmp, 0, &inner, flate2::read::MultiGzDecoder::new(open()?))?;
+        // one compressed file: OpenRefine names it after the compressed file itself
+        let inner = if name.to_ascii_lowercase().ends_with(ext) { name[..name.len() - ext.len()].to_string() } else { name.clone() };
+        let file = extract(&tmp, 0, &inner, decode()?)?;
         return Ok(Unpacked { files: vec![(name, file)], archive: None, tmp: Some(tmp) });
     }
     if is_tar(&head) {

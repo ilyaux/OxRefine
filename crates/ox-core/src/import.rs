@@ -347,6 +347,7 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
         "text/xml" | "application/xml" | "application/rss+xml" | "application/atom+xml" => ".xml",
         "application/zip" | "application/x-zip-compressed" => ".zip",
         "application/gzip" | "application/x-gzip" => ".gz",
+        "application/x-bzip2" | "application/x-bzip" => ".bz2",
         "application/x-tar" => ".tar",
         _ => "",
     };
