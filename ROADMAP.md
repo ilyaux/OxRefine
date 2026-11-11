@@ -181,7 +181,7 @@ Keep the 10x lead as features land; close the import gap.
 Installers, docs and a public launch.
 
 - [x] **Public repository** · v0.2 · P0 · S. git init, license (MIT/Apache-2.0), contributing guide, issue templates; credit OpenRefine (BSD-3). _OpenRefine: new_
-- [ ] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
+- [~] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
 - [~] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
 - [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged. _OpenRefine: openrefine-client, CommandServlet_
 - [ ] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_

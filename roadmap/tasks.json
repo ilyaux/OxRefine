@@ -1231,7 +1231,7 @@
       "id": "rel-bundles",
       "phase": "p12",
       "milestone": "v0.5",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "M",
       "title": "Installers and auto-update",

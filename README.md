@@ -106,9 +106,19 @@ Each area is checked against fixtures produced by running the same cases through
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back | 136 / 136 |
 
-## Getting started
+## Download
 
-Installers aren't available yet, so OxRefine is built from source. You need Rust (stable) and Node.js 22.
+**[Get the latest release](https://github.com/ilyaux/OxRefine/releases/latest).** It includes:
+
+- the Windows installer (`.exe`, or `.msi`);
+- the `ox` command line for Windows;
+- builds for macOS and Linux, which are on their way.
+
+The desktop app checks for updates when it starts and offers to install them.
+
+## Build from source
+
+You need Rust (stable) and Node.js 22.
 
 ```bash
 git clone https://github.com/ilyaux/OxRefine.git && cd OxRefine
@@ -172,7 +182,7 @@ benchmarks/      data generator, recipe, comparison against OpenRefine, regressi
 
 These aren't in OxRefine yet:
 
-- installers and auto-update;
+- installers for macOS and Linux (Windows is available now);
 - RDF, MARC and wikitext import;
 - the scatterplot facet;
 - the PPM clustering distance;
