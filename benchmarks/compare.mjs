@@ -2,7 +2,7 @@
 // node benchmarks/compare.mjs [rows...]   (defaults: 100000 250000 500000 1000000)
 // Each engine gets a fresh server process per dataset; peak RAM = OS peak working set of that process.
 import { spawn, execFileSync } from "node:child_process"
-import { existsSync, openAsBlob, openSync, readFileSync, writeFileSync, mkdirSync } from "node:fs"
+import { existsSync, openAsBlob, openSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs"
 import { join, resolve } from "node:path"
 
 const HERE = import.meta.dirname
@@ -54,7 +54,9 @@ async function ox(cmd, args = {}) {
 }
 
 async function runOx(csv, out) {
-  const p = spawn(OX, ["serve", "--port", "3030"], { stdio: "ignore" })
+  // a library of its own, emptied each run, so runs don't fill the user's project library
+  rmSync(join(DATA, "ox-store"), { recursive: true, force: true })
+  const p = spawn(OX, ["serve", "--port", "3030", "--data", join(DATA, "ox-store")], { stdio: "ignore" })
   try {
     await waitFor(`${OXURL}/summary`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
     const idle = peakMB(p.pid)

@@ -562,19 +562,29 @@ fn time_panel(t: &Table, ev: &Evaluated, others: &[u32], from: f64, to: f64) -> 
     })
 }
 
-fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], record_mode: bool) -> J {
-    // counts per choice, over rows (or records) that pass the other facets
-    let mut counts: HashMap<String, (usize, J)> = HashMap::new();
-    let (mut blank, mut error) = (0usize, 0usize);
-    let mut add = |items: Vec<&Item>| {
+/// Choice counts: each item `n` times.
+#[derive(Default)]
+struct Tally<'a> {
+    counts: HashMap<&'a str, (usize, &'a J)>,
+    blank: usize,
+    error: usize,
+}
+
+impl<'a> Tally<'a> {
+    fn add(&mut self, items: impl IntoIterator<Item = &'a Item>, n: usize) {
         for it in items {
             match it {
-                Item::Val { key, json, .. } => counts.entry(key.clone()).or_insert((0, json.clone())).0 += 1,
-                Item::Blank => blank += 1,
-                Item::Error => error += 1,
+                Item::Val { key, json, .. } => self.counts.entry(key.as_str()).or_insert((0, json)).0 += n,
+                Item::Blank => self.blank += n,
+                Item::Error => self.error += n,
             }
         }
-    };
+    }
+}
+
+fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], record_mode: bool) -> J {
+    // counts per choice, over rows (or records) that pass the other facets
+    let mut tally = Tally::default();
     if record_mode {
         let keep: HashSet<u32> = others.iter().copied().collect();
         for (a, b) in records(t) {
@@ -587,14 +597,26 @@ fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], r
                         }
                     }
                 }
-                add(seen);
+                tally.add(seen, 1);
             }
+        }
+    } else if ev.per_code {
+        // rows by dictionary code first: one pass over the codes, then each distinct value once
+        let codes = &t.columns[ev.col].codes;
+        let mut n = vec![0usize; ev.items.len()];
+        for &r in others {
+            n[codes[r as usize] as usize] += 1;
+        }
+        for (code, &k) in n.iter().enumerate().filter(|(_, k)| **k > 0) {
+            tally.add(&ev.items[code], k);
         }
     } else {
         for &r in others {
-            add(ev.of(t, r as usize).iter().collect());
+            tally.add(ev.of(t, r as usize), 1);
         }
     }
+    let (blank, error) = (tally.blank, tally.error);
+    let mut counts: HashMap<String, (usize, J)> = tally.counts.into_iter().map(|(k, (c, j))| (k.to_string(), (c, j.clone()))).collect();
     // selected choices stay listed even when nothing matches them now
     for c in selection {
         counts.entry(json_key(&c.v.v)).or_insert((0, c.v.v.clone()));

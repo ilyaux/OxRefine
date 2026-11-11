@@ -214,12 +214,39 @@ struct Header {
     recon: Vec<serde_json::Value>,
 }
 
+/// The dictionaries as the header's `dicts`, serialized value by value (no JSON tree of the whole
+/// table in memory; a 1M-row column of unique values would cost more than the column itself).
+struct Dicts<'a>(&'a [Arc<Column>]);
+struct Dict<'a>(&'a [Value]);
+
+impl Serialize for Dicts<'_> {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+        s.collect_seq(self.0.iter().map(|c| Dict(&c.dict)))
+    }
+}
+
+impl Serialize for Dict<'_> {
+    fn serialize<S: serde::Serializer>(&self, s: S) -> std::result::Result<S::Ok, S::Error> {
+        s.collect_seq(self.0.iter().map(cell_to_json))
+    }
+}
+
+#[derive(Serialize)]
+struct HeaderOut<'a> {
+    names: &'a [String],
+    rows: usize,
+    key: &'a Option<String>,
+    dicts: Dicts<'a>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    recon: Vec<serde_json::Value>,
+}
+
 pub fn write_table(path: &Path, t: &Table) -> Result<()> {
-    let header = Header {
-        names: t.names.clone(),
+    let header = HeaderOut {
+        names: &t.names,
         rows: t.rows,
-        key: t.key.clone(),
-        dicts: t.columns.iter().map(|c| c.dict.iter().map(cell_to_json).collect()).collect(),
+        key: &t.key,
+        dicts: Dicts(&t.columns),
         recon: if t.columns.iter().any(|c| c.recon.is_some()) {
             t.columns
                 .iter()
@@ -228,6 +255,7 @@ pub fn write_table(path: &Path, t: &Table) -> Result<()> {
                     Some(rc) => {
                         let mut j = crate::recon::save_cells(&rc.cells);
                         j["config"] = rc.config.clone().unwrap_or(serde_json::Value::Null);
+                        j["stats"] = rc.stats.clone().unwrap_or(serde_json::Value::Null);
                         j
                     }
                 })
@@ -270,7 +298,8 @@ pub fn read_table(bytes: &[u8]) -> Result<Table> {
         }
         let recon = header.recon.get(ci).filter(|j| !j.is_null()).and_then(|j| {
             let cells = crate::recon::load_cells(j, n)?;
-            Some(Arc::new(crate::recon::ReconCol { cells, config: j.get("config").filter(|c| !c.is_null()).cloned() }))
+            let field = |k: &str| j.get(k).filter(|c| !c.is_null()).cloned();
+            Some(Arc::new(crate::recon::ReconCol { cells, config: field("config"), stats: field("stats") }))
         });
         columns.push(Arc::new(Column { dict, codes: codes.into(), recon }));
         pos += 4 * n;
