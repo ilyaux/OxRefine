@@ -36,7 +36,7 @@ Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, inclu
 |---|---|
 | GREL expressions | 469 / 472 |
 | Operations (incl. single-cell edits, stars, flags, transposing, fetching URLs, cross()) | 80 / 81 |
-| Facets (list, range, text, custom, records mode) | 22 / 22 |
+| Facets (list, range, timeline, text, custom, records mode) | 34 / 34 |
 | Import options (CSV/TSV, fixed-width, Excel, ODS, JSON, XML, zip/tar/gzip archives) | 40 / 42 |
 | Clipboard and web-address import (wizard defaults, archives, XML) | 17 / 17 |
 | Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
@@ -79,4 +79,4 @@ Each suite in `tests/<suite>/` has `cases.mjs` (what to try), `gen.mjs` (runs it
 
 ## Not yet
 
-Reconciliation (an imported project keeps its cell values but not their reconciliation data), the PPM clustering distance, RDF and bzip2 import, the timeline and scatterplot facets, and installers. The roadmap is in [ROADMAP.md](ROADMAP.md).
+Reconciliation (an imported project keeps its cell values but not their reconciliation data), the PPM clustering distance, RDF and bzip2 import, the scatterplot facet, and installers. The roadmap is in [ROADMAP.md](ROADMAP.md).

@@ -79,6 +79,25 @@ pub enum Facet {
         #[serde(default = "yes")]
         select_error: bool,
     },
+    /// OpenRefine's timeline facet: dates between `from` and `to` (milliseconds since 1970, both included).
+    #[serde(rename = "timerange", rename_all = "camelCase")]
+    TimeRange {
+        #[serde(default)]
+        name: String,
+        column_name: String,
+        #[serde(default = "value")]
+        expression: String,
+        from: f64,
+        to: f64,
+        #[serde(default = "yes")]
+        select_time: bool,
+        #[serde(default = "yes")]
+        select_non_time: bool,
+        #[serde(default = "yes")]
+        select_blank: bool,
+        #[serde(default = "yes")]
+        select_error: bool,
+    },
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -110,7 +129,7 @@ fn yes() -> bool {
 enum Item {
     Blank,
     Error,
-    Val { key: String, json: J, num: Option<f64> },
+    Val { key: String, json: J, num: Option<f64>, time: Option<i64> },
 }
 
 /// The text a choice is known by: what OpenRefine shows for it.
@@ -153,7 +172,11 @@ fn items_of(v: Value) -> Vec<Item> {
                     Value::Json(j) => (**j).clone(),
                     v => json!(key_of(v)),
                 };
-                Item::Val { key: key_of(&v), json, num }
+                let time = match &v {
+                    Value::Date(d) => Some(d.and_utc().timestamp_millis()),
+                    _ => None,
+                };
+                Item::Val { key: key_of(&v), json, num, time }
             }
         }
     };
@@ -280,6 +303,16 @@ fn range_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
     }
 }
 
+fn time_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
+    let [time, non_time, blank, error] = flags;
+    match it {
+        Item::Val { time: Some(t), .. } => time && (*t as f64) >= from && (*t as f64) <= to,
+        Item::Val { .. } => non_time,
+        Item::Blank => blank,
+        Item::Error => error,
+    }
+}
+
 /// The facet as a row filter, or None when it lets every row through.
 fn compile(t: &Table, f: &Facet, ctx: &Ctx) -> Result<Option<Pass>> {
     match f {
@@ -314,6 +347,15 @@ fn compile(t: &Table, f: &Facet, ctx: &Ctx) -> Result<Option<Pass>> {
             }
             let flags = [*select_numeric, *select_non_numeric, *select_blank, *select_error];
             Ok(Some(Pass::from_items(t, &ev, |items| items.iter().any(|i| range_ok(i, *from, *to, flags)))))
+        }
+        Facet::TimeRange { column_name, expression, from, to, select_time, select_non_time, select_blank, select_error, .. } => {
+            let ev = Evaluated::new(t, column_name, expression, Some(ctx))?;
+            // with no dates at all the facet filters nothing, as in OpenRefine
+            if !(0..t.rows).any(|r| ev.of(t, r).iter().any(|i| matches!(i, Item::Val { time: Some(_), .. }))) {
+                return Ok(None);
+            }
+            let flags = [*select_time, *select_non_time, *select_blank, *select_error];
+            Ok(Some(Pass::from_items(t, &ev, |items| items.iter().any(|i| time_ok(i, *from, *to, flags)))))
         }
     }
 }
@@ -467,6 +509,59 @@ fn range_panel(t: &Table, ev: &Evaluated, others: &[u32]) -> J {
     out
 }
 
+/// OpenRefine's TimeBinIndex steps: millisecond … week, then average Gregorian months and years.
+const TIME_STEPS: [i64; 11] = [1, 1_000, 60_000, 3_600_000, 86_400_000, 604_800_000, 2_629_746_000, 31_556_952_000, 315_569_520_000, 3_155_695_200_000, 31_556_952_000_000];
+
+/// OpenRefine's timeline panel. Its quirks are kept: with fewer than two distinct dates the step is 1,
+/// `max` is 1 and the base histogram stays empty; `from` and `to` come back clamped to min and max.
+fn time_panel(t: &Table, ev: &Evaluated, others: &[u32], from: f64, to: f64) -> J {
+    let tally = |rows: &mut dyn Iterator<Item = usize>| {
+        let (mut s, mut times) = (RangeStats::default(), vec![]);
+        for r in rows {
+            for it in ev.of(t, r) {
+                match it {
+                    Item::Val { time: Some(x), .. } => {
+                        s.numeric += 1;
+                        times.push(*x);
+                    }
+                    Item::Val { .. } => s.non_numeric += 1,
+                    Item::Blank => s.blank += 1,
+                    Item::Error => s.error += 1,
+                }
+            }
+        }
+        (s, times)
+    };
+    let (base, base_times) = tally(&mut (0..t.rows));
+    let (cur, cur_times) = tally(&mut others.iter().map(|&r| r as usize));
+    let (mut min, mut max) = (base_times.iter().copied().min().unwrap_or(i64::MAX), base_times.iter().copied().max().unwrap_or(i64::MIN));
+    let (step, n, fill_base) = if min >= max {
+        min = min.min(max);
+        max = 1;
+        (1, 1, false)
+    } else {
+        let diff = max - min;
+        let step = TIME_STEPS.iter().copied().find(|s| diff / s <= 100).unwrap_or(TIME_STEPS[10]);
+        (step, (diff / step) as usize + 1, true)
+    };
+    let bins = |times: &[i64]| {
+        let mut b = vec![0usize; n];
+        for &x in times {
+            let i = ((x.saturating_sub(min)) / step).max(0) as usize;
+            b[i.min(n - 1)] += 1;
+        }
+        b
+    };
+    json!({
+        "baseTimeCount": base.numeric, "baseNonTimeCount": base.non_numeric, "baseBlankCount": base.blank, "baseErrorCount": base.error,
+        "timeCount": cur.numeric, "nonTimeCount": cur.non_numeric, "blankCount": cur.blank, "errorCount": cur.error,
+        "min": min, "max": max, "step": step,
+        "from": from.max(min as f64), "to": to.min(max as f64),
+        "baseBins": if fill_base { bins(&base_times) } else { vec![0; n] },
+        "bins": bins(&cur_times),
+    })
+}
+
 fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], record_mode: bool) -> J {
     // counts per choice, over rows (or records) that pass the other facets
     let mut counts: HashMap<String, (usize, J)> = HashMap::new();
@@ -531,6 +626,11 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<J>> {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
                 let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
                 Ok(range_panel(t, &ev, &others))
+            }
+            Facet::TimeRange { column_name, expression, from, to, .. } => {
+                let others = filter_with(t, cfg, Some(i), &ctx)?;
+                let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
+                Ok(time_panel(t, &ev, &others, *from, *to))
             }
             Facet::Text { .. } => Ok(J::Null),
         })

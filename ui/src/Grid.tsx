@@ -51,7 +51,7 @@ export const COMMON: [string, string][] = [
 ]
 
 /** OpenRefine's "Customized facets", as [menu label, facet type, expression]. */
-const PRESETS: [string, "list" | "range", string][] = [
+export const PRESETS: [string, "list" | "range", string][] = [
   ["Word facet", "list", "value.split(' ')"],
   ["Duplicates facet", "list", "facetCount(value, 'value', $COL) > 1"],
   ["Text length facet", "range", "value.length()"],
@@ -68,7 +68,7 @@ export type ColumnAction =
         | "facet" | "text-filter" | "transform" | "add-column" | "cluster" | "rename" | "remove"
         | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
         | "move-first" | "move-left" | "move-right" | "move-last"
-        | "numeric-facet" | "custom-list-facet" | "custom-range-facet"
+        | "numeric-facet" | "timeline-facet" | "custom-list-facet" | "custom-range-facet"
         | "fetch" | "transpose-columns" | "transpose-rows" | "columnize"
       column: string
     }
@@ -82,6 +82,7 @@ export function Grid({
   onTotal,
   onAction,
   onApply,
+  onFocusColumn,
 }: {
   columns: string[]
   engine: Engine
@@ -89,6 +90,8 @@ export function Grid({
   onTotal: (n: number) => void
   onAction: (a: ColumnAction) => void
   onApply: (op: Op) => Promise<void>
+  /** the column the user last worked on (its menu or a cell), for the command palette */
+  onFocusColumn?: (column: string) => void
 }) {
   const scroller = useRef<HTMLDivElement>(null)
   const head = useRef<HTMLTableSectionElement>(null)
@@ -200,7 +203,7 @@ export function Grid({
               <span className="sr-only">Star and flag</span>
             </TableHead>
             {columns.map((c) => (
-              <TableHead key={c} className="relative">
+              <TableHead key={c} className="relative" onPointerDownCapture={() => onFocusColumn?.(c)}>
                 <ColumnMenu column={c} onAction={onAction} />
                 <div
                   role="separator"
@@ -246,7 +249,7 @@ export function Grid({
                           size="icon-xs"
                           aria-label={`Edit ${c} in row ${row[0] + 1}`}
                           className="absolute top-1/2 right-1 -translate-y-1/2 opacity-0 group-hover/cell:opacity-100 focus-visible:opacity-100"
-                          onClick={(e) => setEditing({ row: row[0], column: c, value: text ?? "", type: EDIT_TYPE[type] ?? "text", anchor: e.currentTarget.parentElement! })}
+                          onClick={(e) => (onFocusColumn?.(c), setEditing({ row: row[0], column: c, value: text ?? "", type: EDIT_TYPE[type] ?? "text", anchor: e.currentTarget.parentElement! }))}
                         >
                           <PencilIcon />
                         </Button>
@@ -330,6 +333,7 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
           <DropdownMenuLabel>Filter</DropdownMenuLabel>
           <DropdownMenuItem onClick={act("facet")}>Text facet</DropdownMenuItem>
           <DropdownMenuItem onClick={act("numeric-facet")}>Numeric facet</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("timeline-facet")}>Timeline facet</DropdownMenuItem>
           <DropdownMenuItem onClick={act("text-filter")}>Text filter</DropdownMenuItem>
           <DropdownMenuItem onClick={act("custom-list-facet")}>Custom text facet…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("custom-range-facet")}>Custom numeric facet…</DropdownMenuItem>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { call, type Engine, type Op } from "@/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ExpressionEditor, recentExpressions, rememberExpression } from "@/ExpressionEditor"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Slider } from "@/components/ui/slider"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
 const vis = (s: string | null) => (s === null ? "(null)" : s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
@@ -241,6 +242,52 @@ export function TransformDialog({
 type Cluster = [string, number][]
 const SHOWN = 300
 
+/** OpenRefine's cluster facets: choices in the cluster, rows, average length of the choices and its variance. */
+const STATS = [
+  ["size", "Values in cluster"],
+  ["rows", "Rows in cluster"],
+  ["length", "Average length"],
+  ["spread", "Length variance"],
+] as const
+type Stat = (typeof STATS)[number][0]
+const statsOf = (c: Cluster): Record<Stat, number> => {
+  const lens = c.map(([v]) => [...v].length)
+  const length = lens.reduce((a, b) => a + b, 0) / lens.length
+  return {
+    size: c.length,
+    rows: c.reduce((s, [, n]) => s + n, 0),
+    length,
+    spread: lens.reduce((a, l) => a + (l - length) ** 2, 0) / lens.length,
+  }
+}
+const num = (n: number) => (Number.isInteger(n) ? n.toLocaleString() : n.toFixed(1))
+
+function StatFilter({ label, values, value, onChange }: { label: string; values: number[]; value: [number, number] | null; onChange: (v: [number, number] | null) => void }) {
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const [lo, hi] = value ?? [min, max]
+  if (!values.length || min === max) return null
+  const step = Number.isInteger(min) && Number.isInteger(max) && values.every(Number.isInteger) ? 1 : (max - min) / 100
+  return (
+    <Field className="min-w-40 flex-1 gap-1">
+      <FieldLabel className="justify-between text-xs">
+        {label}
+        <span className="tabular-nums text-muted-foreground">
+          {num(lo)} – {num(hi)}
+        </span>
+      </FieldLabel>
+      <Slider
+        aria-label={label}
+        min={min}
+        max={max}
+        step={step}
+        value={[lo, hi]}
+        onValueChange={(v) => Array.isArray(v) && onChange(v[0] <= min && v[1] >= max ? null : [v[0], v[1]])}
+      />
+    </Field>
+  )
+}
+
 /** OpenRefine's key-collision keying functions, in its menu order. */
 const KEYERS: [string, string][] = [
   ["fingerprint", "Fingerprint"],
@@ -275,11 +322,39 @@ export function ClusterDialog({
   const [picks, setPicks] = useState<{ merge: boolean; to: string }[]>([])
   const [ms, setMs] = useState(0)
   const [tick, setTick] = useState(0)
+  const [filters, setFilters] = useState<Partial<Record<Stat, [number, number]>>>({})
   const method = kind === "binning" ? keyer : distance
+  const stats = useMemo(() => (clusters ?? []).map(statsOf), [clusters])
+  // the clusters the filters let through, by index into `clusters`
+  const visible = useMemo(
+    () => stats.flatMap((st, i) => (STATS.every(([k]) => !filters[k] || (st[k] >= filters[k]![0] - 1e-9 && st[k] <= filters[k]![1] + 1e-9)) ? [i] : [])),
+    [stats, filters],
+  )
+  /** OpenRefine's "Export clusters" JSON. */
+  const exported = () =>
+    JSON.stringify(
+      {
+        columnName: column,
+        timestamp: new Date().toISOString(),
+        clusterMethod: kind,
+        ...(kind === "binning" ? { keyingFunction: keyer, ...(keyer === "ngram-fingerprint" ? { ngramSize: ngram } : {}) } : { function: distance, radius, blockingNgramSize: block }),
+        clusters: visible.map((i) => clusters![i].map(([v, c]) => ({ v, c }))),
+      },
+      null,
+      2,
+    )
+  const download = () => {
+    const a = document.createElement("a")
+    a.href = URL.createObjectURL(new Blob([exported()], { type: "application/json" }))
+    a.download = `clusters-${column}.json`
+    a.click()
+    URL.revokeObjectURL(a.href)
+  }
 
   useEffect(() => {
     let live = true
     setClusters(null)
+    setFilters({})
     setError("")
     call<Cluster[]>("cluster", { engine, column, method, n: ngram, radius, block }).then(
       ({ data, ms }) => {
@@ -336,7 +411,7 @@ export function ClusterDialog({
                 <FieldLabel>Keying function</FieldLabel>
                 <Select value={keyer} onValueChange={(v) => v && setKeyer(String(v))}>
                   <SelectTrigger aria-label="Keying function">
-                    <SelectValue />
+                    <SelectValue>{(v: string) => KEYERS.find(([k]) => k === v)?.[1] ?? v}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -362,7 +437,7 @@ export function ClusterDialog({
                 <FieldLabel>Distance</FieldLabel>
                 <Select value={distance} onValueChange={(v) => v && setDistance(String(v))}>
                   <SelectTrigger aria-label="Distance">
-                    <SelectValue />
+                    <SelectValue>{(v: string) => ({ levenshtein: "Levenshtein", ppm: "PPM" })[v] ?? v}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
@@ -385,6 +460,19 @@ export function ClusterDialog({
             </>
           )}
         </div>
+        {clusters && clusters.length > 1 && (
+          <div className="flex flex-wrap gap-4">
+            {STATS.map(([k, label]) => (
+              <StatFilter
+                key={k}
+                label={label}
+                values={stats.map((s) => s[k])}
+                value={filters[k] ?? null}
+                onChange={(v) => setFilters((f) => ({ ...f, [k]: v ?? undefined }))}
+              />
+            ))}
+          </div>
+        )}
         <ScrollArea className="h-96 rounded-lg border">
           {error ? (
             <div className="flex h-96 items-center justify-center p-4">
@@ -400,9 +488,12 @@ export function ClusterDialog({
                 <TableRow>
                   <TableHead className="w-10">
                     <Checkbox
-                      aria-label="Select all clusters"
-                      checked={picks.length > 0 && picks.every((p) => p.merge)}
-                      onCheckedChange={(c) => setPicks((all) => all.map((p) => ({ ...p, merge: !!c })))}
+                      aria-label="Select all shown clusters"
+                      checked={visible.length > 0 && visible.every((i) => picks[i]?.merge)}
+                      onCheckedChange={(c) => {
+                        const shown = new Set(visible)
+                        setPicks((all) => all.map((p, i) => (shown.has(i) ? { ...p, merge: !!c } : p)))
+                      }}
                     />
                   </TableHead>
                   <TableHead>Values in cluster</TableHead>
@@ -411,7 +502,7 @@ export function ClusterDialog({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clusters.slice(0, SHOWN).map((c, i) => (
+                {visible.slice(0, SHOWN).map((i) => [clusters[i], i] as const).map(([c, i]) => (
                   <TableRow key={c.map(([v]) => v).join("\u0000")}>
                     <TableCell>
                       <Checkbox
@@ -448,13 +539,20 @@ export function ClusterDialog({
             </Table>
           )}
         </ScrollArea>
-        {clusters && clusters.length > SHOWN && (
+        {clusters && (
           <p className="text-sm text-muted-foreground">
-            Showing the {SHOWN} largest clusters; merge some or add a facet to see the rest.
+            {visible.length < clusters.length && `${visible.length.toLocaleString()} of ${clusters.length.toLocaleString()} clusters pass the filters. `}
+            {visible.length > SHOWN && `Showing the ${SHOWN} largest; merge some or narrow the filters to see the rest.`}
           </p>
         )}
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
+          <Button variant="outline" disabled={!visible.length} onClick={() => navigator.clipboard.writeText(exported())}>
+            Copy clusters as JSON
+          </Button>
+          <Button variant="outline" disabled={!visible.length} onClick={download}>
+            Export clusters
+          </Button>
           <Button variant="secondary" disabled={!chosen.length} onClick={() => merge(false)}>
             Merge {chosen.length || ""} and re-cluster
           </Button>

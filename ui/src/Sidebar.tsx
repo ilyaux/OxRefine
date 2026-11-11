@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { FilterIcon, FlipHorizontal2Icon, PencilIcon, SearchIcon, XIcon } from "lucide-react"
-import type { Facet, FacetData, ListData, ListFacet, RangeData, RangeFacet, Summary, TextFacet } from "@/api"
+import type { Facet, FacetData, ListData, ListFacet, RangeData, RangeFacet, Summary, TextFacet, TimeData, TimeFacet } from "@/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -55,8 +55,8 @@ export function Facets({
                 </span>
               )}
             </div>
-            {f.type !== "range" && f.invert && <Badge variant="outline">inverted</Badge>}
-            {f.type !== "range" && (
+            {(f.type === "list" || f.type === "text") && f.invert && <Badge variant="outline">inverted</Badge>}
+            {(f.type === "list" || f.type === "text") && (
               <Button variant="ghost" size="icon-xs" aria-label="Invert facet" onClick={() => update(i, { ...f, invert: !f.invert })}>
                 <FlipHorizontal2Icon />
               </Button>
@@ -68,6 +68,7 @@ export function Facets({
           {f.type === "list" && <ListChoices facet={f} data={data[i] as ListData | null} onChange={(nf) => update(i, nf)} onEdit={(c) => onEditChoice(f, c)} />}
           {f.type === "text" && <TextQuery facet={f} onChange={(nf) => update(i, nf)} />}
           {f.type === "range" && <RangePanel facet={f} data={data[i] as RangeData | null} onChange={(nf) => update(i, nf)} />}
+          {f.type === "timerange" && <TimePanel facet={f} data={data[i] as TimeData | null} onChange={(nf) => update(i, nf)} />}
         </div>
       ))}
     </div>
@@ -192,6 +193,82 @@ function RangePanel({ facet, data, onChange }: { facet: RangeFacet; data: RangeD
       />
       <span className="text-xs tabular-nums text-muted-foreground">
         {fmt(lo)} – {fmt(hi)}
+      </span>
+      {boxes}
+    </>
+  )
+}
+
+/** A date as the timeline shows it: the day, plus the time when bins are shorter than a day. */
+const day = (ms: number, step: number) => {
+  const iso = new Date(ms).toISOString()
+  return step < 86_400_000 ? iso.slice(0, 16).replace("T", " ") : iso.slice(0, 10)
+}
+
+function TimePanel({ facet, data, onChange }: { facet: TimeFacet; data: TimeData | null; onChange: (f: TimeFacet) => void }) {
+  const [range, setRange] = useState<[number, number] | null>(null)
+  useEffect(() => setRange(null), [facet.from, facet.to])
+  if (!data) return null
+  const kinds: [keyof TimeFacet, string, number][] = [
+    ["selectTime", "Dates", data.timeCount],
+    ["selectNonTime", "Not dates", data.nonTimeCount],
+    ["selectBlank", "Blank", data.blankCount],
+    ["selectError", "Error", data.errorCount],
+  ]
+  const boxes = (
+    <div className="flex flex-col gap-1">
+      {kinds.map(([k, label, n]) => (
+        <Field key={k} orientation="horizontal">
+          <Checkbox id={`tf-${facet.columnName}-${k}`} checked={Boolean(facet[k])} onCheckedChange={(c) => onChange({ ...facet, [k]: !!c })} />
+          <FieldLabel htmlFor={`tf-${facet.columnName}-${k}`} className="font-normal">
+            {label} <span className="tabular-nums text-muted-foreground">{n.toLocaleString()}</span>
+          </FieldLabel>
+        </Field>
+      ))}
+    </div>
+  )
+  // OpenRefine sends max = 1 when there are fewer than two distinct dates
+  if (data.baseTimeCount === 0 || data.max <= data.min) {
+    return (
+      <>
+        <p className="text-xs text-muted-foreground">
+          {data.baseTimeCount === 0
+            ? "No dates to chart. If the column holds dates as text, convert it with Edit cells → Common transforms → To date, or facet on value.toDate()."
+            : `Every date is ${day(data.min, 86_400_000)}.`}
+        </p>
+        {boxes}
+      </>
+    )
+  }
+  const { min, max, step, bins, baseBins } = data
+  const [lo, hi] = range ?? [Math.max(facet.from, min), Math.min(facet.to, max)]
+  const top = Math.max(1, ...baseBins)
+  const w = 100 / baseBins.length
+  return (
+    <>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="h-12 w-full" role="img" aria-label={`Timeline of ${facet.columnName}`}>
+        {baseBins.map((c, i) => {
+          const x0 = min + i * step
+          const inside = x0 + step > lo && x0 <= hi
+          return (
+            <g key={i}>
+              <rect x={i * w} y={40 - (c / top) * 40} width={w} height={(c / top) * 40} className="fill-muted" />
+              <rect x={i * w} y={40 - (bins[i] / top) * 40} width={w} height={(bins[i] / top) * 40} className={inside ? "fill-primary" : "fill-muted-foreground"} />
+            </g>
+          )
+        })}
+      </svg>
+      <Slider
+        aria-label={`Dates in ${facet.columnName}`}
+        min={min}
+        max={max}
+        step={Math.min(step, 86_400_000)}
+        value={[lo, hi]}
+        onValueChange={(v) => Array.isArray(v) && setRange([v[0], v[1]])}
+        onValueCommitted={(v) => Array.isArray(v) && onChange({ ...facet, from: v[0], to: v[1] })}
+      />
+      <span className="text-xs tabular-nums text-muted-foreground">
+        {day(lo, step)} – {day(hi, step)}
       </span>
       {boxes}
     </>

@@ -75,6 +75,21 @@ fn facets_match_openrefine() {
                 if e != g {
                     why = Some(format!("facet {i}: expected {e:?}, got {g:?}"));
                 }
+            } else if kind == "timerange" {
+                let keys = [
+                    "timeCount", "nonTimeCount", "blankCount", "errorCount", "baseTimeCount", "baseNonTimeCount", "baseBlankCount", "baseErrorCount",
+                    "min", "max", "step", "from", "to", "bins", "baseBins",
+                ];
+                for k in keys {
+                    let ok = match (&exp[k], &got[k]) {
+                        (J::Array(a), J::Array(b)) => a == b,
+                        // OpenRefine's Long.MIN_VALUE arrives as a rounded double
+                        (a, b) => close(a, b) || a.as_f64().zip(b.as_f64()).is_some_and(|(x, y)| (x - y).abs() <= x.abs() * 1e-15),
+                    };
+                    if !ok && why.is_none() {
+                        why = Some(format!("facet {i} {k}: expected {}, got {}", exp[k], got[k]));
+                    }
+                }
             } else if kind == "range" {
                 let fields = ["numericCount", "nonNumericCount", "blankCount", "errorCount", "baseNumericCount", "baseNonNumericCount", "baseBlankCount", "baseErrorCount"];
                 let mut keys: Vec<&str> = fields.to_vec();

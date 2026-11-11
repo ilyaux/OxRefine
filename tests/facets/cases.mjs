@@ -11,12 +11,17 @@ const range = (columnName, expression, from, to, extra = {}) => ({
   type: "range", name: columnName, columnName, expression, from, to,
   selectNumeric: true, selectNonNumeric: true, selectBlank: true, selectError: true, ...extra,
 })
+const time = (columnName, expression, from, to, extra = {}) => ({
+  type: "timerange", name: columnName, columnName, expression, from: Date.parse(from), to: Date.parse(to),
+  selectTime: true, selectNonTime: true, selectBlank: true, selectError: true, ...extra,
+})
 const text = (columnName, query, extra = {}) => ({ type: "text", name: columnName, columnName, query, mode: "text", caseSensitive: false, invert: false, ...extra })
 const transform = (columnName, expression, onError = "keep-original") =>
   ({ op: "core/text-transform", engineConfig: all, columnName, expression: "grel:" + expression, onError, repeat: false, repeatCount: 10 })
 const rows = (...facets) => ({ facets, mode: "row-based" })
 const records = (...facets) => ({ facets, mode: "record-based" })
 
+const dates = [transform("joined", "value.toDate()", "store-error")]
 export const CASES = [
   { name: "list city counts", engine: rows(list("city")) },
   { name: "list selection with text facet", engine: rows(list("city", "value", ["Boston", "boston "]), text("name", "a")) },
@@ -40,4 +45,18 @@ export const CASES = [
   { name: "text facet regex case-sensitive", engine: rows(text("name", "^[A-Z]\\w+ [A-Z]", { mode: "regex", caseSensitive: true })) },
   { name: "records: list counts and filter", engine: records(list("tags", "value", ["blue"])) },
   { name: "records: two facets", engine: records(list("city", "value", ["Chicago"]), text("tags", "red")) },
+
+  // timeline facets (OpenRefine's timerange): from and to are milliseconds since 1970
+  { name: "timeline full range", ops: dates, engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z")) },
+  { name: "timeline part", ops: dates, engine: rows(time("joined", "value", "2023-12-31T00:00:00Z", "2024-02-01T00:00:00Z")) },
+  { name: "timeline only dates", ops: dates, engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z", { selectNonTime: false, selectBlank: false, selectError: false })) },
+  { name: "timeline only blanks", ops: dates, engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z", { selectTime: false, selectNonTime: false, selectError: false })) },
+  { name: "timeline on text dates", engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z")) },
+  { name: "timeline on expression", engine: rows(time("joined", "value.toDate()", "2024-01-01T00:00:00Z", "2024-03-01T00:00:00Z")) },
+  { name: "timeline in minutes", engine: rows(time("id", "'2024-01-01'.toDate().inc(rowIndex * 7, 'minutes')", "2024-01-01T00:10:00Z", "2024-01-01T00:40:00Z")) },
+  { name: "timeline in hours", engine: rows(time("id", "'2024-01-01'.toDate().inc(rowIndex * 13, 'hours')", "2024-01-01T00:00:00Z", "2024-01-03T00:00:00Z")) },
+  { name: "timeline in years", engine: rows(time("id", "'1900-01-01'.toDate().inc(rowIndex * 15, 'years')", "1900-01-01T00:00:00Z", "2100-01-01T00:00:00Z")) },
+  { name: "timeline one date", engine: rows(time("id", "'2024-05-05'.toDate()", "2024-05-05T00:00:00Z", "2024-05-06T00:00:00Z")) },
+  { name: "timeline exact bounds", ops: dates, engine: rows(time("joined", "value", "2024-01-15T00:00:00Z", "2024-03-10T00:00:00Z")) },
+  { name: "timeline with list facet", ops: dates, engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z"), list("city", "value", ["Boston"])) },
 ]

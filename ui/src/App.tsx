@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
-import { call, isProjectArchive, listFacet, pickFile, type ImportReport, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
+import { call, isProjectArchive, listFacet, pickFile, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
+import { Palette } from "@/Palette"
 
 type Modal =
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
@@ -47,6 +48,9 @@ export function App() {
   const [modal, setModal] = useState<Modal>(null)
   // a file to import: picked from disk, or pasted / downloaded and staged by the engine
   const [staged, setStaged] = useState<Staged | null>(null)
+  const [palette, setPalette] = useState(false)
+  // the column the command palette works on: the one last used in the grid
+  const [focusCol, setFocusCol] = useState<string | null>(null)
 
   const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
   const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
@@ -185,8 +189,10 @@ export function App() {
 
   const onAction = (a: ColumnAction) => {
     const c = a.column
+    setFocusCol(c)
     if (a.kind === "facet") setFacets((f) => [...f, listFacet(c)])
     else if (a.kind === "numeric-facet") setFacets((f) => [...f, rangeFacet(c)])
+    else if (a.kind === "timeline-facet") setFacets((f) => [...f, timeFacet(c)])
     else if (a.kind === "preset-facet") setFacets((f) => [...f, a.facet === "list" ? listFacet(c, a.expression) : rangeFacet(c, a.expression)])
     else if (a.kind === "custom-list-facet") setModal({ kind: "facet-list", column: c })
     else if (a.kind === "custom-range-facet") setModal({ kind: "facet-range", column: c })
@@ -236,7 +242,11 @@ export function App() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (!summary || !(e.ctrlKey || e.metaKey) || (e.target as HTMLElement).closest("input,textarea")) return
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault()
+        return setPalette((p) => !p)
+      }
+      if (!summary || !(e.ctrlKey || e.metaKey) || (e.target as HTMLElement).closest("input,textarea,[contenteditable]")) return
       const k = e.key.toLowerCase()
       if (k === "z" && !e.shiftKey && summary.cursor > 0) goto(summary.cursor - 1)
       else if ((k === "y" || (k === "z" && e.shiftKey)) && summary.cursor < summary.history.length) goto(summary.cursor + 1)
@@ -372,7 +382,7 @@ export function App() {
               </Tabs>
             </aside>
             <main className="min-w-0 flex-1">
-              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} />
+              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} />
             </main>
           </div>
         ) : (
@@ -391,6 +401,7 @@ export function App() {
               </span>
             </>
           )}
+          <span className={lastMs ? undefined : "ml-auto"}>Ctrl+K for commands</span>
           {lastMs && (
             <span className="ml-auto tabular-nums">
               last {lastMs.what}: {lastMs.ms.toFixed(1)} ms
@@ -400,6 +411,35 @@ export function App() {
       </div>
 
       <Jobs />
+      <Palette
+        open={palette}
+        onOpenChange={setPalette}
+        column={summary ? (focusCol && summary.columns.includes(focusCol) ? focusCol : (summary.columns[0] ?? null)) : null}
+        columns={summary?.columns ?? []}
+        onColumn={setFocusCol}
+        onAction={onAction}
+        commands={[
+          ...(summary
+            ? [
+                { label: "Undo", shortcut: "Ctrl+Z", run: () => summary.cursor > 0 && goto(summary.cursor - 1) },
+                { label: "Redo", shortcut: "Ctrl+Y", run: () => summary.cursor < summary.history.length && goto(summary.cursor + 1) },
+                { label: mode === "row-based" ? "Show records" : "Show rows", run: () => setMode(mode === "row-based" ? "record-based" : "row-based") },
+                { label: "Remove all facets", run: () => setFacets([]) },
+                { label: "Apply recipe…", run: applyRecipe },
+                { label: "Extract recipe…", run: () => setModal({ kind: "extract" }) },
+                { label: "Copy recipe JSON", run: () => void copyRecipe().catch(fail) },
+                { label: "Export matching rows as CSV…", run: () => exportRows("csv", "csv") },
+                { label: "Export matching rows as Excel…", run: () => exportRows("xlsx", "xlsx") },
+                { label: "Export as an OpenRefine project…", run: exportProject },
+                { label: "Back to projects", run: goHome },
+              ]
+            : []),
+          { label: "Import a file or folder…", run: openFile },
+          { label: "Import pasted data…", run: pasteData },
+          { label: "Import from a web address…", run: fromUrl },
+          { label: "Open an OpenRefine project…", run: openOpenRefine },
+        ]}
+      />
       {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
       {staged && (
         <ImportDialog

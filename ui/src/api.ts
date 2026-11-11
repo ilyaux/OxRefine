@@ -40,6 +40,19 @@ export type RangeFacet = {
   selectBlank: boolean
   selectError: boolean
 }
+/** OpenRefine's timeline facet: dates from `from` to `to`, in milliseconds since 1970. */
+export type TimeFacet = {
+  type: "timerange"
+  name: string
+  columnName: string
+  expression: string
+  from: number
+  to: number
+  selectTime: boolean
+  selectNonTime: boolean
+  selectBlank: boolean
+  selectError: boolean
+}
 export type TextFacet = {
   type: "text"
   name: string
@@ -49,7 +62,7 @@ export type TextFacet = {
   caseSensitive: boolean
   invert: boolean
 }
-export type Facet = ListFacet | TextFacet | RangeFacet
+export type Facet = ListFacet | TextFacet | RangeFacet | TimeFacet
 export type Engine = { facets: Facet[]; mode: "row-based" | "record-based" }
 /** Choices as [text, count, typed value], plus blank and error counts. */
 export type ListData = { distinct: number; choices: [string, number, unknown][]; blank: number; error: number }
@@ -65,7 +78,19 @@ export type RangeData = {
   errorCount: number
   error?: string
 }
-export type FacetData = ListData | RangeData | null
+export type TimeData = {
+  min: number
+  max: number
+  step: number
+  bins: number[]
+  baseBins: number[]
+  timeCount: number
+  nonTimeCount: number
+  blankCount: number
+  errorCount: number
+  baseTimeCount: number
+}
+export type FacetData = ListData | RangeData | TimeData | null
 
 export const listFacet = (column: string, expression = "value"): ListFacet => ({
   type: "list", name: column, columnName: column, expression, selection: [], selectBlank: false, selectError: false, invert: false,
@@ -74,6 +99,11 @@ export const listFacet = (column: string, expression = "value"): ListFacet => ({
 export const rangeFacet = (column: string, expression = "value"): RangeFacet => ({
   type: "range", name: column, columnName: column, expression, from: -Number.MAX_VALUE, to: Number.MAX_VALUE,
   selectNumeric: true, selectNonNumeric: true, selectBlank: true, selectError: true,
+})
+/** A timeline facet that starts by letting every date through. */
+export const timeFacet = (column: string, expression = "value"): TimeFacet => ({
+  type: "timerange", name: column, columnName: column, expression, from: -Number.MAX_VALUE, to: Number.MAX_VALUE,
+  selectTime: true, selectNonTime: true, selectBlank: true, selectError: true,
 })
 export type Op = { op: string } & Record<string, unknown>
 
