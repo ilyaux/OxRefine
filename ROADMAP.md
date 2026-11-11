@@ -64,7 +64,7 @@ Every exporter OpenRefine ships.
 
 - [~] **CSV/TSV/custom separator export** · v0.2 · P0 · S. Separator, quoting, line endings, BOM, filtered rows only. _OpenRefine: csv, tsv, *sv_
 - [~] **Excel export** · v0.2 · P0 · M. xlsx with typed cells (rust_xlsxwriter); legacy xls only if users ask. _OpenRefine: xlsx, xls_
-- [ ] **ODS export** · v0.5 · P2 · M. OpenDocument spreadsheet writer. _OpenRefine: ods_
+- [~] **ODS export** · v0.5 · P2 · M. OpenDocument spreadsheet writer. _OpenRefine: ods_
 - [~] **HTML table export** · v0.5 · P2 · S. Plain HTML table of the filtered rows. _OpenRefine: html_
 - [~] **Templating exporter** · v0.5 · P1 · M. Prefix / row template / separator / suffix with GREL inside {{ }}; the usual way to produce JSON. _OpenRefine: template_
 - [~] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
@@ -163,7 +163,7 @@ Prove parity automatically against real OpenRefine.
 Keep the 10x lead as features land; close the import gap.
 
 - [~] **Parallel CSV import** · v0.2 · P0 · M. Chunked multi-threaded parsing plus a faster hasher; import is the smallest gap today (1.6x at 2M rows). _OpenRefine: benchmark_
-- [ ] **History as diffs** · v0.5 · P1 · M. Store changed codes instead of full column snapshots so long histories on big files stay small. _OpenRefine: project.rs_
+- [~] **History as diffs** · v0.5 · P1 · M. Store changed codes instead of full column snapshots so long histories on big files stay small. _OpenRefine: project.rs_
 - [ ] **Datasets larger than RAM** · later · P2 · L. Memory-mapped column files and spill-to-disk for 50M+ rows. _OpenRefine: new_
 - [ ] **Benchmark tracking** · v0.5 · P2 · S. Run the comparison on every release and publish the chart. _OpenRefine: benchmarks/_
 
@@ -173,7 +173,7 @@ Installers, docs and a public launch.
 
 - [x] **Public repository** · v0.2 · P0 · S. git init, license (MIT/Apache-2.0), contributing guide, issue templates; credit OpenRefine (BSD-3). _OpenRefine: new_
 - [ ] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
-- [ ] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
+- [~] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
 - [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* so existing clients and scripts work unchanged. _OpenRefine: openrefine-client_
 - [ ] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_
 - [ ] **Launch** · v0.5 · P1 · S. README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post. _OpenRefine: new_
