@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { ChevronDownIcon, FlagIcon, PencilIcon, StarIcon } from "lucide-react"
+import { ChevronDownIcon, CircleAlertIcon, CircleCheckIcon, CirclePlusIcon, FlagIcon, PencilIcon, StarIcon } from "lucide-react"
 import { call, type Engine, type Op } from "@/api"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,7 +22,42 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cn } from "cn"
 
 /** [row, cells, starred, flagged, cell types (one letter each), record number when the row starts a record] */
-type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?]
+type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?, Record<string, Recon>?]
+
+/** A reconciled cell, as the grid gets it: judgment, match, best candidates (with how many there are), error. */
+type Candidate = { id: string; name: string; score: number }
+type Recon = { j: "none" | "matched" | "new" | "error"; m: Candidate | null; c: Candidate[]; n: number; e: string | null }
+
+const score = (c: Candidate) => (Math.round(c.score * 10) / 10).toString()
+
+/** What a reconciled cell adds after its text: the match, how many candidates, or the error. */
+function ReconMark({ r, text }: { r: Recon; text: string | null }) {
+  if (r.j === "matched" && r.m)
+    return (
+      <span className="ml-1.5 inline-flex items-center gap-1 text-primary" title={`Matched: ${r.m.name} (${r.m.id})`}>
+        <CircleCheckIcon aria-label="matched" className="size-3.5" />
+        {r.m.name !== text && <span className="truncate">{r.m.name}</span>}
+      </span>
+    )
+  if (r.j === "new")
+    return (
+      <span className="ml-1.5 inline-flex items-center gap-1 text-muted-foreground" title="Will be a new item">
+        <CirclePlusIcon aria-label="new item" className="size-3.5" />
+        new
+      </span>
+    )
+  if (r.j === "error")
+    return (
+      <span className="ml-1.5 inline-flex items-center text-destructive" title={r.e ?? "Reconciliation failed"}>
+        <CircleAlertIcon aria-label="reconciliation error" className="size-3.5" />
+      </span>
+    )
+  return (
+    <span className="ml-1.5 text-xs text-muted-foreground" title={r.c.map((c) => `${c.name} (${c.id}) ${score(c)}`).join("\n") || "No candidates"}>
+      {r.n === 0 ? "no candidates" : r.n === 1 ? `1 candidate: ${r.c[0].name}` : `${r.n} candidates`}
+    </span>
+  )
+}
 const BLOCK = 200
 const ROW_H = 33
 // Browsers cap an element's height (~16-33M px). Past this the scrollbar maps onto the rows
@@ -62,6 +97,19 @@ export const PRESETS: [string, "list" | "range", string][] = [
   ["Facet by flag", "list", "row.flagged"],
 ]
 
+/** OpenRefine's Reconcile → Facets (the first two also open by themselves after reconciling). */
+export const RECON_FACETS: [string, "list" | "range", string][] = [
+  ["By judgment", "list", 'forNonBlank(cell.recon.judgment, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'],
+  ["Best candidate's score", "range", "cell.recon.best.score"],
+  ["Best candidate's type match", "list", 'forNonBlank(cell.recon.features.typeMatch, v, v, if(isNonBlank(value), if(cell.recon != null, "(no type)", "(unreconciled)"), "(blank)"))'],
+  ["Best candidate's name match", "list", 'forNonBlank(cell.recon.features.nameMatch, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'],
+  ["Best candidate's name edit distance", "range", "cell.recon.features.nameLevenshtein"],
+  ["Best candidate's name word similarity", "range", "cell.recon.features.nameWordDistance"],
+  ["Best candidate's types", "list", 'forNonBlank(cell.recon.best.type, v, v, if(isNonBlank(value), "(unreconciled)", "(blank)"))'],
+  ["Judgment action", "list", "cell.recon.judgmentAction"],
+  ["Judgment history entry", "list", "cell.recon.judgmentHistoryEntry"],
+]
+
 export type ColumnAction =
   | {
       kind:
@@ -69,7 +117,7 @@ export type ColumnAction =
         | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
         | "move-first" | "move-left" | "move-right" | "move-last"
         | "numeric-facet" | "timeline-facet" | "custom-list-facet" | "custom-range-facet"
-        | "fetch" | "transpose-columns" | "transpose-rows" | "columnize"
+        | "fetch" | "transpose-columns" | "transpose-rows" | "columnize" | "reconcile"
       column: string
     }
   | { kind: "preset-facet"; column: string; facet: "list" | "range"; expression: string }
@@ -240,9 +288,11 @@ export function Grid({
                 {columns.map((c, j) => {
                   const text = row?.[1][j] ?? null
                   const type = row?.[4]?.[j] ?? "s"
+                  const recon = row?.[6]?.[j]
                   return (
-                    <TableCell key={c} className={cn("group/cell relative truncate", TYPE_CLASS[type])} title={text ?? undefined}>
+                    <TableCell key={c} className={cn("group/cell relative truncate", TYPE_CLASS[type])} title={recon ? undefined : (text ?? undefined)}>
                       {text}
+                      {recon && <ReconMark r={recon} text={text} />}
                       {row && (
                         <Button
                           variant="secondary"
@@ -378,6 +428,23 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
           <DropdownMenuItem onClick={act("split")}>Split into several columns…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("add-column")}>Add column based on this…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("fetch")}>Add column by fetching URLs…</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Reconcile</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-56">
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={act("reconcile")}>Start reconciling…</DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Facets</DropdownMenuLabel>
+                {RECON_FACETS.map(([label, facet, expression]) => (
+                  <DropdownMenuItem key={label} onClick={() => onAction({ kind: "preset-facet", column, facet, expression })}>
+                    {label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Move column</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>

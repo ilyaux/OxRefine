@@ -13,7 +13,7 @@ export type Summary = {
 }
 
 /** What happened to an OpenRefine project's history on import. */
-export type ImportReport = { merged: number; dropped: number; reason: string | null; recon: boolean }
+export type ImportReport = { merged: number; dropped: number; reason: string | null }
 
 /** OpenRefine project archives open with their history instead of going through the import wizard. */
 export const isProjectArchive = (path: string) => /\.(tar\.gz|tgz)$/i.test(path)

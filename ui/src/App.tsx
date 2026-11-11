@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
-import { Grid, type ColumnAction } from "@/Grid"
+import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
+import { ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
@@ -29,6 +30,7 @@ import { Palette } from "@/Palette"
 type Modal =
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
+  | { kind: "reconcile"; column: string }
   | { kind: "export"; format: ExportFormat }
   | { kind: "extract" }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onUpload?: (f: File) => Promise<void>; onSubmit: (v: string) => Promise<void> }
@@ -102,7 +104,6 @@ export function App() {
       r.merged && `${r.merged > 1 ? `The first ${r.merged} steps were` : "The first step was"} merged into the starting data and can't be undone.`,
       r.dropped && `${r.dropped} undone step${r.dropped > 1 ? "s were" : " was"} left out.`,
       r.reason && `Reason: ${r.reason}.`,
-      r.recon && "Reconciliation data isn't kept yet; the cell values are.",
     ].filter(Boolean)
     if (notes.length) toast.add({ title: "Opened with part of its history", description: notes.join(" "), type: "warning", timeout: 0 })
   }
@@ -213,6 +214,7 @@ export function App() {
     else if (a.kind === "common")
       apply({ op: "core/text-transform", engineConfig: engine, columnName: c, expression: `grel:${a.expression}`, onError: "keep-original", repeat: false, repeatCount: 10 }).catch(() => {})
     else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
+    else if (a.kind === "reconcile") setModal({ kind: "reconcile", column: c })
     else if (a.kind === "add-column" || a.kind === "fetch") setModal({ kind: a.kind === "fetch" ? "fetch" : "add", column: c })
     else if (a.kind === "transpose-columns" || a.kind === "transpose-rows" || a.kind === "columnize")
       setModal({ kind: "transpose", column: c, mode: a.kind === "columnize" ? "columnize" : a.kind === "transpose-rows" ? "rows" : "columns" })
@@ -464,6 +466,20 @@ export function App() {
             setFacets([])
             setStaged(null)
           }}
+        />
+      )}
+      {modal?.kind === "reconcile" && summary && (
+        <ReconcileDialog
+          column={modal.column}
+          columns={summary.columns}
+          engine={engine}
+          onApply={async (op) => {
+            await apply(op)
+            // as OpenRefine does when reconciling finishes: facets by judgment and by best score
+            const c = modal.column
+            setFacets((f) => [...f, { ...listFacet(c, RECON_FACETS[0][2]), name: `${c}: judgment` }, { ...rangeFacet(c, RECON_FACETS[1][2]), name: `${c}: best candidate's score` }])
+          }}
+          onClose={() => setModal(null)}
         />
       )}
       {modal?.kind === "transpose" && summary && (
