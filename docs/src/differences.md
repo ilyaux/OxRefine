@@ -1,0 +1,37 @@
+# Differences and what's missing
+
+## Known differences
+
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,034 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+
+| Area | What differs | Why |
+|---|---|---|
+| Sorting | With blanks sorted first, OpenRefine places one non-blank row before the blank rows | Looks like a comparator bug in OpenRefine; OxRefine puts all blanks first |
+| SQL export | OpenRefine drops numeric and null values from `INSERT` rows, which shifts the columns | Deliberate: OxRefine writes `NULL` and unquoted numbers, so the dump loads |
+| ODS import | OpenRefine adds an empty row for the filler row LibreOffice writes at the end of a sheet (2 cases) | Deliberate: OxRefine leaves it out |
+| JSON import | OpenRefine can't read integers beyond 64 bits and creates no project | Deliberate: OxRefine imports them as numbers |
+| `detectLanguage()` | OxRefine doesn't identify languages yet (2 cases) | Needs a language-identification model |
+| Beider-Morse keys | Names with more than 20 phonetic alternatives can get a different key (7 cases) | Apache Commons Codec truncates its list while building it, and keeps a different 20 |
+| PPM clustering | The PPM distance for nearest-neighbour clustering isn't available (2 cases) | Not ported yet |
+
+Everything else checked matches exactly. That covers GREL results and errors, operations, facet counts, import options, exports, clustering, reconciliation, and project archives with their full history.
+
+## Not in OxRefine yet
+
+- **Import:** databases (PostgreSQL, MySQL, MariaDB, SQLite), RDF (N-Triples, Turtle, RDF/XML, JSON-LD), MARC, wikitext tables, PC-Axis, Google Sheets
+- **Facets:** the scatterplot facet
+- **Clustering:** the PPM distance; custom clustering functions
+- **Expressions:** Python (Jython) and Clojure; `detectLanguage()`; `wikibaseIssues()`
+- **Export:** Excel 97 (`.xls`), Google Sheets
+- **Extensions:** Wikibase schemas and uploads, Wikimedia Commons, OpenRefine's extension modules
+- **Projects:** tags and metadata, a preferences page
+- **Interface:** translations (the interface is in English)
+- **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
+
+The full plan is in [ROADMAP.md](https://github.com/ilyaux/OxRefine/blob/main/ROADMAP.md).
+
+## Things that work differently on purpose
+
+- **Speed and memory.** OxRefine keeps each distinct value of a column once and works on distinct values, so facets, clustering and most transforms take milliseconds even on millions of rows.
+- **History is kept compactly.** Undo works the same way, but steps that only rename values share the previous step's data instead of copying it.
+- **One program for every setup.** The desktop app, the browser app (`ox serve`), the server mode and the command line run the same engine.

@@ -13,16 +13,17 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
 </p>
 
 <p align="center">
+  <a href="https://ilyaux.github.io/OxRefine/"><img alt="Documentation" src="https://img.shields.io/badge/docs-ilyaux.github.io%2FOxRefine-blue"></a>
   <a href="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2018%20of%202033%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2018%20of%202034%20checks-brightgreen">
 </p>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
-  <img alt="OxRefine with 100,000 messy rows: text facets on country and city show the spellings to clean up" src="docs/screenshot.png">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/src/images/screenshot-dark.png">
+  <img alt="OxRefine with 100,000 messy rows: text facets on country and city show the spellings to clean up" src="docs/src/images/screenshot.png">
 </picture>
 
 ## Why
@@ -32,7 +33,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 [OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
 
 - **About 20× faster, with 10–18× less memory.** A million-row workflow takes 0.7 s instead of 16.5 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 259 MB.
-- **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,018 of 2,033 checks match, and each known difference is written down with its reason.
+- **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,018 of 2,034 checks match, and each known difference is written down with its reason.
 - **Your work moves both ways.** OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact.
 - **Desktop, browser, server or command line.** It runs as a native desktop app, in a browser (`ox serve`, like OpenRefine), on a server or in Docker behind an access token, or headless with `ox apply`.
 
@@ -77,8 +78,8 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so s
 ## What it does
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/cluster-dark.png">
-  <img alt="Clustering the city column: São Paulo and Zürich spellings grouped, with row counts and a new value for each cluster" src="docs/cluster.png">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/src/images/cluster-dark.png">
+  <img alt="Clustering the city column: São Paulo and Zürich spellings grouped, with row counts and a new value for each cluster" src="docs/src/images/cluster.png">
 </picture>
 
 - **Import:** CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard or a web address. There is a preview wizard with OpenRefine's options.
@@ -105,6 +106,8 @@ Each area is checked against fixtures produced by running the same cases through
 | Clustering and GREL `phonetic()`: 6 keyers, Levenshtein kNN, 9 encoders × 127 values | 1,148 / 1,157 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back | 136 / 136 |
+
+**[Documentation](https://ilyaux.github.io/OxRefine/)**: install, [where everything is if you know OpenRefine](https://ilyaux.github.io/OxRefine/feature-map.html), [moving your projects and recipes](https://ilyaux.github.io/OxRefine/moving-over.html), and the [GREL reference](https://ilyaux.github.io/OxRefine/grel.html).
 
 ## Download
 

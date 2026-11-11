@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 117 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 118 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,7 +8,7 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 21 |
-| v0.5 | 41 | 2 |
+| v0.5 | 42 | 2 |
 | v1.0 | 6 | 0 |
 | later | 14 | 0 |
 
@@ -107,6 +107,7 @@ The full expression language: ~130 functions, controls, errors and coercion.
 - [~] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
 - [ ] **Python and Clojure expressions** · later · P2 · L. Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). _OpenRefine: JythonEvaluable, ClojureEvaluable_
 - [ ] **detectLanguage()** · v0.5 · P2 · M. GREL detectLanguage(s): ISO 639-1 code from OpenRefine's language-detector n-gram profiles, the same answers on the fixture texts (currently 2 known failures). _OpenRefine: DetectLanguage, optimaize language-detector_
+- [ ] **GREL record variable** · v0.5 · P2 · S. In records mode OpenRefine's expressions see the current record: record.index, record.fromRowIndex, record.toRowIndex, record.rowCount, record.cells["Name"].value (an array of the record's values). OxRefine's GREL returns null for record today (found while writing the GREL reference). Fixtures from OpenRefine for each field, in transforms, new columns and facets. _OpenRefine: WrappedRecord, RecordModel_
 
 ## Facets
 
@@ -184,7 +185,7 @@ Installers, docs and a public launch.
 - [~] **Installers and auto-update** · v0.5 · P1 · M. Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. _OpenRefine: tauri bundle_
 - [~] **Headless server mode** · v0.5 · P1 · S. ox serve with the UI embedded, for servers and Docker, like running OpenRefine remotely. _OpenRefine: refine -i 0.0.0.0_
 - [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged. _OpenRefine: openrefine-client, CommandServlet_
-- [ ] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_
+- [~] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_
 - [~] **Launch** · v0.5 · P1 · S. README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post. _OpenRefine: new_
 - [ ] **Check the Docker image** · v0.5 · P2 · S. The Dockerfile from rel-server was never built (Docker Desktop wasn't running). Build and run it, check the token link, uploads and downloads, then build it in CI. _OpenRefine: Dockerfile_
 

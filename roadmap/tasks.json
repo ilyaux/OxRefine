@@ -799,6 +799,17 @@
       "ref": "DetectLanguage, optimaize language-detector"
     },
     {
+      "id": "grel-record",
+      "phase": "p5",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "S",
+      "title": "GREL record variable",
+      "detail": "In records mode OpenRefine's expressions see the current record: record.index, record.fromRowIndex, record.toRowIndex, record.rowCount, record.cells[\"Name\"].value (an array of the record's values). OxRefine's GREL returns null for record today (found while writing the GREL reference). Fixtures from OpenRefine for each field, in transforms, new columns and facets.",
+      "ref": "WrappedRecord, RecordModel"
+    },
+    {
       "id": "facet-range",
       "phase": "p6",
       "milestone": "v0.2",
@@ -1264,7 +1275,7 @@
       "id": "rel-docs",
       "phase": "p12",
       "milestone": "v0.5",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "M",
       "title": "Docs site and migration guide",

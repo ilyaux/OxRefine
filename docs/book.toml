@@ -1,0 +1,17 @@
+[book]
+title = "OxRefine"
+description = "Documentation for OxRefine, a fast open-source OpenRefine alternative written in Rust: install it, move over from OpenRefine, clean and reconcile data, and look up every GREL function."
+authors = ["OxRefine contributors"]
+language = "en"
+src = "src"
+
+[output.html]
+git-repository-url = "https://github.com/ilyaux/OxRefine"
+edit-url-template = "https://github.com/ilyaux/OxRefine/edit/main/docs/{path}"
+site-url = "/OxRefine/"
+default-theme = "light"
+preferred-dark-theme = "navy"
+no-section-label = true
+
+[output.html.search]
+limit-results = 20
