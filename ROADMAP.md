@@ -109,7 +109,7 @@ The full expression language: ~130 functions, controls, errors and coercion.
 Every facet type, including customized and expression facets.
 
 - [~] **Numeric range facet** · v0.2 · P0 · M. Histogram, draggable range, numeric/non-numeric/blank/error toggles. _OpenRefine: range_
-- [ ] **Timeline facet** · v0.5 · P1 · M. Date histogram with range selection. _OpenRefine: timerange_
+- [~] **Timeline facet** · v0.5 · P1 · M. Date histogram with range selection. _OpenRefine: timerange_
 - [ ] **Scatterplot facet** · later · P2 · L. Scatterplot matrix and brushed 2D selection. _OpenRefine: scatterplot_
 - [~] **Custom facets by expression** · v0.2 · P0 · M. List and range facets over any GREL expression, needs the full evaluator. _OpenRefine: list facet expression_
 - [~] **Customized facets menu** · v0.2 · P1 · M. Word, duplicates, text length, Unicode chars, blank, error, star and flag facets. _OpenRefine: Customized facets_
@@ -122,7 +122,7 @@ All key-collision keyers and nearest-neighbour methods.
 - [~] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
 - [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein distance with n-gram blocking, radius and block size; parallel, with progress and cancel. _OpenRefine: knn: levenshtein_
 - [ ] **PPM distance for nearest neighbours** · v0.5 · P2 · M. Port vicino's PPM distance: 10*((C(x+y)+C(y+x))/(C(x+x)+C(y+y)) - 1), where C is the compressed length from arithcode's PPMModel(8). Needs the arithcode-1.2 sources (OpenRefine/simile-vicino, lib-src/arithcode-1.2-sources.jar, 1.3 MB). Then drop the 2 PPM lines from tests/cluster/known_failures.txt and enable PPM in the cluster dialog. _OpenRefine: knn: ppm_
-- [ ] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
+- [~] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
 - [ ] **Custom clustering functions** · later · P2 · M. User-defined keying and distance functions in GREL. _OpenRefine: clustering-functions-dialog_
 
 ## Reconciliation
@@ -142,7 +142,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [~] **Grid parity** · v0.2 · P0 · M. Rows/records toggle, inline cell edit, star/flag column, type-aware rendering, column widths, beyond-1M-row scrolling. _OpenRefine: data-table-view_
 - [~] **Expression editor** · v0.2 · P0 · M. CodeMirror 6 with GREL highlighting, autocomplete with function docs, live preview, history and starred expressions. _OpenRefine: expression-preview-dialog_
 - [~] **Column menus for every operation** · v0.2 · P0 · M. Each operation reachable from the column header like OpenRefine. _OpenRefine: menu-edit-cells, menu-edit-column_
-- [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
+- [~] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
 - [~] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
 - [~] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
 - [~] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
