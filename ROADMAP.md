@@ -1,13 +1,13 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 102 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 103 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 45 | 21 |
+| v0.2 | 46 | 21 |
 | v0.5 | 31 | 2 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
@@ -54,7 +54,7 @@ Every format OpenRefine imports, with its options and preview.
 - [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** · later · P2 · L. Subject-per-record import as OpenRefine does. _OpenRefine: text/rdf/*_
 - [ ] **MARC records** · later · P2 · M. Library records via MARCXML conversion. _OpenRefine: text/marc_
 - [ ] **Wikitext tables** · later · P2 · M. Parse MediaWiki table markup, keep links for reconciliation. _OpenRefine: text/wiki_
-- [ ] **Import from URL and clipboard** · v0.2 · P1 · S. Download with progress and paste-as-table, like OpenRefine's Web Addresses and Clipboard tabs. _OpenRefine: create-project-from-upload_
+- [~] **Import from URL and clipboard** · v0.2 · P1 · S. Download with progress and paste-as-table, like OpenRefine's Web Addresses and Clipboard tabs. _OpenRefine: create-project-from-upload_
 - [ ] **Zip/gzip and multi-file import** · v0.5 · P2 · S. Pick files inside archives, add a file-name column. _OpenRefine: includeFileSources, includeArchiveFileName_
 - [~] **Import preview wizard** · v0.2 · P0 · M. Live preview of the first rows while options change, format auto-detect. _OpenRefine: parsing-ui_
 
@@ -144,6 +144,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [ ] **Command palette and shortcuts** · v0.5 · P1 · S. Ctrl+K to run any operation on the focused column. _OpenRefine: new_
 - [~] **History panel parity** · v0.2 · P1 · S. Extract with step selection, apply from file, filter steps. _OpenRefine: history-panel_
 - [ ] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
+- [ ] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
 - [ ] **Translations** · v0.5 · P2 · M. i18n framework; OpenRefine's BSD-licensed translation files can seed 40+ languages. _OpenRefine: langs/*.json_
 
 ## Compatibility & QA

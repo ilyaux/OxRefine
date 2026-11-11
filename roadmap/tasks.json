@@ -384,7 +384,7 @@
       "id": "imp-sources",
       "phase": "p2",
       "milestone": "v0.2",
-      "status": "todo",
+      "status": "doing",
       "priority": "P1",
       "size": "S",
       "title": "Import from URL and clipboard",
@@ -984,6 +984,17 @@
       "title": "Long-running jobs",
       "detail": "Background processes with progress and cancel (imports, URL fetching, reconciliation).",
       "ref": "get-processes, cancel-processes"
+    },
+    {
+      "id": "ui-scrollbars",
+      "phase": "p9",
+      "milestone": "v0.2",
+      "status": "todo",
+      "priority": "P1",
+      "size": "S",
+      "title": "Themed scrollbars",
+      "detail": "The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used.",
+      "ref": "new"
     },
     {
       "id": "ui-i18n",
