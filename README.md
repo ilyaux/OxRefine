@@ -35,14 +35,14 @@ Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, inclu
 | Area | Cases matching OpenRefine |
 |---|---|
 | GREL expressions | 469 / 472 |
-| Operations (incl. single-cell edits, stars, flags) | 55 / 56 |
+| Operations (incl. single-cell edits, stars, flags, transposing, fetching URLs, cross()) | 80 / 81 |
 | Facets (list, range, text, custom, records mode) | 22 / 22 |
 | Import options (CSV/TSV, fixed-width, Excel, ODS, JSON, XML, zip/tar/gzip archives) | 40 / 42 |
 | Clipboard and web-address import (wizard defaults, archives, XML) | 17 / 17 |
 | Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
 | Exports (CSV/TSV, custom tabular, HTML, templating, Excel, SQL) | 12 / 13 |
 | Clustering and GREL phonetic() (6 keyers, Levenshtein kNN, 9 encoders × 127 values) | 1148 / 1157 |
-| OpenRefine project archives, opened with their full history (and written back) | 59 / 61 |
+| OpenRefine project archives, opened with their full history (and written back) | 86 / 86 |
 
 ## Run
 

@@ -7,19 +7,25 @@ import { join } from "node:path"
 import { tmpdir } from "node:os"
 import { startOpenRefine } from "../../tools/openrefine.mjs"
 import { CASES, CORPUS } from "./cases.mjs"
+import { LOOKUP } from "../ops/cases.mjs"
+import { serve, withBase } from "../ops/server.mjs"
 
 const dir = new URL("archives/", import.meta.url)
 rmSync(dir, { recursive: true, force: true })
 mkdirSync(dir)
+// a fresh workspace, so there is exactly one project named "lookup" for cross()
+rmSync(join(tmpdir(), "oxrefine-orproject-fixtures"), { recursive: true, force: true })
+const server = await serve()
 const or = await startOpenRefine({
   workspace: join(tmpdir(), "oxrefine-orproject-fixtures"),
   jvm: ["-Duser.language=en", "-Duser.country=US", "-Duser.timezone=UTC", "-Dfile.encoding=UTF-8", "-Dsun.jnu.encoding=UTF-8"],
 })
 try {
+  await or.createProject(LOOKUP, { name: "lookup" })
   const out = []
   for (const [i, c] of CASES.entries()) {
     const project = await or.createProject(c.csv ?? CORPUS, { name: c.name, guessTypes: !!c.guessTypes })
-    const res = await or.runOps(project, c.ops)
+    const res = await or.runOps(project, withBase(c.ops, server.base))
     if (res.code !== "ok") throw new Error(`${c.name}: ${res.message ?? JSON.stringify(res)}`)
     let h = await or.get(`/command/core/get-history?project=${project}`)
     const steps = h.past.map((e) => e.id)
@@ -42,4 +48,5 @@ try {
   console.log(`${out.length} cases -> tests/orproject/fixtures.json`)
 } finally {
   or.stop()
+  server.close()
 }

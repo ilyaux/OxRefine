@@ -64,22 +64,27 @@ fn var(name: &str, env: &Env) -> Value {
         "null" => Null,
         "cell" => cell_obj(env.value.clone()),
         "rowIndex" => Int(env.row.index() as i64),
-        "cells" => cells(env),
-        "row" => Obj(vec![
-            ("index".into(), Int(env.row.index() as i64)),
-            ("cells".into(), cells(env)),
-            ("starred".into(), Bool(env.row.starred())),
-            ("flagged".into(), Bool(env.row.flagged())),
-        ]),
+        "cells" => cells(env.row),
+        "row" => row_value(env.row),
         _ => Null,
     }
 }
 
-fn cells(env: &Env) -> Value {
-    Obj(env.row.columns().into_iter().map(|c| {
-        let v = env.row.cell(&c).unwrap_or(Null);
+fn cells(row: &dyn Row) -> Value {
+    Obj(row.columns().into_iter().map(|c| {
+        let v = row.cell(&c).unwrap_or(Null);
         (c, cell_obj(v))
     }).collect())
+}
+
+/// A row as GREL's `row` sees it (also what cross() returns for each match).
+pub fn row_value(row: &dyn Row) -> Value {
+    Obj(vec![
+        ("index".into(), Int(row.index() as i64)),
+        ("cells".into(), cells(row)),
+        ("starred".into(), Bool(row.starred())),
+        ("flagged".into(), Bool(row.flagged())),
+    ])
 }
 
 pub fn field(o: Value, name: &str) -> Value {
@@ -121,6 +126,23 @@ pub fn eval(e: &Expr, env: &mut Env) -> Value {
             operator(op, &a, &b)
         }
         Expr::Call(name, args) if funcs::is_control(name) => control(name, args, env),
+        // cross(cell or value, project, column): the rows of that project with that text in that column
+        Expr::Call(name, args) if name == "cross" => {
+            let vals: Vec<Value> = args.iter().map(|x| eval(x, env)).collect();
+            if let Some(err) = vals.iter().find(|v| v.is_error()) {
+                return err.clone();
+            }
+            let key = match vals.first() {
+                Some(Obj(f)) => f.iter().find(|(k, _)| k == "value").map_or(Null, |(_, v)| v.clone()),
+                Some(v) => v.clone(),
+                None => Null,
+            };
+            match (&key, vals.get(1), vals.get(2), vals.len()) {
+                (Null, ..) | (_, _, _, 4..) => Value::err("cross expects a cell or value, a project name to look up (optional), and a column name in that project (optional)"),
+                (k, Some(Str(p)), Some(Str(c)), _) => crate::cross::cross(&k.to_java_string(), p, c),
+                _ => Value::err("cross: OxRefine needs both the project name and the column name"),
+            }
+        }
         Expr::Call(name, args) if name == "facetCount" => {
             let vals: Vec<Value> = args.iter().map(|x| eval(x, env)).collect();
             if let Some(err) = vals.iter().find(|v| v.is_error()) {

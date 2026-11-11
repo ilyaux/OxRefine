@@ -219,8 +219,32 @@ pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
     }
     let t0 = Instant::now();
     let a = serde_json::from_value(args).map_err(err)?;
-    let data = crate::jobs::run("Working", || run(s, cmd, a))?;
+    let find = projects_by_name(s);
+    let data = crate::jobs::run("Working", || crate::cross::scope(find, || run(s, cmd, a)))?;
     Ok(json!({ "data": data, "ms": t0.elapsed().as_secs_f64() * 1000.0 }))
+}
+
+/// What cross() can look into: the open project and every saved one, by name (a saved project is
+/// opened, its history replayed, the first time a command asks for it).
+fn projects_by_name(s: &Session) -> impl Fn(&str) -> Vec<Table> + 'static {
+    let store = s.store.clone();
+    let open = s.project.as_ref().map(|p| (p.meta.as_ref().map(|m| m.id.clone()), p.name.clone(), p.table().clone()));
+    move |name| {
+        let mut out = vec![];
+        let open_id = open.as_ref().and_then(|o| o.0.clone());
+        if let Some((_, n, t)) = &open {
+            if n == name {
+                out.push(t.clone());
+            }
+        }
+        for m in store.iter().flat_map(Store::list).filter(|m| m.name == name && Some(&m.id) != open_id.as_ref()) {
+            let st = store.as_ref().unwrap();
+            if let Ok(p) = st.load(&m.id).and_then(|(meta, original, history)| Project::restore(meta, original, history)) {
+                out.push(p.table().clone());
+            }
+        }
+        out
+    }
 }
 
 /// Commands that need no session, so hosts answer them while another command holds it:
@@ -406,9 +430,9 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         // `steps` picks history steps by index (the History panel's Extract); default: up to the cursor
         "export_recipe" => {
             let r = if a.steps.is_empty() {
-                json!(p.recipe())
+                json!(p.recipe().into_iter().map(Op::recipe_json).collect::<Vec<_>>())
             } else {
-                json!(a.steps.iter().filter_map(|&i| p.steps().get(i)).filter(|o| o.in_recipe()).collect::<Vec<_>>())
+                json!(a.steps.iter().filter_map(|&i| p.steps().get(i)).filter(|o| o.in_recipe()).map(Op::recipe_json).collect::<Vec<_>>())
             };
             if !a.path.is_empty() {
                 std::fs::write(&a.path, serde_json::to_string_pretty(&r).map_err(err)?).map_err(err)?;

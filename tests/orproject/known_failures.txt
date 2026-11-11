@@ -2,5 +2,3 @@
 # The conformance test fails when one of these starts passing, so remove lines as they get fixed.
 # The data still opens exactly as OpenRefine had it: the steps before the one OxRefine can't replay
 # are merged into the starting table.
-transpose columns into rows  # no core/transpose-columns-into-rows engine yet (op-transpose)
-key-value columnize  # no core/transpose-columns-into-rows or core/key-value-columnize engine yet (op-transpose)

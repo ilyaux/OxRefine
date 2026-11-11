@@ -138,6 +138,8 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
         while (j < ops.length && !ops[j].op.startsWith("ox/")) j++
         res = await command("apply-operations", { project, operations: ops.slice(i, j) })
         await idle(project)
+        // long-running operations (fetching URLs) answer "pending" and finish in the background
+        if (res.code === "pending") res = { code: "ok" }
         i = j
       }
     }

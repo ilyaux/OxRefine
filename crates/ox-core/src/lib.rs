@@ -1,5 +1,6 @@
 //! OxRefine engine: dictionary-encoded string table + OpenRefine-compatible operations.
 pub mod cluster;
+pub mod cross;
 pub mod engine;
 pub mod export;
 pub mod double_metaphone;
@@ -10,6 +11,7 @@ pub mod metaphone3;
 pub mod ops;
 pub mod orproject;
 pub mod project;
+pub mod reshape;
 pub mod store;
 pub mod table;
 pub mod unpack;

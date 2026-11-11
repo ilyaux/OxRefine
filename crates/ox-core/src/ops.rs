@@ -164,6 +164,64 @@ pub enum OpKind {
         mode: String,
         sorting: Sorting,
     },
+    // ------------------------------------------------------------ transposing
+    #[serde(rename = "core/transpose-columns-into-rows", rename_all = "camelCase")]
+    TransposeColumnsIntoRows {
+        start_column_name: String,
+        /// how many columns from the start one; -1 for all the rest
+        column_count: i64,
+        #[serde(default)]
+        ignore_blank_cells: bool,
+        #[serde(default)]
+        fill_down: bool,
+        /// one new column holding the cells (optionally "<column><separator><cell>")...
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        combined_column_name: Option<String>,
+        #[serde(default)]
+        prepend_column_name: bool,
+        /// OpenRefine writes null in key/value mode
+        #[serde(default)]
+        separator: Option<String>,
+        /// ...or a key column (the old column names) and a value column
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        key_column_name: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        value_column_name: Option<String>,
+    },
+    #[serde(rename = "core/transpose-rows-into-columns", rename_all = "camelCase")]
+    TransposeRowsIntoColumns { column_name: String, row_count: usize },
+    #[serde(rename = "core/key-value-columnize", rename_all = "camelCase")]
+    KeyValueColumnize {
+        key_column_name: String,
+        value_column_name: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        note_column_name: Option<String>,
+    },
+    // ------------------------------------------------------------ fetching
+    #[serde(rename = "core/column-addition-by-fetching-urls", rename_all = "camelCase")]
+    ColumnAdditionByFetchingUrls {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        base_column_name: String,
+        url_expression: String,
+        #[serde(default = "set_to_blank")]
+        on_error: String,
+        new_column_name: String,
+        #[serde(default)]
+        column_insert_index: usize,
+        /// milliseconds between requests
+        #[serde(default)]
+        delay: u64,
+        #[serde(default)]
+        cache_responses: bool,
+        #[serde(default)]
+        http_headers_json: Vec<HttpHeader>,
+        /// What was fetched, row by row (null | text | {"e": message}), so replaying the history
+        /// doesn't fetch again. Saved in OxRefine's history; left out of recipes.
+        #[serde(rename = "ox:fetched", default, skip_serializing_if = "Option::is_none")]
+        fetched: Option<Vec<serde_json::Value>>,
+    },
+
     // ------------------------------------------------------------ single-cell and single-row edits
     // OpenRefine records these in history but not in the operations JSON it extracts ("ox/" ops
     // stay out of recipes the same way).
@@ -184,6 +242,48 @@ pub enum OpKind {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         flagged: Option<bool>,
     },
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct HttpHeader {
+    pub name: String,
+    pub value: String,
+}
+
+fn set_to_blank() -> String {
+    "set-to-blank".into()
+}
+
+/// GET `url` with `headers`: the body when the server answers 2xx, else what went wrong.
+fn fetch(agent: &ureq::Agent, url: &str, headers: &[HttpHeader]) -> std::result::Result<String, String> {
+    let mut req = agent.get(url);
+    for h in headers.iter().filter(|h| !h.value.is_empty()) {
+        req = req.header(h.name.as_str(), h.value.as_str());
+    }
+    let mut res = req.call().map_err(|e| format!("{url}: {e}"))?;
+    let status = res.status();
+    let body = res.body_mut().read_to_string().map_err(|e| format!("{url}: {e}"))?;
+    if status.is_success() {
+        Ok(body)
+    } else {
+        Err(format!("HTTP error {} : {} | {body}", status.as_u16(), status.canonical_reason().unwrap_or("")))
+    }
+}
+
+fn saved(v: &Value) -> serde_json::Value {
+    match v {
+        Value::Null => serde_json::Value::Null,
+        Value::Error(e) => serde_json::json!({ "e": e }),
+        other => serde_json::Value::String(other.to_java_string()),
+    }
+}
+
+fn unsaved(j: &serde_json::Value) -> Value {
+    match j {
+        serde_json::Value::String(s) => Value::Str(s.clone()),
+        serde_json::Value::Object(m) => Value::Error(m.get("e").and_then(|e| e.as_str()).unwrap_or("").to_string()),
+        _ => Value::Null,
+    }
 }
 
 fn text_type() -> String {
@@ -463,6 +563,91 @@ fn set_flags(t: &Table, rows: &[u32], starred: Option<bool>, flagged: Option<boo
 }
 
 impl Op {
+    /// The operation as OpenRefine's JSON (what Extract gives): without OxRefine's saved results.
+    pub fn recipe_json(&self) -> serde_json::Value {
+        let mut j = serde_json::to_value(self).unwrap_or(serde_json::Value::Null);
+        if let Some(m) = j.as_object_mut() {
+            m.retain(|k, _| !k.starts_with("ox:"));
+        }
+        j
+    }
+
+    /// OpenRefine's ColumnAdditionByFetchingURLsOperation: one request per matching row, one after
+    /// another with `delay` between them, as a job that shows progress and can be cancelled. The
+    /// results are kept in the operation, so replaying the history reuses them.
+    fn fetch_urls(&mut self, t: &Table) -> Result<Table> {
+        let OpKind::ColumnAdditionByFetchingUrls {
+            engine_config, base_column_name, url_expression, on_error, new_column_name, column_insert_index, delay, cache_responses, http_headers_json, fetched,
+        } = &mut self.kind
+        else {
+            unreachable!()
+        };
+        if t.col(new_column_name).is_ok() {
+            return Err(format!("column '{new_column_name}' already exists"));
+        }
+        let base = t.col(base_column_name)?;
+        let values: Vec<Value> = match fetched {
+            Some(saved_rows) if saved_rows.len() == t.rows => saved_rows.iter().map(unsaved).collect(),
+            _ => {
+                let p = grel::compile(url_expression)?;
+                let sel = engine::mask(t, engine_config)?;
+                let ctx = crate::engine::Ctx::default();
+                let rows: Vec<usize> = (0..t.rows).filter(|&r| sel.as_ref().is_none_or(|s| s[r])).collect();
+                let agent: ureq::Agent = ureq::Agent::new_with_config(
+                    ureq::config::Config::builder()
+                        .http_status_as_error(false)
+                        .timeout_global(Some(std::time::Duration::from_secs(60)))
+                        .user_agent(concat!("OxRefine/", env!("CARGO_PKG_VERSION")))
+                        .build(),
+                );
+                crate::jobs::progress("Fetching URLs", rows.len() as u64);
+                let mut cache: HashMap<String, Value> = HashMap::new();
+                let mut out = vec![Value::Null; t.rows];
+                let mut first = true;
+                for r in rows {
+                    crate::jobs::tick(0)?;
+                    let cell = t.columns[base].get(r);
+                    let url = match p.eval(cell.clone(), &t.row_ctx(r, &ctx)) {
+                        Value::Null | Value::Error(_) => None,
+                        Value::Str(s) if s.trim().is_empty() => None,
+                        v => Some(v.to_java_string()),
+                    };
+                    if let Some(url) = url {
+                        out[r] = match cache.get(&url) {
+                            Some(v) => v.clone(),
+                            None => {
+                                if !first && *delay > 0 {
+                                    std::thread::sleep(std::time::Duration::from_millis(*delay));
+                                }
+                                first = false;
+                                let v = match fetch(&agent, &url, http_headers_json) {
+                                    Ok(body) => Value::Str(body),
+                                    Err(e) => match on_error.as_str() {
+                                        "store-error" => Value::Error(e),
+                                        "keep-original" => cell.clone(),
+                                        _ => Value::Null,
+                                    },
+                                };
+                                if *cache_responses && !v.is_error() {
+                                    cache.insert(url, v.clone());
+                                }
+                                v
+                            }
+                        };
+                    }
+                    crate::jobs::tick(1)?;
+                }
+                *fetched = Some(out.iter().map(saved).collect());
+                out
+            }
+        };
+        let at = (*column_insert_index).min(t.names.len());
+        let mut out = t.clone();
+        out.columns.insert(at, Arc::new(Column::from_values(values)));
+        out.names.insert(at, new_column_name.clone());
+        Ok(out)
+    }
+
     pub fn description(&self) -> &str {
         &self.description
     }
@@ -501,6 +686,23 @@ impl Op {
             RowFlag { flagged, .. } => if *flagged { "Flag rows" } else { "Unflag rows" }.into(),
             RowDuplicateRemoval { criteria, .. } => format!("Remove duplicate rows by {}", criteria.join(", ")),
             RowReorder { .. } => "Reorder rows".into(),
+            TransposeColumnsIntoRows { start_column_name, column_count, combined_column_name, key_column_name, value_column_name, .. } => {
+                let cols = if *column_count > 0 { format!("{column_count} column(s)") } else { "columns".into() };
+                let into = match (combined_column_name, key_column_name, value_column_name) {
+                    (Some(c), _, _) => format!("one new column named {c}"),
+                    (None, Some(k), Some(v)) => format!("two new columns named {k} and {v}"),
+                    _ => "new columns".into(),
+                };
+                format!("Transpose cells in {cols} starting with {start_column_name} into rows in {into}")
+            }
+            TransposeRowsIntoColumns { column_name, row_count } => format!("Transpose every {row_count} cells in column {column_name} into separate columns"),
+            KeyValueColumnize { key_column_name, value_column_name, note_column_name } => format!(
+                "Columnize by key column {key_column_name} and value column {value_column_name} with note column {}",
+                note_column_name.as_deref().unwrap_or("")
+            ),
+            ColumnAdditionByFetchingUrls { new_column_name, column_insert_index, base_column_name, url_expression, .. } => format!(
+                "Create column {new_column_name} at index {column_insert_index} by fetching URLs based on column {base_column_name} using expression {url_expression}"
+            ),
             CellEdit { row, column_name, .. } => format!("Edit single cell on row {}, column {column_name}", row + 1),
             RowAnnotate { row, starred, flagged } => {
                 let what = match (starred, flagged) {
@@ -519,7 +721,22 @@ impl Op {
             self.description = self.describe();
         }
         use OpKind::*;
+        if matches!(self.kind, ColumnAdditionByFetchingUrls { .. }) {
+            return self.fetch_urls(t);
+        }
         Ok(match &self.kind {
+            TransposeColumnsIntoRows {
+                start_column_name, column_count, ignore_blank_cells, fill_down, combined_column_name, prepend_column_name, separator, key_column_name, value_column_name,
+            } => {
+                let kv = key_column_name.as_deref().zip(value_column_name.as_deref());
+                let combined = combined_column_name.as_deref().filter(|c| !c.is_empty());
+                crate::reshape::columns_into_rows(t, start_column_name, *column_count, combined, kv, *prepend_column_name, separator.as_deref().unwrap_or(""), *ignore_blank_cells, *fill_down)?
+            }
+            TransposeRowsIntoColumns { column_name, row_count } => crate::reshape::rows_into_columns(t, column_name, *row_count)?,
+            KeyValueColumnize { key_column_name, value_column_name, note_column_name } => {
+                crate::reshape::key_value_columnize(t, key_column_name, value_column_name, note_column_name.as_deref().filter(|n| !n.is_empty()))?
+            }
+            ColumnAdditionByFetchingUrls { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;
@@ -687,11 +904,13 @@ impl Op {
                 out
             }
             ColumnMultiRemoval { column_names } => {
+                // like OpenRefine, names of columns that aren't there are passed over
                 let mut out = t.clone();
                 for n in column_names {
-                    let ci = out.col(n)?;
-                    out.names.remove(ci);
-                    out.columns.remove(ci);
+                    if let Ok(ci) = out.col(n) {
+                        out.names.remove(ci);
+                        out.columns.remove(ci);
+                    }
                 }
                 out
             }

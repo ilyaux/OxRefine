@@ -8,7 +8,8 @@ const transform = (columnName, expression, onError = "keep-original") =>
   ({ op: "core/text-transform", engineConfig: all, columnName, expression: "grel:" + expression, onError, repeat: false, repeatCount: 10 })
 
 export const CASES = [
-  // every operation case of the ops suite, so every kind of change file shows up
+  // every operation case of the ops suite, so every kind of change file shows up (fetch-URL steps
+  // replay from what OpenRefine fetched; cross() looks into the "lookup" project)
   ...OPS.filter((c) => c.name !== "sort score blanks first"),
   // typed cells straight from the importer
   { name: "guessed types", guessTypes: true, ops: [transform("joined", "value.toDate()", "store-error")] },

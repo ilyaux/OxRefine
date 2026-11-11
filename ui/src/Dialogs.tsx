@@ -41,12 +41,14 @@ export function useDebounced<T>(value: T, ms = 200) {
 const TITLES = {
   transform: (c: string) => `Transform “${c}”`,
   add: (c: string) => `Add column based on “${c}”`,
+  fetch: (c: string) => `Add column by fetching URLs based on “${c}”`,
   "facet-list": (c: string) => `Custom text facet on “${c}”`,
   "facet-range": (c: string) => `Custom numeric facet on “${c}”`,
 }
 const HINTS = {
   transform: "Runs on the rows matching the current facets: once per distinct value, or once per row when it reads other cells.",
   add: "Runs on the rows matching the current facets; other rows get an empty cell.",
+  fetch: "The expression gives each matching row's URL; the new column gets what each address returns. Requests go one at a time, with the delay between them, and can be cancelled.",
   "facet-list": "Each distinct result becomes a choice; an array gives one choice per item.",
   "facet-range": "Numbers go into the histogram; text, blanks and errors are counted separately.",
 }
@@ -71,6 +73,11 @@ export function TransformDialog({
   const [expr, setExpr] = useState("value")
   const [recent] = useState(recentExpressions)
   const [name, setName] = useState("")
+  // fetching URLs: OpenRefine's defaults
+  const [delay, setDelay] = useState(5000)
+  const [fetchError, setFetchError] = useState("set-to-blank")
+  const [cache, setCache] = useState(true)
+  const [headers, setHeaders] = useState("")
   const [preview, setPreview] = useState<[string | null, Result][]>([])
   const [error, setError] = useState("")
   const debounced = useDebounced(expr)
@@ -81,14 +88,34 @@ export function TransformDialog({
       .catch((e) => setError(e.message))
   }, [debounced, column, engine])
 
-  const nameTaken = mode === "add" && columns.includes(name.trim())
-  const blocked = !!error || (mode === "add" && (!name.trim() || nameTaken))
+  const named = mode === "add" || mode === "fetch"
+  const nameTaken = named && columns.includes(name.trim())
+  const blocked = !!error || (named && (!name.trim() || nameTaken))
   const apply = () => {
     if (blocked) return
     rememberExpression(expr.trim())
     if (mode === "facet-list" || mode === "facet-range") {
       onFacet?.(grel(expr))
       return onClose()
+    }
+    if (mode === "fetch") {
+      const httpHeadersJson = headers
+        .split("\n")
+        .map((l) => l.split(/:(.*)/s))
+        .filter(([n, v]) => n.trim() && v !== undefined)
+        .map(([n, v]) => ({ name: n.trim(), value: v.trim() }))
+      return onApply({
+        op: "core/column-addition-by-fetching-urls",
+        engineConfig: engine,
+        baseColumnName: column,
+        urlExpression: grel(expr),
+        onError: fetchError,
+        newColumnName: name.trim(),
+        columnInsertIndex: columns.indexOf(column) + 1,
+        delay,
+        cacheResponses: cache,
+        httpHeadersJson,
+      }).then(onClose)
     }
     return onApply(
       mode === "add"
@@ -121,16 +148,40 @@ export function TransformDialog({
           <DialogDescription>{HINTS[mode]}</DialogDescription>
         </DialogHeader>
         <FieldGroup>
-          {mode === "add" && (
+          {named && (
             <Field data-invalid={nameTaken}>
               <FieldLabel htmlFor="new-column">New column name</FieldLabel>
               <Input id="new-column" value={name} aria-invalid={nameTaken} onChange={(e) => setName(e.target.value)} />
               {nameTaken && <FieldError>A column with this name already exists.</FieldError>}
             </Field>
           )}
+          {mode === "fetch" && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="fetch-delay">Delay between requests (ms)</FieldLabel>
+                <Input id="fetch-delay" type="number" min={0} value={delay} onChange={(e) => setDelay(Math.max(0, Number(e.target.value) || 0))} />
+              </Field>
+              <Field>
+                <FieldLabel>When a request fails</FieldLabel>
+                <ToggleGroup variant="outline" value={[fetchError]} onValueChange={(v) => v[0] && setFetchError(v[0])}>
+                  <ToggleGroupItem value="set-to-blank">Leave blank</ToggleGroupItem>
+                  <ToggleGroupItem value="store-error">Store the error</ToggleGroupItem>
+                </ToggleGroup>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="fetch-headers">HTTP headers</FieldLabel>
+                <Textarea id="fetch-headers" className="font-mono" rows={2} placeholder="Authorization: Bearer …" value={headers} onChange={(e) => setHeaders(e.target.value)} />
+                <FieldDescription>One per line, as Name: value.</FieldDescription>
+              </Field>
+              <Field orientation="horizontal">
+                <Checkbox id="fetch-cache" checked={cache} onCheckedChange={(c) => setCache(!!c)} />
+                <FieldLabel htmlFor="fetch-cache">Fetch each distinct URL once</FieldLabel>
+              </Field>
+            </div>
+          )}
           <Field data-invalid={!!error}>
             <div className="flex items-end justify-between gap-2">
-              <FieldLabel htmlFor="expression">GREL expression</FieldLabel>
+              <FieldLabel htmlFor="expression">{mode === "fetch" ? "URL expression (GREL)" : "GREL expression"}</FieldLabel>
               {recent.length > 0 && (
                 <Select value="" onValueChange={(v) => v && setExpr(String(v))}>
                   <SelectTrigger size="sm" className="max-w-60" aria-label="Recent expressions">
@@ -582,6 +633,161 @@ export function ExtractDialog({
           </Button>
           <Button disabled={!steps.length} onClick={() => onSave(steps)}>
             Save…
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/** OpenRefine's Transpose menu: columns into rows, rows into columns, key/value pairs into columns. */
+export function TransposeDialog({
+  column,
+  columns,
+  mode,
+  onApply,
+  onClose,
+}: {
+  column: string
+  columns: string[]
+  mode: "columns" | "rows" | "columnize"
+  onApply: (op: Op) => Promise<void>
+  onClose: () => void
+}) {
+  const after = columns.slice(columns.indexOf(column) + 1)
+  const [count, setCount] = useState("2")
+  const [into, setInto] = useState<"one" | "two">("two")
+  const [combined, setCombined] = useState("")
+  const [prepend, setPrepend] = useState(true)
+  const [separator, setSeparator] = useState(":")
+  const [keyName, setKeyName] = useState("key")
+  const [valueName, setValueName] = useState("value")
+  const [ignoreBlank, setIgnoreBlank] = useState(true)
+  const [fillDown, setFillDown] = useState(false)
+  const [rows, setRows] = useState(2)
+  const [valueColumn, setValueColumn] = useState(after[0] ?? "")
+  const [noteColumn, setNoteColumn] = useState("")
+  const [error, setError] = useState("")
+
+  const names = into === "one" ? [combined.trim()] : [keyName.trim(), valueName.trim()]
+  const blocked = mode === "columns" ? names.some((n) => !n) : mode === "columnize" ? !valueColumn || valueColumn === column : rows < 1
+  const op = (): Op =>
+    mode === "columns"
+      ? {
+          op: "core/transpose-columns-into-rows",
+          startColumnName: column,
+          columnCount: count.trim() === "" ? -1 : Math.max(1, Number(count) || 1),
+          ignoreBlankCells: ignoreBlank,
+          fillDown,
+          ...(into === "one"
+            ? { combinedColumnName: combined.trim(), prependColumnName: prepend, separator }
+            : { keyColumnName: keyName.trim(), valueColumnName: valueName.trim(), separator: null }),
+        }
+      : mode === "rows"
+        ? { op: "core/transpose-rows-into-columns", columnName: column, rowCount: rows }
+        : { op: "core/key-value-columnize", keyColumnName: column, valueColumnName: valueColumn, noteColumnName: noteColumn }
+  const apply = () => !blocked && onApply(op()).then(onClose, (e) => setError(String((e as Error).message ?? e)))
+  const pick = (value: string, set: (v: string) => void, label: string, none?: string) => (
+    <Field>
+      <FieldLabel>{label}</FieldLabel>
+      <Select value={value || "\u0000"} onValueChange={(v) => set(v === "\u0000" ? "" : String(v))}>
+        <SelectTrigger aria-label={label}>
+          <SelectValue>{(v: string) => (v === "\u0000" ? none : v)}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {none && <SelectItem value={"\u0000"}>{none}</SelectItem>}
+            {columns.filter((c) => c !== column).map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </Field>
+  )
+
+  const title = { columns: `Transpose cells across columns into rows, from “${column}”`, rows: `Transpose cells in “${column}” into columns`, columnize: `Columnize by key “${column}” and a value column` }[mode]
+  const hint = {
+    columns: "Each row becomes one row per column, holding that column's cell; the other columns stay as they are.",
+    rows: "Every group of this many cells down the column goes side by side into new columns.",
+    columnize: "Each distinct key becomes a column holding its values; rows that agree on every other column become one row.",
+  }[mode]
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{hint}</DialogDescription>
+        </DialogHeader>
+        <FieldGroup>
+          {mode === "columns" && (
+            <>
+              <Field>
+                <FieldLabel htmlFor="tr-count">How many columns, starting with this one</FieldLabel>
+                <Input id="tr-count" type="number" min={1} placeholder={`All (${after.length + 1})`} value={count} onChange={(e) => setCount(e.target.value)} />
+                <FieldDescription>Leave empty for this column and every one after it.</FieldDescription>
+              </Field>
+              <Field>
+                <FieldLabel>Into</FieldLabel>
+                <ToggleGroup variant="outline" value={[into]} onValueChange={(v) => v[0] && setInto(v[0] as "one" | "two")}>
+                  <ToggleGroupItem value="two">A key and a value column</ToggleGroupItem>
+                  <ToggleGroupItem value="one">One column</ToggleGroupItem>
+                </ToggleGroup>
+              </Field>
+              {into === "two" ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <Field>
+                    <FieldLabel htmlFor="tr-key">Key column</FieldLabel>
+                    <Input id="tr-key" value={keyName} onChange={(e) => setKeyName(e.target.value)} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="tr-value">Value column</FieldLabel>
+                    <Input id="tr-value" value={valueName} onChange={(e) => setValueName(e.target.value)} />
+                  </Field>
+                </div>
+              ) : (
+                <>
+                  <Field>
+                    <FieldLabel htmlFor="tr-combined">Column name</FieldLabel>
+                    <Input id="tr-combined" value={combined} onChange={(e) => setCombined(e.target.value)} />
+                  </Field>
+                  <Field orientation="horizontal">
+                    <Checkbox id="tr-prepend" checked={prepend} onCheckedChange={(c) => setPrepend(!!c)} />
+                    <FieldLabel htmlFor="tr-prepend">Put the column name before each cell, followed by</FieldLabel>
+                    <Input aria-label="Separator" className="w-16 font-mono" value={separator} disabled={!prepend} onChange={(e) => setSeparator(e.target.value)} />
+                  </Field>
+                </>
+              )}
+              <Field orientation="horizontal">
+                <Checkbox id="tr-blank" checked={ignoreBlank} onCheckedChange={(c) => setIgnoreBlank(!!c)} />
+                <FieldLabel htmlFor="tr-blank">Skip blank cells</FieldLabel>
+              </Field>
+              <Field orientation="horizontal">
+                <Checkbox id="tr-fill" checked={fillDown} onCheckedChange={(c) => setFillDown(!!c)} />
+                <FieldLabel htmlFor="tr-fill">Fill the other columns down into the new rows</FieldLabel>
+              </Field>
+            </>
+          )}
+          {mode === "rows" && (
+            <Field>
+              <FieldLabel htmlFor="tr-rows">Cells per row</FieldLabel>
+              <Input id="tr-rows" type="number" min={1} value={rows} onChange={(e) => setRows(Math.max(1, Number(e.target.value) || 1))} />
+            </Field>
+          )}
+          {mode === "columnize" && (
+            <>
+              {pick(valueColumn, setValueColumn, "Value column")}
+              {pick(noteColumn, setNoteColumn, "Note column", "(none)")}
+            </>
+          )}
+          {error && <FieldError>{error}</FieldError>}
+        </FieldGroup>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+          <Button disabled={blocked} onClick={apply}>
+            Transpose
           </Button>
         </DialogFooter>
       </DialogContent>

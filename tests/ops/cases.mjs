@@ -1,6 +1,20 @@
 // Operation conformance catalog. gen.mjs applies each case to CORPUS in a fresh OpenRefine 3.10.1
 // project and stores the resulting table (columns, rows, typed cells, stars, flags) in fixtures.json.
 
+/** A second project for cross(): gen.mjs creates it in OpenRefine as "lookup"; the Rust test
+ * offers it to cross() under the same name. */
+export const LOOKUP = `city,country,pop
+New York,USA,8.3
+Boston,USA,0.65
+Chicago,USA,2.7
+Boston,US (dup),1
+`
+
+/** Answers of the local web server both gen.mjs and the Rust test run for fetch-URL cases; cases
+ * write its address as {BASE}. /echo/x gives "echo:x", /status/404 that status, /header the X-Ox
+ * request header, /count/k how many times k was asked for. */
+export const SERVER = "echo, status, header, count"
+
 // Records: a blank `id` continues the record above (OpenRefine's key column is the first one).
 export const CORPUS = `id,name,tags,city,score,joined,note
 1,Alice Smith,red|green,New York,10,2024-01-15,first
@@ -28,6 +42,11 @@ const split = (columnName, extra) => ({ op: "core/column-split", engineConfig: a
 /** OxRefine's records of single edits; gen.mjs runs them through OpenRefine's own commands. */
 const cellEdit = (row, columnName, value, type) => ({ op: "ox/cell-edit", row, columnName, value, type })
 const annotate = (row, what) => ({ op: "ox/row-annotate", row, ...what })
+const cols2rows = (startColumnName, columnCount, extra) => ({ op: "core/transpose-columns-into-rows", startColumnName, columnCount, ignoreBlankCells: true, fillDown: false, ...extra })
+const fetch = (baseColumnName, urlExpression, extra = {}) => ({ op: "core/column-addition-by-fetching-urls", engineConfig: all, baseColumnName,
+  urlExpression: "grel:" + urlExpression, onError: "set-to-blank", newColumnName: "fetched", columnInsertIndex: 1, delay: 0, cacheResponses: true, httpHeadersJson: [], ...extra })
+const add = (baseColumnName, expression) => ({ op: "core/column-addition", engineConfig: all, baseColumnName, newColumnName: "looked up", columnInsertIndex: 4,
+  expression: "grel:" + expression, onError: "store-error" })
 const sort = (...criteria) => ({ op: "core/row-reorder", mode: "row-based", sorting: { criteria } })
 const crit = (column, valueType, extra = {}) => ({ column, valueType, reverse: false, blankPosition: 2, errorPosition: 1, ...(valueType === "string" ? { caseSensitive: false } : {}), ...extra })
 
@@ -121,4 +140,42 @@ export const CASES = [
   ] },
   { name: "star and flag one row", ops: [annotate(2, { starred: true }), annotate(3, { flagged: true }), annotate(2, { starred: false }), annotate(8, { flagged: true })] },
   { name: "cell edit after sort", ops: [sort(crit("name", "string")), cellEdit(0, "name", "first after sort", "text"), annotate(0, { starred: true })] },
+
+  // transposing
+  { name: "columns into rows, one column", ops: [cols2rows("city", 2, { combinedColumnName: "pair", prependColumnName: true, separator: ":" })] },
+  { name: "columns into rows, keep blanks", ops: [cols2rows("city", 2, { combinedColumnName: "pair", prependColumnName: true, separator: ": ", ignoreBlankCells: false })] },
+  { name: "columns into rows, values only", ops: [cols2rows("city", 3, { combinedColumnName: "v", prependColumnName: false })] },
+  { name: "columns into rows, key and value", ops: [cols2rows("city", 3, { keyColumnName: "field", valueColumnName: "val" })] },
+  { name: "columns into rows, fill down", ops: [cols2rows("tags", 2, { keyColumnName: "field", valueColumnName: "val", fillDown: true })] },
+  { name: "columns into rows, to the end", ops: [cols2rows("score", -1, { keyColumnName: "k", valueColumnName: "v", ignoreBlankCells: false })] },
+  { name: "rows into columns", ops: [{ op: "core/transpose-rows-into-columns", columnName: "name", rowCount: 2 }] },
+  { name: "rows into columns by 3", ops: [{ op: "core/transpose-rows-into-columns", columnName: "city", rowCount: 3 }] },
+  { name: "key-value columnize", ops: [
+    cols2rows("city", 3, { keyColumnName: "key", valueColumnName: "value", fillDown: true }),
+    { op: "core/key-value-columnize", keyColumnName: "key", valueColumnName: "value", noteColumnName: "" }] },
+  { name: "key-value columnize, keys only", ops: [
+    cols2rows("id", 3, { keyColumnName: "key", valueColumnName: "value" }),
+    { op: "core/column-multi-removal", columnNames: ["tags", "city", "score", "joined", "note"] },
+    { op: "core/key-value-columnize", keyColumnName: "key", valueColumnName: "value", noteColumnName: "" }] },
+  { name: "key-value columnize with notes", ops: [
+    cols2rows("city", 2, { keyColumnName: "key", valueColumnName: "value", fillDown: true }),
+    { op: "core/key-value-columnize", keyColumnName: "key", valueColumnName: "value", noteColumnName: "note" }] },
+
+  // adding columns by fetching URLs (from the local server, no delay)
+  { name: "fetch urls", ops: [fetch("name", '"{BASE}/echo/" + escape(value, "url")')] },
+  { name: "fetch urls in facet", ops: [fetch("city", '"{BASE}/echo/" + escape(value, "url")', { engineConfig: text("city", "york") })] },
+  { name: "fetch 404 store-error", ops: [fetch("id", '"{BASE}/status/404"', { onError: "store-error" })] },
+  { name: "fetch 404 set-to-blank", ops: [fetch("id", '"{BASE}/status/404"')] },
+  { name: "fetch with header", ops: [fetch("id", '"{BASE}/header"', { httpHeadersJson: [{ name: "X-Ox", value: "hello" }] })] },
+  { name: "fetch without cache", ops: [fetch("id", '"{BASE}/count/nocache"', { cacheResponses: false })] },
+  { name: "fetch with cache", ops: [fetch("id", '"{BASE}/count/cache"', { cacheResponses: true })] },
+  { name: "fetch blank urls", ops: [fetch("note", 'if(isBlank(value), null, "{BASE}/echo/" + escape(value, "url"))')] },
+
+  // cross() into the lookup project
+  { name: "cross count", ops: [add("city", 'cell.cross("lookup", "city").length()')] },
+  { name: "cross field", ops: [add("city", 'forEach(cell.cross("lookup", "city"), r, r.cells["country"].value).join("|")')] },
+  { name: "cross from value", ops: [add("city", 'value.cross("lookup", "city")[0].cells.pop.value')] },
+  { name: "cross trimmed key", ops: [add("city", 'value.trim().cross("lookup", "city").length()')] },
+  { name: "cross unknown project", ops: [add("city", 'cell.cross("nowhere", "city").length()')] },
+  { name: "cross unknown column", ops: [add("city", 'cell.cross("lookup", "town").length()')] },
 ]

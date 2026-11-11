@@ -799,9 +799,9 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             Bool(b) => Bool(!b),
             _ => fail!("not expects a boolean"),
         },
-        // ponytail: cross() and facetCount() need the project (other columns' value index); wire through Row later
+        // evaluated in eval.rs, where the row and the session's projects are at hand
         "facetCount" => fail!("facetCount needs a project"),
-        "cross" => fail!("cross is not supported yet"),
+        "cross" => fail!("cross needs the projects of this session"),
         _ => fail!("Unknown function {name}"),
     }
 }

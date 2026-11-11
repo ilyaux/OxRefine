@@ -803,6 +803,15 @@ impl Archive {
                 _ => self.changes[k].as_ref().and_then(|c| c.single_edit(&self.states[i - 1])).ok_or_else(|| "OxRefine can't redo this kind of edit".to_string()),
             };
             let target = state.table();
+            // OpenRefine keeps what it fetched; the step replays from that instead of fetching again
+            let kind = kind.map(|mut k| {
+                if let OpKind::ColumnAdditionByFetchingUrls { new_column_name, fetched, .. } = &mut k {
+                    if let Ok(c) = target.col(new_column_name) {
+                        *fetched = Some((0..target.rows).map(|r| fetched_cell(target.columns[c].get(r))).collect());
+                    }
+                }
+                k
+            });
             let replayed = kind.and_then(|kind| {
                 let mut op = Op { kind, description: e.description.clone() };
                 let t = op.apply(tables.last().unwrap())?;
@@ -832,6 +841,15 @@ impl Archive {
         // the history ends early when a redo couldn't be read; the cursor stays inside it
         p.goto(cursor.min(n - 1)).expect("cursor within the steps");
         (p, report)
+    }
+}
+
+/// A fetched cell as an operation keeps it: null | text | {"e": message}.
+fn fetched_cell(v: &Value) -> J {
+    match v {
+        Value::Null => J::Null,
+        Value::Error(e) => json!({ "e": e }),
+        other => J::String(other.to_java_string()),
     }
 }
 
@@ -933,7 +951,7 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
     let stamp = now.format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
     let id0 = now.timestamp_millis();
     let entry = |k: usize, op: &Op| {
-        let operation = if op.in_recipe() { serde_json::to_value(op).unwrap_or(J::Null) } else { J::Null };
+        let operation = if op.in_recipe() { op.recipe_json() } else { J::Null };
         json!({ "id": id0 + k as i64, "description": op.description(), "operation": operation, "time": stamp }).to_string()
     };
 

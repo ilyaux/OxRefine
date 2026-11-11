@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, type ImportReport, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
-import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransformDialog } from "@/Dialogs"
+import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
@@ -26,7 +26,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
 
 type Modal =
-  | { kind: "transform" | "add" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
+  | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
+  | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "export"; format: ExportFormat }
   | { kind: "extract" }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onSubmit: (v: string) => Promise<void> }
@@ -194,7 +195,9 @@ export function App() {
     else if (a.kind === "common")
       apply({ op: "core/text-transform", engineConfig: engine, columnName: c, expression: `grel:${a.expression}`, onError: "keep-original", repeat: false, repeatCount: 10 }).catch(() => {})
     else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
-    else if (a.kind === "add-column") setModal({ kind: "add", column: c })
+    else if (a.kind === "add-column" || a.kind === "fetch") setModal({ kind: a.kind === "fetch" ? "fetch" : "add", column: c })
+    else if (a.kind === "transpose-columns" || a.kind === "transpose-rows" || a.kind === "columnize")
+      setModal({ kind: "transpose", column: c, mode: a.kind === "columnize" ? "columnize" : a.kind === "transpose-rows" ? "rows" : "columns" })
     else if (a.kind === "remove") apply({ op: "core/column-removal", columnName: c }).catch(() => {})
     else if (a.kind === "fill-down" || a.kind === "blank-down") apply({ op: `core/${a.kind}`, engineConfig: engine, columnName: c }).catch(() => {})
     else if (a.kind === "dedupe") apply({ op: "core/row-duplicate-removal", engineConfig: engine, criteria: [c] }).catch(() => {})
@@ -409,7 +412,10 @@ export function App() {
           }}
         />
       )}
-      {(modal?.kind === "transform" || modal?.kind === "add" || modal?.kind === "facet-list" || modal?.kind === "facet-range") && summary && (
+      {modal?.kind === "transpose" && summary && (
+        <TransposeDialog column={modal.column} columns={summary.columns} mode={modal.mode} onApply={apply} onClose={() => setModal(null)} />
+      )}
+      {(modal?.kind === "transform" || modal?.kind === "add" || modal?.kind === "fetch" || modal?.kind === "facet-list" || modal?.kind === "facet-range") && summary && (
         <TransformDialog
           column={modal.column}
           mode={modal.kind}

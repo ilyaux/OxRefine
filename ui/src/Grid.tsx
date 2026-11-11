@@ -69,6 +69,7 @@ export type ColumnAction =
         | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
         | "move-first" | "move-left" | "move-right" | "move-last"
         | "numeric-facet" | "custom-list-facet" | "custom-range-facet"
+        | "fetch" | "transpose-columns" | "transpose-rows" | "columnize"
       column: string
     }
   | { kind: "preset-facet"; column: string; facet: "list" | "range"; expression: string }
@@ -372,6 +373,7 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
           <DropdownMenuLabel>Edit column</DropdownMenuLabel>
           <DropdownMenuItem onClick={act("split")}>Split into several columns…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("add-column")}>Add column based on this…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("fetch")}>Add column by fetching URLs…</DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Move column</DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
@@ -384,6 +386,13 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
             </DropdownMenuSubContent>
           </DropdownMenuSub>
           <DropdownMenuItem onClick={act("rename")}>Rename…</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Transpose</DropdownMenuLabel>
+          <DropdownMenuItem onClick={act("transpose-columns")}>Cells across columns into rows…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("transpose-rows")}>Cells in rows into columns…</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("columnize")}>Columnize by key/value columns…</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>

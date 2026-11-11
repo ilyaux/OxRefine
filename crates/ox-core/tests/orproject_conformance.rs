@@ -65,6 +65,11 @@ fn openrefine_project_archives() {
         .collect();
     let out = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../target/orproject-export"));
     std::fs::create_dir_all(out).unwrap();
+    // the project cross() cases look into
+    let ops: J = serde_json::from_str(&std::fs::read_to_string(format!("{root}../ops/fixtures.json")).unwrap()).unwrap();
+    let lookup_csv = out.join("lookup.csv");
+    std::fs::write(&lookup_csv, ops["lookup"].as_str().unwrap()).unwrap();
+    let lookup = Project::open(&lookup_csv).unwrap().table().clone();
 
     let (mut failing, mut report) = (BTreeSet::new(), vec![]);
     for case in fx["cases"].as_array().unwrap() {
@@ -83,7 +88,8 @@ fn openrefine_project_archives() {
         }
 
         // 2. as an OxRefine project: replayed steps give OpenRefine's tables
-        let (mut p, r) = a.into_project();
+        let lk = lookup.clone();
+        let (mut p, r) = ox_core::cross::scope(move |n| if n == "lookup" { vec![lk.clone()] } else { vec![] }, || a.into_project());
         let (tables, descriptions) = steps(&mut p);
         let mut why = None;
         if r.merged > 0 || r.dropped > 0 {
@@ -100,7 +106,8 @@ fn openrefine_project_archives() {
         orproject::write(&p, &path).unwrap_or_else(|e| panic!("{name}: writing: {e}"));
         let back = orproject::read(&path).unwrap_or_else(|e| panic!("{name}: reading our archive: {e}"));
         assert_eq!((back.first, back.last(), back.cursor), (0, tables.len() - 1, cursor - r.merged), "{name}: our archive: {:?}", back.stopped);
-        let (mut q, r2) = back.into_project();
+        let lk = lookup.clone();
+        let (mut q, r2) = ox_core::cross::scope(move |n| if n == "lookup" { vec![lk.clone()] } else { vec![] }, || back.into_project());
         assert_eq!((r2.merged, r2.dropped), (0, 0), "{name}: our archive replays: {:?}", r2.reason);
         assert_eq!(steps(&mut q), (tables, descriptions), "{name}: our archive");
 
