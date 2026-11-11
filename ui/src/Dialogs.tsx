@@ -190,6 +190,16 @@ export function TransformDialog({
 type Cluster = [string, number][]
 const SHOWN = 300
 
+/** OpenRefine's key-collision keying functions, in its menu order. */
+const KEYERS: [string, string][] = [
+  ["fingerprint", "Fingerprint"],
+  ["ngram-fingerprint", "N-gram fingerprint"],
+  ["metaphone3", "Metaphone 3"],
+  ["cologne-phonetic", "Cologne phonetic"],
+  ["daitch-mokotoff", "Daitch-Mokotoff"],
+  ["beider-morse", "Beider-Morse"],
+]
+
 export function ClusterDialog({
   column,
   engine,
@@ -201,20 +211,38 @@ export function ClusterDialog({
   onApply: (op: Op) => Promise<void>
   onClose: () => void
 }) {
-  const [method, setMethod] = useState("fingerprint")
+  // OpenRefine's clustering dialog: key collision with a keying function, or nearest neighbours
+  // with a distance, a radius and the size of the n-grams that decide which values get compared
+  const [kind, setKind] = useState<"binning" | "knn">("binning")
+  const [keyer, setKeyer] = useState("fingerprint")
+  const [distance, setDistance] = useState("levenshtein")
+  const [ngram, setNgram] = useState(2)
+  const [radius, setRadius] = useState(1)
+  const [block, setBlock] = useState(6)
   const [clusters, setClusters] = useState<Cluster[] | null>(null)
+  const [error, setError] = useState("")
   const [picks, setPicks] = useState<{ merge: boolean; to: string }[]>([])
   const [ms, setMs] = useState(0)
   const [tick, setTick] = useState(0)
+  const method = kind === "binning" ? keyer : distance
 
   useEffect(() => {
+    let live = true
     setClusters(null)
-    call<Cluster[]>("cluster", { engine, column, method }).then(({ data, ms }) => {
-      setClusters(data)
-      setPicks(data.map((c) => ({ merge: false, to: c[0][0] })))
-      setMs(ms)
-    })
-  }, [method, column, engine, tick])
+    setError("")
+    call<Cluster[]>("cluster", { engine, column, method, n: ngram, radius, block }).then(
+      ({ data, ms }) => {
+        if (!live) return
+        setClusters(data)
+        setPicks(data.map((c) => ({ merge: false, to: c[0][0] })))
+        setMs(ms)
+      },
+      (e) => live && setError(String((e as Error).message ?? e)),
+    )
+    return () => {
+      live = false
+    }
+  }, [method, ngram, radius, block, column, engine, tick])
 
   const set = (i: number, p: Partial<{ merge: boolean; to: string }>) =>
     setPicks((all) => all.map((x, j) => (j === i ? { ...x, ...p } : x)))
@@ -243,12 +271,75 @@ export function ClusterDialog({
               : "Finding clusters…"}
           </DialogDescription>
         </DialogHeader>
-        <ToggleGroup variant="outline" value={[method]} onValueChange={(v) => v[0] && setMethod(v[0])}>
-          <ToggleGroupItem value="fingerprint">Fingerprint</ToggleGroupItem>
-          <ToggleGroupItem value="ngram-fingerprint">N-gram fingerprint</ToggleGroupItem>
-        </ToggleGroup>
+        <div className="flex flex-wrap items-end gap-3">
+          <Field className="w-auto">
+            <FieldLabel>Method</FieldLabel>
+            <ToggleGroup variant="outline" value={[kind]} onValueChange={(v) => v[0] && setKind(v[0] as "binning" | "knn")}>
+              <ToggleGroupItem value="binning">Key collision</ToggleGroupItem>
+              <ToggleGroupItem value="knn">Nearest neighbours</ToggleGroupItem>
+            </ToggleGroup>
+          </Field>
+          {kind === "binning" ? (
+            <>
+              <Field className="w-56">
+                <FieldLabel>Keying function</FieldLabel>
+                <Select value={keyer} onValueChange={(v) => v && setKeyer(String(v))}>
+                  <SelectTrigger aria-label="Keying function">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {KEYERS.map(([v, label]) => (
+                        <SelectItem key={v} value={v}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+              {keyer === "ngram-fingerprint" && (
+                <Field className="w-28">
+                  <FieldLabel htmlFor="cl-ngram">N-gram size</FieldLabel>
+                  <Input id="cl-ngram" type="number" min={1} value={ngram} onChange={(e) => setNgram(Math.max(1, Number(e.target.value) || 1))} />
+                </Field>
+              )}
+            </>
+          ) : (
+            <>
+              <Field className="w-44">
+                <FieldLabel>Distance</FieldLabel>
+                <Select value={distance} onValueChange={(v) => v && setDistance(String(v))}>
+                  <SelectTrigger aria-label="Distance">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="levenshtein">Levenshtein</SelectItem>
+                      <SelectItem value="ppm" disabled>
+                        PPM (not available yet)
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field className="w-24">
+                <FieldLabel htmlFor="cl-radius">Radius</FieldLabel>
+                <Input id="cl-radius" type="number" min={0} step={0.5} value={radius} onChange={(e) => setRadius(Number(e.target.value) || 0)} />
+              </Field>
+              <Field className="w-32">
+                <FieldLabel htmlFor="cl-block">Block chars</FieldLabel>
+                <Input id="cl-block" type="number" min={1} value={block} onChange={(e) => setBlock(Math.max(1, Number(e.target.value) || 1))} />
+              </Field>
+            </>
+          )}
+        </div>
         <ScrollArea className="h-96 rounded-lg border">
-          {!clusters ? (
+          {error ? (
+            <div className="flex h-96 items-center justify-center p-4">
+              <FieldError>{error}</FieldError>
+            </div>
+          ) : !clusters ? (
             <div className="flex h-96 items-center justify-center">
               <Spinner />
             </div>

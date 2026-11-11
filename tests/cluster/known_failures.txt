@@ -1,0 +1,10 @@
+# Cases where OxRefine differs from OpenRefine 3.10.1. Format: <case name> # <reason>
+phonetic beider-morse "Catharine" # past 20 alternatives Commons Codec truncates its list while building; rphonetic keeps a different 20, so the smallest differs
+phonetic beider-morse "Alexander" # same Beider-Morse truncation difference (more than 20 alternatives)
+phonetic beider-morse "International Business Machines" # same Beider-Morse truncation difference
+phonetic beider-morse "Coca-Cola" # same Beider-Morse truncation difference
+phonetic beider-morse "Coca Cola" # same Beider-Morse truncation difference
+phonetic beider-morse "CocaCola" # same Beider-Morse truncation difference
+beider-morse {} # follows from the Beider-Morse keys above (Catharine, Alexander)
+ppm {"radius":1,"blocking-ngram-size":6} # PPM distance not ported yet: it needs the arithcode compressor OpenRefine bundles
+ppm {"radius":2,"blocking-ngram-size":3} # PPM distance not ported yet

@@ -6,3 +6,21 @@ licensed under the BSD 3-Clause License. OxRefine contains no OpenRefine code.
 Test fixtures under tests/ were produced by running OpenRefine 3.10.1, and the
 GREL function descriptions in ui/src/grel-docs.json come from OpenRefine 3.10.1
 (get-expression-language-info), used under the same BSD 3-Clause License.
+
+crates/ox-core/assets/commons-codec/ holds the Beider-Morse and Daitch-Mokotoff
+rule files from Apache Commons Codec 1.20.0 (the version OpenRefine 3.10.1
+uses), under the Apache License 2.0 (LICENSE.txt in that folder):
+
+  Apache Commons Codec
+  Copyright 2002-2025 The Apache Software Foundation
+
+  This product includes software developed at
+  The Apache Software Foundation (https://www.apache.org/).
+
+crates/ox-core/src/double_metaphone.rs is adapted from rphonetic 4.0.0
+(https://github.com/Dalvany/rphonetic, Apache License 2.0), a port of Apache
+Commons Codec's DoubleMetaphone; the changes are described at its top.
+
+crates/ox-core/src/metaphone3.rs is adapted from the metaphone3 crate 0.2.0
+(https://github.com/kakserpom/metaphone3-rs, MIT License), a port of Lawrence
+Philips' Metaphone 3 (BSD License); the changes are described at its top.

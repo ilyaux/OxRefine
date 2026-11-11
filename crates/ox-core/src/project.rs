@@ -187,6 +187,9 @@ struct Args {
     ops: Vec<Op>,
     params: Value,
     steps: Vec<usize>,
+    /// nearest-neighbour clustering: distance radius and blocking n-gram size
+    radius: Option<f64>,
+    block: usize,
     /// clipboard text to stage (`paste`), or where a staged file came from (`open`)
     text: String,
     url: String,
@@ -329,7 +332,9 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let t = p.table();
             let vc = engine::value_counts(t, t.col(&a.column)?, &rows);
             let vc: Vec<(&str, u32)> = vc.iter().map(|(v, c)| (v.as_str(), *c)).collect();
-            json!(cluster::cluster(&vc, &a.method, if a.n == 0 { 2 } else { a.n })?)
+            // OpenRefine's defaults: n-gram size 2, radius 1, blocks of 6-character n-grams
+            let (n, block) = (if a.n == 0 { 2 } else { a.n }, if a.block == 0 { 6 } else { a.block });
+            json!(cluster::cluster(&vc, &a.method, n, a.radius.unwrap_or(1.0), block)?)
         }
         "preview" => {
             let e = grel::compile(&a.expression)?;

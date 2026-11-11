@@ -99,7 +99,7 @@ pub fn parse_number(s: &str) -> Option<Value> {
 /// OpenRefine's fingerprint keyer: trim, lowercase, fold accents, drop punctuation and control
 /// characters (Unicode \p{P}; symbols like < = + stay), then sorted unique whitespace tokens.
 pub fn fingerprint(s: &str) -> String {
-    let s = strip_punct(&crate::cluster::asciify(&text::java_strip(s).to_lowercase()));
+    let s = strip_punct(&crate::cluster::fingerprint_fold(&text::java_strip(s).to_lowercase()));
     let mut t: Vec<&str> = s.split_whitespace().collect();
     t.sort_unstable();
     t.dedup();
@@ -107,7 +107,7 @@ pub fn fingerprint(s: &str) -> String {
 }
 
 pub fn ngram_fingerprint(s: &str, n: usize) -> String {
-    let c: Vec<char> = crate::cluster::asciify(&strip_punct(&s.to_lowercase())).chars().filter(|c| !c.is_whitespace()).collect();
+    let c: Vec<char> = crate::cluster::fingerprint_fold(&strip_punct(&s.to_lowercase())).chars().filter(|c| !c.is_whitespace()).collect();
     if c.len() < n {
         return String::new();
     }
@@ -420,14 +420,28 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             None => Null,
             Some(s) => Str(ngram_fingerprint(&s, a1.as_i64().unwrap_or(1).max(1) as usize)),
         },
+        // OpenRefine: Commons Codec for doublemetaphone, metaphone and soundex; any other name is a
+        // clustering keyer (metaphone3 by default, cologne-phonetic, daitch-mokotoff, beider-morse...)
         "phonetic" => match (a0, a1) {
-            (Str(s), Str(enc)) => match enc.as_str() {
-                "soundex" => text::soundex(s).map_or_else(Value::err, Str),
-                // ponytail: metaphone / double metaphone / metaphone3 still to port (Commons Codec + Metaphone3)
-                "metaphone" | "doublemetaphone" | "metaphone3" => fail!("phonetic encoding '{enc}' is not supported yet"),
-                _ => fail!("phonetic does not know how to handle the '{enc}' encoding"),
-            },
-            _ => fail!("phonetic expects at least one argument"),
+            (Null, _) => fail!("phonetic expects at least one argument"),
+            (v, Str(_) | Null) => {
+                let s = match v {
+                    Str(s) => s.clone(),
+                    v => v.to_java_string(),
+                };
+                let enc = if let Str(e) = a1 { e.to_lowercase() } else { "metaphone3".into() };
+                match enc.as_str() {
+                    "soundex" => text::soundex(&s).map_or_else(Value::err, Str),
+                    "metaphone" => Str(crate::cluster::metaphone(&s, false)),
+                    "doublemetaphone" => Str(crate::cluster::metaphone(&s, true)),
+                    e if !e.starts_with("ngram") || e == "ngram-fingerprint" => match crate::cluster::key(e, &s, 2) {
+                        Ok(k) => Str(k),
+                        Err(_) => fail!("phonetic does not know how to handle the '{enc}' encoding"),
+                    },
+                    _ => fail!("phonetic does not know how to handle the '{enc}' encoding"),
+                }
+            }
+            _ => fail!("phonetic expects a string as the second argument"),
         },
         "unicode" => match a0 {
             Str(s) => Array(s.chars().map(|c| Int(c as i64)).collect()),

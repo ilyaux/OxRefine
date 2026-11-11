@@ -2,9 +2,11 @@
 pub mod cluster;
 pub mod engine;
 pub mod export;
+pub mod double_metaphone;
 pub mod grel;
 pub mod import;
 pub mod jobs;
+pub mod metaphone3;
 pub mod ops;
 pub mod project;
 pub mod store;

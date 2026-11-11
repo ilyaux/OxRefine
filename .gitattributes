@@ -7,3 +7,6 @@ tests/**/*.json -text
 tests/**/*.fods -text
 tests/**/*.ods binary
 tests/**/*.xlsx binary
+
+# Bundled rule files are read byte for byte
+crates/ox-core/assets/** -text

@@ -1,11 +1,5 @@
 # Expressions whose OxRefine result still differs from OpenRefine 3.10.1. Each line: expression  # reason.
 # The conformance test fails when one of these starts passing, so remove lines as they get fixed.
-value.phonetic('metaphone3')  # Metaphone3 not ported yet (roadmap cl-phonetic)
-value.phonetic('doublemetaphone')  # Double Metaphone not ported yet (roadmap cl-phonetic)
-value.phonetic('metaphone')  # Metaphone not ported yet (roadmap cl-phonetic)
-'Thompson'.phonetic('metaphone3')  # Metaphone3 not ported yet
-'Smith'.phonetic('doublemetaphone')  # Double Metaphone not ported yet
-'Knight'.phonetic('metaphone')  # Metaphone not ported yet
 'This is plain English text about cleaning data.'.detectLanguage()  # needs a language-identification model
 'Это русский текст о чистке данных.'.detectLanguage()  # needs a language-identification model
 cosh(1)  # last-digit difference between Java StrictMath (fdlibm) and Rust libm
