@@ -119,8 +119,8 @@ Every facet type, including customized and expression facets.
 
 All key-collision keyers and nearest-neighbour methods.
 
-- [ ] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
-- [ ] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein and PPM distances with n-gram blocking, radius and block size; parallel (rayon). _OpenRefine: knn: levenshtein, ppm_
+- [~] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
+- [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein and PPM distances with n-gram blocking, radius and block size; parallel (rayon). _OpenRefine: knn: levenshtein, ppm_
 - [ ] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
 - [ ] **Custom clustering functions** · later · P2 · M. User-defined keying and distance functions in GREL. _OpenRefine: clustering-functions-dialog_
 
