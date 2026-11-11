@@ -1,9 +1,6 @@
 use crate::{grel, grel::Value, Result};
-use std::{
-    collections::HashMap,
-    path::Path,
-    sync::Arc,
-};
+use rustc_hash::FxHashMap as HashMap;
+use std::{path::Path, sync::Arc};
 
 const NONE: u32 = u32::MAX;
 

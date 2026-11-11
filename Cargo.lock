@@ -2423,6 +2423,7 @@ dependencies = [
  "md-5",
  "regex",
  "rust_xlsxwriter",
+ "rustc-hash",
  "scraper",
  "serde",
  "serde_json",

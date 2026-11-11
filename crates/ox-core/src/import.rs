@@ -110,7 +110,7 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
     crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), 0);
     match format_for(path, format) {
-        Format::Csv => import_text(path, o),
+        Format::Csv => import_text(path, o, PARALLEL_FROM),
         Format::Lines => import_lines(path, o),
         Format::Excel | Format::Ods => import_sheets(path, o),
         Format::Json | Format::JsonLines => import_json(path, format_for(path, format) == Format::JsonLines, o),
@@ -529,7 +529,124 @@ impl<R: Read> Read for PlainBreaks<R> {
     }
 }
 
-fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
+/// Files at least this big intern their data rows on all cores (`feed_parallel`); smaller ones
+/// aren't worth the threads.
+const PARALLEL_FROM: u64 = 8 << 20;
+const BATCH_ROWS: usize = 16_384;
+
+/// Data rows copied out of the parser for the column workers: field bytes back to back.
+#[derive(Default)]
+struct Batch {
+    data: Vec<u8>,
+    /// end of each field in `data`
+    ends: Vec<usize>,
+    /// end of each row in `ends`
+    rows: Vec<usize>,
+}
+
+impl Batch {
+    fn push(&mut self, rec: &csv::ByteRecord) {
+        for f in rec {
+            self.data.extend_from_slice(f);
+            self.ends.push(self.data.len());
+        }
+        self.rows.push(self.ends.len());
+    }
+    /// Fields of row `r`, as indexes into `ends`.
+    fn row(&self, r: usize) -> std::ops::Range<usize> {
+        let start = if r == 0 { 0 } else { self.rows[r - 1] };
+        start..self.rows[r]
+    }
+    fn field(&self, i: usize) -> &[u8] {
+        &self.data[if i == 0 { 0 } else { self.ends[i - 1] }..self.ends[i]]
+    }
+}
+
+/// The data phase of a big delimited file on all cores. This thread parses and applies the row
+/// rules (limit, blank rows); worker `w` owns the columns `c` with `c % workers == w` and walks every
+/// row in order, so each column's dictionary comes out exactly as one thread would build it.
+/// `rec` already holds the first data record.
+fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut csv::ByteRecord) -> Result<()> {
+    let workers = std::thread::available_parallelism().map_or(4, |n| n.get()).clamp(1, 16);
+    let mut owned: Vec<Vec<(usize, Interner, Vec<u32>)>> = (0..workers).map(|_| vec![]).collect();
+    for (c, (i, codes)) in std::mem::take(&mut b.cols).into_iter().enumerate() {
+        owned[c % workers].push((c, i, codes));
+    }
+    let (o, start) = (b.o, b.rows);
+    let mut sent = 0usize;
+    let result = std::thread::scope(|s| -> Result<Vec<Vec<(usize, Interner, Vec<u32>)>>> {
+        let mut txs = vec![];
+        let mut handles = vec![];
+        for (w, mut cols) in owned.into_iter().enumerate() {
+            let (tx, rx) = std::sync::mpsc::sync_channel::<Arc<Batch>>(4);
+            txs.push(tx);
+            handles.push(s.spawn(move || {
+                let mut rows = start;
+                for batch in rx {
+                    for r in 0..batch.rows.len() {
+                        let fields = batch.row(r);
+                        let n = fields.len();
+                        // columns this row reaches for the first time start with nulls for the rows before
+                        let mut c = cols.last().map_or(w, |x| x.0 + workers);
+                        while c < n {
+                            let mut i = Interner::default();
+                            let null = i.intern(Value::Null);
+                            cols.push((c, i, vec![null; rows]));
+                            c += workers;
+                        }
+                        for (c, i, codes) in cols.iter_mut() {
+                            codes.push(if *c < n {
+                                code(o, i, Field::Text(&String::from_utf8_lossy(batch.field(fields.start + *c))))
+                            } else {
+                                i.intern(Value::Null)
+                            });
+                        }
+                        rows += 1;
+                    }
+                }
+                cols
+            }));
+        }
+        let mut batch = Batch::default();
+        let mut parsed = Ok(());
+        loop {
+            if o.limit >= 0 && (start + sent) as i64 >= o.limit {
+                break;
+            }
+            b.line += 1;
+            let blank = !o.store_blank_rows && rec.iter().all(|f| String::from_utf8_lossy(f).trim().is_empty());
+            if !blank {
+                batch.push(rec);
+                sent += 1;
+                if batch.rows.len() == BATCH_ROWS {
+                    let full = Arc::new(std::mem::take(&mut batch));
+                    txs.iter().for_each(|tx| drop(tx.send(full.clone())));
+                }
+            }
+            match rdr.read_byte_record(rec) {
+                Ok(true) => {}
+                Ok(false) => break,
+                Err(e) => {
+                    parsed = Err(err(e));
+                    break;
+                }
+            }
+        }
+        let last = Arc::new(batch);
+        txs.iter().for_each(|tx| drop(tx.send(last.clone())));
+        drop(txs);
+        let cols = handles.into_iter().map(|h| h.join().map_err(|_| "an import worker failed".to_string())).collect::<Result<Vec<_>>>()?;
+        parsed.map(|_| cols)
+    })?;
+    let mut cols: Vec<(usize, Interner, Vec<u32>)> = result.into_iter().flatten().collect();
+    cols.sort_by_key(|c| c.0);
+    b.cols = cols.into_iter().map(|(_, i, codes)| (i, codes)).collect();
+    b.rows = start + sent;
+    Ok(())
+}
+
+/// Delimited text; files of `parallel_from` bytes or more use all cores for the data rows.
+fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Table> {
     let sep = match &o.separator {
         Some(s) if s == "\\t" => '\t',
         Some(s) if !s.is_empty() => {
@@ -559,8 +676,13 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
         r
     };
     let mut rec = csv::ByteRecord::new();
-    let mut feed = |rdr: &mut csv::Reader<Box<dyn Read>>| -> Result<()> {
+    let first_data = (o.ignore_lines.max(0) + o.header_lines.max(0) + o.skip_data_lines.max(0)) as usize;
+    let mut feed = |rdr: &mut csv::Reader<Box<dyn Read>>, parallel: bool| -> Result<()> {
         while rdr.read_byte_record(&mut rec).map_err(err)? {
+            // header lines and the first row go through the builder; big files hand the rest to all cores
+            if parallel && b.line >= first_data && b.line > 0 {
+                return feed_parallel(&mut b, rdr, &mut rec);
+            }
             if !b.push_bytes(&rec) {
                 break;
             }
@@ -569,6 +691,7 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
     };
     if is_utf8(&o.encoding) {
         let f = File::open(path).map_err(err)?;
+        let parallel = f.metadata().is_ok_and(|m| m.len() >= parallel_from);
         crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
         let reader = std::io::BufReader::with_capacity(1 << 20, crate::jobs::Counted(f));
         // ponytail: line breaks are judged from the first 64 KB; a file whose first "\r" comes later keeps it as data
@@ -578,11 +701,12 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
         } else {
             Box::new(reader)
         };
-        feed(&mut builder().from_reader(file))?;
+        feed(&mut builder().from_reader(file), parallel)?;
     } else {
         let text = decode(path, &o.encoding)?;
+        let parallel = text.len() as u64 >= parallel_from;
         let bytes: Box<dyn Read> = Box::new(std::io::Cursor::new(plain_breaks(&text).into_owned().into_bytes()));
-        feed(&mut builder().from_reader(bytes))?;
+        feed(&mut builder().from_reader(bytes), parallel)?;
     }
     Ok(b.finish())
 }
@@ -918,6 +1042,56 @@ impl Table {
             rows,
             starred: Arc::new(vec![false; rows]),
             flagged: Arc::new(vec![false; rows]),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The parallel data stage must build exactly the table the single-threaded one builds: same
+    /// names, codes and dictionary order, across batch boundaries, ragged rows, late columns,
+    /// blank rows, quoted newlines and every row option.
+    #[test]
+    fn parallel_import_matches_serial() {
+        let mut text = String::from("\u{feff}title,a,b,c\nsecond,header,line,x\n");
+        for r in 0..40_000u32 {
+            let line = match r % 11 {
+                0 => format!("{r},\"multi\nline {}\",{},  pad  ", r % 7, r % 3),
+                1 => format!("{r},short"),
+                2 => String::new(),
+                3 => format!("{r},{},{},{},extra {},{}", r % 5, r % 2, r, r % 13, r % 4),
+                4 => ",,,".to_string(),
+                5 => format!("{r},{}.5,true,", r % 9),
+                _ => format!("{r},v{},w{},{}", r % 101, r % 17, r % 3),
+            };
+            text += &line;
+            text += "\n";
+            if r == 30_000 {
+                text += "late,1,2,3,4,5,6,7,8,9,10,11\n";
+            }
+        }
+        let path = std::env::temp_dir().join("oxrefine-parallel-import.csv");
+        std::fs::write(&path, &text).unwrap();
+        let base = ImportOptions::default();
+        let variants = [
+            ImportOptions { ..base.clone() },
+            ImportOptions { header_lines: 2, ..base.clone() },
+            ImportOptions { ignore_lines: 1, skip_data_lines: 3, ..base.clone() },
+            ImportOptions { store_blank_rows: false, ..base.clone() },
+            ImportOptions { limit: 20_000, ..base.clone() },
+            ImportOptions { trim_strings: true, guess_cell_value_types: true, store_blank_cells_as_nulls: false, ..base.clone() },
+            ImportOptions { header_lines: 0, ..base.clone() },
+        ];
+        for (k, o) in variants.iter().enumerate() {
+            let serial = import_text(&path, o, u64::MAX).unwrap();
+            let parallel = import_text(&path, o, 0).unwrap();
+            assert_eq!(serial.names, parallel.names, "variant {k}: names");
+            assert_eq!(serial.rows, parallel.rows, "variant {k}: rows");
+            for (c, (s, p)) in serial.columns.iter().zip(&parallel.columns).enumerate() {
+                assert!(s.dict == p.dict && s.codes == p.codes, "variant {k}: column {c} differs");
+            }
         }
     }
 }
