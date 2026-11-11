@@ -48,14 +48,14 @@ Every format OpenRefine imports, with its options and preview.
 - [~] **Excel xlsx/xls** · v0.2 · P0 · M. Sheet selection, multiple sheets into one project, dates as dates (calamine). _OpenRefine: binary/text/xml/xls/xlsx_
 - [~] **OpenDocument spreadsheet** · v0.5 · P2 · S. ODS through the same sheet importer. _OpenRefine: text/xml/ods_
 - [~] **JSON and JSON Lines** · v0.2 · P0 · L. Pick the record path in a tree preview; nested fields become columns; JSONL streams. _OpenRefine: text/json_
-- [ ] **XML** · v0.5 · P1 · L. Pick the record element in a tree preview, attributes and nested elements as columns. _OpenRefine: text/xml_
-- [ ] **Fixed-width text** · v0.5 · P2 · M. Column widths with a draggable ruler in preview. _OpenRefine: text/line-based/fixed-width_
+- [~] **XML** · v0.5 · P1 · L. Pick the record element in a tree preview, attributes and nested elements as columns. _OpenRefine: text/xml_
+- [~] **Fixed-width text** · v0.5 · P2 · M. Column widths with a draggable ruler in preview. _OpenRefine: text/line-based/fixed-width_
 - [~] **Line-based text** · v0.5 · P2 · S. One line per row, lines-per-row grouping. _OpenRefine: text/line-based_
 - [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** · later · P2 · L. Subject-per-record import as OpenRefine does. _OpenRefine: text/rdf/*_
 - [ ] **MARC records** · later · P2 · M. Library records via MARCXML conversion. _OpenRefine: text/marc_
 - [ ] **Wikitext tables** · later · P2 · M. Parse MediaWiki table markup, keep links for reconciliation. _OpenRefine: text/wiki_
 - [~] **Import from URL and clipboard** · v0.2 · P1 · S. Download with progress and paste-as-table, like OpenRefine's Web Addresses and Clipboard tabs. _OpenRefine: create-project-from-upload_
-- [ ] **Zip/gzip and multi-file import** · v0.5 · P2 · S. Pick files inside archives, add a file-name column. _OpenRefine: includeFileSources, includeArchiveFileName_
+- [~] **Zip/gzip and multi-file import** · v0.5 · P2 · S. Pick files inside archives, add a file-name column. _OpenRefine: includeFileSources, includeArchiveFileName_
 - [~] **Import preview wizard** · v0.2 · P0 · M. Live preview of the first rows while options change, format auto-detect. _OpenRefine: parsing-ui_
 
 ## Export
