@@ -89,7 +89,12 @@ export function App() {
     ].filter(Boolean)
     if (notes.length) toast.add({ title: "Opened with part of its history", description: notes.join(" "), type: "warning", timeout: 0 })
   }
-  const openFile = () => withPath("open", "Import a file", async (path) => (isProjectArchive(path) ? importProject(path) : setStaged({ path })))
+  // an OpenRefine project opens with its history; anything else goes through the import wizard
+  const openFile = () =>
+    withPath("open", "Import a file or folder", async (path) => {
+      const { data } = await call<{ format: string }>("inspect", { path })
+      return data.format === "openrefine-project" ? importProject(path) : setStaged({ path })
+    })
   const openOpenRefine = () => withPath("open", "Open an OpenRefine project (.openrefine.tar.gz)", importProject)
   const exportProject = () =>
     withPath("openrefine", "Export as an OpenRefine project", async (path) => {

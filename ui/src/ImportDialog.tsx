@@ -19,8 +19,18 @@ import { Spinner } from "@/components/ui/spinner"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
-/** The guessed format and OpenRefine's wizard defaults for it. */
-type Info = { format: "csv" | "lines" | "excel" | "ods" | "json" | "jsonlines"; sheets?: string[]; separator?: string; options: Options }
+type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml"
+/** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
+ * for XML, the element paths a record can be. */
+type Info = {
+  format: Format
+  sheets?: string[]
+  separator?: string
+  options: Options
+  files?: { name: string; size: number; format: Format | null; selected: boolean }[]
+  archive?: string | null
+  elements?: { path: string[]; count: number }[]
+}
 type Options = Record<string, unknown>
 type Preview = { columns: string[]; rows: [number, (string | null)[], boolean, boolean][] }
 
@@ -28,6 +38,8 @@ const ENCODINGS = ["UTF-8", "windows-1252", "ISO-8859-1", "UTF-16LE", "UTF-16BE"
 const SEPARATORS: [string, string][] = [[",", "Comma"], [";", "Semicolon"], ["\t", "Tab"], ["|", "Pipe"]]
 
 const baseName = (p: string) => p.split(/[\\/]/).pop() ?? p
+const TEXT: [Format, string][] = [["csv", "Delimited"], ["lines", "Plain lines"], ["fixed-width", "Fixed width"]]
+const KIND: Partial<Record<Format, string>> = { csv: "delimited text", lines: "plain lines (one row per line)", "fixed-width": "fixed-width text" }
 
 export function ImportDialog({
   path,
@@ -42,6 +54,7 @@ export function ImportDialog({
   onClose: () => void
 }) {
   const [info, setInfo] = useState<Info | null>(null)
+  const [format, setFormat] = useState<Format>("csv")
   const [options, setOptions] = useState<Options>({})
   const label = initialName ?? baseName(path)
   const [name, setName] = useState(label)
@@ -53,7 +66,8 @@ export function ImportDialog({
     call<Info>("inspect", { path })
       .then(({ data }) => {
         setInfo(data)
-        setOptions(data.options)
+        setFormat(data.format)
+        setOptions({ ...data.options, ...(data.files ? { files: data.files.filter((f) => f.selected).map((f) => f.name) } : {}) })
       })
       .catch((e) => setError(e.message))
   }, [path])
@@ -61,12 +75,12 @@ export function ImportDialog({
   useEffect(() => {
     if (!info) return
     const t = setTimeout(() => {
-      call<Preview>("preview_import", { path, format: info.format, options, limit: 50 })
+      call<Preview>("preview_import", { path, format, options, limit: 50 })
         .then(({ data }) => (setPreview(data), setError("")))
         .catch((e) => (setPreview(null), setError(e.message)))
     }, 300)
     return () => clearTimeout(t)
-  }, [path, info, options])
+  }, [path, info, format, options])
 
   const set = (patch: Options) => setOptions((o) => ({ ...o, ...patch }))
   const num = (key: string, label: string, help?: string) => (
@@ -90,12 +104,14 @@ export function ImportDialog({
     </Field>
   )
   const sep = String(options.separator ?? ",")
+  // JSON and XML: records from a tree, not lines
+  const tree = format === "json" || format === "jsonlines" || format === "xml"
   const sheets = (options.sheets as { fileNameAndSheetIndex: string; selected: boolean; name: string }[]) ?? []
 
   const create = async () => {
     setBusy(true)
     try {
-      await onCreate({ path, name: name.trim() || label, format: info!.format, options })
+      await onCreate({ path, name: name.trim() || label, format, options })
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -110,7 +126,7 @@ export function ImportDialog({
           <DialogTitle>Import {label}</DialogTitle>
           <DialogDescription>
             {info
-              ? `Detected ${{ csv: "delimited text", lines: "plain lines (one row per line)" }[info.format as string] ?? info.format.toUpperCase()}. The preview updates as you change the options.`
+              ? `${info.files ? `${info.files.length} files inside. ` : ""}Detected ${KIND[info.format] ?? info.format.toUpperCase()}. The preview updates as you change the options.`
               : "Reading the file…"}
           </DialogDescription>
         </DialogHeader>
@@ -121,7 +137,93 @@ export function ImportDialog({
                 <FieldLabel htmlFor="imp-name">Project name</FieldLabel>
                 <Input id="imp-name" value={name} onChange={(e) => setName(e.target.value)} />
               </Field>
-              {info?.format === "csv" && (
+              {info?.files && (
+                <FieldSet>
+                  <FieldLegend variant="label">Files to import</FieldLegend>
+                  {info.files.map((f, i) => {
+                    const picked = (options.files as string[]) ?? []
+                    return (
+                      <Field key={f.name} orientation="horizontal">
+                        <Checkbox
+                          id={`imp-file-${i}`}
+                          checked={picked.includes(f.name)}
+                          onCheckedChange={(c) => set({ files: c ? [...picked, f.name] : picked.filter((x) => x !== f.name) })}
+                        />
+                        <FieldLabel htmlFor={`imp-file-${i}`} className="min-w-0">
+                          <span className="truncate">{f.name}</span>
+                        </FieldLabel>
+                      </Field>
+                    )
+                  })}
+                  {check("includeFileSources", "Add a File column with each row's file")}
+                  {info.archive && check("includeArchiveFileName", "Add an Archive column with the archive's name")}
+                </FieldSet>
+              )}
+              {TEXT.some(([f]) => f === info?.format) && (
+                <Field>
+                  <FieldLabel>Read the text as</FieldLabel>
+                  <ToggleGroup variant="outline" size="sm" value={[format]} onValueChange={(v) => v[0] && setFormat(v[0] as Format)}>
+                    {TEXT.map(([v, l]) => (
+                      <ToggleGroupItem key={v} value={v}>
+                        {l}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </Field>
+              )}
+              {format === "fixed-width" && (
+                <Field>
+                  <FieldLabel htmlFor="imp-widths">Column widths</FieldLabel>
+                  <Input
+                    id="imp-widths"
+                    className="font-mono"
+                    placeholder="5, 10, 9"
+                    defaultValue={((options.columnWidths as number[]) ?? []).join(", ")}
+                    onChange={(e) => set({ columnWidths: e.target.value.split(/[\s,]+/).map(Number).filter((n) => n > 0) })}
+                  />
+                  <FieldDescription>Characters in each column, left to right. Whatever is past the last one becomes one more column.</FieldDescription>
+                </Field>
+              )}
+              {format === "xml" && info?.elements && (
+                <Field>
+                  <FieldLabel>Each record is an element</FieldLabel>
+                  <Select value={JSON.stringify(options.recordPath ?? [])} onValueChange={(v) => v && set({ recordPath: JSON.parse(String(v)) })}>
+                    <SelectTrigger aria-label="Record element">
+                      <SelectValue>{(v: string) => (JSON.parse(v ?? "[]") as string[]).join(" › ")}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {info.elements.map((e) => (
+                          <SelectItem key={e.path.join("/")} value={JSON.stringify(e.path)}>
+                            {e.path.join(" › ")} ({e.count.toLocaleString()})
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FieldDescription>Its attributes and the elements inside it become columns.</FieldDescription>
+                </Field>
+              )}
+              {(format === "csv" || format === "lines" || format === "fixed-width") && (
+                <Field>
+                  <FieldLabel>Character encoding</FieldLabel>
+                  <Select value={String(options.encoding ?? "UTF-8")} onValueChange={(v) => set({ encoding: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {ENCODINGS.map((e) => (
+                          <SelectItem key={e} value={e}>
+                            {e}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+              {format === "csv" && (
                 <>
                   <Field>
                     <FieldLabel>Columns separated by</FieldLabel>
@@ -133,26 +235,9 @@ export function ImportDialog({
                       ))}
                     </ToggleGroup>
                   </Field>
-                  <Field>
-                    <FieldLabel>Character encoding</FieldLabel>
-                    <Select value={String(options.encoding)} onValueChange={(v) => set({ encoding: v })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {ENCODINGS.map((e) => (
-                            <SelectItem key={e} value={e}>
-                              {e}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
                 </>
               )}
-              {(info?.format === "excel" || info?.format === "ods") && (
+              {(format === "excel" || format === "ods") && info && (
                 <FieldSet>
                   <FieldLegend variant="label">Sheets to import</FieldLegend>
                   {info.sheets?.map((s, i) => {
@@ -176,7 +261,7 @@ export function ImportDialog({
                   })}
                 </FieldSet>
               )}
-              {(info?.format === "json" || info?.format === "jsonlines") && (
+              {(format === "json" || format === "jsonlines") && (
                 <Field>
                   <FieldLabel htmlFor="imp-path">Path to the records</FieldLabel>
                   <Input
@@ -188,8 +273,8 @@ export function ImportDialog({
                   <FieldDescription>Field names from the top, with _ for the items of an array. A list of objects is “_, _”.</FieldDescription>
                 </Field>
               )}
-              {info?.format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
-              {info && info.format !== "json" && info.format !== "jsonlines" && (
+              {format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
+              {info && !tree && (
                 <>
                   {num("ignoreLines", "Lines to ignore at the top")}
                   {num("headerLines", "Header lines", "0 names the columns Column 1, Column 2…")}
@@ -200,11 +285,12 @@ export function ImportDialog({
               {info && (
                 <FieldSet>
                   <FieldLegend variant="label">Cells</FieldLegend>
-                  {info.format === "csv" && check("processQuotes", "Quotes group text with separators in it")}
-                  {(info.format === "csv" || info.format.startsWith("json")) && check("trimStrings", "Trim leading and trailing spaces")}
-                  {(info.format === "csv" || info.format.startsWith("json")) && check("guessCellValueTypes", "Turn text that looks like numbers into numbers")}
-                  {info.format !== "json" && info.format !== "jsonlines" && check("storeBlankRows", "Keep blank rows")}
-                  {info.format !== "json" && info.format !== "jsonlines" && check("storeBlankCellsAsNulls", "Store blank cells as empty (null)")}
+                  {format === "csv" && check("processQuotes", "Quotes group text with separators in it")}
+                  {(format === "csv" || tree) && check("trimStrings", "Trim leading and trailing spaces")}
+                  {(format === "csv" || format === "fixed-width" || tree) && check("guessCellValueTypes", "Turn text that looks like numbers into numbers")}
+                  {!tree && check("storeBlankRows", "Keep blank rows")}
+                  {!tree && check("storeBlankCellsAsNulls", "Store blank cells as empty (null)")}
+                  {tree && check("storeEmptyStrings", "Keep empty text as an empty string")}
                 </FieldSet>
               )}
             </FieldGroup>

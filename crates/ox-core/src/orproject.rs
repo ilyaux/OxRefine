@@ -30,10 +30,14 @@ use std::{
 /// What OpenRefine 3.10.1 writes at the top of its data and change files.
 const VERSION: &str = "3.10-SNAPSHOT";
 
-/// Whether a file name looks like an OpenRefine project export.
+/// Whether a file is an OpenRefine project export: a gzipped tar with OpenRefine's `data.zip` in it
+/// (a tar.gz of data files is imported as an archive instead).
 pub fn is_archive(path: &Path) -> bool {
-    let n = path.file_name().map(|n| n.to_string_lossy().to_lowercase()).unwrap_or_default();
-    n.ends_with(".tar.gz") || n.ends_with(".tgz")
+    let Ok(f) = std::fs::File::open(path) else { return false };
+    let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(BufReader::new(f)));
+    let Ok(entries) = tar.entries() else { return false };
+    // OpenRefine writes data.zip first; a few entries are enough to tell
+    entries.take(64).flatten().any(|e| e.path().is_ok_and(|p| p.to_string_lossy().trim_start_matches("./") == "data.zip"))
 }
 
 // ---------------------------------------------------------------- OpenRefine's project model

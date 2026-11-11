@@ -16,6 +16,12 @@ const sheet = (file, sheets, options = {}) => ({
   options: { ...SHEET_DEFAULTS, sheets: sheets.map((i) => ({ name: `${file}#${i}`, fileNameAndSheetIndex: `${file}#${i}`, rows: 100, selected: true })), ...options },
 })
 const json = (file, options = {}) => ({ file, format: "text/json", options: { ...JSON_DEFAULTS, ...options } })
+export const XML_DEFAULTS = { recordPath: [], limit: -1, trimStrings: false, guessCellValueTypes: false, storeEmptyStrings: true, includeFileSources: false, includeArchiveFileName: false }
+const xml = (file, recordPath, options = {}) => ({ file, format: "text/xml", options: { ...XML_DEFAULTS, recordPath, ...options } })
+export const FIXED_DEFAULTS = { encoding: "UTF-8", ignoreLines: -1, headerLines: 0, skipDataLines: 0, limit: -1, storeBlankRows: true, storeBlankColumns: true,
+  storeBlankCellsAsNulls: true, guessCellValueTypes: false, includeFileSources: false, includeArchiveFileName: false }
+const fixed = (columnWidths, options = {}) => ({ file: "fixed.txt", format: "text/line-based/fixed-width", options: { ...FIXED_DEFAULTS, columnWidths, ...options } })
+const archive = (file, options = {}) => csv(file, { includeFileSources: true, includeArchiveFileName: true, ...options })
 
 export const CASES = [
   { name: "semicolons, BOM, quoted newline", ...csv("semi.csv", { separator: ";" }) },
@@ -42,4 +48,25 @@ export const CASES = [
   { name: "json guess and trim", ...json("people.json", { guessCellValueTypes: true, trimStrings: true }) },
   { name: "json limit", ...json("people.json", { limit: 2 }) },
   { name: "json nested record path", ...json("nested.json", { recordPath: ["_", "data", "items", "_"] }) },
+  // XML: the record path names elements from the root down
+  { name: "xml books", ...xml("books.xml", ["library", "book"]) },
+  { name: "xml books guess and trim", ...xml("books.xml", ["library", "book"], { guessCellValueTypes: true, trimStrings: true }) },
+  { name: "xml books no empty strings", ...xml("books.xml", ["library", "book"], { storeEmptyStrings: false }) },
+  { name: "xml books limit", ...xml("books.xml", ["library", "book"], { limit: 2 }) },
+  { name: "xml whole library", ...xml("books.xml", ["library"]) },
+  { name: "xml magazines", ...xml("books.xml", ["library", "magazine"]) },
+  { name: "xml nested record", ...xml("books.xml", ["library", "book", "tags", "tag"]) },
+  { name: "xml atom entries", ...xml("atom.xml", ["feed", "entry"]) },
+  // fixed-width text
+  { name: "fixed widths", ...fixed([5, 10, 9]) },
+  { name: "fixed widths header", ...fixed([5, 10, 9], { headerLines: 1 }) },
+  { name: "fixed widths guess types", ...fixed([5, 10, 9, 6], { headerLines: 1, guessCellValueTypes: true }) },
+  { name: "fixed no blank rows", ...fixed([5, 10], { storeBlankRows: false, skipDataLines: 1, limit: 3 }) },
+  { name: "fixed blanks as empty strings", ...fixed([5, 10, 9], { headerLines: 1, storeBlankCellsAsNulls: false }) },
+  // archives: every data file inside, with the file and archive names as columns
+  { name: "zip of csv files", ...archive("bundle.zip") },
+  { name: "zip without name columns", ...archive("bundle.zip", { includeFileSources: false, includeArchiveFileName: false }) },
+  { name: "tar.gz of csv files", ...archive("bundle.tar.gz") },
+  { name: "gzip csv", ...csv("single.csv.gz") },
+  { name: "gzip csv with file name", ...csv("single.csv.gz", { includeFileSources: true }) },
 ]

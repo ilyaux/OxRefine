@@ -22,5 +22,6 @@ sha1 = "0.10"
 tar = "0.4"
 unicode-normalization = "0.1"
 ureq = "3.5.1"
+quick-xml = "0.42"
 url = "2"
 zip = { version = "9", default-features = false, features = ["deflate"] }

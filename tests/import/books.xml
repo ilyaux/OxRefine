@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <!-- a comment -->
+  <book id="b1" lang="en">
+    <title>Dune</title>
+    <author>Frank Herbert</author>
+    <year>1965</year>
+    <tags><tag>scifi</tag><tag>classic</tag></tags>
+    <dc:publisher>Chilton</dc:publisher>
+  </book>
+  <book id="b2">
+    <title>  Spaced  Title </title>
+    <author>Ursula K. Le Guin</author>
+    <author>Second Author</author>
+    <year>1969.5</year>
+    <note><![CDATA[<b>bold</b> & raw]]></note>
+    <empty/>
+    <blank></blank>
+  </book>
+  <book id="b3" lang="ru">
+    <title>Мастер &amp; Маргарита</title>
+    <price currency="RUB">350</price>
+    <mixed>text <i>inner</i> tail</mixed>
+    <shelf><row>3</row><pos>12</pos></shelf>
+  </book>
+  <magazine id="m1"><title>Not a book</title><issue>7</issue></magazine>
+</library>

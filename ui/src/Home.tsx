@@ -60,7 +60,7 @@ export function Home({
         <CardHeader>
           <CardTitle>New project</CardTitle>
           <CardDescription>
-            Import CSV, TSV, Excel (.xlsx, .xls), OpenDocument (.ods), JSON or plain text from a file, the clipboard or a web address.
+            Import CSV, TSV, fixed-width or plain text, Excel (.xlsx, .xls), OpenDocument (.ods), JSON or XML from a file, a zip, tar or gzip archive, the clipboard or a web address.
             Options and a preview come next; the original is never changed. OpenRefine projects (.openrefine.tar.gz) open with
             their undo history.
           </CardDescription>

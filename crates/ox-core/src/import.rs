@@ -1,5 +1,6 @@
-//! Importers with OpenRefine's options: delimited text, plain lines, Excel/ODS and JSON, plus the
-//! clipboard and web-address sources (staged as files, then imported like any other file).
+//! Importers with OpenRefine's options: delimited text, plain lines, fixed-width text, Excel/ODS,
+//! JSON and XML, from a file, the files inside an archive or a folder, the clipboard or a web
+//! address (the last two staged as files, then imported like any other file).
 //! Behaviour is pinned to OpenRefine 3.10.1 by tests/import_conformance.rs.
 use crate::{
     err,
@@ -35,6 +36,14 @@ pub struct ImportOptions {
     pub store_empty_strings: bool,
     /// Line-based text: how many lines make one row.
     pub lines_per_row: i64,
+    /// Fixed-width text: the width of each column, in characters; the rest of a line is one more column.
+    pub column_widths: Vec<usize>,
+    /// A "File" column with each row's file name (inside the archive, or the file itself).
+    pub include_file_sources: bool,
+    /// An "Archive" column with the archive's file name.
+    pub include_archive_file_name: bool,
+    /// Archives and folders: the files to import, by name; empty picks them as OpenRefine does.
+    pub files: Vec<String>,
 }
 
 impl Default for ImportOptions {
@@ -56,6 +65,10 @@ impl Default for ImportOptions {
             record_path: vec!["_".into(), "_".into()],
             store_empty_strings: true,
             lines_per_row: 1,
+            column_widths: vec![],
+            include_file_sources: false,
+            include_archive_file_name: false,
+            files: vec![],
         }
     }
 }
@@ -84,6 +97,9 @@ pub enum Format {
     Ods,
     Json,
     JsonLines,
+    Xml,
+    #[serde(rename = "fixed-width")]
+    FixedWidth,
 }
 
 /// OpenRefine format ids, or our own short names; None picks by file extension.
@@ -95,6 +111,8 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "text/xml/ods" | "ods" => return Format::Ods,
         "text/json" | "json" => return Format::Json,
         "jsonl" | "jsonlines" => return Format::JsonLines,
+        "text/xml" | "xml" => return Format::Xml,
+        "text/line-based/fixed-width" | "fixed-width" => return Format::FixedWidth,
         _ => {}
     }
     let ext = path.extension().map(|e| e.to_string_lossy().to_ascii_lowercase()).unwrap_or_default();
@@ -103,24 +121,125 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "ods" => Format::Ods,
         "json" => Format::Json,
         "jsonl" | "ndjson" => Format::JsonLines,
+        "xml" | "rss" | "atom" | "kml" | "gpx" => Format::Xml,
         _ => Format::Csv,
     }
 }
 
+/// Import a file, or the files inside an archive or a folder (one after another, columns matched by
+/// name), with OpenRefine's options. `format` (an OpenRefine format id or our short name) applies to
+/// every file; None picks it from the file name.
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
     crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), 0);
-    match format_for(path, format) {
+    let u = crate::unpack::unpack(path)?;
+    if !u.several() && u.files[0].1 == path && !o.include_file_sources {
+        return import_file(path, format_for(path, format), o);
+    }
+    let (picked, best) = pick(&u, o)?;
+    if picked.is_empty() {
+        return Err(format!("{}: no files to import", path.display()));
+    }
+    let f = format.map(|_| format_for(path, format));
+    let tables = picked
+        .into_iter()
+        .map(|(name, p)| Ok(with_sources(import_file(p, f.unwrap_or(if u.several() { best } else { format_for(p, None) }), o)?, name, u.archive.as_deref(), o)))
+        .collect::<Result<Vec<_>>>()?;
+    Ok(concat_by_name(tables))
+}
+
+fn import_file(path: &Path, f: Format, o: &ImportOptions) -> Result<Table> {
+    match f {
         Format::Csv => import_text(path, o, PARALLEL_FROM),
         Format::Lines => import_lines(path, o),
+        Format::FixedWidth => import_fixed(path, o),
         Format::Excel | Format::Ods => import_sheets(path, o),
-        Format::Json | Format::JsonLines => import_json(path, format_for(path, format) == Format::JsonLines, o),
+        Format::Json | Format::JsonLines => import_json(path, f == Format::JsonLines, o),
+        Format::Xml => import_xml(path, o),
     }
+}
+
+/// The format the wizard would guess for one file: by extension, except that text whose first line
+/// has no separator is plain lines (unless its name says CSV/TSV).
+fn guess_format(path: &Path) -> Result<Format> {
+    let f = format_for(path, None);
+    let declared = path.extension().is_some_and(|e| ["csv", "tsv", "tab"].iter().any(|x| e.eq_ignore_ascii_case(x)));
+    Ok(if f == Format::Csv && !declared && guess_separator(path)?.is_none() { Format::Lines } else { f })
+}
+
+/// The files to import from an archive or folder: those named in `files`, else, like OpenRefine,
+/// every file of the most common format (files OxRefine can't read are left out). Also that format.
+fn pick<'u>(u: &'u crate::unpack::Unpacked, o: &ImportOptions) -> Result<(Vec<(&'u str, &'u Path)>, Format)> {
+    let guesses: Vec<Option<Format>> = u.files.iter().map(|(_, p)| guess_format(p).ok()).collect();
+    let mut counts: Vec<(Format, usize)> = vec![];
+    for g in guesses.iter().flatten() {
+        match counts.iter_mut().find(|c| c.0 == *g) {
+            Some(c) => c.1 += 1,
+            None => counts.push((*g, 1)),
+        }
+    }
+    // the most common, the first found on a tie
+    let best = counts.iter().fold(None::<(Format, usize)>, |b, &c| if b.is_some_and(|b| b.1 >= c.1) { b } else { Some(c) }).map_or(Format::Csv, |b| b.0);
+    let chosen = u.files.iter().zip(&guesses).filter(|((name, _), g)| if o.files.is_empty() { **g == Some(best) } else { o.files.contains(name) });
+    Ok((chosen.map(|((n, p), _)| (n.as_str(), p.as_path())).collect(), best))
+}
+
+/// OpenRefine's "Archive" and "File" columns, in front.
+fn with_sources(t: Table, file: &str, archive: Option<&str>, o: &ImportOptions) -> Table {
+    let mut names = vec![];
+    let mut cols = vec![];
+    let constant = |v: &str| Column { dict: vec![Value::Str(v.into())], codes: vec![0; t.rows] };
+    if let (true, Some(a)) = (o.include_archive_file_name, archive) {
+        names.push("Archive".to_string());
+        cols.push(constant(a));
+    }
+    if o.include_file_sources {
+        names.push("File".to_string());
+        cols.push(constant(file));
+    }
+    if names.is_empty() {
+        return t;
+    }
+    names.extend(t.names.iter().cloned());
+    cols.extend(t.columns.iter().map(|c| Column { dict: c.dict.clone(), codes: c.codes.clone() }));
+    Table::new(names, cols, t.rows)
 }
 
 /// What the import wizard needs before options are chosen: the guessed format and OpenRefine's
 /// wizard defaults for it (`options`). Text with no separator in its first line is line-based,
 /// unless the file says it is CSV/TSV.
 pub fn inspect(path: &Path) -> Result<serde_json::Value> {
+    use serde_json::json;
+    if crate::orproject::is_archive(path) {
+        return Ok(json!({ "format": "openrefine-project" }));
+    }
+    let u = crate::unpack::unpack(path)?;
+    if !u.several() {
+        let mut out = inspect_file(&u.files[0].1)?;
+        if let Some(o) = out["options"].as_object_mut() {
+            o.insert("includeFileSources".into(), json!(false));
+            o.insert("includeArchiveFileName".into(), json!(false));
+        }
+        return Ok(out);
+    }
+    // an archive or folder: the wizard's guesses for its first picked file, plus the list to pick from
+    let (picked, _) = pick(&u, &ImportOptions::default())?;
+    let first = picked.first().map_or(u.files[0].1.as_path(), |p| p.1);
+    let mut out = inspect_file(first)?;
+    if let Some(o) = out["options"].as_object_mut() {
+        o.insert("includeFileSources".into(), json!(true));
+        o.insert("includeArchiveFileName".into(), json!(u.archive.is_some()));
+    }
+    out["files"] = json!(u.files.iter().map(|(n, p)| json!({
+        "name": n,
+        "size": std::fs::metadata(p).map_or(0, |m| m.len()),
+        "format": guess_format(p).ok(),
+        "selected": picked.iter().any(|x| x.0 == n),
+    })).collect::<Vec<_>>());
+    out["archive"] = json!(u.archive);
+    Ok(out)
+}
+
+fn inspect_file(path: &Path) -> Result<serde_json::Value> {
     use serde_json::json;
     let mut f = format_for(path, None);
     let lines = json!({ "ignoreLines": -1, "headerLines": 1, "skipDataLines": 0, "limit": -1, "storeBlankRows": true, "storeBlankCellsAsNulls": true });
@@ -152,6 +271,14 @@ pub fn inspect(path: &Path) -> Result<serde_json::Value> {
         }
         Format::Lines => merge(json!({ "headerLines": 0, "linesPerRow": 1, "encoding": encoding, "guessCellValueTypes": false })),
         Format::Json | Format::JsonLines => json!({ "recordPath": ["_", "_"], "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true }),
+        // OpenRefine leaves the record element to the user; OxRefine suggests the first repeated one
+        Format::Xml => {
+            let paths = xml_paths(&parse_xml(&decode(path, encoding)?)?);
+            let guess = paths.iter().find(|(_, n)| *n > 1).or(paths.first()).map(|(p, _)| p.clone()).unwrap_or_default();
+            out["elements"] = json!(paths.iter().take(500).map(|(p, n)| json!({ "path": p, "count": n })).collect::<Vec<_>>());
+            json!({ "recordPath": guess, "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true })
+        }
+        Format::FixedWidth => merge(json!({ "headerLines": 0, "columnWidths": [], "encoding": encoding, "guessCellValueTypes": false })),
     };
     out["format"] = json!(f);
     Ok(out)
@@ -209,6 +336,10 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" => ".xlsx",
         "application/vnd.ms-excel" => ".xls",
         "application/vnd.oasis.opendocument.spreadsheet" => ".ods",
+        "text/xml" | "application/xml" | "application/rss+xml" | "application/atom+xml" => ".xml",
+        "application/zip" | "application/x-zip-compressed" => ".zip",
+        "application/gzip" | "application/x-gzip" => ".gz",
+        "application/x-tar" => ".tar",
         _ => "",
     };
     let path = stage_folder(dir)?.join(format!("{name}{ext}"));
@@ -427,6 +558,30 @@ fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
     let mut b = Builder::new(o);
     for chunk in lines.chunks(per) {
         if !b.push(chunk.iter().map(|s| Field::Text(s))) {
+            break;
+        }
+    }
+    Ok(b.finish())
+}
+
+/// OpenRefine's fixed-width importer: each line cut at the column widths (in characters, cells kept
+/// as they are, spaces included); whatever is left past the last width is one more cell.
+fn import_fixed(path: &Path, o: &ImportOptions) -> Result<Table> {
+    let text = decode(path, &o.encoding)?;
+    let text = plain_breaks(&text);
+    let mut b = Builder::new(o);
+    for line in text.lines() {
+        let chars: Vec<char> = line.chars().collect();
+        let mut cells: Vec<String> = vec![];
+        let mut at = 0;
+        for &w in &o.column_widths {
+            cells.push(chars[at.min(chars.len())..(at + w).min(chars.len())].iter().collect());
+            at += w;
+        }
+        if at < chars.len() {
+            cells.push(chars[at..].iter().collect());
+        }
+        if !b.push(cells.iter().map(|s| Field::Text(s))) {
             break;
         }
     }
@@ -877,20 +1032,55 @@ fn concat_by_name(tables: Vec<Table>) -> Table {
 
 // ---------------------------------------------------------------- JSON
 
+/// OpenRefine's ImportColumnGroup: columns and subgroups of a JSON object or XML element, with the
+/// row the next value goes on (`next`, per group and per column) while a record is read.
 #[derive(Default)]
 struct Group {
-    /// (local name, full column name, cells filled) in discovery order
-    columns: Vec<(String, String, usize)>,
+    /// (local name, full column name, cells filled, next row) in discovery order
+    columns: Vec<(String, String, usize, usize)>,
     /// (local name, group) in discovery order
     groups: Vec<(String, Group)>,
+    next: usize,
 }
 
 impl Group {
-    fn column(&mut self, local: &str, full: &str) {
-        match self.columns.iter_mut().find(|c| c.0 == local) {
-            Some(c) => c.2 += 1,
-            None => self.columns.push((local.to_string(), full.to_string(), 1)),
+    fn column(&mut self, local: &str, full: &str) -> usize {
+        match self.columns.iter().position(|c| c.0 == local) {
+            Some(i) => {
+                self.columns[i].2 += 1;
+                i
+            }
+            None => {
+                self.columns.push((local.to_string(), full.to_string(), 1, 0));
+                self.columns.len() - 1
+            }
         }
+    }
+    /// OpenRefine's addCell: the value goes on the later of the group's and the column's next row.
+    fn add(&mut self, rec: &mut JsonRecord, local: &str, full: &str, v: Value) {
+        let i = self.column(local, full);
+        let row = self.next.max(self.columns[i].3);
+        while rec.rows.len() <= row {
+            rec.rows.push(vec![]);
+        }
+        rec.rows[row].push((full.to_string(), v));
+        self.columns[i].3 = row + 1;
+    }
+    /// Start a sub-record (a nested object or element): it can't begin above where this group is.
+    fn enter(&mut self, local: &str) -> &mut Group {
+        let at = self.next;
+        let g = self.group(local);
+        g.next = g.next.max(at);
+        g
+    }
+    /// End a sub-record: the next one starts below everything it filled.
+    fn settle(&mut self) {
+        self.next = self.columns.iter().map(|c| c.3).chain(self.groups.iter().map(|g| g.1.next)).fold(self.next, usize::max);
+    }
+    fn reset(&mut self) {
+        self.next = 0;
+        self.columns.iter_mut().for_each(|c| c.3 = 0);
+        self.groups.iter_mut().for_each(|g| g.1.reset());
     }
     fn group(&mut self, local: &str) -> &mut Group {
         let i = match self.groups.iter().position(|g| g.0 == local) {
@@ -924,30 +1114,23 @@ struct JsonRecord {
     rows: Vec<Vec<(String, Value)>>,
 }
 
-impl JsonRecord {
-    /// A value goes on the first row of the record that has nothing in its column yet.
-    fn place(&mut self, column: &str, v: Value) {
-        match self.rows.iter_mut().find(|r| !r.iter().any(|(c, _)| c == column)) {
-            Some(r) => r.push((column.to_string(), v)),
-            None => self.rows.push(vec![(column.to_string(), v)]),
+/// A text value of a JSON or XML tree, with the trim, empty-string and type-guessing options.
+fn tree_text(s: &str, o: &ImportOptions) -> Value {
+    let s = if o.trim_strings { crate::grel::text::java_strip(s) } else { s };
+    if s.is_empty() && !o.store_empty_strings {
+        return Value::Null;
+    }
+    if o.guess_cell_value_types {
+        if let Some(n) = parse_number(s).filter(|n| !matches!(n, Value::Num(x) if !x.is_finite())) {
+            return n;
         }
     }
+    Value::Str(s.to_string())
 }
 
 fn json_scalar(v: &serde_json::Value, o: &ImportOptions) -> Value {
     match v {
-        serde_json::Value::String(s) => {
-            let s = if o.trim_strings { crate::grel::text::java_strip(s) } else { s.as_str() };
-            if s.is_empty() && !o.store_empty_strings {
-                return Value::Null;
-            }
-            if o.guess_cell_value_types {
-                if let Some(n) = parse_number(s).filter(|n| !matches!(n, Value::Num(x) if !x.is_finite())) {
-                    return n;
-                }
-            }
-            Value::Str(s.to_string())
-        }
+        serde_json::Value::String(s) => tree_text(s, o),
         other => from_json(other.clone()),
     }
 }
@@ -959,24 +1142,23 @@ fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mu
             for (k, v) in m {
                 let full = format!("{prefix} - {k}");
                 match v {
-                    J::Object(_) => walk_json(v, &full, group.group(k), rec, o),
+                    J::Object(_) => {
+                        let g = group.enter(k);
+                        walk_json(v, &full, g, rec, o);
+                        g.settle();
+                    }
+                    // each item is a sub-record of the field's group
                     J::Array(items) => {
-                        let sub = group.group(k);
                         for item in items {
+                            let g = group.enter(k);
                             match item {
-                                J::Object(_) | J::Array(_) => walk_json(item, &full, sub, rec, o),
-                                scalar => {
-                                    let col = format!("{full} - {k}");
-                                    sub.column(k, &col);
-                                    rec.place(&col, json_scalar(scalar, o));
-                                }
+                                J::Object(_) | J::Array(_) => walk_json(item, &full, g, rec, o),
+                                scalar => g.add(rec, k, &format!("{full} - {k}"), json_scalar(scalar, o)),
                             }
+                            g.settle();
                         }
                     }
-                    scalar => {
-                        group.column(k, &full);
-                        rec.place(&full, json_scalar(scalar, o));
-                    }
+                    scalar => group.add(rec, k, &full, json_scalar(scalar, o)),
                 }
             }
         }
@@ -985,10 +1167,7 @@ fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mu
                 walk_json(item, prefix, group, rec, o);
             }
         }
-        scalar => {
-            group.column(prefix, prefix);
-            rec.place(prefix, json_scalar(scalar, o));
-        }
+        scalar => group.add(rec, prefix, prefix, json_scalar(scalar, o)),
     }
 }
 
@@ -1019,9 +1198,15 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
     let mut records = vec![];
     for node in nodes.into_iter().take(if o.limit >= 0 { o.limit as usize } else { usize::MAX }) {
         let mut rec = JsonRecord { rows: vec![vec![]] };
+        group.reset();
         walk_json(node, &record_name, &mut group, &mut rec, o);
         records.push(rec);
     }
+    Ok(tree_table(&group, &records))
+}
+
+/// Rows of tree records, columns in OpenRefine's order.
+fn tree_table(group: &Group, records: &[JsonRecord]) -> Table {
     let mut names = vec![];
     group.order(&mut names);
     let rows: Vec<&Vec<(String, Value)>> = records.iter().flat_map(|r| r.rows.iter()).collect();
@@ -1029,7 +1214,153 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
         .iter()
         .map(|n| Column::from_values(rows.iter().map(|r| r.iter().find(|(c, _)| c == n).map_or(Value::Null, |(_, v)| v.clone()))))
         .collect();
-    Ok(Table::new(names, cols, rows.len()))
+    Table::new(names, cols, rows.len())
+}
+
+// ---------------------------------------------------------------- XML
+
+enum XNode {
+    El(XEl),
+    Text(String),
+}
+
+struct XEl {
+    name: String,
+    attrs: Vec<(String, String)>,
+    children: Vec<XNode>,
+}
+
+/// Adjacent text, entity references and CDATA make one text node.
+fn xml_text(stack: &mut [XEl], s: &str) {
+    if let Some(top) = stack.last_mut() {
+        match top.children.last_mut() {
+            Some(XNode::Text(t)) => t.push_str(s),
+            _ => top.children.push(XNode::Text(s.to_string())),
+        }
+    }
+}
+
+// ponytail: the whole document becomes a tree in memory (a few times the file size); stream the records
+// from the reader if XML files of hundreds of MB need importing.
+fn parse_xml(text: &str) -> Result<XEl> {
+    use quick_xml::events::{BytesStart, Event};
+    let el = |e: &BytesStart| -> Result<XEl> {
+        let attrs = e
+            .attributes()
+            .map(|a| {
+                let a = a.map_err(|e| format!("XML: {e}"))?;
+                Ok((a.key.as_ref().to_string(), a.normalized_value(quick_xml::XmlVersion::Implicit1_0).map_err(|e| format!("XML: {e}"))?.into_owned()))
+            })
+            .collect::<Result<_>>()?;
+        Ok(XEl { name: e.name().as_ref().to_string(), attrs, children: vec![] })
+    };
+    let close = |stack: &mut Vec<XEl>, root: &mut Option<XEl>, x: XEl| match stack.last_mut() {
+        Some(p) => p.children.push(XNode::El(x)),
+        None => *root = root.take().or(Some(x)),
+    };
+    let mut r = quick_xml::Reader::from_str(text.trim_start_matches('\u{feff}'));
+    let (mut stack, mut root) = (vec![], None);
+    loop {
+        match r.read_event().map_err(|e| format!("XML, at byte {}: {e}", r.buffer_position()))? {
+            Event::Start(e) => stack.push(el(&e)?),
+            Event::Empty(e) => {
+                let x = el(&e)?;
+                close(&mut stack, &mut root, x);
+            }
+            Event::End(_) => {
+                let x = stack.pop().ok_or("XML: a closing tag with no opening one")?;
+                close(&mut stack, &mut root, x);
+            }
+            Event::Text(t) => xml_text(&mut stack, &t.xml_content(quick_xml::XmlVersion::Implicit1_0)),
+            Event::CData(c) => xml_text(&mut stack, &c.into_inner()),
+            Event::GeneralRef(g) => {
+                let s = match g.resolve_char_ref().map_err(|e| format!("XML: {e}"))? {
+                    Some(c) => c.to_string(),
+                    None => match &*g.into_inner() {
+                        "amp" => "&".into(),
+                        "lt" => "<".into(),
+                        "gt" => ">".into(),
+                        "quot" => "\"".into(),
+                        "apos" => "'".into(),
+                        other => format!("&{other};"),
+                    },
+                };
+                xml_text(&mut stack, &s);
+            }
+            Event::Eof => break,
+            _ => {}
+        }
+    }
+    root.ok_or_else(|| "XML: no root element".into())
+}
+
+/// Every element path from the root (record-path candidates), with how many elements it reaches.
+fn xml_paths(root: &XEl) -> Vec<(Vec<String>, usize)> {
+    fn walk(e: &XEl, path: &mut Vec<String>, out: &mut Vec<(Vec<String>, usize)>) {
+        path.push(e.name.clone());
+        match out.iter_mut().find(|(p, _)| p == path) {
+            Some(x) => x.1 += 1,
+            None => out.push((path.clone(), 1)),
+        }
+        for c in &e.children {
+            if let XNode::El(c) = c {
+                walk(c, path, out);
+            }
+        }
+        path.pop();
+    }
+    let mut out = vec![];
+    walk(root, &mut vec![], &mut out);
+    out
+}
+
+/// OpenRefine's XML record: attributes are columns "<path> - <name>", an element's text is the
+/// column of its own path, child elements nest as groups; text that is only whitespace is skipped.
+fn walk_xml(e: &XEl, prefix: &str, group: &mut Group, rec: &mut JsonRecord, o: &ImportOptions) {
+    // namespace declarations are not data
+    for (k, v) in e.attrs.iter().filter(|(k, _)| k != "xmlns" && !k.starts_with("xmlns:")) {
+        group.add(rec, k, &format!("{prefix} - {k}"), tree_text(v, o));
+    }
+    for c in &e.children {
+        match c {
+            XNode::Text(t) if !t.trim().is_empty() => {
+                // a key no attribute can have: the element's own text
+                group.add(rec, "\u{0}", prefix, tree_text(t, o));
+            }
+            XNode::Text(_) => {}
+            XNode::El(c) => {
+                let g = group.enter(&c.name);
+                walk_xml(c, &format!("{prefix} - {}", c.name), g, rec, o);
+                g.settle();
+            }
+        }
+    }
+}
+
+fn import_xml(path: &Path, o: &ImportOptions) -> Result<Table> {
+    let root = parse_xml(&decode(path, &o.encoding)?)?;
+    let want = if o.record_path.is_empty() { vec![root.name.clone()] } else { o.record_path.clone() };
+    // the elements at the record path, from the root down
+    let mut nodes: Vec<&XEl> = if want[0] == root.name { vec![&root] } else { vec![] };
+    for seg in &want[1..] {
+        nodes = nodes
+            .into_iter()
+            .flat_map(|n| n.children.iter().filter_map(|c| match c {
+                XNode::El(x) if &x.name == seg => Some(x),
+                _ => None,
+            }))
+            .collect();
+    }
+    let name = want.last().cloned().unwrap_or_default();
+    let mut group = Group::default();
+    let mut records = vec![];
+    for node in nodes.into_iter().take(if o.limit >= 0 { o.limit as usize } else { usize::MAX }) {
+        let mut rec = JsonRecord { rows: vec![vec![]] };
+        group.reset();
+        walk_xml(node, &name, &mut group, &mut rec, o);
+        records.push(rec);
+    }
+    Ok(tree_table(&group, &records))
 }
 
 impl Table {

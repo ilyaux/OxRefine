@@ -1784,6 +1784,1771 @@
      }
     ]
    ]
+  },
+  {
+   "name": "xml books",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "book"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "book - id",
+    "book - lang",
+    "book - title",
+    "book - author",
+    "book - year",
+    "book - tags - tag",
+    "book - mixed",
+    "book - mixed - i",
+    "book - dc:publisher",
+    "book - note",
+    "book - price - currency",
+    "book - price",
+    "book - shelf - row",
+    "book - shelf - pos"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b1"
+     },
+     {
+      "v": "en"
+     },
+     {
+      "v": "Dune"
+     },
+     {
+      "v": "Frank Herbert"
+     },
+     {
+      "v": "1965"
+     },
+     {
+      "v": "scifi"
+     },
+     null,
+     null,
+     {
+      "v": "Chilton"
+     },
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "classic"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b2"
+     },
+     null,
+     {
+      "v": "  Spaced  Title "
+     },
+     {
+      "v": "Ursula K. Le Guin"
+     },
+     {
+      "v": "1969.5"
+     },
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "<b>bold</b> & raw"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "Second Author"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b3"
+     },
+     {
+      "v": "ru"
+     },
+     {
+      "v": "Мастер & Маргарита"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "text "
+     },
+     {
+      "v": "inner"
+     },
+     null,
+     null,
+     {
+      "v": "RUB"
+     },
+     {
+      "v": "350"
+     },
+     {
+      "v": "3"
+     },
+     {
+      "v": "12"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": " tail"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "xml books guess and trim",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "book"
+    ],
+    "limit": -1,
+    "trimStrings": true,
+    "guessCellValueTypes": true,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "book - id",
+    "book - lang",
+    "book - title",
+    "book - author",
+    "book - year",
+    "book - tags - tag",
+    "book - mixed",
+    "book - mixed - i",
+    "book - dc:publisher",
+    "book - note",
+    "book - price - currency",
+    "book - price",
+    "book - shelf - row",
+    "book - shelf - pos"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b1"
+     },
+     {
+      "v": "en"
+     },
+     {
+      "v": "Dune"
+     },
+     {
+      "v": "Frank Herbert"
+     },
+     {
+      "v": 1965
+     },
+     {
+      "v": "scifi"
+     },
+     null,
+     null,
+     {
+      "v": "Chilton"
+     },
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "classic"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b2"
+     },
+     null,
+     {
+      "v": "Spaced  Title"
+     },
+     {
+      "v": "Ursula K. Le Guin"
+     },
+     {
+      "v": 1969.5
+     },
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "<b>bold</b> & raw"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "Second Author"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b3"
+     },
+     {
+      "v": "ru"
+     },
+     {
+      "v": "Мастер & Маргарита"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "text"
+     },
+     {
+      "v": "inner"
+     },
+     null,
+     null,
+     {
+      "v": "RUB"
+     },
+     {
+      "v": 350
+     },
+     {
+      "v": 3
+     },
+     {
+      "v": 12
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "tail"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "xml books no empty strings",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "book"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "book - id",
+    "book - lang",
+    "book - title",
+    "book - author",
+    "book - year",
+    "book - tags - tag",
+    "book - mixed",
+    "book - mixed - i",
+    "book - dc:publisher",
+    "book - note",
+    "book - price - currency",
+    "book - price",
+    "book - shelf - row",
+    "book - shelf - pos"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b1"
+     },
+     {
+      "v": "en"
+     },
+     {
+      "v": "Dune"
+     },
+     {
+      "v": "Frank Herbert"
+     },
+     {
+      "v": "1965"
+     },
+     {
+      "v": "scifi"
+     },
+     null,
+     null,
+     {
+      "v": "Chilton"
+     },
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "classic"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b2"
+     },
+     null,
+     {
+      "v": "  Spaced  Title "
+     },
+     {
+      "v": "Ursula K. Le Guin"
+     },
+     {
+      "v": "1969.5"
+     },
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "<b>bold</b> & raw"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "Second Author"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b3"
+     },
+     {
+      "v": "ru"
+     },
+     {
+      "v": "Мастер & Маргарита"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "text "
+     },
+     {
+      "v": "inner"
+     },
+     null,
+     null,
+     {
+      "v": "RUB"
+     },
+     {
+      "v": "350"
+     },
+     {
+      "v": "3"
+     },
+     {
+      "v": "12"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": " tail"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "xml books limit",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "book"
+    ],
+    "limit": 2,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "book - id",
+    "book - lang",
+    "book - author",
+    "book - title",
+    "book - year",
+    "book - tags - tag",
+    "book - dc:publisher",
+    "book - note"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b1"
+     },
+     {
+      "v": "en"
+     },
+     {
+      "v": "Frank Herbert"
+     },
+     {
+      "v": "Dune"
+     },
+     {
+      "v": "1965"
+     },
+     {
+      "v": "scifi"
+     },
+     {
+      "v": "Chilton"
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "classic"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b2"
+     },
+     null,
+     {
+      "v": "Ursula K. Le Guin"
+     },
+     {
+      "v": "  Spaced  Title "
+     },
+     {
+      "v": "1969.5"
+     },
+     null,
+     null,
+     {
+      "v": "<b>bold</b> & raw"
+     }
+    ],
+    [
+     null,
+     null,
+     {
+      "v": "Second Author"
+     },
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "xml whole library",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "library - book - id",
+    "library - book - lang",
+    "library - book - title",
+    "library - book - author",
+    "library - book - year",
+    "library - book - tags - tag",
+    "library - book - mixed",
+    "library - book - mixed - i",
+    "library - book - dc:publisher",
+    "library - book - note",
+    "library - book - price - currency",
+    "library - book - price",
+    "library - book - shelf - row",
+    "library - book - shelf - pos",
+    "library - magazine - id",
+    "library - magazine - title",
+    "library - magazine - issue"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b1"
+     },
+     {
+      "v": "en"
+     },
+     {
+      "v": "Dune"
+     },
+     {
+      "v": "Frank Herbert"
+     },
+     {
+      "v": "1965"
+     },
+     {
+      "v": "scifi"
+     },
+     null,
+     null,
+     {
+      "v": "Chilton"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "m1"
+     },
+     {
+      "v": "Not a book"
+     },
+     {
+      "v": "7"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "classic"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b2"
+     },
+     null,
+     {
+      "v": "  Spaced  Title "
+     },
+     {
+      "v": "Ursula K. Le Guin"
+     },
+     {
+      "v": "1969.5"
+     },
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "<b>bold</b> & raw"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "Second Author"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "b3"
+     },
+     {
+      "v": "ru"
+     },
+     {
+      "v": "Мастер & Маргарита"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "text "
+     },
+     {
+      "v": "inner"
+     },
+     null,
+     null,
+     {
+      "v": "RUB"
+     },
+     {
+      "v": "350"
+     },
+     {
+      "v": "3"
+     },
+     {
+      "v": "12"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": " tail"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "xml magazines",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "magazine"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "magazine - id",
+    "magazine - title",
+    "magazine - issue"
+   ],
+   "rows": [
+    [
+     {
+      "v": "m1"
+     },
+     {
+      "v": "Not a book"
+     },
+     {
+      "v": "7"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xml nested record",
+   "file": "books.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "library",
+     "book",
+     "tags",
+     "tag"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "tag"
+   ],
+   "rows": [
+    [
+     {
+      "v": "scifi"
+     }
+    ],
+    [
+     {
+      "v": "classic"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "xml atom entries",
+   "file": "atom.xml",
+   "format": "text/xml",
+   "options": {
+    "recordPath": [
+     "feed",
+     "entry"
+    ],
+    "limit": -1,
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "entry - link - href",
+    "entry - link - rel",
+    "entry - title",
+    "entry - updated"
+   ],
+   "rows": [
+    [
+     {
+      "v": "http://example.org/1"
+     },
+     null,
+     {
+      "v": "First"
+     },
+     {
+      "v": "2024-01-15T10:20:30Z"
+     }
+    ],
+    [
+     {
+      "v": "http://example.org/2"
+     },
+     {
+      "v": "alternate"
+     },
+     {
+      "v": "Second"
+     },
+     {
+      "v": "2024-02-01T00:00:00Z"
+     }
+    ],
+    [
+     {
+      "v": "http://example.org/2.pdf"
+     },
+     {
+      "v": "enclosure"
+     },
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "fixed widths",
+   "file": "fixed.txt",
+   "format": "text/line-based/fixed-width",
+   "options": {
+    "encoding": "UTF-8",
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "columnWidths": [
+     5,
+     10,
+     9
+    ]
+   },
+   "columns": [
+    "Column 1",
+    "Column 2",
+    "Column 3",
+    "Column 4"
+   ],
+   "rows": [
+    [
+     {
+      "v": "ID   "
+     },
+     {
+      "v": "NAME      "
+     },
+     {
+      "v": "CITY     "
+     },
+     {
+      "v": "AMOUNT"
+     }
+    ],
+    [
+     {
+      "v": "1    "
+     },
+     {
+      "v": "Alice     "
+     },
+     {
+      "v": "Boston   "
+     },
+     {
+      "v": "10.5"
+     }
+    ],
+    [
+     {
+      "v": "2    "
+     },
+     {
+      "v": "Bob Jones "
+     },
+     {
+      "v": "New York "
+     },
+     {
+      "v": "7"
+     }
+    ],
+    [
+     {
+      "v": "3    "
+     },
+     {
+      "v": "Ünïcödé   "
+     },
+     {
+      "v": "Köln"
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "44444"
+     },
+     {
+      "v": "Overflow  "
+     },
+     {
+      "v": "TooLongCi"
+     },
+     {
+      "v": "tyName 12345678"
+     }
+    ],
+    [
+     {
+      "v": "short"
+     },
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "fixed widths header",
+   "file": "fixed.txt",
+   "format": "text/line-based/fixed-width",
+   "options": {
+    "encoding": "UTF-8",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "columnWidths": [
+     5,
+     10,
+     9
+    ]
+   },
+   "columns": [
+    "ID",
+    "NAME",
+    "CITY",
+    "AMOUNT"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1    "
+     },
+     {
+      "v": "Alice     "
+     },
+     {
+      "v": "Boston   "
+     },
+     {
+      "v": "10.5"
+     }
+    ],
+    [
+     {
+      "v": "2    "
+     },
+     {
+      "v": "Bob Jones "
+     },
+     {
+      "v": "New York "
+     },
+     {
+      "v": "7"
+     }
+    ],
+    [
+     {
+      "v": "3    "
+     },
+     {
+      "v": "Ünïcödé   "
+     },
+     {
+      "v": "Köln"
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "44444"
+     },
+     {
+      "v": "Overflow  "
+     },
+     {
+      "v": "TooLongCi"
+     },
+     {
+      "v": "tyName 12345678"
+     }
+    ],
+    [
+     {
+      "v": "short"
+     },
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "fixed widths guess types",
+   "file": "fixed.txt",
+   "format": "text/line-based/fixed-width",
+   "options": {
+    "encoding": "UTF-8",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "columnWidths": [
+     5,
+     10,
+     9,
+     6
+    ]
+   },
+   "columns": [
+    "ID",
+    "NAME",
+    "CITY",
+    "AMOUNT",
+    "Column 5"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "Alice     "
+     },
+     {
+      "v": "Boston   "
+     },
+     {
+      "v": 10.5
+     },
+     null
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "Bob Jones "
+     },
+     {
+      "v": "New York "
+     },
+     {
+      "v": 7
+     },
+     null
+    ],
+    [
+     {
+      "v": 3
+     },
+     {
+      "v": "Ünïcödé   "
+     },
+     {
+      "v": "Köln"
+     },
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": 44444
+     },
+     {
+      "v": "Overflow  "
+     },
+     {
+      "v": "TooLongCi"
+     },
+     {
+      "v": "tyName"
+     },
+     {
+      "v": 12345678
+     }
+    ],
+    [
+     {
+      "v": "short"
+     },
+     null,
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "fixed no blank rows",
+   "file": "fixed.txt",
+   "format": "text/line-based/fixed-width",
+   "options": {
+    "encoding": "UTF-8",
+    "ignoreLines": -1,
+    "headerLines": 0,
+    "skipDataLines": 1,
+    "limit": 3,
+    "storeBlankRows": false,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "columnWidths": [
+     5,
+     10
+    ]
+   },
+   "columns": [
+    "Column 1",
+    "Column 2",
+    "Column 3"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1    "
+     },
+     {
+      "v": "Alice     "
+     },
+     {
+      "v": "Boston   10.5"
+     }
+    ],
+    [
+     {
+      "v": "2    "
+     },
+     {
+      "v": "Bob Jones "
+     },
+     {
+      "v": "New York 7"
+     }
+    ],
+    [
+     {
+      "v": "3    "
+     },
+     {
+      "v": "Ünïcödé   "
+     },
+     {
+      "v": "Köln"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "fixed blanks as empty strings",
+   "file": "fixed.txt",
+   "format": "text/line-based/fixed-width",
+   "options": {
+    "encoding": "UTF-8",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": false,
+    "guessCellValueTypes": false,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "columnWidths": [
+     5,
+     10,
+     9
+    ]
+   },
+   "columns": [
+    "ID",
+    "NAME",
+    "CITY",
+    "AMOUNT"
+   ],
+   "rows": [
+    [
+     {
+      "v": "1    "
+     },
+     {
+      "v": "Alice     "
+     },
+     {
+      "v": "Boston   "
+     },
+     {
+      "v": "10.5"
+     }
+    ],
+    [
+     {
+      "v": "2    "
+     },
+     {
+      "v": "Bob Jones "
+     },
+     {
+      "v": "New York "
+     },
+     {
+      "v": "7"
+     }
+    ],
+    [
+     {
+      "v": "3    "
+     },
+     {
+      "v": "Ünïcödé   "
+     },
+     {
+      "v": "Köln"
+     },
+     null
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     null
+    ],
+    [
+     {
+      "v": "44444"
+     },
+     {
+      "v": "Overflow  "
+     },
+     {
+      "v": "TooLongCi"
+     },
+     {
+      "v": "tyName 12345678"
+     }
+    ],
+    [
+     {
+      "v": "short"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "zip of csv files",
+   "file": "bundle.zip",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": true,
+    "includeArchiveFileName": true,
+    "trimStrings": false
+   },
+   "columns": [
+    "Archive",
+    "File",
+    "name",
+    "city",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "bundle.zip"
+     },
+     {
+      "v": "people/a.csv"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.zip"
+     },
+     {
+      "v": "people/a.csv"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.zip"
+     },
+     {
+      "v": "people/b.csv"
+     },
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Rome"
+     },
+     {
+      "v": "3"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "zip without name columns",
+   "file": "bundle.zip",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     },
+     null
+    ],
+    [
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Rome"
+     },
+     {
+      "v": "3"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "tar.gz of csv files",
+   "file": "bundle.tar.gz",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": true,
+    "includeArchiveFileName": true,
+    "trimStrings": false
+   },
+   "columns": [
+    "Archive",
+    "File",
+    "name",
+    "city",
+    "score"
+   ],
+   "rows": [
+    [
+     {
+      "v": "bundle.tar.gz"
+     },
+     {
+      "v": "a.csv"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.tar.gz"
+     },
+     {
+      "v": "a.csv"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     },
+     null
+    ],
+    [
+     {
+      "v": "bundle.tar.gz"
+     },
+     {
+      "v": "b.csv"
+     },
+     {
+      "v": "Carol"
+     },
+     {
+      "v": "Rome"
+     },
+     {
+      "v": "3"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "gzip csv",
+   "file": "single.csv.gz",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     }
+    ],
+    [
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "gzip csv with file name",
+   "file": "single.csv.gz",
+   "format": "text/line-based/*sv",
+   "options": {
+    "encoding": "UTF-8",
+    "separator": ",",
+    "ignoreLines": -1,
+    "headerLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "guessCellValueTypes": false,
+    "processQuotes": true,
+    "quoteCharacter": "\"",
+    "storeBlankCellsAsNulls": true,
+    "includeFileSources": true,
+    "includeArchiveFileName": false,
+    "trimStrings": false
+   },
+   "columns": [
+    "File",
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     {
+      "v": "single.csv.gz"
+     },
+     {
+      "v": "Alice"
+     },
+     {
+      "v": "Boston"
+     }
+    ],
+    [
+     {
+      "v": "single.csv.gz"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "Paris"
+     }
+    ]
+   ]
   }
  ]
 }

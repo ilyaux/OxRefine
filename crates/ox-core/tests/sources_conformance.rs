@@ -39,6 +39,7 @@ fn openrefine_format(f: &str) -> &str {
         "jsonlines" => "text/json",
         "excel" => "binary/text/xml/xls/xlsx",
         "ods" => "text/xml/ods",
+        "xml" => "text/xml",
         other => other,
     }
 }
@@ -91,8 +92,10 @@ fn sources_match_openrefine() {
                 stage_text(&dir, text)?
             } else {
                 let (path, file) = download(&dir, &format!("http://127.0.0.1:{port}{}", case["url"].as_str().unwrap()))?;
-                if file != case["fileName"] {
-                    return Err(format!("file name: expected {}, got {file:?}", case["fileName"]));
+                // OpenRefine's first file: the download, or the first file inside an archive
+                let first = inspect(&path)?["files"][0]["name"].as_str().map_or(file, String::from);
+                if first != case["fileName"] {
+                    return Err(format!("file name: expected {}, got {first:?}", case["fileName"]));
                 }
                 path
             };
@@ -107,7 +110,7 @@ fn sources_match_openrefine() {
                 let want = match (k.as_str(), v) {
                     ("separator", J::String(s)) if format == "text/line-based" => continue,
                     ("separator", J::String(s)) => json!(s.replace("\\t", "\t")),
-                    ("encoding" | "includeFileSources" | "includeArchiveFileName" | "storeBlankColumns" | "forceText", _) => continue,
+                    ("encoding" | "storeBlankColumns" | "forceText", _) => continue,
                     ("sheetRecords", J::Array(a)) => {
                         let picked = ours["sheets"].as_array().map_or(0, |s| s.iter().filter(|x| x["selected"] == true).count());
                         let want = a.iter().filter(|x| x["selected"] == true).count();

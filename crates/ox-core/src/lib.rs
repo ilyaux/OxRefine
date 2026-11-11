@@ -12,6 +12,7 @@ pub mod orproject;
 pub mod project;
 pub mod store;
 pub mod table;
+pub mod unpack;
 
 pub use project::{dispatch, dispatch_free, Project, Session};
 

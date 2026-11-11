@@ -5,6 +5,9 @@ tests/**/*.tsv -text
 tests/**/*.txt -text
 tests/**/*.json -text
 tests/**/*.fods -text
+tests/**/*.xml -text
+tests/**/*.gz binary
+tests/**/*.zip binary
 tests/**/*.ods binary
 tests/**/*.xlsx binary
 

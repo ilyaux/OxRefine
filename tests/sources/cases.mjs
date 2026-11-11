@@ -11,6 +11,10 @@ export const FILES = {
   "/api/export?format=csv": ["text/csv; charset=utf-8", "k,v\n1,2\n"],
   "/notes.txt": ["text/plain", "first line\nsecond line\n"],
   "/sheet.xlsx": ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", readFileSync(new URL("../import/sheets.xlsx", import.meta.url)).toString("base64"), "base64"],
+  "/books.xml": ["text/xml", readFileSync(new URL("../import/books.xml", import.meta.url), "utf8")],
+  "/bundle.zip": ["application/zip", readFileSync(new URL("../import/bundle.zip", import.meta.url)).toString("base64"), "base64"],
+  "/single.csv.gz": ["application/gzip", readFileSync(new URL("../import/single.csv.gz", import.meta.url)).toString("base64"), "base64"],
+  "/bundle.tar.gz": ["application/gzip", readFileSync(new URL("../import/bundle.tar.gz", import.meta.url)).toString("base64"), "base64"],
 }
 
 export const CASES = [
@@ -28,4 +32,10 @@ export const CASES = [
   { name: "url with query", url: "/api/export?format=csv" },
   { name: "url plain text", url: "/notes.txt" },
   { name: "url excel, all sheets", url: "/sheet.xlsx" },
+  // the user clicks the record element in OpenRefine's XML preview
+  { name: "url xml", url: "/books.xml", choose: { recordPath: ["library", "book"] } },
+  // archives: the wizard picks the files of the most common format and adds File and Archive columns
+  { name: "url zip of csv files", url: "/bundle.zip" },
+  { name: "url tar.gz of csv files", url: "/bundle.tar.gz" },
+  { name: "url gzip csv", url: "/single.csv.gz" },
 ]

@@ -125,7 +125,7 @@ export async function pickFile(kind: string): Promise<string | null | undefined>
   if (kind === "open") {
     const p = await open({
       filters: [
-        { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson", "gz", "tgz"] },
+        { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson", "xml", "zip", "gz", "tgz", "tar"] },
         { name: "OpenRefine projects", extensions: ["gz", "tgz"] },
         { name: "All files", extensions: ["*"] },
       ],
