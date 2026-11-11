@@ -109,6 +109,38 @@ export type Op = { op: string } & Record<string, unknown>
 
 export const isTauri = "__TAURI_INTERNALS__" in window
 
+// `ox serve --host`: the link carries a token; this tab keeps it and sends it with every request
+const token = (() => {
+  const q = new URLSearchParams(location.search).get("token")
+  try {
+    if (q) sessionStorage.setItem("ox-token", q)
+    return q ?? sessionStorage.getItem("ox-token")
+  } catch {
+    return q
+  }
+})()
+const auth: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
+
+/** Browser (`ox serve`): send a file from this computer to the server, staged for the import wizard. */
+export async function upload(file: File): Promise<{ path: string; name: string }> {
+  const r = await fetch("/upload", { method: "POST", headers: { ...auth, "X-File-Name": encodeURIComponent(file.name) }, body: file })
+  const j = await r.json()
+  if (!r.ok) throw new Error(String(j))
+  return j.data
+}
+
+/** Browser: write a file with `write(path)` on the server, then download it to this computer. */
+export async function saveToBrowser(name: string, write: (path: string) => Promise<void>) {
+  const r = await fetch("/stage", { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ name }) })
+  const j = await r.json()
+  if (!r.ok) throw new Error(String(j))
+  await write(j.data.path)
+  const a = document.createElement("a")
+  a.href = `/download?path=${encodeURIComponent(j.data.path)}${token ? `&token=${encodeURIComponent(token)}` : ""}`
+  a.download = name
+  a.click()
+}
+
 // commands in flight, so the progress panel knows when to look for running jobs
 let pending = 0
 const pendingListeners = new Set<(n: number) => void>()
@@ -140,7 +172,7 @@ async function send<T>(cmd: string, args: object): Promise<{ data: T; ms: number
   }
   const r = await fetch(`/api/${cmd}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { ...auth, "Content-Type": "application/json" },
     body: JSON.stringify(args),
   })
   const j = await r.json()

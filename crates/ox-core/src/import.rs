@@ -306,6 +306,14 @@ fn stage_folder(dir: &Path) -> Result<std::path::PathBuf> {
     Ok(folder)
 }
 
+/// A path for a file named `name` in a fresh staging folder (an upload, or a file to download).
+pub fn stage_path(dir: &Path, name: &str) -> Result<std::path::PathBuf> {
+    let base = name.rsplit(['/', '\\']).next().unwrap_or("");
+    let clean: String = base.chars().map(|c| if "\\/:*?\"<>|".contains(c) || c.is_control() { '_' } else { c }).collect();
+    let clean = if clean.trim_matches('.').is_empty() { "file".to_string() } else { clean };
+    Ok(stage_folder(dir)?.join(clean))
+}
+
 /// OpenRefine's Clipboard tab: the pasted text becomes a file to import.
 pub fn stage_text(dir: &Path, text: &str) -> Result<std::path::PathBuf> {
     let path = stage_folder(dir)?.join("clipboard.txt");

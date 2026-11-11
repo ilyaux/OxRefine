@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
-import { call, isProjectArchive, listFacet, pickFile, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
+import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
@@ -31,7 +31,7 @@ type Modal =
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "export"; format: ExportFormat }
   | { kind: "extract" }
-  | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onSubmit: (v: string) => Promise<void> }
+  | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onUpload?: (f: File) => Promise<void>; onSubmit: (v: string) => Promise<void> }
   | null
 
 type Staged = { path: string; name?: string; origin?: string }
@@ -74,11 +74,23 @@ export function App() {
   const apply = (op: Op) => run(String(op.op).replace("core/", ""), "apply", { op }).catch((e) => (fail(e), Promise.reject(e)))
   const goto = (index: number) => run("history", "goto", { index }).catch(fail)
 
-  // Desktop: native dialogs. Browser (`ox serve`): the server reads/writes paths on its own machine.
+  // Desktop: native dialogs. Browser (`ox serve`): open a path on the server or upload a file from this
+  // computer; files to save are written on the server and downloaded.
   const withPath = async (kind: string, title: string, then: (p: string) => Promise<void>) => {
     const p = await pickFile(kind)
     if (p) return then(p).catch(fail)
-    if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
+    if (p !== undefined) return
+    if (kind !== "open") {
+      const ext = kind === "openrefine" ? "openrefine.tar.gz" : kind
+      return saveToBrowser(`${(summary?.name ?? "export").replace(/\.[^.]+$/, "")}.${ext}`, then).catch(fail)
+    }
+    setModal({
+      kind: "ask",
+      title,
+      label: "File or folder path on the server",
+      onUpload: (f) => upload(f).then((u) => then(u.path)).catch(fail),
+      onSubmit: (v) => then(v.trim()).catch(fail),
+    })
   }
   const importProject = async (path: string) => {
     setFacets([])

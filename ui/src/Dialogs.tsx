@@ -616,6 +616,7 @@ export function AskDialog({
   initial = "",
   multiline,
   fileAccept,
+  onUpload,
   onSubmit,
   onClose,
 }: {
@@ -625,6 +626,8 @@ export function AskDialog({
   multiline?: boolean
   /** offer "Load from file…" for these file types; the file's text fills the box */
   fileAccept?: string
+  /** offer "Upload from this computer…" (the browser app talking to `ox serve`) */
+  onUpload?: (f: File) => Promise<void>
   onSubmit: (v: string) => Promise<void> | void
   onClose: () => void
 }) {
@@ -650,6 +653,19 @@ export function AskDialog({
             )}
           </Field>
           <DialogFooter>
+            {onUpload && (
+              <Button variant="outline" className="sm:mr-auto" render={<label />} nativeButton={false}>
+                Upload from this computer…
+                <input
+                  type="file"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0]
+                    if (f) onUpload(f).then(onClose)
+                  }}
+                />
+              </Button>
+            )}
             {fileAccept && (
               <Button variant="outline" className="sm:mr-auto" render={<label />} nativeButton={false}>
                 Load from file…

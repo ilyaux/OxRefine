@@ -53,8 +53,16 @@ cargo run --release -p ox-cli -- apply history.json input.csv -o output.csv
 # desktop app
 cd ui && npm install && npm run tauri dev
 
-# browser mode (like OpenRefine): engine API + Vite UI on http://localhost:5173
-cargo run --release -p ox-cli -- serve data.csv
+# browser mode (like OpenRefine): build the UI once, then `ox serve` has it built in
+cd ui && npm install && npm run build && cd ..
+cargo run --release -p ox-cli -- serve            # http://127.0.0.1:3030/
+
+# on a server: other machines get in with the link it prints (it carries an access token);
+# files are uploaded from the browser and exports download to it
+ox serve --host 0.0.0.0 --data /srv/oxrefine
+docker build -t oxrefine . && docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
+
+# working on the UI: Vite on http://localhost:5173 in front of `ox serve`
 cd ui && npm run dev
 ```
 
@@ -62,7 +70,7 @@ cd ui && npm run dev
 
 ```
 crates/ox-core   engine: table, import, facets, ops, GREL, export, clustering, history, jobs, JSON dispatch
-crates/ox-cli    `ox apply` (batch) and `ox serve` (local JSON API)
+crates/ox-cli    `ox apply` (batch) and `ox serve` (the browser app and its JSON API, UI built in)
 ui/              React + shadcn/ui (virtualized grid, facets, history, transform and cluster dialogs)
 ui/src-tauri     desktop shell: one `ox` command that forwards to ox-core::dispatch
 benchmarks/      data generator, recipe, timing + peak-RAM script

@@ -1,0 +1,7 @@
+target/
+**/node_modules/
+ui/dist/
+benchmarks/
+tests/
+.git/
+.claude/

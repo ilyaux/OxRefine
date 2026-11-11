@@ -15,6 +15,6 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     // browser mode: `ox serve` provides the engine API
-    proxy: { "/api": { target: "http://127.0.0.1:3030", changeOrigin: true } },
+    proxy: Object.fromEntries(["/api", "/upload", "/stage", "/download"].map((p) => [p, { target: "http://127.0.0.1:3030", changeOrigin: true }])),
   },
 })
