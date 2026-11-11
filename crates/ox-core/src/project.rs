@@ -71,9 +71,14 @@ impl Project {
         Ok(())
     }
 
-    /// Operations up to the current step, in OpenRefine's JSON shape.
-    pub fn recipe(&self) -> &[Op] {
-        &self.ops[..self.cursor]
+    /// Every recorded step, including undone ones.
+    pub fn steps(&self) -> &[Op] {
+        &self.ops
+    }
+
+    /// Operations up to the current step, in OpenRefine's JSON shape (without single-cell edits).
+    pub fn recipe(&self) -> Vec<&Op> {
+        self.ops[..self.cursor].iter().filter(|o| o.in_recipe()).collect()
     }
 
     /// Filtered row indices, cached per (table version, facets) so scrolling is free.
@@ -97,6 +102,8 @@ impl Project {
             "columns": t.names,
             "rows": t.rows,
             "history": self.ops.iter().map(Op::description).collect::<Vec<_>>(),
+            // per step: whether it can go into an extracted recipe
+            "recipe": self.ops.iter().map(Op::in_recipe).collect::<Vec<_>>(),
             "cursor": self.cursor,
         })
     }
@@ -132,8 +139,32 @@ fn cell_json(v: &grel::Value) -> Value {
     if v.is_null() { Value::Null } else { Value::String(v.display()) }
 }
 
-fn table_page(t: &Table, rows: impl Iterator<Item = usize>) -> Vec<Value> {
-    rows.map(|r| json!([r, t.columns.iter().map(|c| cell_json(c.get(r))).collect::<Vec<_>>(), t.starred[r], t.flagged[r]])).collect()
+/// One letter per cell so the grid can style it: s text/blank, n number, b boolean, d date, e error, o other.
+fn cell_type(v: &grel::Value) -> char {
+    use grel::Value::*;
+    match v {
+        Null | Str(_) => 's',
+        Int(_) | Num(_) => 'n',
+        Bool(_) => 'b',
+        Date(_) => 'd',
+        Error(_) => 'e',
+        _ => 'o',
+    }
+}
+
+/// Grid rows: `[row, cells, starred, flagged, types]`, plus the record number when the row starts a
+/// record (`starts` is given in records mode).
+fn table_page(t: &Table, rows: impl Iterator<Item = usize>, starts: Option<&[u32]>) -> Vec<Value> {
+    rows.map(|r| {
+        let types: String = t.columns.iter().map(|c| cell_type(c.get(r))).collect();
+        let mut row = json!([r, t.columns.iter().map(|c| cell_json(c.get(r))).collect::<Vec<_>>(), t.starred[r], t.flagged[r], types]);
+        if let Some(s) = starts {
+            // s[r] is the record number of row r; only its first row shows it
+            row.as_array_mut().unwrap().push(if r == 0 || s[r] != s[r - 1] { json!(s[r]) } else { Value::Null });
+        }
+        row
+    })
+    .collect()
 }
 
 #[derive(Deserialize, Default)]
@@ -155,6 +186,7 @@ struct Args {
     op: Option<Op>,
     ops: Vec<Op>,
     params: Value,
+    steps: Vec<usize>,
 }
 
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
@@ -173,7 +205,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let mut o = a.options.clone();
             o.limit = if a.limit == 0 { 100 } else { a.limit as i64 };
             let t = import::import(Path::new(&a.path), a.format.as_deref(), &o)?;
-            return Ok(json!({ "columns": t.names, "rows": table_page(&t, 0..t.rows) }));
+            return Ok(json!({ "columns": t.names, "rows": table_page(&t, 0..t.rows, None) }));
         }
         "projects" => return Ok(json!(store.map(Store::list).unwrap_or_default())),
         "open" => {
@@ -222,7 +254,12 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "rows" => {
             let rows = p.rows(&a.engine)?;
             let t = p.table();
-            let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize));
+            // ponytail: record numbers are recounted per page (O(rows)); cache them per table version if paging gets slow
+            let starts: Option<Vec<u32>> = (a.engine.mode == "record-based").then(|| {
+                let mut n = 0u32;
+                t.record_starts(t.key_index()).into_iter().enumerate().map(|(r, s)| { if s && r > 0 { n += 1 } n }).collect()
+            });
+            let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
             json!({ "total": rows.len(), "rows": page })
         }
         "facets" => json!(engine::facet_counts(p.table(), &a.engine)?),
@@ -281,8 +318,13 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 json!(rows.len())
             }
         }
+        // `steps` picks history steps by index (the History panel's Extract); default: up to the cursor
         "export_recipe" => {
-            let r = json!(p.recipe());
+            let r = if a.steps.is_empty() {
+                json!(p.recipe())
+            } else {
+                json!(a.steps.iter().filter_map(|&i| p.steps().get(i)).filter(|o| o.in_recipe()).collect::<Vec<_>>())
+            };
             if !a.path.is_empty() {
                 std::fs::write(&a.path, serde_json::to_string_pretty(&r).map_err(err)?).map_err(err)?;
             }

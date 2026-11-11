@@ -7,6 +7,8 @@ export type Summary = {
   columns: string[]
   rows: number
   history: string[]
+  /** per step: whether it goes into an extracted recipe (single-cell edits do not, as in OpenRefine) */
+  recipe: boolean[]
   cursor: number
 }
 

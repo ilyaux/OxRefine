@@ -375,6 +375,7 @@ export function AskDialog({
   label,
   initial = "",
   multiline,
+  fileAccept,
   onSubmit,
   onClose,
 }: {
@@ -382,6 +383,8 @@ export function AskDialog({
   label: string
   initial?: string
   multiline?: boolean
+  /** offer "Load from file…" for these file types; the file's text fills the box */
+  fileAccept?: string
   onSubmit: (v: string) => Promise<void> | void
   onClose: () => void
 }) {
@@ -407,12 +410,89 @@ export function AskDialog({
             )}
           </Field>
           <DialogFooter>
+            {fileAccept && (
+              <Button variant="outline" className="sm:mr-auto" render={<label />} nativeButton={false}>
+                Load from file…
+                <input type="file" accept={fileAccept} className="sr-only" onChange={(e) => e.target.files?.[0]?.text().then(setV)} />
+              </Button>
+            )}
             <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
             <Button type="submit" disabled={!v.trim()}>
               OK
             </Button>
           </DialogFooter>
         </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+/** OpenRefine's Undo/Redo → Extract: pick steps, see their JSON, copy or save it. */
+export function ExtractDialog({
+  summary,
+  onCopy,
+  onSave,
+  onClose,
+}: {
+  summary: { history: string[]; recipe: boolean[]; cursor: number }
+  onCopy: (steps: number[]) => Promise<void>
+  onSave: (steps: number[]) => void
+  onClose: () => void
+}) {
+  const usable = summary.history.map((_, i) => i).filter((i) => i < summary.cursor && summary.recipe[i])
+  const [steps, setSteps] = useState(usable)
+  const [json, setJson] = useState("")
+  useEffect(() => {
+    if (!steps.length) return setJson("[]")
+    call("export_recipe", { steps }).then(({ data }) => setJson(JSON.stringify(data, null, 2)), () => {})
+  }, [steps])
+  const toggle = (i: number, on: boolean) => setSteps((s) => (on ? [...s, i].sort((a, b) => a - b) : s.filter((x) => x !== i)))
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="sm:max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>Extract operation history</DialogTitle>
+          <DialogDescription>
+            Pick the steps to keep. The JSON applies in OpenRefine (Undo/Redo → Apply) or with ox apply. As in OpenRefine, single-cell edits and
+            single-row stars or flags can't be extracted, and undone steps are not listed.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid min-h-0 gap-4 md:grid-cols-2">
+          <ScrollArea className="h-96 rounded-md border p-2">
+            <div className="flex flex-col gap-1">
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="ex-all"
+                  checked={steps.length === usable.length && usable.length > 0}
+                  indeterminate={steps.length > 0 && steps.length < usable.length}
+                  onCheckedChange={(c) => setSteps(c ? usable : [])}
+                />
+                <FieldLabel htmlFor="ex-all">All steps</FieldLabel>
+              </Field>
+              {summary.history.slice(0, summary.cursor).map((d, i) => (
+                <Field key={i} orientation="horizontal" data-disabled={!summary.recipe[i] || undefined}>
+                  <Checkbox id={`ex-${i}`} disabled={!summary.recipe[i]} checked={steps.includes(i)} onCheckedChange={(c) => toggle(i, !!c)} />
+                  <FieldLabel htmlFor={`ex-${i}`} className="font-normal">
+                    <span className="w-6 shrink-0 tabular-nums text-muted-foreground">{i + 1}.</span>
+                    {d}
+                  </FieldLabel>
+                </Field>
+              ))}
+            </div>
+          </ScrollArea>
+          <ScrollArea className="h-96 rounded-md border bg-muted">
+            <pre className="p-2 font-mono text-xs whitespace-pre">{json}</pre>
+          </ScrollArea>
+        </div>
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
+          <Button variant="outline" disabled={!steps.length} onClick={() => onCopy(steps)}>
+            Copy JSON
+          </Button>
+          <Button disabled={!steps.length} onClick={() => onSave(steps)}>
+            Save…
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

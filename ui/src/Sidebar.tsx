@@ -215,11 +215,25 @@ function TextQuery({ facet, onChange }: { facet: TextFacet; onChange: (f: TextFa
   )
 }
 
-export function History({ summary, onGoto }: { summary: Summary; onGoto: (i: number) => void }) {
+export function History({ summary, onGoto, onExtract }: { summary: Summary; onGoto: (i: number) => void; onExtract: () => void }) {
+  const [q, setQ] = useState("")
   const steps = ["Create project", ...summary.history]
+  const shown = steps.map((s, i) => [s, i] as const).filter(([s]) => !q || s.toLowerCase().includes(q.toLowerCase()))
   return (
     <div className="flex flex-col gap-1">
-      {steps.map((s, i) => (
+      <div className="mb-1 flex gap-1">
+        <InputGroup>
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+          <InputGroupInput aria-label="Filter steps" placeholder="Filter steps" value={q} onChange={(e) => setQ(e.target.value)} />
+        </InputGroup>
+        <Button variant="outline" disabled={!summary.cursor} onClick={onExtract}>
+          Extract…
+        </Button>
+      </div>
+      {q && !shown.length && <p className="px-2 text-xs text-muted-foreground">No steps match.</p>}
+      {shown.map(([s, i]) => (
         <Button
           key={i}
           variant={i === summary.cursor ? "secondary" : "ghost"}
@@ -234,7 +248,7 @@ export function History({ summary, onGoto }: { summary: Summary; onGoto: (i: num
       ))}
       <Separator className="my-2" />
       <p className="text-xs text-muted-foreground">
-        Click a step to undo or redo to it. Export → Recipe gives these steps as OpenRefine-compatible JSON.
+        Click a step to undo or redo to it. Extract gives the steps you pick as OpenRefine-compatible JSON.
       </p>
     </div>
   )

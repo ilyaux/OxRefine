@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, listFacet, pickFile, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
-import { AskDialog, ClusterDialog, SortDialog, TransformDialog } from "@/Dialogs"
+import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
@@ -27,7 +27,8 @@ import { Toaster, toast } from "@/components/ui/toast"
 type Modal =
   | { kind: "transform" | "add" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "export"; format: ExportFormat }
-  | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; onSubmit: (v: string) => Promise<void> }
+  | { kind: "extract" }
+  | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onSubmit: (v: string) => Promise<void> }
   | null
 
 const fail = (e: unknown) => void toast.add({ title: "Something went wrong", description: String((e as Error).message ?? e), type: "error" })
@@ -93,13 +94,13 @@ export function App() {
       setLastMs({ what: "export", ms })
       toast.add({ title: `Exported ${data.toLocaleString()} rows`, description: path, type: "success" })
     })
-  const saveRecipe = () =>
+  const saveRecipe = (steps: number[] = []) =>
     withPath("json", "Save recipe JSON", async (path) => {
-      await call("export_recipe", { path })
+      await call("export_recipe", { path, steps })
       toast.add({ title: "Recipe saved", description: path, type: "success" })
     })
-  const copyRecipe = async () => {
-    const { data } = await call("export_recipe")
+  const copyRecipe = async (steps: number[] = []) => {
+    const { data } = await call("export_recipe", { steps })
     await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
     toast.add({ title: "Recipe copied", description: "Paste it into OpenRefine's Undo/Redo → Apply, or `ox apply`.", type: "success" })
   }
@@ -109,6 +110,7 @@ export function App() {
       title: "Apply operation history",
       label: "OpenRefine or OxRefine recipe JSON",
       multiline: true,
+      fileAccept: ".json,application/json",
       onSubmit: async (v) => {
         let ops: unknown
         try {
@@ -271,7 +273,8 @@ export function App() {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>Operation history</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={saveRecipe}>Recipe JSON…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => saveRecipe()}>Recipe JSON…</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setModal({ kind: "extract" })}>Pick steps…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
@@ -296,13 +299,13 @@ export function App() {
                     <Facets facets={facets} data={facetData} onChange={setFacets} onEditChoice={editChoice} />
                   </TabsContent>
                   <TabsContent value="history">
-                    <History summary={summary} onGoto={goto} />
+                    <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
                   </TabsContent>
                 </ScrollArea>
               </Tabs>
             </aside>
             <main className="min-w-0 flex-1">
-              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} />
+              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} />
             </main>
           </div>
         ) : (
@@ -360,6 +363,17 @@ export function App() {
           onExport={(params) => {
             setModal(null)
             exportRows(modal.format, EXTENSION[modal.format], params)
+          }}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.kind === "extract" && summary && (
+        <ExtractDialog
+          summary={summary}
+          onCopy={(steps) => copyRecipe(steps).catch(fail)}
+          onSave={(steps) => {
+            setModal(null)
+            saveRecipe(steps)
           }}
           onClose={() => setModal(null)}
         />

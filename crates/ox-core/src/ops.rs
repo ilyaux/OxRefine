@@ -164,6 +164,42 @@ pub enum OpKind {
         mode: String,
         sorting: Sorting,
     },
+    // ------------------------------------------------------------ single-cell and single-row edits
+    // OpenRefine records these in history but not in the operations JSON it extracts ("ox/" ops
+    // stay out of recipes the same way).
+    #[serde(rename = "ox/cell-edit", rename_all = "camelCase")]
+    CellEdit {
+        row: usize,
+        column_name: String,
+        value: String,
+        /// text | number | boolean | date, as in OpenRefine's cell editor
+        #[serde(default = "text_type", rename = "type")]
+        kind: String,
+    },
+    #[serde(rename = "ox/row-annotate")]
+    RowAnnotate {
+        row: usize,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        starred: Option<bool>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        flagged: Option<bool>,
+    },
+}
+
+fn text_type() -> String {
+    "text".into()
+}
+
+/// The value OpenRefine's edit-one-cell stores for `value` typed as `kind`.
+fn typed_cell(value: &str, kind: &str) -> Result<Value> {
+    Ok(match kind {
+        "text" => Value::Str(value.into()),
+        "number" => parse_number(value).ok_or_else(|| format!("`{value}` is not a number"))?,
+        "boolean" => Value::Bool(value == "true"),
+        // only a full ISO timestamp with offset parses; anything else leaves the cell empty
+        "date" => chrono::DateTime::parse_from_rfc3339(value).map_or(Value::Null, |d| Value::Date(d.naive_utc())),
+        k => return Err(format!("unknown cell type `{k}` (text, number, boolean, date)")),
+    })
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -431,6 +467,11 @@ impl Op {
         &self.description
     }
 
+    /// Whether OpenRefine would list this step in an extracted operation history.
+    pub fn in_recipe(&self) -> bool {
+        !matches!(self.kind, OpKind::CellEdit { .. } | OpKind::RowAnnotate { .. })
+    }
+
     /// Default description, in OpenRefine's wording, for operations that arrive without one.
     fn describe(&self) -> String {
         use OpKind::*;
@@ -460,6 +501,16 @@ impl Op {
             RowFlag { flagged, .. } => if *flagged { "Flag rows" } else { "Unflag rows" }.into(),
             RowDuplicateRemoval { criteria, .. } => format!("Remove duplicate rows by {}", criteria.join(", ")),
             RowReorder { .. } => "Reorder rows".into(),
+            CellEdit { row, column_name, .. } => format!("Edit single cell on row {}, column {column_name}", row + 1),
+            RowAnnotate { row, starred, flagged } => {
+                let what = match (starred, flagged) {
+                    (Some(true), _) => "Star",
+                    (Some(false), _) => "Unstar",
+                    (_, Some(true)) => "Flag",
+                    _ => "Unflag",
+                };
+                format!("{what} row {}", row + 1)
+            }
         }
     }
 
@@ -685,6 +736,29 @@ impl Op {
                     .collect();
                 let rows: Vec<Option<u32>> = (0..t.rows as u32).filter(|r| !dup.contains(r)).map(Some).collect();
                 t.pick_rows(&rows)
+            }
+            CellEdit { row, column_name, value, kind } => {
+                let ci = t.col(column_name)?;
+                if *row >= t.rows {
+                    return Err(format!("no row {}", row + 1));
+                }
+                let v = typed_cell(value, kind)?;
+                let old = &t.columns[ci];
+                let mut col = Column { dict: old.dict.clone(), codes: old.codes.clone() };
+                let code = col.dict.iter().position(|d| *d == v).unwrap_or_else(|| {
+                    col.dict.push(v);
+                    col.dict.len() - 1
+                });
+                col.codes[*row] = code as u32;
+                let mut out = t.clone();
+                out.columns[ci] = Arc::new(col);
+                out
+            }
+            RowAnnotate { row, starred, flagged } => {
+                if *row >= t.rows {
+                    return Err(format!("no row {}", row + 1));
+                }
+                set_flags(t, &[*row as u32], *starred, *flagged)
             }
             RowReorder { mode, sorting } => {
                 let cols = sorting.criteria.iter().map(|c| t.col(&c.column)).collect::<Result<Vec<_>>>()?;

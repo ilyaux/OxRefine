@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react"
-import { useVirtualizer } from "@tanstack/react-virtual"
-import { ChevronDownIcon, FlagIcon, StarIcon } from "lucide-react"
-import { call, type Engine } from "@/api"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { ChevronDownIcon, FlagIcon, PencilIcon, StarIcon } from "lucide-react"
+import { call, type Engine, type Op } from "@/api"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -15,13 +14,29 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Popover, PopoverContent } from "@/components/ui/popover"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Textarea } from "@/components/ui/textarea"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { cn } from "cn"
 
-type Row = [number, (string | null)[], boolean, boolean]
+/** [row, cells, starred, flagged, cell types (one letter each), record number when the row starts a record] */
+type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?]
 const BLOCK = 200
 const ROW_H = 33
-// ponytail: native scroll height caps near ~1M rows at 33px (browser max element height);
-// switch to scaled scroll offsets when bigger files need to scroll end-to-end.
+// Browsers cap an element's height (~16-33M px). Past this the scrollbar maps onto the rows
+// proportionally and the wheel is slowed down to match, so every row stays reachable.
+const MAX_H = 8_000_000
+const DEFAULT_W = 160
+const TYPE_CLASS: Record<string, string> = {
+  n: "text-right tabular-nums text-(--syntax-number)",
+  d: "tabular-nums text-(--syntax-variable)",
+  b: "text-(--syntax-function)",
+  e: "text-destructive",
+}
+const EDIT_TYPE: Record<string, string> = { n: "number", b: "boolean", d: "date" }
+type Editing = { row: number; column: string; value: string; type: string; anchor: HTMLElement }
 
 export const COMMON: [string, string][] = [
   ["Trim leading and trailing whitespace", "value.trim()"],
@@ -65,22 +80,25 @@ export function Grid({
   version,
   onTotal,
   onAction,
+  onApply,
 }: {
   columns: string[]
   engine: Engine
   version: string
   onTotal: (n: number) => void
   onAction: (a: ColumnAction) => void
+  onApply: (op: Op) => Promise<void>
 }) {
-  const outer = useRef<HTMLDivElement>(null)
-  const [scrollEl, setScrollEl] = useState<HTMLElement | null>(null)
+  const scroller = useRef<HTMLDivElement>(null)
+  const head = useRef<HTMLTableSectionElement>(null)
+  const [view, setView] = useState({ top: 0, height: 600, head: 40 })
   const [total, setTotal] = useState(0)
   const [blocks, setBlocks] = useState(() => new Map<number, Row[]>())
+  const [widths, setWidths] = useState<Record<string, number>>({})
+  const [editing, setEditing] = useState<Editing | null>(null)
   const pending = useRef(new Set<number>())
   const current = useRef(version)
-
-  // The shadcn Table wraps itself in a scroll container; we virtualize that element.
-  useEffect(() => setScrollEl(outer.current?.querySelector<HTMLElement>("[data-slot=table-container]") ?? null), [])
+  const records = engine.mode === "record-based"
 
   const load = (b: number) => {
     if (pending.current.has(b)) return
@@ -104,65 +122,197 @@ export function Grid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version])
 
-  const v = useVirtualizer({
-    count: total,
-    getScrollElement: () => scrollEl,
-    estimateSize: () => ROW_H,
-    overscan: 30,
-  })
-  const items = v.getVirtualItems()
-  const first = items[0]?.index ?? 0
-  const last = items[items.length - 1]?.index ?? 0
+  // geometry: scrolled height is the real height, capped at MAX_H
+  const real = total * ROW_H
+  const height = Math.min(real, MAX_H)
+  const viewH = Math.max(ROW_H, view.height - view.head)
+  const ratio = real > height ? (real - viewH) / Math.max(1, height - viewH) : 1
+  const virt = Math.min(view.top * ratio, Math.max(0, real - viewH))
+  const first = Math.min(Math.floor(virt / ROW_H), Math.max(0, total - 1))
+  const count = Math.min(total - first, Math.ceil(viewH / ROW_H) + 2)
+  const topPad = Math.max(0, view.top - (virt - first * ROW_H))
+  const bottomPad = Math.max(0, height - topPad - count * ROW_H)
+
+  useLayoutEffect(() => {
+    const el = scroller.current
+    if (!el) return
+    const measure = () => setView({ top: el.scrollTop, height: el.clientHeight, head: head.current?.offsetHeight ?? 40 })
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    el.addEventListener("scroll", measure, { passive: true })
+    return () => {
+      ro.disconnect()
+      el.removeEventListener("scroll", measure)
+    }
+  }, [])
+
+  // scaled scrolling: one wheel notch still moves by rows, not by `ratio` screens
+  useEffect(() => {
+    const el = scroller.current
+    if (!el || ratio <= 1) return
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return
+      e.preventDefault()
+      el.scrollTop += (e.deltaMode === 1 ? e.deltaY * ROW_H : e.deltaMode === 2 ? e.deltaY * viewH : e.deltaY) / ratio
+    }
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
+  }, [ratio, viewH])
 
   useEffect(() => {
-    for (let b = Math.floor(first / BLOCK); b <= Math.floor(last / BLOCK); b++) if (!blocks.has(b)) load(b)
+    for (let b = Math.floor(first / BLOCK); b <= Math.floor((first + count) / BLOCK); b++) if (!blocks.has(b)) load(b)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [first, last, blocks])
+  }, [first, count, blocks])
 
-  const top = items[0]?.start ?? 0
-  const bottom = v.getTotalSize() - (items[items.length - 1]?.end ?? 0)
+  const width = (c: string) => widths[c] ?? DEFAULT_W
+  const resize = (c: string) => (e: React.PointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const x0 = e.clientX
+    const w0 = width(c)
+    const move = (ev: PointerEvent) => setWidths((w) => ({ ...w, [c]: Math.max(48, w0 + ev.clientX - x0) }))
+    const up = () => {
+      window.removeEventListener("pointermove", move)
+      window.removeEventListener("pointerup", up)
+    }
+    window.addEventListener("pointermove", move)
+    window.addEventListener("pointerup", up)
+  }
+  const annotate = (row: number, what: { starred: boolean } | { flagged: boolean }) => onApply({ op: "ox/row-annotate", row, ...what }).catch(() => {})
 
+  const rows = Array.from({ length: Math.max(0, count) }, (_, i) => first + i)
   return (
-    <div
-      ref={outer}
-      className="h-full [&_[data-slot=table-container]]:h-full [&_[data-slot=table-container]]:overflow-auto"
-    >
-      <Table>
-        <TableHeader className="sticky top-0 z-10 bg-background">
+    <div ref={scroller} className="h-full overflow-auto [&_[data-slot=table-container]]:overflow-visible">
+      <Table className="table-fixed" style={{ width: 72 + 64 + columns.reduce((s, c) => s + width(c), 0) }}>
+        <colgroup>
+          <col style={{ width: 72 }} />
+          <col style={{ width: 64 }} />
+          {columns.map((c) => (
+            <col key={c} style={{ width: width(c) }} />
+          ))}
+        </colgroup>
+        <TableHeader ref={head} className="sticky top-0 z-10 bg-background">
           <TableRow>
-            <TableHead className="w-16 text-right text-muted-foreground">#</TableHead>
+            <TableHead className="text-right text-muted-foreground">{records ? "record" : "#"}</TableHead>
+            <TableHead className="text-muted-foreground">
+              <span className="sr-only">Star and flag</span>
+            </TableHead>
             {columns.map((c) => (
-              <TableHead key={c}>
+              <TableHead key={c} className="relative">
                 <ColumnMenu column={c} onAction={onAction} />
+                <div
+                  role="separator"
+                  aria-orientation="vertical"
+                  aria-label={`Resize ${c}`}
+                  className="absolute inset-y-0 right-0 w-1.5 cursor-col-resize hover:bg-border"
+                  onPointerDown={resize(c)}
+                  onDoubleClick={() => setWidths(({ [c]: _, ...w }) => w)}
+                />
               </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {top > 0 && <tr style={{ height: top }} />}
-          {items.map((it) => {
-            const row = blocks.get(Math.floor(it.index / BLOCK))?.[it.index % BLOCK]
+          {topPad > 0 && <tr style={{ height: topPad }} />}
+          {rows.map((i) => {
+            const row = blocks.get(Math.floor(i / BLOCK))?.[i % BLOCK]
+            const label = !row ? "" : records ? (row[5] == null ? "" : row[5] + 1) : row[0] + 1
             return (
-              <TableRow key={it.index} style={{ height: ROW_H }}>
-                <TableCell className="text-right font-mono text-xs text-muted-foreground tabular-nums">
-                  <span className="inline-flex items-center gap-1">
-                    {row?.[2] && <StarIcon aria-label="Starred" className="size-3 fill-current" />}
-                    {row?.[3] && <FlagIcon aria-label="Flagged" className="size-3 fill-current" />}
-                    {row ? row[0] + 1 : ""}
-                  </span>
+              <TableRow key={i} style={{ height: ROW_H }}>
+                <TableCell className="text-right font-mono text-xs text-muted-foreground tabular-nums">{label}</TableCell>
+                <TableCell className="py-0">
+                  {row && (
+                    <span className="flex">
+                      <Button variant="ghost" size="icon-xs" aria-label={row[2] ? "Unstar row" : "Star row"} aria-pressed={row[2]} onClick={() => annotate(row[0], { starred: !row[2] })}>
+                        <StarIcon className={row[2] ? "fill-current" : "opacity-30"} />
+                      </Button>
+                      <Button variant="ghost" size="icon-xs" aria-label={row[3] ? "Unflag row" : "Flag row"} aria-pressed={row[3]} onClick={() => annotate(row[0], { flagged: !row[3] })}>
+                        <FlagIcon className={row[3] ? "fill-current" : "opacity-30"} />
+                      </Button>
+                    </span>
+                  )}
                 </TableCell>
-                {columns.map((c, i) => (
-                  <TableCell key={c} className="max-w-xs truncate" title={row?.[1][i] ?? undefined}>
-                    {row?.[1][i]}
-                  </TableCell>
-                ))}
+                {columns.map((c, j) => {
+                  const text = row?.[1][j] ?? null
+                  const type = row?.[4]?.[j] ?? "s"
+                  return (
+                    <TableCell key={c} className={cn("group/cell relative truncate", TYPE_CLASS[type])} title={text ?? undefined}>
+                      {text}
+                      {row && (
+                        <Button
+                          variant="secondary"
+                          size="icon-xs"
+                          aria-label={`Edit ${c} in row ${row[0] + 1}`}
+                          className="absolute top-1/2 right-1 -translate-y-1/2 opacity-0 group-hover/cell:opacity-100 focus-visible:opacity-100"
+                          onClick={(e) => setEditing({ row: row[0], column: c, value: text ?? "", type: EDIT_TYPE[type] ?? "text", anchor: e.currentTarget.parentElement! })}
+                        >
+                          <PencilIcon />
+                        </Button>
+                      )}
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             )
           })}
-          {bottom > 0 && <tr style={{ height: bottom }} />}
+          {bottomPad > 0 && <tr style={{ height: bottomPad }} />}
         </TableBody>
       </Table>
+      {editing && <CellEditor editing={editing} engine={engine} onApply={onApply} onClose={() => setEditing(null)} />}
     </div>
+  )
+}
+
+/** OpenRefine's cell editor: a value, its type, and "apply to all identical cells" (a mass edit). */
+function CellEditor({ editing, engine, onApply, onClose }: { editing: Editing; engine: Engine; onApply: (op: Op) => Promise<void>; onClose: () => void }) {
+  const [value, setValue] = useState(editing.value)
+  const [type, setType] = useState(editing.type)
+  const one = () => onApply({ op: "ox/cell-edit", row: editing.row, columnName: editing.column, value, type }).then(onClose, () => {})
+  const all = () =>
+    onApply({
+      op: "core/mass-edit",
+      engineConfig: engine,
+      columnName: editing.column,
+      expression: "value",
+      edits: [{ from: [editing.value], fromBlank: editing.value === "", fromError: false, to: value }],
+    }).then(onClose, () => {})
+  return (
+    <Popover open onOpenChange={(o) => !o && onClose()}>
+      <PopoverContent anchor={editing.anchor} align="start" className="w-80">
+        <Field>
+          <FieldLabel htmlFor="cell-edit">
+            {editing.column}, row {editing.row + 1}
+          </FieldLabel>
+          <Textarea
+            id="cell-edit"
+            className="font-mono"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) one()
+            }}
+            autoFocus
+          />
+        </Field>
+        <ToggleGroup size="sm" variant="outline" value={[type]} onValueChange={(v) => v[0] && setType(v[0])} aria-label="Cell type">
+          <ToggleGroupItem value="text">Text</ToggleGroupItem>
+          <ToggleGroupItem value="number">Number</ToggleGroupItem>
+          <ToggleGroupItem value="boolean">Boolean</ToggleGroupItem>
+          <ToggleGroupItem value="date">Date</ToggleGroupItem>
+        </ToggleGroup>
+        <div className="flex justify-end gap-2">
+          {type === "text" && (
+            <Button variant="outline" size="sm" onClick={all}>
+              Apply to all identical cells
+            </Button>
+          )}
+          <Button size="sm" onClick={one}>
+            Apply
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 

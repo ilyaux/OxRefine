@@ -234,7 +234,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column city to position 0"
+   ],
+   "operations": 1
   },
   {
    "name": "column-move to end",
@@ -468,7 +472,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column id to position 6"
+   ],
+   "operations": 1
   },
   {
    "name": "column-move-left",
@@ -701,7 +709,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column city to the left"
+   ],
+   "operations": 1
   },
   {
    "name": "column-move-right",
@@ -934,7 +946,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column city to the right"
+   ],
+   "operations": 1
   },
   {
    "name": "column-move-first",
@@ -1167,7 +1183,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column note to the beginning"
+   ],
+   "operations": 1
   },
   {
    "name": "column-move-last",
@@ -1400,7 +1420,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Move column id to the end"
+   ],
+   "operations": 1
   },
   {
    "name": "column-reorder subset",
@@ -1543,7 +1567,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder columns"
+   ],
+   "operations": 1
   },
   {
    "name": "column-multi-removal",
@@ -1735,7 +1763,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 2 columns"
+   ],
+   "operations": 1
   },
   {
    "name": "rename then transform",
@@ -1981,7 +2013,12 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Rename column name to full name",
+    "Text transform on 6 cells in column full name: grel:value.toUppercase()"
+   ],
+   "operations": 2
   },
   {
    "name": "toNumber keep-original",
@@ -2222,7 +2259,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 7 cells in column score: grel:value.toNumber()"
+   ],
+   "operations": 1
   },
   {
    "name": "toNumber set-to-blank",
@@ -2461,7 +2502,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 8 cells in column score: grel:value.toNumber()"
+   ],
+   "operations": 1
   },
   {
    "name": "toDate store-error",
@@ -2712,7 +2757,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 9 cells in column joined: grel:value.toDate()"
+   ],
+   "operations": 1
   },
   {
    "name": "transform reads other cells",
@@ -2955,7 +3004,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 6 cells in column note: grel:cells['name'].value + ' @ ' + cells['city'].value"
+   ],
+   "operations": 1
   },
   {
    "name": "transform in facet only",
@@ -3206,7 +3259,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 2 cells in column city: grel:value.trim().toTitlecase()"
+   ],
+   "operations": 1
   },
   {
    "name": "transform record mode facet",
@@ -3457,7 +3514,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 2 cells in column tags: grel:value.toUppercase()"
+   ],
+   "operations": 1
   },
   {
    "name": "column-addition per row",
@@ -3722,7 +3783,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Create new column double based on column score by filling 7 rows with grel:value.toNumber() * 2"
+   ],
+   "operations": 1
   },
   {
    "name": "mass-edit with blank",
@@ -3979,7 +4044,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Mass edit 3 cells in column city"
+   ],
+   "operations": 1
   },
   {
    "name": "split tags guess types",
@@ -4250,7 +4319,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 7 cell(s) in column tags into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "split keep original no guess",
@@ -4545,7 +4618,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 7 cell(s) in column tags into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "split max columns",
@@ -4804,7 +4881,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 7 cell(s) in column tags into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "split name regex",
@@ -5069,7 +5150,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 6 cell(s) in column name into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "split score numbers",
@@ -5324,7 +5409,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 8 cell(s) in column score into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "split joined by lengths",
@@ -5620,7 +5709,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 7 cell(s) in column joined into several columns by field lengths"
+   ],
+   "operations": 1
   },
   {
    "name": "split only matching rows",
@@ -5895,7 +5988,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split 1 cell(s) in column tags into several columns by separator"
+   ],
+   "operations": 1
   },
   {
    "name": "multivalued split",
@@ -6192,7 +6289,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split multi-valued cells in column tags"
+   ],
+   "operations": 1
   },
   {
    "name": "multivalued split regex",
@@ -6493,7 +6594,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split multi-valued cells in column name"
+   ],
+   "operations": 1
   },
   {
    "name": "multivalued join",
@@ -6726,7 +6831,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Join multi-valued cells in column tags"
+   ],
+   "operations": 1
   },
   {
    "name": "multivalued split then join",
@@ -6967,7 +7076,12 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Split multi-valued cells in column tags",
+    "Join multi-valued cells in column tags"
+   ],
+   "operations": 2
   },
   {
    "name": "multivalued join city",
@@ -7198,7 +7312,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Join multi-valued cells in column city"
+   ],
+   "operations": 1
   },
   {
    "name": "fill-down id",
@@ -7439,7 +7557,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 2 cells in column id"
+   ],
+   "operations": 1
   },
   {
    "name": "fill-down name",
@@ -7682,7 +7804,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 3 cells in column name"
+   ],
+   "operations": 1
   },
   {
    "name": "fill-down in facet",
@@ -7931,7 +8057,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 1 cells in column score"
+   ],
+   "operations": 1
   },
   {
    "name": "fill-down record mode",
@@ -8172,7 +8302,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 2 cells in column name"
+   ],
+   "operations": 1
   },
   {
    "name": "blank-down city",
@@ -8407,7 +8541,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Blank down 1 cells in column city"
+   ],
+   "operations": 1
   },
   {
    "name": "blank-down name",
@@ -8642,7 +8780,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Blank down 1 cells in column name"
+   ],
+   "operations": 1
   },
   {
    "name": "fill then blank down",
@@ -8885,7 +9027,12 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 2 cells in column id",
+    "Blank down 3 cells in column id"
+   ],
+   "operations": 2
   },
   {
    "name": "row-removal facet",
@@ -9058,7 +9205,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 3 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "row-removal list facet blank",
@@ -9221,7 +9372,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 4 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "row-keep-matched",
@@ -9354,7 +9509,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Keep only matching rows (5 rows removed)"
+   ],
+   "operations": 1
   },
   {
    "name": "row-removal record mode",
@@ -9483,7 +9642,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 5 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "row-star facet",
@@ -9730,7 +9893,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Star 3 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "row-flag then unflag",
@@ -9995,7 +10162,12 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Flag 9 rows",
+    "Unflag 2 rows"
+   ],
+   "operations": 2
   },
   {
    "name": "row-duplicate-removal id",
@@ -10190,7 +10362,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 2 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "row-duplicate-removal name city",
@@ -10407,7 +10583,11 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Remove 1 rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort score as number",
@@ -10651,7 +10831,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort score as number reversed",
@@ -10895,7 +11079,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort score blanks first",
@@ -11139,7 +11327,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort name as text",
@@ -11384,7 +11576,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort name case-sensitive",
@@ -11629,7 +11825,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "sort joined as date",
@@ -11891,7 +12091,12 @@
       }
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 6 cells in column joined: grel:value.toDate()",
+    "Reorder rows"
+   ],
+   "operations": 2
   },
   {
    "name": "sort typed numbers",
@@ -12147,7 +12352,12 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Text transform on 7 cells in column score: grel:value.toNumber()",
+    "Reorder rows"
+   ],
+   "operations": 2
   },
   {
    "name": "sort two criteria",
@@ -12399,7 +12609,11 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Reorder rows"
+   ],
+   "operations": 1
   },
   {
    "name": "cleanup recipe",
@@ -12697,7 +12911,855 @@
       null
      ]
     }
-   ]
+   ],
+   "history": [
+    "Fill down 2 cells in column id",
+    "Text transform on 2 cells in column name: grel:value.replace(/\\s+/, ' ').trim().toTitlecase()",
+    "Text transform on 3 cells in column city: grel:value.trim()",
+    "Mass edit 2 cells in column city",
+    "Text transform on 8 cells in column score: grel:value.toNumber()",
+    "Remove 1 rows",
+    "Reorder rows"
+   ],
+   "operations": 7
+  },
+  {
+   "name": "edit one cell, typed",
+   "ops": [
+    {
+     "op": "ox/cell-edit",
+     "row": 0,
+     "columnName": "score",
+     "value": "12",
+     "type": "number"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 1,
+     "columnName": "score",
+     "value": "7.5",
+     "type": "number"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 1,
+     "columnName": "tags",
+     "value": "1e3",
+     "type": "number"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 3,
+     "columnName": "name",
+     "value": "true",
+     "type": "boolean"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 4,
+     "columnName": "name",
+     "value": "yes",
+     "type": "boolean"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 5,
+     "columnName": "joined",
+     "value": "2024-01-15",
+     "type": "date"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 6,
+     "columnName": "joined",
+     "value": "2024-01-15T10:20:30Z",
+     "type": "date"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 7,
+     "columnName": "joined",
+     "value": "garbage",
+     "type": "date"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 8,
+     "columnName": "id",
+     "value": "  spaced  ",
+     "type": "text"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 0,
+     "columnName": "note",
+     "value": "",
+     "type": "text"
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 2,
+     "columnName": "city",
+     "value": "Boston",
+     "type": "text"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": 12
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": ""
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": 1000
+      },
+      {
+       "v": "new york"
+      },
+      {
+       "v": 7.5
+      },
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": true
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": false
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {},
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "2024-01-15T10:20:30Z",
+       "t": "date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {},
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "  spaced  "
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Edit single cell on row 1, column score",
+    "Edit single cell on row 2, column score",
+    "Edit single cell on row 2, column tags",
+    "Edit single cell on row 4, column name",
+    "Edit single cell on row 5, column name",
+    "Edit single cell on row 6, column joined",
+    "Edit single cell on row 7, column joined",
+    "Edit single cell on row 8, column joined",
+    "Edit single cell on row 9, column id",
+    "Edit single cell on row 1, column note",
+    "Edit single cell on row 3, column city"
+   ],
+   "operations": 0
+  },
+  {
+   "name": "star and flag one row",
+   "ops": [
+    {
+     "op": "ox/row-annotate",
+     "row": 2,
+     "starred": true
+    },
+    {
+     "op": "ox/row-annotate",
+     "row": 3,
+     "flagged": true
+    },
+    {
+     "op": "ox/row-annotate",
+     "row": 2,
+     "starred": false
+    },
+    {
+     "op": "ox/row-annotate",
+     "row": 8,
+     "flagged": true
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": true,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Star row 3",
+    "Flag row 4",
+    "Unstar row 3",
+    "Flag row 9"
+   ],
+   "operations": 0
+  },
+  {
+   "name": "cell edit after sort",
+   "ops": [
+    {
+     "op": "core/row-reorder",
+     "mode": "row-based",
+     "sorting": {
+      "criteria": [
+       {
+        "column": "name",
+        "valueType": "string",
+        "reverse": false,
+        "blankPosition": 2,
+        "errorPosition": 1,
+        "caseSensitive": false
+       }
+      ]
+     }
+    },
+    {
+     "op": "ox/cell-edit",
+     "row": 0,
+     "columnName": "name",
+     "value": "first after sort",
+     "type": "text"
+    },
+    {
+     "op": "ox/row-annotate",
+     "row": 0,
+     "starred": true
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": true,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "first after sort"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    }
+   ],
+   "history": [
+    "Reorder rows",
+    "Edit single cell on row 1, column name",
+    "Star row 1"
+   ],
+   "operations": 1
   }
  ]
 }

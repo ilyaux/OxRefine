@@ -59,6 +59,15 @@ fn operations_match_openrefine() {
                 break;
             }
         }
+        if why.is_none() && case["ops"].as_array().unwrap().iter().any(|o| o["op"].as_str().unwrap().starts_with("ox/")) {
+            // single edits: same history wording, and left out of the extracted operations like OpenRefine
+            let steps: Vec<&str> = p.steps().iter().map(|o| o.description()).collect();
+            if serde_json::to_value(&steps).unwrap() != case["history"] {
+                why = Some(format!("history: expected {}, got {steps:?}", case["history"]));
+            } else if json!(p.recipe().len()) != case["operations"] {
+                why = Some(format!("extracted operations: expected {}, got {}", case["operations"], p.recipe().len()));
+            }
+        }
         if why.is_none() {
             let t = p.table();
             let cols: Vec<&str> = case["columns"].as_array().unwrap().iter().map(|c| c.as_str().unwrap()).collect();

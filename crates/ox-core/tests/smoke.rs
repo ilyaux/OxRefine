@@ -27,8 +27,8 @@ fn recipe_facets_cluster_history() {
         {"op": "core/column-removal", "columnName": "city 2"},
     ]}));
     let rows = call("rows", json!({ "start": 0, "limit": 10 }));
-    assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"], false, false]));
-    assert_eq!(rows["rows"][3], json!([3, [null, "Boston", "boston"], false, false]), "facet-excluded row untouched; empty cells are null");
+    assert_eq!(rows["rows"][0], json!([0, ["ALICE SMITH", "New York", "new york"], false, false, "sss"]));
+    assert_eq!(rows["rows"][3], json!([3, [null, "Boston", "boston"], false, false, "sss"]), "facet-excluded row untouched; empty cells are null");
 
     // ngram clusters all three spellings; fingerprint misses New-York (punctuation is removed, not split)
     let c = call("cluster", json!({ "column": "city", "method": "ngram-fingerprint" }));

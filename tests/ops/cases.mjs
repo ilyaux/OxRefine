@@ -25,6 +25,9 @@ const list = (columnName, values, mode = "row-based", extra = {}) => ({
 const transform = (columnName, expression, engineConfig = all, onError = "keep-original") =>
   ({ op: "core/text-transform", engineConfig, columnName, expression: "grel:" + expression, onError, repeat: false, repeatCount: 10 })
 const split = (columnName, extra) => ({ op: "core/column-split", engineConfig: all, columnName, guessCellType: true, removeOriginalColumn: true, mode: "separator", separator: "|", regex: false, maxColumns: 0, ...extra })
+/** OxRefine's records of single edits; gen.mjs runs them through OpenRefine's own commands. */
+const cellEdit = (row, columnName, value, type) => ({ op: "ox/cell-edit", row, columnName, value, type })
+const annotate = (row, what) => ({ op: "ox/row-annotate", row, ...what })
 const sort = (...criteria) => ({ op: "core/row-reorder", mode: "row-based", sorting: { criteria } })
 const crit = (column, valueType, extra = {}) => ({ column, valueType, reverse: false, blankPosition: 2, errorPosition: 1, ...(valueType === "string" ? { caseSensitive: false } : {}), ...extra })
 
@@ -109,4 +112,13 @@ export const CASES = [
     { op: "core/row-duplicate-removal", engineConfig: all, criteria: ["id", "name"] },
     sort(crit("score", "number", { reverse: true })),
   ] },
+  // single-cell and single-row edits (OpenRefine's edit-one-cell and annotate-one-row commands)
+  { name: "edit one cell, typed", ops: [
+    cellEdit(0, "score", "12", "number"), cellEdit(1, "score", "7.5", "number"), cellEdit(1, "tags", "1e3", "number"),
+    cellEdit(3, "name", "true", "boolean"), cellEdit(4, "name", "yes", "boolean"),
+    cellEdit(5, "joined", "2024-01-15", "date"), cellEdit(6, "joined", "2024-01-15T10:20:30Z", "date"), cellEdit(7, "joined", "garbage", "date"),
+    cellEdit(8, "id", "  spaced  ", "text"), cellEdit(0, "note", "", "text"), cellEdit(2, "city", "Boston", "text"),
+  ] },
+  { name: "star and flag one row", ops: [annotate(2, { starred: true }), annotate(3, { flagged: true }), annotate(2, { starred: false }), annotate(8, { flagged: true })] },
+  { name: "cell edit after sort", ops: [sort(crit("name", "string")), cellEdit(0, "name", "first after sort", "text"), annotate(0, { starred: true })] },
 ]
