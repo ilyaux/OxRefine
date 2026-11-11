@@ -8,6 +8,7 @@ pub mod import;
 pub mod jobs;
 pub mod metaphone3;
 pub mod ops;
+pub mod orproject;
 pub mod project;
 pub mod store;
 pub mod table;

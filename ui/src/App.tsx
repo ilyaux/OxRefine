@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
-import { call, listFacet, pickFile, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
+import { call, isProjectArchive, listFacet, pickFile, type ImportReport, rangeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransformDialog } from "@/Dialogs"
 import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
@@ -75,7 +75,29 @@ export function App() {
     if (p) return then(p).catch(fail)
     if (p === undefined) setModal({ kind: "ask", title, label: "File path on this machine", onSubmit: (v) => then(v.trim()).catch(fail) })
   }
-  const openFile = () => withPath("open", "Import a file", async (path) => setStaged({ path }))
+  const importProject = async (path: string) => {
+    setFacets([])
+    const { data, ms } = await call<Summary & { report: ImportReport }>("import_project", { path })
+    setSummary(data)
+    setLastMs({ what: "import", ms })
+    const r = data.report
+    const notes = [
+      r.merged && `${r.merged > 1 ? `The first ${r.merged} steps were` : "The first step was"} merged into the starting data and can't be undone.`,
+      r.dropped && `${r.dropped} undone step${r.dropped > 1 ? "s were" : " was"} left out.`,
+      r.reason && `Reason: ${r.reason}.`,
+      r.recon && "Reconciliation data isn't kept yet; the cell values are.",
+    ].filter(Boolean)
+    if (notes.length) toast.add({ title: "Opened with part of its history", description: notes.join(" "), type: "warning", timeout: 0 })
+  }
+  const openFile = () => withPath("open", "Import a file", async (path) => (isProjectArchive(path) ? importProject(path) : setStaged({ path })))
+  const openOpenRefine = () => withPath("open", "Open an OpenRefine project (.openrefine.tar.gz)", importProject)
+  const exportProject = () =>
+    withPath("openrefine", "Export as an OpenRefine project", async (path) => {
+      const file = isProjectArchive(path) ? path : path.replace(/\.gz$/i, "") + ".openrefine.tar.gz"
+      const { ms } = await call("export_project", { path: file })
+      setLastMs({ what: "export", ms })
+      toast.add({ title: "Project exported", description: `${file} opens in OpenRefine with its history.`, type: "success" })
+    })
   const pasteData = () =>
     setModal({
       kind: "ask",
@@ -291,6 +313,11 @@ export function App() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
+                  <DropdownMenuLabel>Whole project</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={exportProject}>OpenRefine project…</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
                   <DropdownMenuLabel>Operation history</DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => saveRecipe()}>Recipe JSON…</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setModal({ kind: "extract" })}>Pick steps…</DropdownMenuItem>
@@ -308,6 +335,10 @@ export function App() {
                   <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
                   <DropdownMenuItem onClick={pasteData}>Paste data…</DropdownMenuItem>
                   <DropdownMenuItem onClick={fromUrl}>Web address…</DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem onClick={openOpenRefine}>OpenRefine project…</DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -337,7 +368,7 @@ export function App() {
             </main>
           </div>
         ) : (
-          <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpen={openProject} onRename={renameProject} onError={fail} />
+          <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
         )}
 
         <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">

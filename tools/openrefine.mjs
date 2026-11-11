@@ -118,5 +118,36 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
     const file = cfg.retrievalRecord.files[0]
     return { fileName: file.fileName, format, options, columns: cols.map((x) => x.name), rows: rows.map((r) => cols.map((x) => r.cells[x.cellIndex] ?? null)) }
   }
-  return { url, pid: proc.pid, proc, command, get, createProject, idle, wizard, stop: () => kill(proc) }
+  /** Apply a list of ops: core ops through apply-operations, OxRefine's single edits (`ox/cell-edit`,
+   * `ox/row-annotate`) through OpenRefine's own commands. Returns the last reply ({code: "ok"} on success). */
+  async function runOps(project, ops) {
+    let res = { code: "ok" }
+    for (let i = 0; i < ops.length && res.code === "ok"; ) {
+      const op = ops[i]
+      if (op.op === "ox/cell-edit") {
+        const cols = (await get(`/command/core/get-models?project=${project}`)).columnModel.columns
+        const cell = cols.find((x) => x.name === op.columnName).cellIndex
+        res = await command("edit-one-cell", { project, row: op.row, cell, value: op.value, type: op.type })
+        i++
+      } else if (op.op === "ox/row-annotate") {
+        const { op: _, row, ...what } = op
+        res = await command("annotate-one-row", { project, row, ...what })
+        i++
+      } else {
+        let j = i
+        while (j < ops.length && !ops[j].op.startsWith("ox/")) j++
+        res = await command("apply-operations", { project, operations: ops.slice(i, j) })
+        await idle(project)
+        i = j
+      }
+    }
+    return res
+  }
+  /** The table as get-rows shows it, in column order: cells are null | {v, t?} | {e}. */
+  async function table(project) {
+    const cols = (await get(`/command/core/get-models?project=${project}`)).columnModel.columns
+    const rows = (await get(`/command/core/get-rows?project=${project}&start=0&limit=100000`)).rows
+    return { columns: cols.map((x) => x.name), rows: rows.map((r) => ({ starred: r.starred, flagged: r.flagged, cells: cols.map((x) => r.cells[x.cellIndex] ?? null) })) }
+  }
+  return { url, pid: proc.pid, proc, command, get, createProject, idle, wizard, runOps, table, stop: () => kill(proc) }
 }

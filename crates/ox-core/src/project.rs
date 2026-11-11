@@ -31,8 +31,12 @@ impl Project {
         Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None }
     }
 
-    /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension).
+    /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension),
+    /// or open an OpenRefine project archive with its history.
     pub fn open(path: &Path) -> Result<Project> {
+        if crate::orproject::is_archive(path) {
+            return Ok(crate::orproject::read(path)?.into_project().0);
+        }
         Ok(Project::new(file_name(path), import::import(path, None, &ImportOptions::default())?))
     }
 
@@ -45,6 +49,17 @@ impl Project {
         p.goto(history.cursor.min(p.ops.len()))?;
         p.meta = Some(meta);
         Ok(p)
+    }
+
+    /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
+    pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>) -> Project {
+        let cursor = ops.len();
+        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None }
+    }
+
+    /// Every table, every step and the cursor (for writing the whole history out).
+    pub(crate) fn history_parts(&self) -> (&[Table], &[Op], usize) {
+        (&self.states, &self.ops, self.cursor)
     }
 
     pub fn table(&self) -> &Table {
@@ -260,6 +275,23 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             }
             s.project = Some(p);
         }
+        // an OpenRefine project archive, history included; `report` says what history couldn't come along
+        "import_project" => {
+            let (mut p, report) = crate::orproject::read(Path::new(&a.path))?.into_project();
+            if !a.name.trim().is_empty() {
+                p.name = a.name.trim().to_string();
+            }
+            if let Some(st) = store {
+                crate::jobs::progress("Saving the project", 0);
+                let source = Source { path: a.path.clone(), format: Some("openrefine-project".into()), options: ImportOptions::default() };
+                p.meta = Some(st.create(&p.name, &p.history_parts().0[0], Some(source))?);
+                p.save(store)?;
+            }
+            let mut out = p.summary();
+            out["report"] = json!(report);
+            s.project = Some(p);
+            return Ok(out);
+        }
         "open_project" => {
             let st = store.ok_or("projects are not saved in this session")?;
             let (meta, original, history) = st.load(&a.id)?;
@@ -366,6 +398,10 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 std::fs::write(&a.path, bytes).map_err(|e| format!("{}: {e}", a.path))?;
                 json!(rows.len())
             }
+        }
+        "export_project" => {
+            crate::orproject::write(p, Path::new(&a.path))?;
+            json!(a.path)
         }
         // `steps` picks history steps by index (the History panel's Extract); default: up to the cursor
         "export_recipe" => {

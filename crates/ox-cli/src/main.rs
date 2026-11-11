@@ -6,7 +6,8 @@ use std::{
 };
 
 const USAGE: &str = "usage:
-  ox apply <history.json> <input.csv> -o <output.csv>   replay an OpenRefine operation history headlessly
+  ox apply <history.json> <input> -o <output>          replay an OpenRefine operation history headlessly
+                                                        (input or output may be an .openrefine.tar.gz project)
   ox serve [file] [--port 3030] [--data DIR]             JSON API for the web UI (ui/: npm run dev); projects are saved in DIR";
 
 fn main() {
@@ -38,6 +39,11 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
     }
     eprintln!("apply   {:>9.1} ms   {} operations", ms(t), p.recipe().len());
     let t = Instant::now();
+    if ox_core::orproject::is_archive(out.as_ref()) {
+        ox_core::orproject::write(&p, out.as_ref())?;
+        eprintln!("export  {:>9.1} ms   {out}", ms(t));
+        return Ok(());
+    }
     let t2 = p.table();
     let bytes = ox_core::export::export(t2, &(0..t2.rows as u32).collect::<Vec<_>>(), ox_core::export::format_for(out), &serde_json::Value::Null, "data")?;
     std::fs::write(out, bytes).map_err(|e| format!("{out}: {e}"))?;

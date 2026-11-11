@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { ClipboardPasteIcon, FolderOpenIcon, GlobeIcon, TableIcon } from "lucide-react"
+import { ClipboardPasteIcon, FolderOpenIcon, GlobeIcon, HistoryIcon, TableIcon } from "lucide-react"
 import { call } from "@/api"
 import {
   AlertDialog,
@@ -28,6 +28,7 @@ export function Home({
   onImport,
   onPaste,
   onUrl,
+  onOpenRefine,
   onOpen,
   onRename,
   onError,
@@ -35,6 +36,7 @@ export function Home({
   onImport: () => void
   onPaste: () => void
   onUrl: () => void
+  onOpenRefine: () => void
   onOpen: (id: string) => void
   onRename: (p: ProjectMeta, done: () => void) => void
   onError: (e: unknown) => void
@@ -59,9 +61,14 @@ export function Home({
           <CardTitle>New project</CardTitle>
           <CardDescription>
             Import CSV, TSV, Excel (.xlsx, .xls), OpenDocument (.ods), JSON or plain text from a file, the clipboard or a web address.
-            Options and a preview come next; the original is never changed.
+            Options and a preview come next; the original is never changed. OpenRefine projects (.openrefine.tar.gz) open with
+            their undo history.
           </CardDescription>
           <CardAction className="flex gap-2">
+            <Button variant="outline" onClick={onOpenRefine}>
+              <HistoryIcon data-icon="inline-start" />
+              OpenRefine project
+            </Button>
             <Button variant="outline" onClick={onPaste}>
               <ClipboardPasteIcon data-icon="inline-start" />
               Paste data

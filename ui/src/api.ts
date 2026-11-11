@@ -12,6 +12,12 @@ export type Summary = {
   cursor: number
 }
 
+/** What happened to an OpenRefine project's history on import. */
+export type ImportReport = { merged: number; dropped: number; reason: string | null; recon: boolean }
+
+/** OpenRefine project archives open with their history instead of going through the import wizard. */
+export const isProjectArchive = (path: string) => /\.(tar\.gz|tgz)$/i.test(path)
+
 export type ListFacet = {
   type: "list"
   name: string
@@ -119,11 +125,13 @@ export async function pickFile(kind: string): Promise<string | null | undefined>
   if (kind === "open") {
     const p = await open({
       filters: [
-        { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson"] },
+        { name: "Data files", extensions: ["csv", "tsv", "tab", "txt", "xlsx", "xlsm", "xls", "ods", "json", "jsonl", "ndjson", "gz", "tgz"] },
+        { name: "OpenRefine projects", extensions: ["gz", "tgz"] },
         { name: "All files", extensions: ["*"] },
       ],
     })
     return typeof p === "string" ? p : null
   }
+  if (kind === "openrefine") return save({ filters: [{ name: "OpenRefine project", extensions: ["gz"] }], defaultPath: "project.openrefine.tar.gz" })
   return save({ filters: [{ name: kind.toUpperCase(), extensions: [kind] }] })
 }

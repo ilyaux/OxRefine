@@ -15,36 +15,10 @@ try {
   const out = []
   for (const c of CASES) {
     const project = await or.createProject(CORPUS, { name: "ops" })
-    // core ops go through apply-operations; single edits through OpenRefine's own commands
-    let res = { code: "ok" }
-    for (let i = 0; i < c.ops.length && res.code === "ok"; ) {
-      const op = c.ops[i]
-      if (op.op === "ox/cell-edit") {
-        const cols = (await or.get(`/command/core/get-models?project=${project}`)).columnModel.columns
-        const cell = cols.find((x) => x.name === op.columnName).cellIndex
-        res = await or.command("edit-one-cell", { project, row: op.row, cell, value: op.value, type: op.type })
-        i++
-      } else if (op.op === "ox/row-annotate") {
-        const { op: _, row, ...what } = op
-        res = await or.command("annotate-one-row", { project, row, ...what })
-        i++
-      } else {
-        let j = i
-        while (j < c.ops.length && !c.ops[j].op.startsWith("ox/")) j++
-        res = await or.command("apply-operations", { project, operations: c.ops.slice(i, j) })
-        await or.idle(project)
-        i = j
-      }
-    }
+    const res = await or.runOps(project, c.ops)
     const history = (await or.get(`/command/core/get-history?project=${project}`)).past.map((h) => h.description)
     const operations = (await or.get(`/command/core/get-operations?project=${project}`)).entries.filter((e) => e.operation).length
-    const models = await or.get(`/command/core/get-models?project=${project}`)
-    const rows = (await or.get(`/command/core/get-rows?project=${project}&start=0&limit=1000`)).rows
-    const cols = models.columnModel.columns
-    const table = {
-      columns: cols.map((x) => x.name),
-      rows: rows.map((r) => ({ starred: r.starred, flagged: r.flagged, cells: cols.map((x) => r.cells[x.cellIndex] ?? null) })),
-    }
+    const table = await or.table(project)
     const entry = { name: c.name, ops: c.ops, ...table, history, operations }
     if (res.code !== "ok") entry.error = res.message ?? JSON.stringify(res)
     out.push(entry)

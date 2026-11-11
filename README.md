@@ -30,7 +30,7 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. Results go to `benchmarks/resul
 
 ## OpenRefine compatibility
 
-Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, including `engineConfig` facets, so a history moves between the two tools in both directions. Behaviour is checked against fixtures generated from a real OpenRefine 3.10.1 (see [Tests](#tests)); every known difference is listed with its reason in a `known_failures.txt` next to the fixtures.
+Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, including `engineConfig` facets, so a history moves between the two tools in both directions. Whole projects move too: an OpenRefine export (`.openrefine.tar.gz`) opens with its undo history, and *Export → OpenRefine project* writes one that OpenRefine opens with OxRefine's history (`ox apply` reads and writes them as well). Behaviour is checked against fixtures generated from a real OpenRefine 3.10.1 (see [Tests](#tests)); every known difference is listed with its reason in a `known_failures.txt` next to the fixtures.
 
 | Area | Cases matching OpenRefine |
 |---|---|
@@ -42,6 +42,7 @@ Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, inclu
 | Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
 | Exports (CSV/TSV, custom tabular, HTML, templating, Excel, SQL) | 12 / 13 |
 | Clustering and GREL phonetic() (6 keyers, Levenshtein kNN, 9 encoders × 127 values) | 1148 / 1157 |
+| OpenRefine project archives, opened with their full history (and written back) | 59 / 61 |
 
 ## Run
 
@@ -74,8 +75,8 @@ cargo test --release          # unit tests + every OpenRefine conformance suite
 cd ui && npm run build        # UI typecheck and build
 ```
 
-Each suite in `tests/<suite>/` has `cases.mjs` (what to try), `gen.mjs` (runs it through OpenRefine 3.10.1 and writes `fixtures.json`) and `known_failures.txt` (deliberate differences, each with a reason). A test fails on a new difference, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs the OpenRefine download next to the repo (`tools/openrefine.mjs`); `node tests/corpus/make.mjs` rewrites the corpus files. CI (`.github/workflows/ci.yml`) runs all of this on Windows, macOS and Linux.
+Each suite in `tests/<suite>/` has `cases.mjs` (what to try), `gen.mjs` (runs it through OpenRefine 3.10.1 and writes `fixtures.json`) and `known_failures.txt` (deliberate differences, each with a reason). A test fails on a new difference, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs the OpenRefine download next to the repo (`tools/openrefine.mjs`); `node tests/corpus/make.mjs` rewrites the corpus files; `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. CI (`.github/workflows/ci.yml`) runs all of this on Windows, macOS and Linux.
 
 ## Not yet
 
-Reconciliation, the PPM clustering distance, XML/fixed-width/RDF import, project archives, the timeline and scatterplot facets, and installers. The roadmap is in [ROADMAP.md](ROADMAP.md).
+Reconciliation (an imported project keeps its cell values but not their reconciliation data), the PPM clustering distance, XML/fixed-width/RDF import, the timeline and scatterplot facets, and installers. The roadmap is in [ROADMAP.md](ROADMAP.md).
