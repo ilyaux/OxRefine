@@ -73,8 +73,28 @@ export type Op = { op: string } & Record<string, unknown>
 
 export const isTauri = "__TAURI_INTERNALS__" in window
 
-/** One entry point for both the desktop app (Tauri IPC) and `ox serve` (HTTP). */
-export async function call<T = unknown>(cmd: string, args: object = {}): Promise<{ data: T; ms: number }> {
+// commands in flight, so the progress panel knows when to look for running jobs
+let pending = 0
+const pendingListeners = new Set<(n: number) => void>()
+/** Follow the number of commands in flight; returns an unsubscribe function. */
+export function onPending(f: (n: number) => void) {
+  pendingListeners.add(f)
+  return () => void pendingListeners.delete(f)
+}
+
+/** One entry point for both the desktop app (Tauri IPC) and `ox serve` (HTTP). `quiet` calls (progress
+ * polling) don't count as work in flight. */
+export async function call<T = unknown>(cmd: string, args: object = {}, { quiet = false } = {}): Promise<{ data: T; ms: number }> {
+  if (quiet) return send<T>(cmd, args)
+  pendingListeners.forEach((f) => f(++pending))
+  try {
+    return await send<T>(cmd, args)
+  } finally {
+    pendingListeners.forEach((f) => f(--pending))
+  }
+}
+
+async function send<T>(cmd: string, args: object): Promise<{ data: T; ms: number }> {
   if (isTauri) {
     try {
       return await invoke("ox", { cmd, args })

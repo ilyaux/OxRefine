@@ -5,10 +5,11 @@ use std::sync::Mutex;
 
 struct Slot(Mutex<Session>);
 
-// async = runs off the UI thread, so importing a big file doesn't freeze the window
+// async = runs off the UI thread, so importing a big file doesn't freeze the window;
+// `processes` and `cancel_process` skip the session lock so they answer during a long command
 #[tauri::command]
 async fn ox(slot: tauri::State<'_, Slot>, cmd: String, args: Value) -> Result<Value, String> {
-    ox_core::dispatch(&mut slot.0.lock().unwrap_or_else(|e| e.into_inner()), &cmd, args)
+    ox_core::dispatch_free(&cmd, &args).unwrap_or_else(|| ox_core::dispatch(&mut slot.0.lock().unwrap_or_else(|e| e.into_inner()), &cmd, args))
 }
 
 fn main() {

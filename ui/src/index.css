@@ -132,6 +132,14 @@
   * {
     @apply border-border outline-ring/50;
     }
+  /* native scrollbars in the theme's colours instead of the browser's light default */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground) 40%, transparent) transparent;
+  }
+  *:hover {
+    scrollbar-color: var(--muted-foreground) transparent;
+  }
   body {
     @apply bg-background text-foreground;
     }

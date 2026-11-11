@@ -6,6 +6,7 @@ import { Grid, type ColumnAction } from "@/Grid"
 import { Home } from "@/Home"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
+import { Jobs } from "@/Jobs"
 import { Facets, History } from "@/Sidebar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -359,6 +360,7 @@ export function App() {
         </footer>
       </div>
 
+      <Jobs />
       {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
       {staged && (
         <ImportDialog

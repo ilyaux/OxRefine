@@ -4,12 +4,13 @@ pub mod engine;
 pub mod export;
 pub mod grel;
 pub mod import;
+pub mod jobs;
 pub mod ops;
 pub mod project;
 pub mod store;
 pub mod table;
 
-pub use project::{dispatch, Project, Session};
+pub use project::{dispatch, dispatch_free, Project, Session};
 
 pub type Result<T> = std::result::Result<T, String>;
 

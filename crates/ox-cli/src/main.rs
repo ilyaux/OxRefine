@@ -1,6 +1,9 @@
-use ox_core::{dispatch, ops::Op, store::Store, Project, Session};
+use ox_core::{dispatch, dispatch_free, ops::Op, store::Store, Project, Session};
 use serde_json::{json, Value};
-use std::time::Instant;
+use std::{
+    sync::{Arc, Mutex},
+    time::Instant,
+};
 
 const USAGE: &str = "usage:
   ox apply <history.json> <input.csv> -o <output.csv>   replay an OpenRefine operation history headlessly
@@ -56,14 +59,19 @@ fn serve(args: &[&str]) -> Result<(), String> {
             f => file = Some(f),
         }
     }
-    let mut slot = Session::with_store(Store::open(&data)?);
+    let mut session = Session::with_store(Store::open(&data)?);
     // a file named on the command line opens without being added to the project library
-    slot.project = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    session.project = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    let slot = Arc::new(Mutex::new(session));
     eprintln!("projects are saved in {}", data.display());
     let server = tiny_http::Server::http(("127.0.0.1", port)).map_err(|e| e.to_string())?;
     let host_ok = [format!("127.0.0.1:{port}"), format!("localhost:{port}")];
     eprintln!("OxRefine API on http://127.0.0.1:{port}/api/<command>");
+    // a thread per request: `processes` and `cancel_process` answer while a long command holds the session
     for mut req in server.incoming_requests() {
+        let slot = slot.clone();
+        let host_ok = host_ok.clone();
+        std::thread::spawn(move || {
         let header = |name: &str| req.headers().iter().find(|h| h.field.as_str().as_str().eq_ignore_ascii_case(name)).map(|h| h.value.as_str().to_owned());
         // The API reads and writes local files: refuse other hosts (DNS rebinding) and
         // non-JSON bodies (cross-site form posts can't set this type without a preflight we never answer).
@@ -76,13 +84,15 @@ fn serve(args: &[&str]) -> Result<(), String> {
             let mut body = String::new();
             req.as_reader().read_to_string(&mut body).ok();
             let args = serde_json::from_str(&body).unwrap_or_else(|_| json!({}));
-            match dispatch(&mut slot, &cmd, args) {
+            let result = dispatch_free(&cmd, &args).unwrap_or_else(|| dispatch(&mut slot.lock().unwrap_or_else(|e| e.into_inner()), &cmd, args));
+            match result {
                 Ok(v) => (200, v),
                 Err(e) => (400, Value::String(e)),
             }
         };
         let ct = tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap();
         req.respond(tiny_http::Response::from_string(body.to_string()).with_status_code(code).with_header(ct)).ok();
+        });
     }
     Ok(())
 }

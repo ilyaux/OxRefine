@@ -108,6 +108,7 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
 }
 
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
+    crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), 0);
     match format_for(path, format) {
         Format::Csv => import_text(path, o),
         Format::Lines => import_lines(path, o),
@@ -192,7 +193,9 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
     if !matches!(parsed.scheme(), "http" | "https") {
         return Err(format!("{url}: only http and https addresses can be imported"));
     }
+    crate::jobs::progress(&format!("Connecting to {}", parsed.host_str().unwrap_or("")), 0);
     let mut res = ureq::get(parsed.as_str()).call().map_err(|e| format!("{url}: {e}"))?;
+    let size = res.headers().get("content-length").and_then(|v| v.to_str().ok()?.parse().ok()).unwrap_or(0);
     let name = parsed.path_segments().and_then(|mut s| s.next_back()).filter(|s| !s.is_empty()).unwrap_or("download");
     let name: String = name.chars().map(|c| if "\\/:*?\"<>|".contains(c) { '_' } else { c }).collect();
     let mime = res.headers().get("content-type").and_then(|v| v.to_str().ok()).unwrap_or("").split(';').next().unwrap_or("").trim().to_ascii_lowercase();
@@ -209,7 +212,12 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
     };
     let path = stage_folder(dir)?.join(format!("{name}{ext}"));
     let mut file = File::create(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-    std::io::copy(&mut res.body_mut().as_reader(), &mut file).map_err(|e| format!("{url}: {e}"))?;
+    crate::jobs::progress(&format!("Downloading {name}"), size);
+    if let Err(e) = std::io::copy(&mut crate::jobs::Counted(res.body_mut().as_reader()), &mut file) {
+        drop(file);
+        let _ = std::fs::remove_dir_all(path.parent().unwrap_or(&path));
+        return Err(if crate::jobs::is_cancel(&e) { crate::jobs::CANCELLED.into() } else { format!("{url}: {e}") });
+    }
     Ok((path, name))
 }
 
@@ -444,7 +452,9 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
         Ok(())
     };
     if is_utf8(&o.encoding) {
-        let file: Box<dyn Read> = Box::new(std::io::BufReader::with_capacity(1 << 20, File::open(path).map_err(err)?));
+        let f = File::open(path).map_err(err)?;
+        crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
+        let file: Box<dyn Read> = Box::new(std::io::BufReader::with_capacity(1 << 20, crate::jobs::Counted(f)));
         feed(&mut builder().from_reader(file))?;
     } else {
         let text = decode(path, &o.encoding)?;
@@ -455,7 +465,10 @@ fn import_text(path: &Path, o: &ImportOptions) -> Result<Table> {
 }
 
 fn decode(path: &Path, label: &str) -> Result<String> {
-    let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let mut bytes = vec![];
+    let f = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
+    crate::jobs::Counted(f).read_to_end(&mut bytes).map_err(|e| if crate::jobs::is_cancel(&e) { crate::jobs::CANCELLED.to_string() } else { format!("{}: {e}", path.display()) })?;
     if is_utf8(label) {
         return Ok(String::from_utf8_lossy(&bytes).into_owned());
     }

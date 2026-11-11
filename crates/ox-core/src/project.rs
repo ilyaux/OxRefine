@@ -194,10 +194,29 @@ struct Args {
 }
 
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
+/// Each command runs as a job, so `processes` can report its progress and `cancel_process` stop it.
 pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
+    if let Some(r) = dispatch_free(cmd, &args) {
+        return r;
+    }
     let t0 = Instant::now();
-    let data = run(s, cmd, serde_json::from_value(args).map_err(err)?)?;
+    let a = serde_json::from_value(args).map_err(err)?;
+    let data = crate::jobs::run("Working", || run(s, cmd, a))?;
     Ok(json!({ "data": data, "ms": t0.elapsed().as_secs_f64() * 1000.0 }))
+}
+
+/// Commands that need no session, so hosts answer them while another command holds it:
+/// `processes` (running jobs with progress) and `cancel_process` (`id`, or every job without one).
+pub fn dispatch_free(cmd: &str, args: &Value) -> Option<Result<Value>> {
+    let data = match cmd {
+        "processes" => crate::jobs::list(),
+        "cancel_process" => {
+            crate::jobs::cancel(args.get("id").and_then(Value::as_u64).unwrap_or(0));
+            Value::Null
+        }
+        _ => return None,
+    };
+    Some(Ok(json!({ "data": data, "ms": 0.0 })))
 }
 
 fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
@@ -224,6 +243,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "open" => {
             let path = Path::new(&a.path);
             let table = import::import(path, a.format.as_deref(), &a.options)?;
+            crate::jobs::progress("Saving the project", 0);
             let name = if a.name.trim().is_empty() { file_name(path) } else { a.name.trim().to_string() };
             let mut p = Project::new(name.clone(), table);
             if let Some(st) = store {
@@ -287,7 +307,13 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             p.summary()
         }
         "apply_recipe" => {
-            let result = a.ops.into_iter().enumerate().try_for_each(|(i, op)| p.apply(op).map_err(|e| format!("step {}: {e}", i + 1)));
+            let n = a.ops.len();
+            crate::jobs::progress(&format!("Applying {n} steps"), n as u64);
+            let result = a.ops.into_iter().enumerate().try_for_each(|(i, op)| {
+                crate::jobs::tick(0)?;
+                p.apply(op).map_err(|e| format!("step {}: {e}", i + 1))?;
+                crate::jobs::tick(1)
+            });
             // keep the steps that did apply, even when a later one failed
             p.save(store)?;
             result?;
