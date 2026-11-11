@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 112 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 117 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,8 +8,8 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 21 |
-| v0.5 | 37 | 2 |
-| v1.0 | 5 | 0 |
+| v0.5 | 41 | 2 |
+| v1.0 | 6 | 0 |
 | later | 14 | 0 |
 
 ## Prototype
@@ -88,7 +88,7 @@ All 37 OpenRefine operations, same JSON, same results.
 - [~] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
 - [~] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
 - [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
-- [ ] **Reconciliation operations** · v1.0 · P1 · M. The operations around reconciliation: match each cell to its best candidate, create a new item for each cell, match all filtered cells to a chosen item, discard judgments, clear reconciliation data, copy reconciliation data to other columns, use values as identifiers, add a column of matched entity identifiers/names. Same operation JSON and results as OpenRefine 3.10.1, checked by fixtures. _OpenRefine: ReconMatchBestCandidatesOperation, ReconMarkNewTopicsOperation, ReconDiscardJudgmentsOperation, ReconClearSimilarCellsOperation, ReconCopyAcrossColumnsOperation, ReconUseValuesAsIdentifiersOperation, ReconMatchSpecificTopicOperation_
+- [~] **Reconciliation operations** · v1.0 · P1 · M. The operations around reconciliation: match each cell to its best candidate, create a new item for each cell, match all filtered cells to a chosen item, discard judgments, clear reconciliation data, copy reconciliation data to other columns, use values as identifiers, add a column of matched entity identifiers/names. Same operation JSON and results as OpenRefine 3.10.1, checked by fixtures. _OpenRefine: ReconMatchBestCandidatesOperation, ReconMarkNewTopicsOperation, ReconDiscardJudgmentsOperation, ReconClearSimilarCellsOperation, ReconCopyAcrossColumnsOperation, ReconUseValuesAsIdentifiersOperation, ReconMatchSpecificTopicOperation_
 
 ## GREL
 
@@ -134,9 +134,11 @@ All key-collision keyers and nearest-neighbour methods.
 W3C Reconciliation API: matching, judging, data extension.
 
 - [~] **Reconciliation API client and the reconcile operation** · v1.0 · P1 · L. W3C Reconciliation API client: fetch a service manifest, batched queries (OpenRefine's batch size), type constraint, property constraints from other columns, limit, auto-match (OpenRefine's rule: top candidate matched when its score and the gap to the second qualify). The core/recon operation with StandardReconConfig JSON, same output cells as OpenRefine; long-running job with progress and cancel. Service list kept in preferences, with Wikidata as a preset; 'guess types of column'. The reconcile dialog: service, type, columns as properties, auto-match toggle. Tests run against a local mock service with fixtures from OpenRefine 3.10.1. _OpenRefine: StandardReconConfig, ReconOperation, GuessTypesOfColumnCommand_
-- [ ] **Matching UI** · v1.0 · P1 · M. Per-cell reconciliation UI as in OpenRefine: the candidate list with scores under each cell, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', 'search for match' with the service's suggest API, entity preview (preview service / flyout), matched cells shown as links to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries. _OpenRefine: ReconJudgeOneCellCommand, ReconJudgeSimilarCellsOperation_
+- [~] **Matching UI** · v1.0 · P1 · M. Per-cell reconciliation UI as in OpenRefine: the candidate list with scores, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', matching to another item by id, discard and clear; matched cells link to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries. (Searching with the suggest API and the preview flyout: rc-suggest.) _OpenRefine: ReconJudgeOneCellCommand, ReconJudgeSimilarCellsOperation_
 - [~] **Reconciliation facets** · v1.0 · P1 · M. Reconcile → Facets menu: by judgment, best candidate's score (range), best candidate's type match, best candidate's name edit distance, best candidate's name word similarity, best candidate's types; by judgment action and judgment timestamp. Same facet JSON in engineConfig, so recipes with these facets replay. _OpenRefine: ReconJudgmentFacet, cell.recon.* expressions_
 - [ ] **Add columns from reconciled values** · v1.0 · P1 · L. Data extension: propose properties from the service, preview, fetch in batches, add one column per property (extend-reconciled-data), multi-valued results as extra record rows, settings (limit, rank, references, count), values that are entities come back reconciled. Fixtures from OpenRefine against the mock service. _OpenRefine: ExtendDataOperation, ReconciledDataExtensionJob_
+- [ ] **Recons through every operation** · v0.5 · P2 · S. Fill down copies the Recon with the value (OpenRefine copies the whole cell); records-mode reconciling takes property values from the record's other rows (cellDependencies); check split, join, transpose and star/flag steps against OpenRefine fixtures. _OpenRefine: FillDownOperation, RecordModel.CellDependency_
+- [ ] **Search for match and entity preview** · v1.0 · P2 · M. In the matching panel: search the service with its suggest API (entity, type, property) instead of typing an id; the preview service in a flyout; the same suggest boxes in the reconcile dialog for types and properties. _OpenRefine: suggest API, preview service, reconciliation manifest_
 
 ## Desktop UI
 
@@ -162,6 +164,7 @@ Prove parity automatically against real OpenRefine.
 - [~] **Messy-data test corpus** · v0.2 · P0 · M. Real-world files: encodings, ragged rows, embedded newlines, huge cells, mixed types. _OpenRefine: tests/_
 - [ ] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
 - [~] **CI on Windows, macOS, Linux** · v0.2 · P0 · S. GitHub Actions: build, tests, UI typecheck, conformance on a small corpus. _OpenRefine: new_
+- [ ] **Follow HTTP redirects** · v0.5 · P1 · S. Reconciliation services, fetch-URL steps and import from a web address follow redirects as OpenRefine's HttpClient does (301/302/303/307/308, POST kept on 307/308). Found on Nov 11: wikidata.reconci.link answers 307 and ureq refused it, so the Wikidata preset had to point at the final host. _OpenRefine: HttpClient_
 
 ## Performance
 
@@ -170,7 +173,8 @@ Keep the 10x lead as features land; close the import gap.
 - [~] **Parallel CSV import** · v0.2 · P0 · M. Chunked multi-threaded parsing plus a faster hasher; import is the smallest gap today (1.6x at 2M rows). _OpenRefine: benchmark_
 - [~] **History as diffs** · v0.5 · P1 · M. Store changed codes instead of full column snapshots so long histories on big files stay small. _OpenRefine: project.rs_
 - [ ] **Datasets larger than RAM** · later · P2 · L. Memory-mapped column files and spill-to-disk for 50M+ rows. _OpenRefine: new_
-- [ ] **Benchmark tracking** · v0.5 · P2 · S. Run the comparison on every release and publish the chart. _OpenRefine: benchmarks/_
+- [ ] **Benchmark tracking** · v0.5 · P1 · S. Run the comparison on every release and publish the chart, and catch regressions: on Nov 11 a hand check against the first prototype found the list facet 6x slower (per-row string keys), peak RAM up 70% from saving (a JSON tree of the whole table) and export (the whole CSV in memory). Keep a baseline results.json, an OxRefine-only fast mode for CI, and fail on per-step slowdowns and memory growth beyond noise. _OpenRefine: benchmarks/compare.mjs, benchmarks/report.mjs_
+- [ ] **Import memory** · v0.5 · P2 · S. After the Nov 11 fixes peak RAM at 1M rows is 141 MB against the prototype's 122; the remainder is probably the parallel import's batches and per-worker dictionaries. Measure per step, trim without losing the 4x import speed-up. _OpenRefine: benchmarks/compare.mjs_
 
 ## Release
 
@@ -182,6 +186,7 @@ Installers, docs and a public launch.
 - [ ] **OpenRefine HTTP API compatibility** · later · P2 · L. Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged. _OpenRefine: openrefine-client, CommandServlet_
 - [ ] **Docs site and migration guide** · v0.5 · P1 · M. Feature map from OpenRefine, GREL reference, what is not supported yet. _OpenRefine: new_
 - [ ] **Launch** · v0.5 · P1 · S. README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post. _OpenRefine: new_
+- [ ] **Check the Docker image** · v0.5 · P2 · S. The Dockerfile from rel-server was never built (Docker Desktop wasn't running). Build and run it, check the token link, uploads and downloads, then build it in CI. _OpenRefine: Dockerfile_
 
 ## Extensions
 

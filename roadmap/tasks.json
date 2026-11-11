@@ -648,7 +648,7 @@
       "id": "op-recon",
       "phase": "p4",
       "milestone": "v1.0",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "M",
       "title": "Reconciliation operations",
@@ -934,11 +934,11 @@
       "id": "rc-judge",
       "phase": "p8",
       "milestone": "v1.0",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P1",
       "size": "M",
       "title": "Matching UI",
-      "detail": "Per-cell reconciliation UI as in OpenRefine: the candidate list with scores under each cell, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', 'search for match' with the service's suggest API, entity preview (preview service / flyout), matched cells shown as links to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries.",
+      "detail": "Per-cell reconciliation UI as in OpenRefine: the candidate list with scores, 'match this cell', 'match all identical cells', 'create new item' and 'new for identical cells', matching to another item by id, discard and clear; matched cells link to the entity view URL. Backed by recon-judge-one-cell and recon-judge-similar-cells, with the same history entries. (Searching with the suggest API and the preview flyout: rc-suggest.)",
       "ref": "ReconJudgeOneCellCommand, ReconJudgeSimilarCellsOperation"
     },
     {
@@ -962,6 +962,28 @@
       "title": "Add columns from reconciled values",
       "detail": "Data extension: propose properties from the service, preview, fetch in batches, add one column per property (extend-reconciled-data), multi-valued results as extra record rows, settings (limit, rank, references, count), values that are entities come back reconciled. Fixtures from OpenRefine against the mock service.",
       "ref": "ExtendDataOperation, ReconciledDataExtensionJob"
+    },
+    {
+      "id": "recon-carry",
+      "phase": "p8",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "S",
+      "title": "Recons through every operation",
+      "detail": "Fill down copies the Recon with the value (OpenRefine copies the whole cell); records-mode reconciling takes property values from the record's other rows (cellDependencies); check split, join, transpose and star/flag steps against OpenRefine fixtures.",
+      "ref": "FillDownOperation, RecordModel.CellDependency"
+    },
+    {
+      "id": "rc-suggest",
+      "phase": "p8",
+      "milestone": "v1.0",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "Search for match and entity preview",
+      "detail": "In the matching panel: search the service with its suggest API (entity, type, property) instead of typing an id; the preview service in a flyout; the same suggest boxes in the reconcile dialog for types and properties.",
+      "ref": "suggest API, preview service, reconciliation manifest"
     },
     {
       "id": "ui-home",
@@ -1129,6 +1151,17 @@
       "ref": "new"
     },
     {
+      "id": "net-redirects",
+      "phase": "p10",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P1",
+      "size": "S",
+      "title": "Follow HTTP redirects",
+      "detail": "Reconciliation services, fetch-URL steps and import from a web address follow redirects as OpenRefine's HttpClient does (301/302/303/307/308, POST kept on 307/308). Found on Nov 11: wikidata.reconci.link answers 307 and ureq refused it, so the Wikidata preset had to point at the final host.",
+      "ref": "HttpClient"
+    },
+    {
       "id": "perf-import",
       "phase": "p11",
       "milestone": "v0.2",
@@ -1166,11 +1199,22 @@
       "phase": "p11",
       "milestone": "v0.5",
       "status": "backlog",
-      "priority": "P2",
+      "priority": "P1",
       "size": "S",
       "title": "Benchmark tracking",
-      "detail": "Run the comparison on every release and publish the chart.",
-      "ref": "benchmarks/"
+      "detail": "Run the comparison on every release and publish the chart, and catch regressions: on Nov 11 a hand check against the first prototype found the list facet 6x slower (per-row string keys), peak RAM up 70% from saving (a JSON tree of the whole table) and export (the whole CSV in memory). Keep a baseline results.json, an OxRefine-only fast mode for CI, and fail on per-step slowdowns and memory growth beyond noise.",
+      "ref": "benchmarks/compare.mjs, benchmarks/report.mjs"
+    },
+    {
+      "id": "perf-import-mem",
+      "phase": "p11",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "S",
+      "title": "Import memory",
+      "detail": "After the Nov 11 fixes peak RAM at 1M rows is 141 MB against the prototype's 122; the remainder is probably the parallel import's batches and per-worker dictionaries. Measure per step, trim without losing the 4x import speed-up.",
+      "ref": "benchmarks/compare.mjs"
     },
     {
       "id": "rel-repo",
@@ -1237,6 +1281,17 @@
       "title": "Launch",
       "detail": "README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post.",
       "ref": "new"
+    },
+    {
+      "id": "rel-docker",
+      "phase": "p12",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "S",
+      "title": "Check the Docker image",
+      "detail": "The Dockerfile from rel-server was never built (Docker Desktop wasn't running). Build and run it, check the token link, uploads and downloads, then build it in CI.",
+      "ref": "Dockerfile"
     },
     {
       "id": "ext-db",
