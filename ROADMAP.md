@@ -79,11 +79,11 @@ All 37 OpenRefine operations, same JSON, same results.
 - [x] **Split column** · v0.2 · P0 · M. By separator, regex or field lengths; guess types; remove original. _OpenRefine: column-split_
 - [x] **Split / join multi-valued cells** · v0.2 · P0 · M. Explode cells into rows of a record and back. _OpenRefine: multivalued-cell-split, multivalued-cell-join_
 - [x] **Fill down / blank down** · v0.2 · P0 · S. Row- and record-aware. _OpenRefine: fill-down, blank-down_
-- [ ] **Transpose and key-value columnize** · v0.5 · P1 · L. Columns into rows, rows into columns, key/value pairs into columns. _OpenRefine: transpose-columns-into-rows, transpose-rows-into-columns, key-value-columnize_
+- [~] **Transpose and key-value columnize** · v0.5 · P1 · L. Columns into rows, rows into columns, key/value pairs into columns. _OpenRefine: transpose-columns-into-rows, transpose-rows-into-columns, key-value-columnize_
 - [x] **Row operations** · v0.2 · P0 · M. Remove matching rows, keep matched, add rows, remove duplicates by key columns. _OpenRefine: row-removal, row-keep-matched, row-addition, row-duplicate-removal_
 - [x] **Sort and reorder rows permanently** · v0.2 · P0 · M. Multi-column sort criteria by type, then make it permanent. _OpenRefine: row-reorder_
 - [~] **Edit a single cell** · v0.2 · P0 · S. Inline edit with type, recorded in history (and in exported histories where OpenRefine records it). _OpenRefine: edit-one-cell_
-- [ ] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
+- [~] **Add column by fetching URLs** · v0.5 · P1 · L. Async with throttle delay, custom headers, cache, retry and progress; cancellable. _OpenRefine: column-addition-by-fetching-urls_
 - [x] **onError and repeat semantics** · v0.2 · P0 · S. keep-original, set-to-blank, store-error exactly as OpenRefine once GREL can error. _OpenRefine: onError_
 - [ ] **Reconciliation operations** · v1.0 · P1 · L. recon, match best, judge similar, clear similar, mark new, discard, match specific, copy across columns, use values as identifiers. _OpenRefine: recon-*_
 
@@ -101,7 +101,7 @@ The full expression language: ~130 functions, controls, errors and coercion.
 - [x] **HTML/XML functions (11)** · v0.5 · P1 · M. parseHtml, parseXml, select with CSS selectors, htmlText, ownText, xmlAttr and others (scraper / roxmltree). _OpenRefine: expr/functions/html, xml_
 - [x] **parseJson and JSON paths** · v0.2 · P1 · S. Field access on parsed JSON like OpenRefine. _OpenRefine: ParseJson_
 - [x] **Error and type-coercion semantics** · v0.2 · P0 · M. Match OpenRefine's EvalError propagation, null handling and number formatting to the character. _OpenRefine: EvalError_
-- [ ] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
+- [~] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
 - [ ] **Python and Clojure expressions** · later · P2 · L. OpenRefine ships Jython 2.7 and Clojure; decide between embedded Python (pyo3) or clear unsupported errors. _OpenRefine: jython, clojure_
 
 ## Facets
