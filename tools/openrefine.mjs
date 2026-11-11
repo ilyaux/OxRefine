@@ -146,10 +146,16 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
     return res
   }
   /** The table as get-rows shows it, in column order: cells are null | {v, t?} | {e}. */
-  async function table(project) {
+  /** `recon: "brief"` shows a reconciled cell's Recon as {j: judgment, m: matched id or null}. */
+  async function table(project, { recon } = {}) {
     const cols = (await get(`/command/core/get-models?project=${project}`)).columnModel.columns
-    const rows = (await get(`/command/core/get-rows?project=${project}&start=0&limit=100000`)).rows
-    return { columns: cols.map((x) => x.name), rows: rows.map((r) => ({ starred: r.starred, flagged: r.flagged, cells: cols.map((x) => r.cells[x.cellIndex] ?? null) })) }
+    const { rows, pool } = await get(`/command/core/get-rows?project=${project}&start=0&limit=100000`)
+    const cell = (c) => {
+      if (!c?.r || recon !== "brief") return c ?? null
+      const r = pool.recons[c.r]
+      return { ...c, r: { j: r.j, m: r.m?.id ?? null } }
+    }
+    return { columns: cols.map((x) => x.name), rows: rows.map((r) => ({ starred: r.starred, flagged: r.flagged, cells: cols.map((x) => cell(r.cells[x.cellIndex])) })) }
   }
   return { url, pid: proc.pid, proc, command, get, createProject, idle, wizard, runOps, table, stop: () => kill(proc) }
 }

@@ -38,7 +38,7 @@ try {
     for (let n = 0; n <= steps.length; n++) {
       await or.command("undo-redo", { project, lastDoneID: n ? steps[n - 1].id : 0 })
       await or.idle(project)
-      if (shape(await or.table(project)) !== shape(c.states[merged + n])) {
+      if (shape(await or.table(project, { recon: "brief" })) !== shape(c.states[merged + n])) {
         fail(`table after ${merged + n} steps differs`)
         break
       }

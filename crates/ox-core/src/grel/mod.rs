@@ -14,12 +14,18 @@ pub use value::Value;
 pub struct Program {
     expr: parse::Expr,
     uses_row: bool,
+    uses_cell: bool,
 }
 
 impl Program {
     /// Whether the result can depend on more than `value` (other cells, row index...).
     pub fn uses_row(&self) -> bool {
         self.uses_row
+    }
+    /// Whether it must run row by row on `col`: it reads more than `value`, or reads `cell` on a
+    /// reconciled column (equal values can carry different Recons).
+    pub fn uses_row_of(&self, col: &crate::table::Column) -> bool {
+        self.uses_row || (self.uses_cell && col.recon.is_some())
     }
     pub fn eval(&self, value: Value, row: &dyn Row) -> Value {
         eval::eval(&self.expr, &mut eval::Env::new(value, row))
@@ -35,5 +41,5 @@ pub fn compile(src: &str) -> Result<Program, String> {
         }
     }
     let expr = parse::parse(src)?;
-    Ok(Program { uses_row: eval::uses_row(&expr), expr })
+    Ok(Program { uses_row: eval::uses_row(&expr), uses_cell: eval::uses_cell(&expr), expr })
 }

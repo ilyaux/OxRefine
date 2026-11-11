@@ -11,6 +11,7 @@ pub mod metaphone3;
 pub mod ops;
 pub mod orproject;
 pub mod project;
+pub mod recon;
 pub mod reshape;
 pub mod store;
 pub mod table;

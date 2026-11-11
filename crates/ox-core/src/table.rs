@@ -54,16 +54,31 @@ impl Interner {
 
 /// Dictionary-encoded column of OpenRefine cell values: each distinct value is stored once and
 /// rows hold u32 codes, so transforms and facets cost O(distinct) + one pass over codes.
+#[derive(Default)]
 pub struct Column {
     pub dict: Vec<Value>,
     /// Shared between history steps whenever a step leaves every row's code as it was (see
     /// `Project::apply`); write through `Arc::make_mut`.
     pub codes: Arc<Vec<u32>>,
+    /// Reconciliation data, row by row, for columns that were reconciled.
+    pub recon: Option<Arc<crate::recon::ReconCol>>,
 }
 
 impl Column {
     pub fn get(&self, row: usize) -> &Value {
         &self.dict[self.codes[row] as usize]
+    }
+
+    /// The Recon of a row's cell, if it has one.
+    pub fn recon(&self, row: usize) -> Option<&Arc<crate::recon::Recon>> {
+        self.recon.as_ref().and_then(|rc| rc.cells.get(row)).and_then(Option::as_ref)
+    }
+
+    /// This column with another column's reconciliation data (same rows): what operations that
+    /// change cell values in place (transforms, mass edits) do in OpenRefine.
+    pub fn keep_recon(mut self, from: &Column) -> Column {
+        self.recon = from.recon.clone();
+        self
     }
 
     /// Rows in `sel` (None = all) get `f(value)`; other rows keep their value, or turn
@@ -93,7 +108,7 @@ impl Column {
                 }
             })
             .collect::<Vec<u32>>().into();
-        Column { dict: b.finish(), codes }
+        Column { dict: b.finish(), codes, recon: None }
     }
 
     /// Rows in a new order; `None` makes an empty (null) row. The dictionary is shared, not rebuilt.
@@ -106,13 +121,17 @@ impl Column {
                 (dict.len() - 1) as u32
             }
         };
-        Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect::<Vec<u32>>().into() }
+        let recon = self.recon.as_ref().map(|rc| {
+            let cells = rows.iter().map(|r| r.and_then(|r| rc.cells[r as usize].clone())).collect();
+            Arc::new(crate::recon::ReconCol { cells, config: rc.config.clone() })
+        });
+        Column { dict, codes: rows.iter().map(|r| r.map_or(null, |r| self.codes[r as usize])).collect::<Vec<u32>>().into(), recon }
     }
 
     pub fn from_values(values: impl IntoIterator<Item = Value>) -> Column {
         let mut b = Interner::default();
         let codes: Vec<u32> = values.into_iter().map(|v| b.intern(v)).collect();
-        Column { dict: b.finish(), codes: codes.into() }
+        Column { dict: b.finish(), codes: codes.into(), recon: None }
     }
 
     /// Like `map`, but `f(row, value)` runs for every selected row (expressions reading other cells).
@@ -130,7 +149,7 @@ impl Column {
                 }
             })
             .collect::<Vec<u32>>().into();
-        Column { dict: b.finish(), codes }
+        Column { dict: b.finish(), codes, recon: None }
     }
 }
 
@@ -151,6 +170,8 @@ pub struct RowRef<'a> {
     pub table: &'a Table,
     pub row: usize,
     pub ctx: Option<&'a crate::engine::Ctx>,
+    /// the column of the cell the expression runs on (for `cell.recon`)
+    pub col: Option<usize>,
 }
 
 impl grel::Row for RowRef<'_> {
@@ -166,6 +187,13 @@ impl grel::Row for RowRef<'_> {
     }
     fn starred(&self) -> bool {
         self.table.starred[self.row]
+    }
+    fn recon(&self, column: &str) -> Option<Arc<crate::recon::Recon>> {
+        let ci = self.table.names.iter().position(|n| n == column)?;
+        self.table.columns[ci].recon(self.row).cloned()
+    }
+    fn current_recon(&self) -> Option<Arc<crate::recon::Recon>> {
+        self.table.columns.get(self.col?)?.recon(self.row).cloned()
     }
     fn flagged(&self) -> bool {
         self.table.flagged[self.row]
@@ -184,12 +212,17 @@ impl Table {
     }
 
     pub fn row(&self, row: usize) -> RowRef<'_> {
-        RowRef { table: self, row, ctx: None }
+        RowRef { table: self, row, ctx: None, col: None }
     }
 
     /// A row that can also answer facetCount(), with results shared through `ctx`.
     pub fn row_ctx<'a>(&'a self, row: usize, ctx: &'a crate::engine::Ctx) -> RowRef<'a> {
-        RowRef { table: self, row, ctx: Some(ctx) }
+        RowRef { table: self, row, ctx: Some(ctx), col: None }
+    }
+
+    /// A row whose expressions run on the cell in column `col`.
+    pub fn row_at<'a>(&'a self, row: usize, ctx: &'a crate::engine::Ctx, col: usize) -> RowRef<'a> {
+        RowRef { table: self, row, ctx: Some(ctx), col: Some(col) }
     }
 
     /// Column that delimits records: a non-blank key cell starts a new record.

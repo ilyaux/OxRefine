@@ -222,6 +222,20 @@ pub enum OpKind {
         fetched: Option<Vec<serde_json::Value>>,
     },
 
+    // ------------------------------------------------------------ reconciliation
+    #[serde(rename = "core/recon", rename_all = "camelCase")]
+    Recon {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        column_name: String,
+        /// StandardReconConfig JSON, kept as given
+        config: serde_json::Value,
+        /// The Recons the service gave, so replaying the history doesn't ask again (see
+        /// recon::save_cells). Saved in OxRefine's history; left out of recipes.
+        #[serde(rename = "ox:recon", default, skip_serializing_if = "Option::is_none")]
+        results: Option<serde_json::Value>,
+    },
+
     // ------------------------------------------------------------ single-cell and single-row edits
     // OpenRefine records these in history but not in the operations JSON it extracts ("ox/" ops
     // stay out of recipes the same way).
@@ -360,6 +374,9 @@ fn two() -> i32 {
 
 /// ExpressionUtils.wrapStorable: arrays, JSON and HTML can't live in a cell and become an error.
 fn storable(v: Value) -> Value {
+    if let Some((v, _)) = grel::eval::as_cell(&v) {
+        return v;
+    }
     match v {
         Value::Array(_) | Value::Json(_) | Value::Html(_) | Value::Obj(_) | Value::Re(_) => Value::err(format!("{} value not storable", v.type_name())),
         v => v,
@@ -386,12 +403,35 @@ fn run(p: &grel::Program, v: &Value, fallback: &Value, row: &dyn grel::Row, on_e
 }
 
 /// Apply `p` to a column: once per distinct value when it only reads `value`, else row by row.
+/// A transform keeps the cells' Recons; a new column gets those of the cells the expression
+/// returned whole (`cell`), as OpenRefine copies a Cell result.
 fn eval_column(t: &Table, ci: usize, sel: Option<&[bool]>, new_column: bool, p: &grel::Program, on_error: &str, times: u32) -> Column {
     let col = &t.columns[ci];
     let fallback = |v: &Value| if new_column && on_error != "keep-original" { Value::Null } else { v.clone() };
-    if p.uses_row() {
+    if !new_column {
         let ctx = crate::engine::Ctx::default();
-        col.map_rows(sel, new_column, |r, v| run(p, v, &fallback(v), &t.row_ctx(r, &ctx), on_error, times))
+        let out = if p.uses_row_of(col) {
+            col.map_rows(sel, false, |r, v| run(p, v, v, &t.row_at(r, &ctx, ci), on_error, times))
+        } else {
+            col.map(sel, false, |v| run(p, v, v, &grel::NoRow, on_error, times))
+        };
+        return out.keep_recon(col);
+    }
+    if p.uses_row_of(col) {
+        let ctx = crate::engine::Ctx::default();
+        let mut recons = vec![None; t.rows];
+        let mut out = col.map_rows(sel, new_column, |r, v| {
+            let row = t.row_at(r, &ctx, ci);
+            if let Some((v, recon)) = grel::eval::as_cell(&p.eval(v.clone(), &row)) {
+                recons[r] = recon;
+                return v;
+            }
+            run(p, v, &fallback(v), &row, on_error, times)
+        });
+        if recons.iter().any(Option::is_some) {
+            out.recon = Some(Arc::new(crate::recon::ReconCol { cells: recons, config: None }));
+        }
+        out
     } else {
         col.map(sel, new_column, |v| run(p, v, &fallback(v), &grel::NoRow, on_error, times))
     }
@@ -572,6 +612,35 @@ impl Op {
         j
     }
 
+    /// OpenRefine's ReconOperation: the selected cells of the column get Recons from the service
+    /// (asked once per distinct query, in batches, as a job with progress and cancel); the column
+    /// keeps the config. The Recons are kept in the operation, so replaying reuses them.
+    fn reconcile(&mut self, t: &Table) -> Result<Table> {
+        let OpKind::Recon { engine_config, column_name, config, results } = &mut self.kind else { unreachable!() };
+        let cfg = crate::recon::StandardConfig::from_json(config)?;
+        let ci = t.col(column_name)?;
+        let new = match results.as_ref().and_then(|j| crate::recon::load_cells(j, t.rows)) {
+            Some(cells) => cells,
+            None => {
+                let sel = engine::mask(t, engine_config)?;
+                let history_entry = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_millis() as i64);
+                let cells = crate::recon::reconcile(t, column_name, &cfg, sel.as_deref(), history_entry)?;
+                *results = Some(crate::recon::save_cells(&cells));
+                cells
+            }
+        };
+        let old = &t.columns[ci];
+        let cells = (0..t.rows).map(|r| new[r].clone().or_else(|| old.recon(r).cloned())).collect();
+        let col = Column {
+            dict: old.dict.clone(),
+            codes: old.codes.clone(),
+            recon: Some(Arc::new(crate::recon::ReconCol { cells, config: Some(cfg.to_json()) })),
+        };
+        let mut out = t.clone();
+        out.columns[ci] = Arc::new(col);
+        Ok(out)
+    }
+
     /// OpenRefine's ColumnAdditionByFetchingURLsOperation: one request per matching row, one after
     /// another with `delay` between them, as a job that shows progress and can be cancelled. The
     /// results are kept in the operation, so replaying the history reuses them.
@@ -662,6 +731,10 @@ impl Op {
         use OpKind::*;
         match &self.kind {
             TextTransform { column_name, expression, .. } => format!("Text transform on cells in column {column_name} using expression {expression}"),
+            OpKind::Recon { column_name, config, .. } => {
+                let ty = config.get("type").and_then(|t| t.get("id")).and_then(|t| t.as_str()).unwrap_or("null");
+                format!("Reconcile cells in column {column_name} to type {ty}")
+            }
             MassEdit { column_name, .. } => format!("Mass edit cells in column {column_name}"),
             FillDown { column_name, .. } => format!("Fill down cells in column {column_name}"),
             BlankDown { column_name, .. } => format!("Blank down cells in column {column_name}"),
@@ -724,6 +797,9 @@ impl Op {
         if matches!(self.kind, ColumnAdditionByFetchingUrls { .. }) {
             return self.fetch_urls(t);
         }
+        if matches!(self.kind, OpKind::Recon { .. }) {
+            return self.reconcile(t);
+        }
         Ok(match &self.kind {
             TransposeColumnsIntoRows {
                 start_column_name, column_count, ignore_blank_cells, fill_down, combined_column_name, prepend_column_name, separator, key_column_name, value_column_name,
@@ -736,7 +812,7 @@ impl Op {
             KeyValueColumnize { key_column_name, value_column_name, note_column_name } => {
                 crate::reshape::key_value_columnize(t, key_column_name, value_column_name, note_column_name.as_deref().filter(|n| !n.is_empty()))?
             }
-            ColumnAdditionByFetchingUrls { .. } => unreachable!(),
+            ColumnAdditionByFetchingUrls { .. } | OpKind::Recon { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;
@@ -758,7 +834,7 @@ impl Op {
                 out.columns[ci] = Arc::new(t.columns[ci].map(sel.as_deref(), false, |v| {
                     let to = if v.is_blank() { blank_to.or_else(|| map.get("").copied()) } else { map.get(v.display().as_str()).copied() };
                     to.map_or_else(|| v.clone(), |s| Value::Str(s.to_string()))
-                }));
+                }).keep_recon(&t.columns[ci]));
                 out
             }
             FillDown { engine_config, column_name } | BlankDown { engine_config, column_name } => {
@@ -963,7 +1039,7 @@ impl Op {
                 }
                 let v = typed_cell(value, kind)?;
                 let old = &t.columns[ci];
-                let mut col = Column { dict: old.dict.clone(), codes: old.codes.clone() };
+                let mut col = Column { dict: old.dict.clone(), codes: old.codes.clone(), recon: old.recon.clone() };
                 let code = col.dict.iter().position(|d| *d == v).unwrap_or_else(|| {
                     col.dict.push(v);
                     col.dict.len() - 1

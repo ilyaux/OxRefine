@@ -21,6 +21,14 @@ pub trait Row {
     fn facet_count(&self, _choice: &Value, _expression: &str, _column: &str) -> Value {
         Value::err("facetCount needs a project")
     }
+    /// The Recon of this row's cell in `column`.
+    fn recon(&self, _column: &str) -> Option<std::sync::Arc<crate::recon::Recon>> {
+        None
+    }
+    /// The Recon of the cell the expression runs on (`cell.recon`).
+    fn current_recon(&self) -> Option<std::sync::Arc<crate::recon::Recon>> {
+        None
+    }
 }
 
 /// No row context (constant expressions, per-distinct-value evaluation).
@@ -49,8 +57,26 @@ impl<'a> Env<'a> {
     }
 }
 
-fn cell_obj(v: Value) -> Value {
-    Obj(vec![("value".into(), v), ("recon".into(), Null)])
+fn cell_obj(v: Value, recon: Option<std::sync::Arc<crate::recon::Recon>>) -> Value {
+    let recon = recon.map_or(Null, |r| crate::recon::View::Recon(r).into());
+    Obj(vec![("value".into(), v), ("recon".into(), recon)])
+}
+
+/// A `cell` object an expression returned: its value and Recon (column additions copy both).
+pub fn as_cell(v: &Value) -> Option<(Value, Option<std::sync::Arc<crate::recon::Recon>>)> {
+    match v {
+        Obj(f) if f.len() == 2 && f[0].0 == "value" && f[1].0 == "recon" => {
+            let recon = match &f[1].1 {
+                Value::Recon(r) => match &**r {
+                    crate::recon::View::Recon(r) => Some(r.clone()),
+                    _ => None,
+                },
+                _ => None,
+            };
+            Some((f[0].1.clone(), recon))
+        }
+        _ => None,
+    }
 }
 
 fn var(name: &str, env: &Env) -> Value {
@@ -62,7 +88,7 @@ fn var(name: &str, env: &Env) -> Value {
         "true" => Bool(true),
         "false" => Bool(false),
         "null" => Null,
-        "cell" => cell_obj(env.value.clone()),
+        "cell" => cell_obj(env.value.clone(), env.row.current_recon()),
         "rowIndex" => Int(env.row.index() as i64),
         "cells" => cells(env.row),
         "row" => row_value(env.row),
@@ -73,7 +99,8 @@ fn var(name: &str, env: &Env) -> Value {
 fn cells(row: &dyn Row) -> Value {
     Obj(row.columns().into_iter().map(|c| {
         let v = row.cell(&c).unwrap_or(Null);
-        (c, cell_obj(v))
+        let recon = row.recon(&c);
+        (c, cell_obj(v, recon))
     }).collect())
 }
 
@@ -90,6 +117,7 @@ pub fn row_value(row: &dyn Row) -> Value {
 pub fn field(o: Value, name: &str) -> Value {
     match o {
         Error(_) => o,
+        Value::Recon(r) => r.field(name),
         Obj(fields) => fields.into_iter().find(|(k, _)| k == name).map_or(Null, |(_, v)| v),
         Json(j) => match *j {
             serde_json::Value::Object(mut m) => m.remove(name).map_or(Null, from_json),
@@ -330,6 +358,18 @@ fn control(name: &str, a: &[Expr], env: &mut Env) -> Value {
 
 /// True when the expression reads anything beyond `value` (cells, row, rowIndex...),
 /// so it must run once per row instead of once per distinct value.
+/// Whether the expression reads `cell` (its Recon differs between rows with equal values).
+pub fn uses_cell(e: &Expr) -> bool {
+    match e {
+        Expr::Var(n) => n == "cell",
+        Expr::Lit(_) | Expr::Regex(_) => false,
+        Expr::Call(_, a) | Expr::Array(a) => a.iter().any(uses_cell),
+        Expr::Field(o, _) => uses_cell(o),
+        Expr::Index(o, i) => uses_cell(o) || i.iter().any(uses_cell),
+        Expr::Op(_, a, b) => uses_cell(a) || uses_cell(b),
+    }
+}
+
 pub fn uses_row(e: &Expr) -> bool {
     match e {
         Expr::Var(n) => matches!(n.as_str(), "cells" | "row" | "rowIndex" | "record" | "recon"),

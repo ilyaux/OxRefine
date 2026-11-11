@@ -9,6 +9,7 @@ import { startOpenRefine } from "../../tools/openrefine.mjs"
 import { CASES, CORPUS } from "./cases.mjs"
 import { LOOKUP } from "../ops/cases.mjs"
 import { serve, withBase } from "../ops/server.mjs"
+import { serve as serveRecon } from "../recon/service.mjs"
 
 const dir = new URL("archives/", import.meta.url)
 rmSync(dir, { recursive: true, force: true })
@@ -16,6 +17,7 @@ mkdirSync(dir)
 // a fresh workspace, so there is exactly one project named "lookup" for cross()
 rmSync(join(tmpdir(), "oxrefine-orproject-fixtures"), { recursive: true, force: true })
 const server = await serve()
+const recon = await serveRecon()
 const or = await startOpenRefine({
   workspace: join(tmpdir(), "oxrefine-orproject-fixtures"),
   jvm: ["-Duser.language=en", "-Duser.country=US", "-Duser.timezone=UTC", "-Dfile.encoding=UTF-8", "-Dsun.jnu.encoding=UTF-8"],
@@ -25,7 +27,7 @@ try {
   const out = []
   for (const [i, c] of CASES.entries()) {
     const project = await or.createProject(c.csv ?? CORPUS, { name: c.name, guessTypes: !!c.guessTypes })
-    const res = await or.runOps(project, withBase(c.ops, server.base))
+    const res = await or.runOps(project, JSON.parse(JSON.stringify(withBase(c.ops, server.base)).replaceAll("{RECON}", recon.base)))
     if (res.code !== "ok") throw new Error(`${c.name}: ${res.message ?? JSON.stringify(res)}`)
     let h = await or.get(`/command/core/get-history?project=${project}`)
     const steps = h.past.map((e) => e.id)
@@ -38,7 +40,7 @@ try {
     const states = []
     for (let n = 0; n <= steps.length; n++) {
       await goto(n)
-      states.push(await or.table(project))
+      states.push(await or.table(project, { recon: "brief" }))
     }
     out.push({ name: c.name, archive, history: [...h.past, ...h.future].map((e) => e.description), cursor: h.past.length, states })
     await or.command("delete-project", { project })
@@ -49,4 +51,5 @@ try {
 } finally {
   or.stop()
   server.close()
+  recon.close()
 }

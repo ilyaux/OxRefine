@@ -22,6 +22,8 @@ pub enum Value {
     Obj(Vec<(String, Value)>),
     /// A regex literal passed as a function argument.
     Re(Box<regex::Regex>),
+    /// cell.recon and what hangs off it (candidates, features).
+    Recon(Box<crate::recon::View>),
     Error(String),
 }
 
@@ -43,6 +45,10 @@ impl Value {
     }
     pub fn is_null(&self) -> bool {
         matches!(self, Null)
+    }
+    /// ExpressionUtils.isNonBlankData: not null, not an error, not the empty string.
+    pub fn is_non_blank_data(&self) -> bool {
+        !self.is_blank() && !self.is_error()
     }
     /// ExpressionUtils.isBlank: null or the empty string.
     pub fn is_blank(&self) -> bool {
@@ -86,6 +92,7 @@ impl Value {
                 _ => "object",
             },
             Html(_) | Obj(_) => "object",
+            Recon(r) => r.type_name(),
             Re(_) => "regex",
             Error(_) => "error",
         }
@@ -117,6 +124,7 @@ impl Value {
             Html(h) => h.markup.clone(),
             Obj(f) => format!("{{{}}}", f.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect::<Vec<_>>().join(", ")),
             Re(r) => r.as_str().to_string(),
+            Recon(r) => r.to_java_string(),
             Error(e) => e.clone(),
         }
     }
@@ -197,6 +205,7 @@ pub fn json_pretty(v: &Value, depth: usize) -> String {
 "), "  ".repeat(depth))
         }
         Re(r) => json_str(r.as_str()),
+        Recon(r) => json_str(&r.to_java_string()),
         Error(e) => json_str(e),
     }
 }
@@ -243,6 +252,7 @@ impl PartialEq for Value {
             (Html(a), Html(b)) => a == b,
             (Obj(a), Obj(b)) => a == b,
             (Re(a), Re(b)) => a.as_str() == b.as_str(),
+            (Recon(a), Recon(b)) => a == b,
             _ => false,
         }
     }
@@ -263,6 +273,7 @@ impl Hash for Value {
             Html(x) => x.hash(h),
             Obj(f) => f.hash(h),
             Re(r) => r.as_str().hash(h),
+            Recon(r) => r.to_java_string().hash(h),
         }
     }
 }
@@ -288,4 +299,9 @@ mod tests {
 fn value_stays_small() {
     // dictionary entries are Values: keep the enum at a String plus a tag
     assert!(std::mem::size_of::<Value>() <= 32, "Value is {} bytes", std::mem::size_of::<Value>());
+}
+
+/// ExpressionUtils.isNonBlankData.
+pub fn is_non_blank(v: &Value) -> bool {
+    v.is_non_blank_data()
 }

@@ -1,6 +1,7 @@
 // OpenRefine project archives. gen.mjs builds each case in a real OpenRefine 3.10.1, exports the
 // project (.openrefine.tar.gz) into archives/, and records the table at every history step.
 import { CASES as OPS, CORPUS } from "../ops/cases.mjs"
+import { CASES as RECON, CORPUS as RECON_CORPUS } from "../recon/cases.mjs"
 
 export { CORPUS }
 const all = { facets: [], mode: "row-based" }
@@ -35,4 +36,12 @@ export const CASES = [
       expression: "grel:value[0]", onError: "set-to-blank" },
     transform("initial", "value.toLowercase()"),
   ] },
+  // reconciliation (against tests/recon/service.mjs, written {RECON}): Recons in the data, the
+  // change files and the column model, kept through later steps
+  ...RECON.map((c) => ({ ...c, name: `recon: ${c.name}`, csv: RECON_CORPUS, ops: JSON.parse(JSON.stringify(c.ops).replaceAll("{BASE}", "{RECON}")) })),
+  { name: "recon: undo leaves future steps", csv: RECON_CORPUS, undo: 1, ops: JSON.parse(JSON.stringify([
+    RECON[1].ops[0],
+    { op: "core/row-removal", engineConfig: { facets: [{ type: "text", name: "country", columnName: "country", query: "us", mode: "text", caseSensitive: false, invert: false }], mode: "row-based" } },
+    { op: "core/column-move", columnName: "name", index: 2 },
+  ]).replaceAll("{BASE}", "{RECON}")) },
 ]

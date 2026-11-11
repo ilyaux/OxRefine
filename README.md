@@ -42,7 +42,8 @@ Recipes use the same JSON as OpenRefine's *Undo/Redo → Extract / Apply*, inclu
 | Messy-data corpus (encodings, line endings, ragged rows, huge cells…) | 26 / 27 |
 | Exports (CSV/TSV, custom tabular, HTML, templating, Excel, ODS, SQL) | 14 / 15 |
 | Clustering and GREL phonetic() (6 keyers, Levenshtein kNN, 9 encoders × 127 values) | 1148 / 1157 |
-| OpenRefine project archives, opened with their full history (and written back) | 86 / 86 |
+| Reconciliation (reconcile against a service, Recons in GREL, kept through later steps) | 16 / 16 |
+| OpenRefine project archives, opened with their full history (and written back), reconciliation included | 103 / 103 |
 
 ## Run
 

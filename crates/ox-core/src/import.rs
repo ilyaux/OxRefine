@@ -187,7 +187,7 @@ fn pick<'u>(u: &'u crate::unpack::Unpacked, o: &ImportOptions) -> Result<(Vec<(&
 fn with_sources(t: Table, file: &str, archive: Option<&str>, o: &ImportOptions) -> Table {
     let mut names = vec![];
     let mut cols = vec![];
-    let constant = |v: &str| Column { dict: vec![Value::Str(v.into())], codes: vec![0; t.rows].into() };
+    let constant = |v: &str| Column { dict: vec![Value::Str(v.into())], codes: vec![0; t.rows].into(), recon: None };
     if let (true, Some(a)) = (o.include_archive_file_name, archive) {
         names.push("Archive".to_string());
         cols.push(constant(a));
@@ -200,7 +200,7 @@ fn with_sources(t: Table, file: &str, archive: Option<&str>, o: &ImportOptions) 
         return t;
     }
     names.extend(t.names.iter().cloned());
-    cols.extend(t.columns.iter().map(|c| Column { dict: c.dict.clone(), codes: c.codes.clone() }));
+    cols.extend(t.columns.iter().map(|c| Column { dict: c.dict.clone(), codes: c.codes.clone(), recon: None }));
     Table::new(names, cols, t.rows)
 }
 
@@ -470,7 +470,7 @@ impl<'o> Builder<'o> {
             .collect();
         let named = self.header.iter().map(Vec::len).max().unwrap_or(0);
         let rows = self.rows;
-        Table::new(column_names(names, named), self.cols.into_iter().map(|(b, codes)| Column { dict: b.finish(), codes: codes.into() }).collect(), rows)
+        Table::new(column_names(names, named), self.cols.into_iter().map(|(b, codes)| Column { dict: b.finish(), codes: codes.into(), recon: None }).collect(), rows)
     }
 }
 

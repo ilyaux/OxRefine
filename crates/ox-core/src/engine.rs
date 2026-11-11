@@ -256,12 +256,12 @@ impl Evaluated {
             return Ok(Evaluated { col, per_code: true, items: c.dict.iter().cloned().map(items_of).collect() });
         }
         let p = grel::compile(expr)?;
-        if !p.uses_row() {
+        if !p.uses_row_of(c) {
             return Ok(Evaluated { col, per_code: true, items: c.dict.iter().map(|v| items_of(p.eval(v.clone(), &grel::NoRow))).collect() });
         }
         let owned = Ctx::default();
         let ctx = ctx.unwrap_or(&owned);
-        let items = (0..t.rows).map(|r| items_of(p.eval(c.get(r).clone(), &t.row_ctx(r, ctx)))).collect();
+        let items = (0..t.rows).map(|r| items_of(p.eval(c.get(r).clone(), &t.row_at(r, ctx, col)))).collect();
         Ok(Evaluated { col, per_code: false, items })
     }
     fn of<'a>(&'a self, t: &Table, r: usize) -> &'a [Item] {

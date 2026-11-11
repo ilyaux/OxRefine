@@ -1,0 +1,8654 @@
+{
+ "openrefine": "3.10.1",
+ "corpus": "name,country,city\nDouglas Adams,UK,London\nDouglas Adams,UK,London\ndouglas adams,US,York\nDouglas Adam,US,New York\nParis,FR,Paris\nParis,US,Paris\nParis Hilton,US,New York\nAda Lovelace,UK,London\nLovelace,UK,\n,UK,York\nNobody Known,XX,Nowhere\nBroken,UK,London\n",
+ "manifest": {
+  "versions": [
+   "0.2"
+  ],
+  "name": "OxRefine test service",
+  "identifierSpace": "http://ox.test/entity/",
+  "schemaSpace": "http://ox.test/prop/",
+  "defaultTypes": [
+   {
+    "id": "Q5",
+    "name": "human"
+   },
+   {
+    "id": "Q515",
+    "name": "city"
+   }
+  ],
+  "view": {
+   "url": "http://ox.test/entity/{{id}}"
+  },
+  "preview": {
+   "url": "{BASE}/svc/preview?id={{id}}",
+   "width": 300,
+   "height": 100
+  }
+ },
+ "answers": {
+  "{\"query\":\"Ada Lovelace\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Broken\"}": {},
+  "{\"query\":\"Paris\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 41.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Nobody Known\"}": {
+   "result": []
+  },
+  "{\"query\":\"Douglas Adams\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"douglas adams\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Paris Hilton\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 41.666666666666664,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 41.666666666666664,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Lovelace\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 66.66666666666666,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Douglas Adam\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Paris\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 41.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Douglas Adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"douglas adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Ada Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Nobody Known\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"query\":\"Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 66.66666666666666,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Douglas Adam\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Paris Hilton\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"Broken\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {},
+  "{\"query\":\"Paris\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"Nowhere\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"query\":\"York\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q13",
+     "name": "York",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q14",
+     "name": "New York City",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 30.769230769230774,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"London\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q12",
+     "name": "London",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"New York\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q13",
+     "name": "York",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 50,
+     "match": false
+    },
+    {
+     "id": "Q14",
+     "name": "New York City",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 61.53846153846154,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Paris\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Douglas Adam\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"douglas adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 66.66666666666666,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Paris Hilton\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Ada Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Douglas Adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"limit\":2,\"query\":\"Nobody Known\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"limit\":2,\"query\":\"Broken\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {},
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"US\"}],\"query\":\"Paris\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 80,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"FR\"}],\"query\":\"Paris\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 80,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": -8.333333333333336,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"UK\"}],\"query\":\"London\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q12",
+     "name": "London",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"US\"}],\"query\":\"New York\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q13",
+     "name": "York",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 30,
+     "match": false
+    },
+    {
+     "id": "Q14",
+     "name": "New York City",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 61.53846153846154,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"UK\"}],\"query\":\"York\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q13",
+     "name": "York",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q14",
+     "name": "New York City",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 10.769230769230774,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"XX\"}],\"query\":\"Nowhere\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"properties\":[{\"pid\":\"P17\",\"v\":\"US\"}],\"query\":\"York\",\"type\":\"Q515\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q13",
+     "name": "York",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 80,
+     "match": false
+    },
+    {
+     "id": "Q14",
+     "name": "New York City",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 30.769230769230774,
+     "match": false
+    }
+   ]
+  },
+  "{\"query\":\"XX\",\"type\":\"Q6256\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"query\":\"US\",\"type\":\"Q6256\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q30",
+     "name": "United States",
+     "type": [
+      {
+       "id": "Q6256",
+       "name": "country"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"UK\",\"type\":\"Q6256\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q145",
+     "name": "United Kingdom",
+     "type": [
+      {
+       "id": "Q6256",
+       "name": "country"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"query\":\"FR\",\"type\":\"Q6256\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q142",
+     "name": "France",
+     "type": [
+      {
+       "id": "Q6256",
+       "name": "country"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q30\",\"name\":\"United States\"}}],\"query\":\"Paris Hilton\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": -8.333333333333336,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 11.666666666666664,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q145\",\"name\":\"United Kingdom\"}}],\"query\":\"Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 66.66666666666666,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q145\",\"name\":\"United Kingdom\"}}],\"query\":\"Douglas Adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 72.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q145\",\"name\":\"United Kingdom\"}}],\"query\":\"Ada Lovelace\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q3",
+     "name": "Ada Lovelace",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q30\",\"name\":\"United States\"}}],\"query\":\"douglas adams\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 80,
+     "match": false
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 92.3076923076923,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q30\",\"name\":\"United States\"}}],\"query\":\"Douglas Adam\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q1",
+     "name": "Douglas Adams",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 72.3076923076923,
+     "match": false
+    },
+    {
+     "id": "Q2",
+     "name": "Douglas Adam",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 100,
+     "match": true
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q145\",\"name\":\"United Kingdom\"}}],\"query\":\"Broken\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {},
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q142\",\"name\":\"France\"}}],\"query\":\"Paris\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 50,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 21.666666666666664,
+     "match": false
+    }
+   ]
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":\"XX\"}],\"query\":\"Nobody Known\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": []
+  },
+  "{\"properties\":[{\"pid\":\"P27\",\"v\":{\"id\":\"Q30\",\"name\":\"United States\"}}],\"query\":\"Paris\",\"type\":\"Q5\",\"type_strict\":\"should\"}": {
+   "result": [
+    {
+     "id": "Q10",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 50,
+     "match": false
+    },
+    {
+     "id": "Q11",
+     "name": "Paris",
+     "type": [
+      {
+       "id": "Q515",
+       "name": "city"
+      }
+     ],
+     "score": 70,
+     "match": false
+    },
+    {
+     "id": "Q4",
+     "name": "Paris Hilton",
+     "type": [
+      {
+       "id": "Q5",
+       "name": "human"
+      }
+     ],
+     "score": 41.666666666666664,
+     "match": false
+    }
+   ]
+  }
+ },
+ "cases": [
+  {
+   "name": "no type",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": null,
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q1",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type null"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "type human",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "type city",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q515",
+       "name": "city"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q13",
+         "name": "York",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q14",
+          "name": "New York City",
+          "types": [
+           "Q515"
+          ],
+          "score": 61.53846153846154
+         },
+         {
+          "id": "Q13",
+          "name": "York",
+          "types": [
+           "Q515"
+          ],
+          "score": 50
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 11.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 11.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q14",
+          "name": "New York City",
+          "types": [
+           "Q515"
+          ],
+          "score": 61.53846153846154
+         },
+         {
+          "id": "Q13",
+          "name": "York",
+          "types": [
+           "Q515"
+          ],
+          "score": 50
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q13",
+         "name": "York",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere",
+       "r": {
+        "id": 5,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column city to type Q515"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q515",
+       "name": "city"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 0
+     }
+    }
+   ]
+  },
+  {
+   "name": "no auto-match",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": false,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 11.666666666666664
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 11.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": false,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "limit 2",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 2
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 2
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "property from column",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "city",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q515",
+       "name": "city"
+      },
+      "autoMatch": true,
+      "columnDetails": [
+       {
+        "column": "country",
+        "propertyName": "country",
+        "propertyID": "P17"
+       }
+      ],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York",
+       "r": {
+        "id": 2,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q13",
+          "name": "York",
+          "types": [
+           "Q515"
+          ],
+          "score": 80
+         },
+         {
+          "id": "Q14",
+          "name": "New York City",
+          "types": [
+           "Q515"
+          ],
+          "score": 30.769230769230774
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q14",
+          "name": "New York City",
+          "types": [
+           "Q515"
+          ],
+          "score": 61.53846153846154
+         },
+         {
+          "id": "Q13",
+          "name": "York",
+          "types": [
+           "Q515"
+          ],
+          "score": 30
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "matched",
+        "m": {
+         "id": "Q10",
+         "name": "Paris",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q11",
+         "name": "Paris",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q14",
+          "name": "New York City",
+          "types": [
+           "Q515"
+          ],
+          "score": 61.53846153846154
+         },
+         {
+          "id": "Q13",
+          "name": "York",
+          "types": [
+           "Q515"
+          ],
+          "score": 30
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q13",
+         "name": "York",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q12",
+         "name": "London",
+         "types": [
+          "Q515"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column city to type Q515"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q515",
+       "name": "city"
+      },
+      "autoMatch": true,
+      "columnDetails": [
+       {
+        "column": "country",
+        "propertyName": "country",
+        "propertyID": "P17"
+       }
+      ],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 7,
+      "errorTopics": 0
+     }
+    }
+   ]
+  },
+  {
+   "name": "property from reconciled column",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "country",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q6256",
+       "name": "country"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    },
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [
+       {
+        "column": "country",
+        "propertyName": "country",
+        "propertyID": "P27"
+       }
+      ],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         },
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 80
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US",
+       "r": {
+        "id": 4,
+        "j": "matched",
+        "m": {
+         "id": "Q30",
+         "name": "United States",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US",
+       "r": {
+        "id": 4,
+        "j": "matched",
+        "m": {
+         "id": "Q30",
+         "name": "United States",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 6,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 50
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 21.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR",
+       "r": {
+        "id": 7,
+        "j": "matched",
+        "m": {
+         "id": "Q142",
+         "name": "France",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 50
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US",
+       "r": {
+        "id": 4,
+        "j": "matched",
+        "m": {
+         "id": "Q30",
+         "name": "United States",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 9,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US",
+       "r": {
+        "id": 4,
+        "j": "matched",
+        "m": {
+         "id": "Q30",
+         "name": "United States",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 10,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 11,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 12,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX",
+       "r": {
+        "id": 13,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 14,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q6",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q145",
+         "name": "United Kingdom",
+         "types": [
+          "Q6256"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column country to type Q6256",
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [
+       {
+        "column": "country",
+        "propertyName": "country",
+        "propertyID": "P27"
+       }
+      ],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 5,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q6256",
+       "name": "country"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 12,
+      "newTopics": 0,
+      "matchedTopics": 11,
+      "errorTopics": 0
+     }
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "text facet",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "country",
+        "columnName": "country",
+        "query": "uk",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 4,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q3",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 3,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "batch size 2",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0,
+      "batchSize": 2
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q0",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "batchSize": 2,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "service error 500",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc500",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "error",
+        "e": "The reconciliation service returned an invalid response",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "error",
+        "e": "The reconciliation service returned an invalid response",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "error",
+        "e": "HTTP error 500 : Internal Server Error for URL /svc500",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "error",
+        "e": "HTTP error 500 : Internal Server Error for URL /svc500",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc500",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 11
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "service answers null",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svcnull",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "error",
+        "e": "The reconciliation service returned an invalid response",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "error",
+        "e": "The reconciliation service returned an invalid response",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "No. of recon objects was less than no. of jobs",
+        "service": "unknown",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svcnull",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 11
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "twice",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    },
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": false,
+      "columnDetails": [],
+      "limit": 0
+     }
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q2",
+          "name": "Douglas Adam",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q1",
+          "name": "Douglas Adams",
+          "types": [
+           "Q5"
+          ],
+          "score": 92.3076923076923
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         },
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 11.666666666666664
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 11.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 100
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Reconcile cells in column name to type Q5"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": false,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "grel recon fields",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell.recon.judgment + \"|\" + cell.recon.judgmentAction + \"|\" + cell.recon.matched + \"|\" + cell.recon.new + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank",
+     "onError": "set-to-blank",
+     "newColumnName": "j",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell.recon.match.id + \"|\" + cell.recon.match.name + \"|\" + cell.recon.match.score + \"|\" + cell.recon.match.type.join(\",\")",
+     "onError": "set-to-blank",
+     "newColumnName": "m",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell.recon.best.id + \"|\" + cell.recon.best.score + \"|\" + cell.recon.candidates.length() + \"|\" + forEach(cell.recon.candidates, c, c.id).join(\",\")",
+     "onError": "set-to-blank",
+     "newColumnName": "b",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell.recon.features.typeMatch + \"|\" + cell.recon.features.nameMatch + \"|\" + cell.recon.features.nameLevenshtein + \"|\" + cell.recon.features.nameWordDistance",
+     "onError": "set-to-blank",
+     "newColumnName": "f",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell.recon.service.length() > 0 + \"|\" + cell.recon.identifierSpace + \"|\" + cell.recon.schemaSpace + \"|\" + cell.recon.error",
+     "onError": "set-to-blank",
+     "newColumnName": "s",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:type(cell.recon) + \"|\" + type(cell.recon.match) + \"|\" + type(cell.recon.candidates) + \"|\" + type(cell.recon.features)",
+     "onError": "set-to-blank",
+     "newColumnName": "t",
+     "columnInsertIndex": 1
+    }
+   ],
+   "columns": [
+    "name",
+    "t",
+    "s",
+    "f",
+    "b",
+    "m",
+    "j",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q1|100.0|2|Q1,Q2"
+      },
+      {
+       "v": "Q1|Douglas Adams|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|2|0"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q1|100.0|2|Q1,Q2"
+      },
+      {
+       "v": "Q1|Douglas Adams|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|2|0"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q1|100.0|2|Q1,Q2"
+      },
+      {
+       "v": "Q1|Douglas Adams|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|1|0"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q2|100.0|2|Q2,Q1"
+      },
+      {
+       "v": "Q2|Douglas Adam|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|1|0"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|undefined|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "false|true|0|1.0"
+      },
+      {
+       "v": "Q10|70.0|3|Q10,Q11,Q4"
+      },
+      null,
+      {
+       "v": "none|unknown|false|false|2|-1"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|undefined|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "false|true|0|1.0"
+      },
+      {
+       "v": "Q10|70.0|3|Q10,Q11,Q4"
+      },
+      null,
+      {
+       "v": "none|unknown|false|false|2|-1"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q4|100.0|3|Q4,Q10,Q11"
+      },
+      {
+       "v": "Q4|Paris Hilton|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|1|0"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|com.google.refine.model.ReconCandidate|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|true|0|1.0"
+      },
+      {
+       "v": "Q3|100.0|1|Q3"
+      },
+      {
+       "v": "Q3|Ada Lovelace|100.0|Q5"
+      },
+      {
+       "v": "matched|auto|true|false|1|0"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|undefined|array|com.google.refine.model.Recon$Features"
+      },
+      null,
+      {
+       "v": "true|false|4|0.5"
+      },
+      {
+       "v": "Q3|66.66666666666666|1|Q3"
+      },
+      null,
+      {
+       "v": "none|unknown|false|false|1|-1"
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "undefined|undefined|undefined|undefined"
+      },
+      null,
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|undefined|undefined|com.google.refine.model.Recon$Features"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "none|unknown|false|false|1|-1"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "com.google.refine.model.Recon|undefined|undefined|com.google.refine.model.Recon$Features"
+      },
+      null,
+      null,
+      null,
+      null,
+      {
+       "v": "errors|unknown|false|false|1|-1"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Create new column j based on column name by filling 11 rows with grel:cell.recon.judgment + \"|\" + cell.recon.judgmentAction + \"|\" + cell.recon.matched + \"|\" + cell.recon.new + \"|\" + cell.recon.judgmentBatchSize + \"|\" + cell.recon.matchRank",
+    "Create new column m based on column name by filling 6 rows with grel:cell.recon.match.id + \"|\" + cell.recon.match.name + \"|\" + cell.recon.match.score + \"|\" + cell.recon.match.type.join(\",\")",
+    "Create new column b based on column name by filling 9 rows with grel:cell.recon.best.id + \"|\" + cell.recon.best.score + \"|\" + cell.recon.candidates.length() + \"|\" + forEach(cell.recon.candidates, c, c.id).join(\",\")",
+    "Create new column f based on column name by filling 9 rows with grel:cell.recon.features.typeMatch + \"|\" + cell.recon.features.nameMatch + \"|\" + cell.recon.features.nameLevenshtein + \"|\" + cell.recon.features.nameWordDistance",
+    "Create new column s based on column name by filling 0 rows with grel:cell.recon.service.length() > 0 + \"|\" + cell.recon.identifierSpace + \"|\" + cell.recon.schemaSpace + \"|\" + cell.recon.error",
+    "Create new column t based on column name by filling 12 rows with grel:type(cell.recon) + \"|\" + type(cell.recon.match) + \"|\" + type(cell.recon.candidates) + \"|\" + type(cell.recon.features)"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "t",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "s",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "f",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "b",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "m",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "j",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "grel recon of unreconciled",
+   "ops": [
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:type(cell.recon) + \"|\" + isNull(cell.recon)",
+     "onError": "set-to-blank",
+     "newColumnName": "r",
+     "columnInsertIndex": 1
+    }
+   ],
+   "columns": [
+    "name",
+    "r",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken"
+      },
+      {
+       "v": "undefined|true"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Create new column r based on column name by filling 12 rows with grel:type(cell.recon) + \"|\" + isNull(cell.recon)"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "r",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "transform keeps recon",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    },
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "expression": "grel:value.toUppercase()",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "name",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "DOUGLAS ADAMS",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "DOUGLAS ADAMS",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "DOUGLAS ADAMS",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "DOUGLAS ADAM",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "PARIS",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "PARIS",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "PARIS HILTON",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "ADA LOVELACE",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "LOVELACE",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "NOBODY KNOWN",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "BROKEN",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Text transform on 11 cells in column name: grel:value.toUppercase()"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  },
+  {
+   "name": "copy column keeps recon",
+   "ops": [
+    {
+     "op": "core/recon",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "name",
+     "config": {
+      "mode": "standard-service",
+      "service": "{BASE}/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     }
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:value",
+     "onError": "set-to-blank",
+     "newColumnName": "copy",
+     "columnInsertIndex": 1
+    },
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "expression": "grel:cell",
+     "onError": "set-to-blank",
+     "newColumnName": "copy cell",
+     "columnInsertIndex": 1
+    }
+   ],
+   "columns": [
+    "name",
+    "copy cell",
+    "copy",
+    "country",
+    "city"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adams",
+       "r": {
+        "id": 1,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adams"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "douglas adams",
+       "r": {
+        "id": 2,
+        "j": "matched",
+        "m": {
+         "id": "Q1",
+         "name": "Douglas Adams",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "douglas adams"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adam",
+       "r": {
+        "id": 3,
+        "j": "matched",
+        "m": {
+         "id": "Q2",
+         "name": "Douglas Adam",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Douglas Adam"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "FR"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris",
+       "r": {
+        "id": 4,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q10",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q11",
+          "name": "Paris",
+          "types": [
+           "Q515"
+          ],
+          "score": 70
+         },
+         {
+          "id": "Q4",
+          "name": "Paris Hilton",
+          "types": [
+           "Q5"
+          ],
+          "score": 41.666666666666664
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "Paris"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris Hilton",
+       "r": {
+        "id": 5,
+        "j": "matched",
+        "m": {
+         "id": "Q4",
+         "name": "Paris Hilton",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Paris Hilton"
+      },
+      {
+       "v": "US"
+      },
+      {
+       "v": "New York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Ada Lovelace",
+       "r": {
+        "id": 6,
+        "j": "matched",
+        "m": {
+         "id": "Q3",
+         "name": "Ada Lovelace",
+         "types": [
+          "Q5"
+         ],
+         "score": 100
+        },
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Ada Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Lovelace",
+       "r": {
+        "id": 7,
+        "j": "none",
+        "c": [
+         {
+          "id": "Q3",
+          "name": "Ada Lovelace",
+          "types": [
+           "Q5"
+          ],
+          "score": 66.66666666666666
+         }
+        ],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Lovelace"
+      },
+      {
+       "v": "UK"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      null,
+      {
+       "v": "UK"
+      },
+      {
+       "v": "York"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Nobody Known",
+       "r": {
+        "id": 8,
+        "j": "none",
+        "c": [],
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Nobody Known"
+      },
+      {
+       "v": "XX"
+      },
+      {
+       "v": "Nowhere"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Broken",
+       "r": {
+        "id": 9,
+        "j": "error",
+        "e": "The service returned a JSON response without \"result\" field for query q8",
+        "service": "http://127.0.0.1:50530/svc",
+        "identifierSpace": "http://ox.test/entity/",
+        "schemaSpace": "http://ox.test/prop/"
+       }
+      },
+      {
+       "v": "Broken"
+      },
+      {
+       "v": "UK"
+      },
+      {
+       "v": "London"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Reconcile cells in column name to type Q5",
+    "Create new column copy based on column name by filling 11 rows with grel:value",
+    "Create new column copy cell based on column name by filling 11 rows with grel:cell"
+   ],
+   "columnRecon": [
+    {
+     "name": "name",
+     "reconConfig": {
+      "mode": "standard-service",
+      "service": "http://127.0.0.1:50530/svc",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "type": {
+       "id": "Q5",
+       "name": "human"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 0
+     },
+     "reconStats": {
+      "nonBlanks": 11,
+      "newTopics": 0,
+      "matchedTopics": 6,
+      "errorTopics": 1
+     }
+    },
+    {
+     "name": "copy cell",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "copy",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "country",
+     "reconConfig": null,
+     "reconStats": null
+    },
+    {
+     "name": "city",
+     "reconConfig": null,
+     "reconStats": null
+    }
+   ]
+  }
+ ]
+}

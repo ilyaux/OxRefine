@@ -120,6 +120,13 @@ impl Project {
             // per step: whether it can go into an extracted recipe
             "recipe": self.ops.iter().map(Op::in_recipe).collect::<Vec<_>>(),
             "cursor": self.cursor,
+            // reconciled columns: the service and how far along judging is
+            "recon": t.names.iter().zip(&t.columns).filter_map(|(n, c)| {
+                let rc = c.recon.as_ref()?;
+                let service = rc.config.as_ref().and_then(|j| j.get("service")).cloned()
+                    .or_else(|| rc.cells.iter().flatten().next().map(|r| json!(r.service)))?;
+                Some((n.clone(), json!({ "service": service, "stats": rc.stats(c) })))
+            }).collect::<serde_json::Map<_, _>>(),
         })
     }
 
@@ -148,7 +155,12 @@ fn share(prev: &Table, mut t: Table) -> Table {
         if Arc::ptr_eq(p, c) || Arc::ptr_eq(&p.codes, &c.codes) {
             continue;
         }
-        if p.codes == c.codes && p.dict == c.dict {
+        let same_recon = match (&p.recon, &c.recon) {
+            (None, None) => true,
+            (Some(a), Some(b)) => Arc::ptr_eq(a, b),
+            _ => false,
+        };
+        if same_recon && p.codes == c.codes && p.dict == c.dict {
             t.columns[i] = p.clone();
             continue;
         }
@@ -165,7 +177,7 @@ fn share(prev: &Table, mut t: Table) -> Table {
         });
         if renamed {
             let dict = to.iter().map(|&n| if n == NONE { crate::grel::Value::Null } else { c.dict[n as usize].clone() }).collect();
-            t.columns[i] = Arc::new(crate::table::Column { dict, codes: p.codes.clone() });
+            t.columns[i] = Arc::new(crate::table::Column { dict, codes: p.codes.clone(), recon: c.recon.clone() });
         }
     }
     t
@@ -212,9 +224,19 @@ fn table_page(t: &Table, rows: impl Iterator<Item = usize>, starts: Option<&[u32
     rows.map(|r| {
         let types: String = t.columns.iter().map(|c| cell_type(c.get(r))).collect();
         let mut row = json!([r, t.columns.iter().map(|c| cell_json(c.get(r))).collect::<Vec<_>>(), t.starred[r], t.flagged[r], types]);
+        let a = row.as_array_mut().unwrap();
+        // [5]: s[r] is the record number of row r; only its first row shows it
         if let Some(s) = starts {
-            // s[r] is the record number of row r; only its first row shows it
-            row.as_array_mut().unwrap().push(if r == 0 || s[r] != s[r - 1] { json!(s[r]) } else { Value::Null });
+            a.push(if r == 0 || s[r] != s[r - 1] { json!(s[r]) } else { Value::Null });
+        }
+        // [6]: Recons by column index, when the row has any
+        let recons: serde_json::Map<String, Value> =
+            t.columns.iter().enumerate().filter_map(|(i, c)| c.recon(r).map(|rc| (i.to_string(), crate::recon::brief(rc)))).collect();
+        if !recons.is_empty() {
+            if starts.is_none() {
+                a.push(Value::Null);
+            }
+            a.push(Value::Object(recons));
         }
         row
     })
@@ -310,6 +332,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let path = import::stage_text(&import::staging_dir(store.map(|s| s.root())), &a.text)?;
             return Ok(json!({ "path": path, "name": "Clipboard", "origin": "(clipboard)" }));
         }
+        "recon_service" => return crate::recon::manifest(&a.url),
         "fetch_url" => {
             let (path, name) = import::download(&import::staging_dir(store.map(|s| s.root())), &a.url)?;
             return Ok(json!({ "path": path, "name": name, "origin": a.url.trim() }));
@@ -399,6 +422,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             json!({ "total": rows.len(), "rows": page })
         }
         "facets" => json!(engine::facet_counts(p.table(), &a.engine)?),
+        "recon_guess_types" => crate::recon::guess_types(p.table(), &a.column, &a.url)?,
         "apply" => {
             p.apply(a.op.ok_or("missing op")?)?;
             p.save(store)?;
@@ -435,12 +459,13 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let e = grel::compile(&a.expression)?;
             let rows = p.rows(&a.engine)?;
             let t = p.table();
-            let col = &t.columns[t.col(&a.column)?];
+            let ci = t.col(&a.column)?;
+            let col = &t.columns[ci];
             let ctx = engine::Ctx::default();
             // [before, after] as the expression dialog shows them: null, text, or {"error": message}
             let pairs = rows.iter().take(a.limit.clamp(1, 100)).map(|&r| {
                 let v = col.get(r as usize);
-                let out = match e.eval(v.clone(), &t.row_ctx(r as usize, &ctx)) {
+                let out = match e.eval(v.clone(), &t.row_at(r as usize, &ctx, ci)) {
                     grel::Value::Error(m) => json!({ "error": m }),
                     out => json!(out.render()),
                 };

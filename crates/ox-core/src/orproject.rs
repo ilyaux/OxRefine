@@ -15,6 +15,7 @@ use crate::{
     grel::{value::fmt_date, Value},
     ops::{Op, OpKind},
     project::Project,
+    recon::{Recon, ReconCol},
     table::{Column, Interner, Table},
     Result,
 };
@@ -48,6 +49,26 @@ struct Col {
     #[serde(rename = "cellIndex")]
     cell: usize,
     name: String,
+    /// the last reconcile operation's config, kept by the column
+    #[serde(rename = "reconConfig", default)]
+    recon: Option<J>,
+}
+
+/// A cell: its value and Recon.
+type Cell = (Value, Option<Arc<Recon>>);
+
+/// The Recons a data or change file names, by id (its pool.txt).
+type Pool = HashMap<String, Arc<Recon>>;
+
+fn read_pool(text: &str) -> Pool {
+    text.lines()
+        .filter(|l| l.starts_with('{'))
+        .filter_map(|l| serde_json::from_str::<J>(l).ok())
+        .map(|j| {
+            let r = Recon::from_json(&j);
+            (r.id.to_string(), Arc::new(r))
+        })
+        .collect()
 }
 
 /// A row as OpenRefine saves it, cells by cell index.
@@ -55,7 +76,7 @@ struct Col {
 struct Row {
     starred: bool,
     flagged: bool,
-    cells: Vec<Value>,
+    cells: Vec<Cell>,
 }
 
 /// The project at one step: the column model plus the cells of every cell index, including those
@@ -71,23 +92,30 @@ struct State {
 }
 
 fn null_column(rows: usize) -> Column {
-    Column { dict: vec![Value::Null], codes: vec![0; rows].into() }
+    Column { dict: vec![Value::Null], codes: vec![0; rows].into(), recon: None }
 }
 
-/// A cell of OpenRefine's JSON: null | {"v": value, "t"?: "date"} | {"e": message}; recon data is dropped.
-fn cell(j: J) -> Value {
-    let J::Object(mut m) = j else { return Value::Null };
+/// A cell of OpenRefine's JSON: null | {"v": value, "t"?: "date", "r"?: recon id} | {"e": message}.
+fn cell(j: J, pool: &Pool) -> Cell {
+    let J::Object(mut m) = j else { return (Value::Null, None) };
+    let recon = match m.remove("r") {
+        Some(J::String(id)) => pool.get(&id).cloned(),
+        Some(J::Number(id)) => pool.get(&id.to_string()).cloned(),
+        Some(r @ J::Object(_)) => Some(Arc::new(Recon::from_json(&r))),
+        _ => None,
+    };
     if let Some(J::String(e)) = m.remove("e") {
-        return Value::Error(e);
+        return (Value::Error(e), recon);
     }
     let date = m.get("t").and_then(J::as_str) == Some("date");
-    match m.remove("v") {
+    let v = match m.remove("v") {
         Some(J::String(s)) if date => chrono::DateTime::parse_from_rfc3339(&s).map_or(Value::Str(s), |d| Value::Date(d.naive_utc())),
         Some(J::String(s)) => Value::Str(s),
         Some(J::Number(n)) => n.as_i64().map_or_else(|| Value::Num(n.as_f64().unwrap_or(f64::NAN)), Value::Int),
         Some(J::Bool(b)) => Value::Bool(b),
         _ => Value::Null,
-    }
+    };
+    (v, recon)
 }
 
 /// A cell as OpenRefine writes it (non-finite numbers become text, as OpenRefine itself does).
@@ -105,15 +133,15 @@ fn cell_json(v: &Value) -> J {
     }
 }
 
-fn opt_cell(s: &str) -> Result<Value> {
+fn opt_cell(s: &str, pool: &Pool) -> Result<Cell> {
     if s.is_empty() {
-        Ok(Value::Null)
+        Ok((Value::Null, None))
     } else {
-        Ok(cell(serde_json::from_str(s).map_err(err)?))
+        Ok(cell(serde_json::from_str(s).map_err(err)?, pool))
     }
 }
 
-fn row(s: &str) -> Result<Row> {
+fn row(s: &str, pool: &Pool) -> Result<Row> {
     #[derive(Deserialize)]
     struct R {
         #[serde(default)]
@@ -124,13 +152,13 @@ fn row(s: &str) -> Result<Row> {
         cells: Vec<J>,
     }
     let r: R = serde_json::from_str(s).map_err(|e| format!("a row: {e}"))?;
-    Ok(Row { starred: r.starred, flagged: r.flagged, cells: r.cells.into_iter().map(cell).collect() })
+    Ok(Row { starred: r.starred, flagged: r.flagged, cells: r.cells.into_iter().map(|c| cell(c, pool)).collect() })
 }
 
 /// Columns built row by row, for every cell index that appears.
 #[derive(Default)]
 struct Builder {
-    cols: Vec<(Interner, Vec<u32>)>,
+    cols: Vec<(Interner, Vec<u32>, Vec<Option<Arc<Recon>>>)>,
     rows: usize,
     starred: Vec<bool>,
     flagged: Vec<bool>,
@@ -141,11 +169,13 @@ impl Builder {
         while self.cols.len() < r.cells.len() {
             let mut i = Interner::default();
             let null = i.intern(Value::Null);
-            self.cols.push((i, vec![null; self.rows]));
+            self.cols.push((i, vec![null; self.rows], vec![None; self.rows]));
         }
         let mut cells = r.cells.into_iter();
-        for (i, codes) in &mut self.cols {
-            codes.push(i.intern(cells.next().unwrap_or(Value::Null)));
+        for (i, codes, recons) in &mut self.cols {
+            let (v, recon) = cells.next().unwrap_or((Value::Null, None));
+            codes.push(i.intern(v));
+            recons.push(recon);
         }
         self.starred.push(r.starred);
         self.flagged.push(r.flagged);
@@ -153,7 +183,15 @@ impl Builder {
     }
 
     fn state(self, cols: Vec<Col>, key: Option<String>) -> State {
-        let data = self.cols.into_iter().enumerate().map(|(c, (i, codes))| (c, Arc::new(Column { dict: i.finish(), codes: codes.into() }))).collect();
+        let data = self
+            .cols
+            .into_iter()
+            .enumerate()
+            .map(|(c, (i, codes, recons))| {
+                let recon = recons.iter().any(Option::is_some).then(|| Arc::new(ReconCol { cells: recons, config: None }));
+                (c, Arc::new(Column { dict: i.finish(), codes: codes.into(), recon }))
+            })
+            .collect();
         State { cols, data, rows: self.rows, starred: Arc::new(self.starred), flagged: Arc::new(self.flagged), key }
     }
 }
@@ -167,7 +205,22 @@ fn from_rows(cols: Vec<Col>, rows: &[Row], key: Option<String>) -> State {
 impl State {
     /// The table OxRefine shows: the model's columns in order.
     fn table(&self) -> Table {
-        let columns = self.cols.iter().map(|c| self.data.get(&c.cell).cloned().unwrap_or_else(|| Arc::new(null_column(self.rows)))).collect();
+        let columns = self
+            .cols
+            .iter()
+            .map(|c| {
+                let col = self.data.get(&c.cell).cloned().unwrap_or_else(|| Arc::new(null_column(self.rows)));
+                // the column model keeps the reconConfig; OxRefine keeps it with the cells
+                match &c.recon {
+                    None => col,
+                    Some(config) => {
+                        let cells = col.recon.as_ref().map_or_else(|| vec![None; self.rows], |rc| rc.cells.clone());
+                        let recon = Some(Arc::new(ReconCol { cells, config: Some(config.clone()) }));
+                        Arc::new(Column { dict: col.dict.clone(), codes: col.codes.clone(), recon })
+                    }
+                }
+            })
+            .collect();
         Table {
             names: self.cols.iter().map(|c| c.name.clone()).collect(),
             columns,
@@ -179,8 +232,8 @@ impl State {
     }
 
     /// Cells set by (row, cell index, value); only the touched cell indexes are rebuilt.
-    fn set_cells(&self, edits: impl IntoIterator<Item = (usize, usize, Value)>) -> Result<State> {
-        let mut by: BTreeMap<usize, Vec<(usize, Value)>> = BTreeMap::new();
+    fn set_cells(&self, edits: impl IntoIterator<Item = (usize, usize, Cell)>) -> Result<State> {
+        let mut by: BTreeMap<usize, Vec<(usize, Cell)>> = BTreeMap::new();
         for (r, c, v) in edits {
             if r >= self.rows {
                 return Err(format!("a change names row {r}, but there are {} rows", self.rows));
@@ -189,7 +242,7 @@ impl State {
         }
         let mut out = self.clone();
         for (c, edits) in by {
-            let old = self.data.get(&c).map_or_else(|| null_column(self.rows), |c| Column { dict: c.dict.clone(), codes: c.codes.clone() });
+            let old = self.data.get(&c).map_or_else(|| null_column(self.rows), |c| Column { dict: c.dict.clone(), codes: c.codes.clone(), recon: c.recon.clone() });
             out.data.insert(c, Arc::new(patch(old, edits)));
         }
         Ok(out)
@@ -202,7 +255,7 @@ impl State {
         idx.extend(0..width);
         idx.sort_unstable();
         idx.dedup();
-        let edits = rows.iter().flat_map(|(r, row)| idx.iter().map(move |&c| (*r, c, row.cells.get(c).cloned().unwrap_or(Value::Null))));
+        let edits = rows.iter().flat_map(|(r, row)| idx.iter().map(move |&c| (*r, c, row.cells.get(c).cloned().unwrap_or((Value::Null, None)))));
         let mut out = self.set_cells(edits.collect::<Vec<_>>())?;
         let (mut s, mut f) = ((*out.starred).clone(), (*out.flagged).clone());
         for (r, row) in rows {
@@ -231,7 +284,7 @@ impl State {
         (at < self.cols.len()).then_some(at).ok_or_else(|| format!("a change names column {at}, but there are {}", self.cols.len()))
     }
 
-    fn insert(&self, at: usize, col: &Col, cells: &[(usize, Value)]) -> Result<State> {
+    fn insert(&self, at: usize, col: &Col, cells: &[(usize, Cell)]) -> Result<State> {
         let mut out = self.set_cells(cells.iter().map(|(r, v)| (*r, col.cell, v.clone())).collect::<Vec<_>>())?;
         out.cols.insert(at.min(out.cols.len()), col.clone());
         Ok(out)
@@ -249,9 +302,14 @@ impl State {
     }
 }
 
-fn patch(mut col: Column, edits: Vec<(usize, Value)>) -> Column {
+fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Column {
     let mut index: HashMap<Value, u32> = col.dict.iter().enumerate().map(|(i, v)| (v.clone(), i as u32)).collect();
-    for (r, v) in edits {
+    let rows = col.codes.len();
+    let mut recons = col.recon.as_ref().map(|rc| rc.cells.clone());
+    for (r, (v, recon)) in edits {
+        if recon.is_some() || recons.is_some() {
+            recons.get_or_insert_with(|| vec![None; rows])[r] = recon;
+        }
         let code = match index.get(&v) {
             Some(&c) => c,
             None => {
@@ -263,6 +321,7 @@ fn patch(mut col: Column, edits: Vec<(usize, Value)>) -> Column {
         };
         Arc::make_mut(&mut col.codes)[r] = code;
     }
+    col.recon = recons.filter(|c| c.iter().any(Option::is_some)).map(|cells| Arc::new(ReconCol { cells, config: None }));
     col
 }
 
@@ -271,15 +330,17 @@ fn patch(mut col: Column, edits: Vec<(usize, Value)>) -> Column {
 /// One history step's change, as OpenRefine records it (com.google.refine.model.changes.*).
 enum Change {
     /// CellChange / MassCellChange: (row, cell index, old, new)
-    Cells(Vec<(usize, usize, Value, Value)>),
+    Cells(Vec<(usize, usize, Cell, Cell)>),
+    /// ReconChange: cells of one column, and its reconConfig before and after
+    Recon { cells: Vec<(usize, usize, Cell, Cell)>, column: String, old: Option<J>, new: Option<J> },
     Star(usize, bool, bool),
     Flag(usize, bool, bool),
     Many(Vec<Change>),
     Rename(String, String),
     Move(usize, usize),
-    Reorder { old: Vec<Col>, new: Vec<Col>, cells: Vec<(usize, usize, Value)> },
-    RemoveColumn { at: usize, col: Col, cells: Vec<(usize, Value)> },
-    AddColumn { at: usize, col: Col, cells: Vec<(usize, Value)> },
+    Reorder { old: Vec<Col>, new: Vec<Col>, cells: Vec<(usize, usize, Cell)> },
+    RemoveColumn { at: usize, col: Col, cells: Vec<(usize, Cell)> },
+    AddColumn { at: usize, col: Col, cells: Vec<(usize, Cell)> },
     Split { at: usize, col: Col, remove: bool, first: usize, names: Vec<String>, rows: Vec<usize>, new: Vec<Row>, old: Vec<Row> },
     Rows { new: Vec<Row>, old: Vec<Row> },
     RowsAndColumns { new_cols: Vec<Col>, old_cols: Vec<Col>, new: Vec<Row>, old: Vec<Row> },
@@ -287,7 +348,7 @@ enum Change {
     Order(Vec<usize>),
 }
 
-struct Lines<'a>(std::str::Lines<'a>);
+struct Lines<'a>(std::str::Lines<'a>, Pool);
 
 impl<'a> Lines<'a> {
     fn next(&mut self) -> Result<&'a str> {
@@ -305,7 +366,8 @@ impl<'a> Lines<'a> {
         (0..num(n)?).map(|_| self.next()).collect()
     }
     fn rows(&mut self, n: &str) -> Result<Vec<Row>> {
-        self.take(n)?.into_iter().map(row).collect()
+        let lines = self.take(n)?;
+        lines.into_iter().map(|l| row(l, &self.1)).collect()
     }
     fn cols(&mut self, n: &str) -> Result<Vec<Col>> {
         self.take(n)?.into_iter().map(|l| serde_json::from_str(l).map_err(err)).collect()
@@ -316,11 +378,11 @@ fn num(s: &str) -> Result<usize> {
     s.trim().parse().map_err(|_| format!("a change file has `{s}` where a number belongs"))
 }
 
-/// `row;cell` lines: (row, value).
-fn row_cells(lines: Vec<&str>) -> Result<Vec<(usize, Value)>> {
+/// `row;cell` lines: (row, cell).
+fn row_cells(lines: Vec<&str>, pool: &Pool) -> Result<Vec<(usize, Cell)>> {
     lines.into_iter().map(|l| {
         let (r, c) = l.split_once(';').ok_or("a change file has a malformed cell")?;
-        Ok((num(r)?, opt_cell(c)?))
+        Ok((num(r)?, opt_cell(c, pool)?))
     }).collect()
 }
 
@@ -357,13 +419,20 @@ fn parse(p: &mut Lines) -> Result<Change> {
             (_, "newColumnCount") => cols_b = p.cols(v)?,
             (_, "oldRowCount") | ("RowRemovalChange", "rowCount") => rows_a = p.rows(v)?,
             (_, "newRowCount") => rows_b = p.rows(v)?,
-            (_, "newCellCount") => at_cells = row_cells(p.take(v)?)?,
-            ("ColumnRemovalChange", "oldCellCount") => at_cells = row_cells(p.take(v)?)?,
+            (_, "newCellCount") => {
+                let lines = p.take(v)?;
+                at_cells = row_cells(lines, &p.1)?
+            }
+            ("ColumnRemovalChange", "oldCellCount") => {
+                let lines = p.take(v)?;
+                at_cells = row_cells(lines, &p.1)?
+            }
             ("ColumnReorderChange", "oldCellCount") => {
-                rc_cells = p.take(v)?.into_iter().map(|l| {
+                let lines = p.take(v)?;
+                rc_cells = lines.into_iter().map(|l| {
                     let mut it = l.splitn(3, ';');
                     let (r, c, v) = (it.next().unwrap_or(""), it.next().unwrap_or(""), it.next().unwrap_or(""));
-                    Ok((num(r)?, num(c)?, opt_cell(v)?))
+                    Ok((num(r)?, num(c)?, opt_cell(v, &p.1)?))
                 }).collect::<Result<_>>()?;
             }
             // column groups and anything else counted: skip the lines they announce
@@ -379,8 +448,12 @@ fn parse(p: &mut Lines) -> Result<Change> {
     let col = |k: &str| -> Result<Col> { serde_json::from_str(get(k)?).map_err(err) };
     let flag = |k: &str| get(k).map(|v| v == "true");
     Ok(match kind {
-        "CellChange" => Change::Cells(vec![cell_body(&f)?]),
+        "CellChange" => Change::Cells(vec![cell_body(&f, &p.1)?]),
         "MassCellChange" => Change::Cells(cells),
+        "ReconChange" => {
+            let config = |k: &str| f.get(k).filter(|v| !v.is_empty()).and_then(|v| serde_json::from_str::<J>(v).ok()).filter(|v| !v.is_null());
+            Change::Recon { cells, column: get("commonColumnName")?.into(), old: config("oldReconConfig"), new: config("newReconConfig") }
+        }
         "MassChange" => Change::Many(changes),
         "RowStarChange" => Change::Star(num(get("row")?)?, flag("oldStarred")?, flag("newStarred")?),
         "RowFlagChange" => Change::Flag(num(get("row")?)?, flag("oldFlagged")?, flag("newFlagged")?),
@@ -390,7 +463,7 @@ fn parse(p: &mut Lines) -> Result<Change> {
         "ColumnRemovalChange" => Change::RemoveColumn { at: num(get("oldColumnIndex")?)?, col: col("oldColumn")?, cells: at_cells },
         "ColumnAdditionChange" => Change::AddColumn {
             at: num(get("columnIndex")?)?,
-            col: Col { cell: num(get("newCellIndex")?)?, name: get("columnName")?.into() },
+            col: Col { cell: num(get("newCellIndex")?)?, name: get("columnName")?.into(), recon: None },
             cells: at_cells,
         },
         "ColumnSplitChange" => Change::Split {
@@ -411,18 +484,18 @@ fn parse(p: &mut Lines) -> Result<Change> {
     })
 }
 
-fn cell_body(f: &HashMap<&str, &str>) -> Result<(usize, usize, Value, Value)> {
+fn cell_body(f: &HashMap<&str, &str>, pool: &Pool) -> Result<(usize, usize, Cell, Cell)> {
     let get = |k: &str| f.get(k).copied().ok_or_else(|| format!("CellChange: no {k}"));
-    Ok((num(get("row")?)?, num(get("cell")?)?, opt_cell(get("old")?)?, opt_cell(get("new")?)?))
+    Ok((num(get("row")?)?, num(get("cell")?)?, opt_cell(get("old")?, pool)?, opt_cell(get("new")?, pool)?))
 }
 
 /// A CellChange inside a MassCellChange: its fields, no class line.
-fn cell_change(p: &mut Lines) -> Result<(usize, usize, Value, Value)> {
+fn cell_change(p: &mut Lines) -> Result<(usize, usize, Cell, Cell)> {
     let mut f = HashMap::new();
     while let Some((k, v)) = p.field()? {
         f.insert(k, v);
     }
-    cell_body(&f)
+    cell_body(&f, &p.1)
 }
 
 impl Change {
@@ -431,6 +504,13 @@ impl Change {
         let pick = |old: bool, new: bool| if forward { new } else { old };
         Ok(match self {
             Change::Cells(v) => s.set_cells(v.iter().map(|(r, c, o, n)| (*r, *c, if forward { n } else { o }.clone())).collect::<Vec<_>>())?,
+            Change::Recon { cells, column, old, new } => {
+                let mut out = s.set_cells(cells.iter().map(|(r, c, o, n)| (*r, *c, if forward { n } else { o }.clone())).collect::<Vec<_>>())?;
+                if let Some(c) = out.cols.iter_mut().find(|c| &c.name == column) {
+                    c.recon = if forward { new } else { old }.clone();
+                }
+                out
+            }
             Change::Star(r, o, n) | Change::Flag(r, o, n) => {
                 if *r >= s.rows {
                     return Err(format!("a change names row {r}, but there are {} rows", s.rows));
@@ -506,7 +586,7 @@ impl Change {
                 if forward {
                     let mut out = s.put_rows(&rows.iter().copied().zip(new.iter()).collect::<Vec<_>>())?;
                     for (i, n) in names.iter().enumerate() {
-                        out.cols.insert((at + 1 + i).min(out.cols.len()), Col { cell: first + i, name: n.clone() });
+                        out.cols.insert((at + 1 + i).min(out.cols.len()), Col { cell: first + i, name: n.clone(), recon: None });
                     }
                     if *remove {
                         out.cols.remove(out.col_at(*at)?);
@@ -561,7 +641,7 @@ impl Change {
     fn single_edit(&self, s: &State) -> Option<OpKind> {
         match self {
             Change::Cells(v) if v.len() == 1 => {
-                let (row, c, _, new) = &v[0];
+                let (row, c, _, (new, _)) = &v[0];
                 let column_name = s.cols.iter().find(|x| x.cell == *c)?.name.clone();
                 let (value, kind) = match new {
                     Value::Str(t) => (t.clone(), "text"),
@@ -604,7 +684,7 @@ pub struct Archive {
     pub first: usize,
     /// why undo or redo stopped early
     pub stopped: Option<String>,
-    /// whether cells carried reconciliation data, which OxRefine doesn't keep yet
+    /// whether cells carried reconciliation data
     pub recon: bool,
     entries: Vec<Entry>,
     changes: Vec<Option<Change>>,
@@ -619,7 +699,6 @@ pub struct Report {
     /// undone steps that were dropped
     pub dropped: usize,
     pub reason: Option<String>,
-    pub recon: bool,
 }
 
 fn files(path: &Path) -> Result<HashMap<String, Vec<u8>>> {
@@ -653,7 +732,8 @@ pub fn read(path: &Path) -> Result<Archive> {
     let meta: J = files.get("metadata.json").map(|b| serde_json::from_slice(b).unwrap_or(J::Null)).unwrap_or(J::Null);
     let data = files.remove("data.zip").ok_or("not an OpenRefine project archive (no data.zip)")?;
     let mut z = zip::ZipArchive::new(Cursor::new(&data)).map_err(err)?;
-    let recon = unzip(&data, "pool.txt").is_ok_and(|p| p.lines().any(|l| l.starts_with("reconCount=") && l != "reconCount=0"));
+    let pool = read_pool(&unzip(&data, "pool.txt").unwrap_or_default());
+    let recon = !pool.is_empty();
 
     // data.txt: version, column model, history, overlay models, then the rows
     let mut lines = BufReader::new(z.by_name("data.txt").map_err(err)?).lines();
@@ -687,7 +767,7 @@ pub fn read(path: &Path) -> Result<Archive> {
                 let n = num(v)?;
                 crate::jobs::progress("Reading the OpenRefine project", n as u64);
                 for _ in 0..n {
-                    b.push(row(&next()?)?);
+                    b.push(row(&next()?, &pool)?);
                     crate::jobs::tick(1)?;
                 }
                 break;
@@ -703,14 +783,14 @@ pub fn read(path: &Path) -> Result<Archive> {
         .map(|e| {
             let f = files.get(&format!("history/{}.change.zip", e.id))?;
             let text = unzip(f, "change.txt").ok()?;
-            Some(parse(&mut Lines(text.lines())))
+            Some(parse(&mut Lines(text.lines(), read_pool(&unzip(f, "pool.txt").unwrap_or_default()))))
         })
         .map(|c| c.and_then(|c| c.ok()))
         .collect();
     let why = |i: usize, e: &Entry| -> String {
         let reason = match files.get(&format!("history/{}.change.zip", e.id)) {
             None => "its change file is missing".to_string(),
-            Some(f) => match unzip(f, "change.txt").map(|t| parse(&mut Lines(t.lines()))) {
+            Some(f) => match unzip(f, "change.txt").map(|t| parse(&mut Lines(t.lines(), read_pool(&unzip(f, "pool.txt").unwrap_or_default())))) {
                 Ok(Err(m)) | Err(m) => m,
                 Ok(Ok(_)) => "it doesn't fit the table".into(),
             },
@@ -768,11 +848,17 @@ fn same(a: &Table, b: &Table) -> bool {
         (Value::Int(i), Value::Num(n)) | (Value::Num(n), Value::Int(i)) => *i as f64 == *n,
         _ => x == y,
     };
+    // Recons alike: same judgment and match (ids are random)
+    let recon = |x: Option<&Arc<Recon>>, y: Option<&Arc<Recon>>| match (x, y) {
+        (None, None) => true,
+        (Some(x), Some(y)) => x.judgment == y.judgment && x.matched.as_ref().map(|m| &m.id) == y.matched.as_ref().map(|m| &m.id),
+        _ => false,
+    };
     a.names == b.names
         && a.rows == b.rows
         && a.starred == b.starred
         && a.flagged == b.flagged
-        && a.columns.iter().zip(&b.columns).all(|(x, y)| Arc::ptr_eq(x, y) || (0..a.rows).all(|r| cell(x.get(r), y.get(r))))
+        && a.columns.iter().zip(&b.columns).all(|(x, y)| Arc::ptr_eq(x, y) || (0..a.rows).all(|r| cell(x.get(r), y.get(r)) && recon(x.recon(r), y.recon(r))))
 }
 
 impl Archive {
@@ -789,7 +875,7 @@ impl Archive {
     /// An OxRefine project: OpenRefine's steps as operations, from the first one OxRefine can replay
     /// to the same result; anything before a step it can't is merged into the starting table.
     pub fn into_project(self) -> (Project, Report) {
-        let mut report = Report { merged: self.first, recon: self.recon, reason: self.stopped.clone(), ..Report::default() };
+        let mut report = Report { merged: self.first, reason: self.stopped.clone(), ..Report::default() };
         let mut tables = vec![self.states[0].table()];
         let mut ops: Vec<Op> = vec![];
         for (i, state) in self.states.iter().enumerate().skip(1) {
@@ -803,11 +889,18 @@ impl Archive {
                 _ => self.changes[k].as_ref().and_then(|c| c.single_edit(&self.states[i - 1])).ok_or_else(|| "OxRefine can't redo this kind of edit".to_string()),
             };
             let target = state.table();
-            // OpenRefine keeps what it fetched; the step replays from that instead of fetching again
+            // OpenRefine keeps what it fetched and the Recons the service gave; the step replays
+            // from those instead of asking again
             let kind = kind.map(|mut k| {
                 if let OpKind::ColumnAdditionByFetchingUrls { new_column_name, fetched, .. } = &mut k {
                     if let Ok(c) = target.col(new_column_name) {
                         *fetched = Some((0..target.rows).map(|r| fetched_cell(target.columns[c].get(r))).collect());
+                    }
+                }
+                if let OpKind::Recon { column_name, results, .. } = &mut k {
+                    if let Ok(c) = target.col(column_name) {
+                        let cells: Vec<_> = (0..target.rows).map(|r| target.columns[c].recon(r).cloned()).collect();
+                        *results = Some(crate::recon::save_cells(&cells));
                     }
                 }
                 k
@@ -855,12 +948,58 @@ fn fetched_cell(v: &Value) -> J {
 
 // ---------------------------------------------------------------- writing
 
-fn col_json(i: usize, name: &str) -> String {
-    json!({ "cellIndex": i, "originalName": name, "name": name }).to_string()
+fn col_json(i: usize, name: &str, col: &Column) -> String {
+    let mut j = json!({ "cellIndex": i, "originalName": name, "name": name });
+    if let Some(rc) = col.recon.as_ref().filter(|rc| rc.config.is_some()) {
+        j["reconConfig"] = rc.config.clone().unwrap_or(J::Null);
+        j["reconStats"] = rc.stats(col);
+    }
+    j.to_string()
 }
 
-fn row_json(t: &Table, r: usize) -> String {
-    json!({ "starred": t.starred[r], "flagged": t.flagged[r], "cells": t.columns.iter().map(|c| cell_json(c.get(r))).collect::<Vec<_>>() }).to_string()
+/// The Recons a data or change file names, written once each to its pool.txt.
+#[derive(Default)]
+struct PoolOut {
+    seen: std::collections::HashSet<i64>,
+    lines: String,
+}
+
+impl PoolOut {
+    fn cell(&mut self, v: &Value, recon: Option<&Arc<Recon>>) -> J {
+        let mut j = cell_json(v);
+        if let Some(r) = recon {
+            if j.is_null() {
+                j = json!({});
+            }
+            j["r"] = J::String(r.id.to_string());
+            if self.seen.insert(r.id) {
+                self.lines += &(r.to_json(true).to_string() + "\n");
+            }
+        }
+        j
+    }
+    fn opt(&mut self, v: &Value, recon: Option<&Arc<Recon>>) -> String {
+        match self.cell(v, recon) {
+            J::Null => String::new(),
+            j => j.to_string(),
+        }
+    }
+    fn text(&self) -> String {
+        format!("{VERSION}\nreconCount={}\n{}", self.seen.len(), self.lines)
+    }
+}
+
+fn row_json(t: &Table, r: usize, pool: &mut PoolOut) -> String {
+    let cells: Vec<J> = t.columns.iter().map(|c| pool.cell(c.get(r), c.recon(r))).collect();
+    json!({ "starred": t.starred[r], "flagged": t.flagged[r], "cells": cells }).to_string()
+}
+
+fn same_recon(x: Option<&Arc<Recon>>, y: Option<&Arc<Recon>>) -> bool {
+    match (x, y) {
+        (None, None) => true,
+        (Some(x), Some(y)) => Arc::ptr_eq(x, y),
+        _ => false,
+    }
 }
 
 fn zip_files(files: &[(&str, &[u8])]) -> Result<Vec<u8>> {
@@ -877,19 +1016,45 @@ fn zip_files(files: &[(&str, &[u8])]) -> Result<Vec<u8>> {
 /// flags; anything else as both whole tables (OpenRefine's MassRowColumnChange, which undoes anything).
 // ponytail: structural steps store both tables in full, like OpenRefine's own MassRowChange; store
 // only the moved or removed rows if exported archives of big projects get too large.
-fn change_file(a: &Table, b: &Table, op: &Op) -> String {
+/// The change file and its pool.txt.
+fn change_file(a: &Table, b: &Table, op: &Op) -> (String, String) {
+    let mut pool = PoolOut::default();
+    let w = change_text(a, b, op, &mut pool);
+    (w, pool.text())
+}
+
+fn change_text(a: &Table, b: &Table, op: &Op, pool: &mut PoolOut) -> String {
     let mut w = format!("{VERSION}\n");
+    let diffs = |pool: &mut PoolOut, i: usize, x: &Column, y: &Column| -> Vec<String> {
+        (0..a.rows)
+            .filter(|&r| x.get(r) != y.get(r) || !same_recon(x.recon(r), y.recon(r)))
+            .map(|r| format!("row={r}\ncell={i}\nold={}\nnew={}\n/ec/\n", pool.opt(x.get(r), x.recon(r)), pool.opt(y.get(r), y.recon(r))))
+            .collect()
+    };
     match &op.kind {
         OpKind::CellEdit { row, column_name, .. } if a.names == b.names => {
             let i = a.names.iter().position(|n| n == column_name).unwrap_or(0);
-            let (x, y) = (a.columns[i].get(*row), b.columns[i].get(*row));
-            return w + &format!("com.google.refine.model.changes.CellChange\nrow={row}\ncell={i}\nold={}\nnew={}\n/ec/\n", opt_json(x), opt_json(y));
+            let (x, y) = (&a.columns[i], &b.columns[i]);
+            let (old, new) = (pool.opt(x.get(*row), x.recon(*row)), pool.opt(y.get(*row), y.recon(*row)));
+            return w + &format!("com.google.refine.model.changes.CellChange\nrow={row}\ncell={i}\nold={old}\nnew={new}\n/ec/\n");
         }
         OpKind::RowAnnotate { row: r, starred: Some(_), .. } => {
             return w + &format!("com.google.refine.model.changes.RowStarChange\nrow={r}\nnewStarred={}\noldStarred={}\n/ec/\n", b.starred[*r], a.starred[*r]);
         }
         OpKind::RowAnnotate { row: r, .. } => {
             return w + &format!("com.google.refine.model.changes.RowFlagChange\nrow={r}\nnewFlagged={}\noldFlagged={}\n/ec/\n", b.flagged[*r], a.flagged[*r]);
+        }
+        OpKind::Recon { column_name, .. } if a.names == b.names && a.rows == b.rows => {
+            let i = a.names.iter().position(|n| n == column_name).unwrap_or(0);
+            let (x, y) = (&a.columns[i], &b.columns[i]);
+            let config = |c: &Column| c.recon.as_ref().and_then(|rc| rc.config.as_ref().map(|j| (j.to_string(), rc.stats(c).to_string()))).unwrap_or_default();
+            let ((old_config, old_stats), (new_config, new_stats)) = (config(x), config(y));
+            let d = diffs(pool, i, x, y);
+            return w + &format!(
+                "com.google.refine.model.changes.ReconChange\nnewReconConfig={new_config}\nnewReconStats={new_stats}\noldReconConfig={old_config}\noldReconStats={old_stats}\ncommonColumnName={column_name}\nupdateRowContextDependencies=false\ncellChangeCount={}\n{}/ec/\n",
+                d.len(),
+                d.concat()
+            );
         }
         _ => {}
     }
@@ -899,10 +1064,7 @@ fn change_file(a: &Table, b: &Table, op: &Op) -> String {
             if Arc::ptr_eq(x, y) {
                 continue;
             }
-            let diffs: Vec<String> = (0..a.rows)
-                .filter(|&r| x.get(r) != y.get(r))
-                .map(|r| format!("row={r}\ncell={i}\nold={}\nnew={}\n/ec/\n", opt_json(x.get(r)), opt_json(y.get(r))))
-                .collect();
+            let diffs = diffs(pool, i, x, y);
             if !diffs.is_empty() {
                 parts.push(format!(
                     "{VERSION}\ncom.google.refine.model.changes.MassCellChange\ncommonColumnName={}\nupdateRowContextDependencies=true\ncellChangeCount={}\n{}/ec/\n",
@@ -925,22 +1087,15 @@ fn change_file(a: &Table, b: &Table, op: &Op) -> String {
         w += "com.google.refine.model.changes.MassRowColumnChange\n";
         for (label, t) in [("new", b), ("old", a)] {
             w += &format!("{label}ColumnCount={}\n", t.names.len());
-            t.names.iter().enumerate().for_each(|(i, n)| w += &(col_json(i, n) + "\n"));
+            t.names.iter().enumerate().for_each(|(i, n)| w += &(col_json(i, n, &t.columns[i]) + "\n"));
         }
         for (label, t) in [("new", b), ("old", a)] {
             w += &format!("{label}RowCount={}\n", t.rows);
-            (0..t.rows).for_each(|r| w += &(row_json(t, r) + "\n"));
+            (0..t.rows).for_each(|r| w += &(row_json(t, r, pool) + "\n"));
         }
         w += "oldColumnGroupCount=0\n/ec/\n";
     }
     w
-}
-
-fn opt_json(v: &Value) -> String {
-    match cell_json(v) {
-        J::Null => String::new(),
-        j => j.to_string(),
-    }
 }
 
 /// Write `p` as an archive OpenRefine 3.10 opens, history and undone steps included.
@@ -957,17 +1112,17 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
 
     let t = &tables[cursor];
     let mut d = format!("{VERSION}\ncolumnModel=\nmaxCellIndex={}\nkeyColumnIndex={}\ncolumnCount={}\n", t.names.len() as i64 - 1, t.key_index().min(t.names.len().saturating_sub(1)), t.names.len());
-    t.names.iter().enumerate().for_each(|(i, n)| d += &(col_json(i, n) + "\n"));
+    t.names.iter().enumerate().for_each(|(i, n)| d += &(col_json(i, n, &t.columns[i]) + "\n"));
     d += &format!("columnGroupCount=0\n/e/\nhistory=\npastEntryCount={cursor}\n");
     ops[..cursor].iter().enumerate().for_each(|(k, o)| d += &(entry(k, o) + "\n"));
     d += &format!("futureEntryCount={}\n", ops.len() - cursor);
     ops[cursor..].iter().enumerate().for_each(|(k, o)| d += &(entry(cursor + k, o) + "\n"));
     d += &format!("/e/\nrowCount={}\n", t.rows);
+    let mut data_pool = PoolOut::default();
     for r in 0..t.rows {
-        d += &row_json(t, r);
+        d += &row_json(t, r, &mut data_pool);
         d.push('\n');
     }
-    let pool = format!("{VERSION}\nreconCount=0\n");
     let created = stamp.clone();
     let meta = json!({
         "created": created, "modified": stamp, "name": p.name, "password": "", "encoding": "UTF-8", "encodingConfidence": 0,
@@ -986,10 +1141,10 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
         tar.append_data(&mut h, name, bytes).map_err(err)
     };
     add("metadata.json", meta.to_string().as_bytes())?;
-    add("data.zip", &zip_files(&[("data.txt", d.as_bytes()), ("pool.txt", pool.as_bytes())])?)?;
+    add("data.zip", &zip_files(&[("data.txt", d.as_bytes()), ("pool.txt", data_pool.text().as_bytes())])?)?;
     crate::jobs::tick(1)?;
     for k in 0..ops.len() {
-        let c = change_file(&tables[k], &tables[k + 1], &ops[k]);
+        let (c, pool) = change_file(&tables[k], &tables[k + 1], &ops[k]);
         add(&format!("history/{}.change.zip", id0 + k as i64), &zip_files(&[("change.txt", c.as_bytes()), ("pool.txt", pool.as_bytes())])?)?;
         crate::jobs::tick(1)?;
     }

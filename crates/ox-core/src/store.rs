@@ -209,6 +209,9 @@ struct Header {
     rows: usize,
     key: Option<String>,
     dicts: Vec<Vec<serde_json::Value>>,
+    /// per column: null, or {"config", "recons", "rows"} (see recon::save_cells)
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    recon: Vec<serde_json::Value>,
 }
 
 pub fn write_table(path: &Path, t: &Table) -> Result<()> {
@@ -217,6 +220,21 @@ pub fn write_table(path: &Path, t: &Table) -> Result<()> {
         rows: t.rows,
         key: t.key.clone(),
         dicts: t.columns.iter().map(|c| c.dict.iter().map(cell_to_json).collect()).collect(),
+        recon: if t.columns.iter().any(|c| c.recon.is_some()) {
+            t.columns
+                .iter()
+                .map(|c| match &c.recon {
+                    None => serde_json::Value::Null,
+                    Some(rc) => {
+                        let mut j = crate::recon::save_cells(&rc.cells);
+                        j["config"] = rc.config.clone().unwrap_or(serde_json::Value::Null);
+                        j
+                    }
+                })
+                .collect()
+        } else {
+            vec![]
+        },
     };
     let header = serde_json::to_vec(&header).map_err(err)?;
     write_atomic(path, |w| {
@@ -243,14 +261,18 @@ pub fn read_table(bytes: &[u8]) -> Result<Table> {
     let mut pos = 12 + len;
     let n = header.rows;
     let mut columns = vec![];
-    for dict in header.dicts {
+    for (ci, dict) in header.dicts.into_iter().enumerate() {
         let raw = bytes.get(pos..pos + 4 * n).ok_or_else(bad)?;
         let codes: Vec<u32> = raw.chunks_exact(4).map(|c| u32::from_le_bytes(c.try_into().unwrap())).collect();
         let dict: Vec<Value> = dict.into_iter().map(cell_from_json).collect();
         if codes.iter().any(|&c| c as usize >= dict.len()) {
             return Err(bad());
         }
-        columns.push(Arc::new(Column { dict, codes: codes.into() }));
+        let recon = header.recon.get(ci).filter(|j| !j.is_null()).and_then(|j| {
+            let cells = crate::recon::load_cells(j, n)?;
+            Some(Arc::new(crate::recon::ReconCol { cells, config: j.get("config").filter(|c| !c.is_null()).cloned() }))
+        });
+        columns.push(Arc::new(Column { dict, codes: codes.into(), recon }));
         pos += 4 * n;
     }
     let flags = |pos: usize| -> Result<Arc<Vec<bool>>> { Ok(Arc::new(bytes.get(pos..pos + n).ok_or_else(bad)?.iter().map(|&b| b != 0).collect())) };

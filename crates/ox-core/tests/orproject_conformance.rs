@@ -31,10 +31,19 @@ fn norm(c: &J) -> J {
     }
 }
 
+/// The table as gen.mjs records it: a reconciled cell also shows its judgment and matched id.
 fn shown(t: &Table) -> J {
+    let cell_at = |c: &ox_core::table::Column, r: usize| {
+        let mut j = cell(c.get(r));
+        if let Some(recon) = c.recon(r) {
+            let v = recon.to_json(false);
+            j["r"] = json!({ "j": v["j"], "m": recon.matched.as_ref().map(|m| m.id.clone()) });
+        }
+        j
+    };
     json!({
         "columns": t.names,
-        "rows": (0..t.rows).map(|r| json!({ "starred": t.starred[r], "flagged": t.flagged[r], "cells": t.columns.iter().map(|c| cell(c.get(r))).collect::<Vec<_>>() })).collect::<Vec<_>>(),
+        "rows": (0..t.rows).map(|r| json!({ "starred": t.starred[r], "flagged": t.flagged[r], "cells": t.columns.iter().map(|c| cell_at(c, r)).collect::<Vec<_>>() })).collect::<Vec<_>>(),
     })
 }
 
