@@ -839,8 +839,19 @@
       "priority": "P1",
       "size": "L",
       "title": "Nearest-neighbour clustering",
-      "detail": "Levenshtein and PPM distances with n-gram blocking, radius and block size; parallel (rayon).",
-      "ref": "knn: levenshtein, ppm"
+      "detail": "Levenshtein distance with n-gram blocking, radius and block size; parallel, with progress and cancel.",
+      "ref": "knn: levenshtein"
+    },
+    {
+      "id": "cl-ppm",
+      "phase": "p7",
+      "milestone": "v0.5",
+      "status": "backlog",
+      "priority": "P2",
+      "size": "M",
+      "title": "PPM distance for nearest neighbours",
+      "detail": "Port vicino's PPM distance: 10*((C(x+y)+C(y+x))/(C(x+x)+C(y+y)) - 1), where C is the compressed length from arithcode's PPMModel(8). Needs the arithcode-1.2 sources (OpenRefine/simile-vicino, lib-src/arithcode-1.2-sources.jar, 1.3 MB). Then drop the 2 PPM lines from tests/cluster/known_failures.txt and enable PPM in the cluster dialog.",
+      "ref": "knn: ppm"
     },
     {
       "id": "cl-ui",

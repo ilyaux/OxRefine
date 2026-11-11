@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 103 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 104 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,7 +8,7 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 21 |
-| v0.5 | 31 | 2 |
+| v0.5 | 32 | 2 |
 | v1.0 | 5 | 0 |
 | later | 11 | 0 |
 
@@ -120,7 +120,8 @@ Every facet type, including customized and expression facets.
 All key-collision keyers and nearest-neighbour methods.
 
 - [~] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
-- [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein and PPM distances with n-gram blocking, radius and block size; parallel (rayon). _OpenRefine: knn: levenshtein, ppm_
+- [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein distance with n-gram blocking, radius and block size; parallel, with progress and cancel. _OpenRefine: knn: levenshtein_
+- [ ] **PPM distance for nearest neighbours** · v0.5 · P2 · M. Port vicino's PPM distance: 10*((C(x+y)+C(y+x))/(C(x+x)+C(y+y)) - 1), where C is the compressed length from arithcode's PPMModel(8). Needs the arithcode-1.2 sources (OpenRefine/simile-vicino, lib-src/arithcode-1.2-sources.jar, 1.3 MB). Then drop the 2 PPM lines from tests/cluster/known_failures.txt and enable PPM in the cluster dialog. _OpenRefine: knn: ppm_
 - [ ] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
 - [ ] **Custom clustering functions** · later · P2 · M. User-defined keying and distance functions in GREL. _OpenRefine: clustering-functions-dialog_
 
