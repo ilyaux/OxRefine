@@ -25,6 +25,7 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
+import { checkForUpdates } from "@/updates"
 import { Palette } from "@/Palette"
 
 type Modal =
@@ -68,6 +69,7 @@ export function App() {
 
   useEffect(() => {
     call<Summary>("summary").then(({ data }) => setSummary(data), () => {})
+    checkForUpdates()
   }, [])
 
   useEffect(() => {

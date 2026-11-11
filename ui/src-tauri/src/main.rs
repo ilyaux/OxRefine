@@ -15,6 +15,8 @@ async fn ox(slot: tauri::State<'_, Slot>, cmd: String, args: Value) -> Result<Va
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(Slot(Mutex::new(Session::with_store(Store::open(Store::default_root()).expect("cannot create the OxRefine data folder")))))
         .invoke_handler(tauri::generate_handler![ox])
         .run(tauri::generate_context!())
