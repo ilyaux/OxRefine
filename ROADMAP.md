@@ -37,7 +37,7 @@ OpenRefine's data model: typed cells, records, persistent projects.
 - [x] **Row stars and flags** · v0.2 · P1 · S. Per-row star/flag bits, filterable and preserved in history. _OpenRefine: row-star, row-flag_
 - [~] **Save and reopen projects** · v0.2 · P0 · L. Project files on disk (columns + history), autosave, crash-safe writes; reopening a 1M-row project in under a second. _OpenRefine: workspace, ProjectManager_
 - [~] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
-- [ ] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
+- [~] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
 - [ ] **Reconciliation data in the cell model** · v0.5 · P2 · M. Per-cell recon judgment, candidates and match, stored outside the dictionary. _OpenRefine: Recon, ReconCandidate_
 
 ## Import
@@ -69,7 +69,7 @@ Every exporter OpenRefine ships.
 - [~] **Templating exporter** · v0.5 · P1 · M. Prefix / row template / separator / suffix with GREL inside {{ }}; the usual way to produce JSON. _OpenRefine: template_
 - [~] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
 - [~] **Custom tabular exporter** · v0.5 · P1 · M. Choose and order columns, format dates and recon values, save as a reusable preset. _OpenRefine: custom-tabular-exporter_
-- [ ] **Export project archive** · v0.5 · P2 · M. Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible. _OpenRefine: export-project_
+- [~] **Export project archive** · v0.5 · P2 · M. Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible. _OpenRefine: export-project_
 
 ## Operations
 
