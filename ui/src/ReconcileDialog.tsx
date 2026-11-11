@@ -18,7 +18,7 @@ type Manifest = { name?: string; identifierSpace: string; schemaSpace: string; d
 type Guess = { id: string; name: string; score: number; count: number }
 
 /** OpenRefine's preset service, then any the user added (kept in this browser profile). */
-const WIKIDATA: Service = { url: "https://wikidata-reconciliation.wmcloud.org/en/api", name: "Wikidata (en)" }
+const WIKIDATA: Service = { url: "https://wikidata.reconci.link/en/api", name: "Wikidata (en)" }
 const KEY = "ox-recon-services"
 export function loadServices(): Service[] {
   try {

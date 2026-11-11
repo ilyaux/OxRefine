@@ -110,5 +110,11 @@ export const CASES = [
     { name: "judge one cell: none", ops: [recon("name", human), { op: "ox/recon-judge-one-cell", row: 3, columnName: "name", judgment: "none" }] },
     { name: "judge one cell: unreconciled", ops: [{ op: "ox/recon-judge-one-cell", row: 0, columnName: "city", judgment: "matched", match: { id: "Q12", name: "London", types: ["Q515"], score: 100 } }] },
     { name: "clear one cell", ops: [recon("name", human), { op: "ox/recon-clear-one-cell", row: 4, columnName: "name" }] },
+    // ---------------------------------------------------------------- Recons through other steps
+    { name: "fill down copies recon", ops: [recon("name", human), { op: "core/fill-down", engineConfig: all, columnName: "name" }] },
+    { name: "blank down drops recon", ops: [recon("name", human), { op: "core/blank-down", engineConfig: all, columnName: "name" }] },
+    { name: "mass edit keeps recon", ops: [recon("name", human), { op: "core/mass-edit", engineConfig: all, columnName: "name", expression: "value", edits: [{ from: ["Paris"], fromBlank: false, fromError: false, to: "Paris, France" }] }] },
+    { name: "rows removed and sorted", ops: [recon("name", human), { op: "core/row-removal", engineConfig: uk }, { op: "core/row-reorder", mode: "row-based", sorting: { criteria: [{ column: "name", valueType: "string", reverse: false, blankPosition: 2, errorPosition: 1, caseSensitive: false }] } }] },
+    { name: "split column drops recon", ops: [recon("name", human), { op: "core/column-split", engineConfig: all, columnName: "name", guessCellType: false, removeOriginalColumn: false, mode: "separator", separator: " ", regex: false, maxColumns: 0 }] },
   ]),
 ]

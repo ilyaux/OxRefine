@@ -620,14 +620,33 @@ fn jackson(v: &Value) -> String {
 }
 
 /// HttpClient.postNameValue: a form with `queries`, the body back when the service answers 2xx.
+/// Redirects as OpenRefine's HttpClient follows them: 307/308 send the form again to the new
+/// address, 301/302/303 turn into a GET (ureq itself won't resend a body).
 fn post(agent: &ureq::Agent, url: &str, queries: &str) -> std::result::Result<String, String> {
-    let mut res = agent.post(url).send_form([("queries", queries)]).map_err(|e| e.to_string())?;
+    let mut url = url.to_string();
+    let mut res = None;
+    for _ in 0..10 {
+        let r = agent.post(&url).config().max_redirects(0).build().send_form([("queries", queries)]).map_err(|e| e.to_string())?;
+        let next = r.headers().get("location").and_then(|l| l.to_str().ok()).and_then(|l| url::Url::parse(&url).ok()?.join(l).ok());
+        match (r.status().as_u16(), next) {
+            (307 | 308, Some(next)) => url = next.to_string(),
+            (301..=303, Some(next)) => {
+                res = Some(agent.get(next.as_str()).call().map_err(|e| e.to_string())?);
+                break;
+            }
+            _ => {
+                res = Some(r);
+                break;
+            }
+        }
+    }
+    let mut res = res.ok_or("too many redirects")?;
     let status = res.status();
     let body = res.body_mut().read_to_string().map_err(|e| e.to_string())?;
     if status.is_success() {
         Ok(body)
     } else {
-        let path = url::Url::parse(url).map(|u| u.path().to_string() + &u.query().map(|q| format!("?{q}")).unwrap_or_default()).unwrap_or_else(|_| url.into());
+        let path = url::Url::parse(&url).map(|u| u.path().to_string() + &u.query().map(|q| format!("?{q}")).unwrap_or_default()).unwrap_or_else(|_| url.clone());
         Err(format!("HTTP error {} : {} for URL {path}", status.as_u16(), status.canonical_reason().unwrap_or("")))
     }
 }
@@ -1091,6 +1110,41 @@ pub fn judge_one(col: &Column, row: usize, judgment: Judgment, matched: Option<C
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A service that moved: 307 from /old to /new, which answers with the form it got.
+    #[test]
+    fn post_follows_redirects() {
+        use std::io::{BufRead, BufReader, Read, Write};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        std::thread::spawn(move || {
+            for stream in listener.incoming().flatten() {
+                let mut r = BufReader::new(stream.try_clone().unwrap());
+                let (mut line, mut len) = (String::new(), 0);
+                r.read_line(&mut line).unwrap();
+                loop {
+                    let mut h = String::new();
+                    if r.read_line(&mut h).unwrap_or(0) == 0 || h.trim().is_empty() {
+                        break;
+                    }
+                    if let Some(v) = h.to_ascii_lowercase().strip_prefix("content-length:") {
+                        len = v.trim().parse().unwrap();
+                    }
+                }
+                let mut body = vec![0; len];
+                r.read_exact(&mut body).unwrap();
+                let mut s = stream;
+                let reply = if line.contains("/old") {
+                    "HTTP/1.1 307 Temporary Redirect\r\nLocation: /new\r\nContent-Length: 0\r\nConnection: close\r\n\r\n".to_string()
+                } else {
+                    let b = String::from_utf8_lossy(&body).to_string();
+                    format!("HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{b}", b.len())
+                };
+                s.write_all(reply.as_bytes()).unwrap();
+            }
+        });
+        assert_eq!(post(&agent(), &format!("{base}/old"), "{}").unwrap(), "queries=%7B%7D");
+    }
 
     #[test]
     fn features_and_order() {

@@ -1114,7 +1114,9 @@ impl Op {
                 let rows = engine::filter(t, engine_config, None)?;
                 let starts = (engine_config.mode == "record-based").then(|| t.record_starts(t.key_index()));
                 let mut vals = column_values(t, ci);
-                let mut last: Option<Value> = None;
+                // OpenRefine copies the whole cell down, Recon included, and blanks the cell itself
+                let mut recons: crate::recon::Edits = vec![None; t.rows];
+                let mut last: Option<(Value, usize)> = None;
                 for &r in &rows {
                     let r = r as usize;
                     if starts.as_ref().is_some_and(|s| s[r]) {
@@ -1123,19 +1125,26 @@ impl Op {
                     let v = vals[r].clone();
                     if fill {
                         if v.is_blank() {
-                            if let Some(l) = &last {
+                            if let Some((l, from)) = &last {
                                 vals[r] = l.clone();
+                                recons[r] = Some(t.columns[ci].recon(*from).cloned());
                             }
                         } else {
-                            last = Some(v);
+                            last = Some((v, r));
                         }
-                    } else if !v.is_blank() && last.as_ref() == Some(&v) {
+                    } else if !v.is_blank() && last.as_ref().map(|l| &l.0) == Some(&v) {
                         vals[r] = Value::Null;
+                        recons[r] = Some(None);
                     } else {
-                        last = Some(v);
+                        last = Some((v, r));
                     }
                 }
-                set_column(t, ci, vals)
+                let mut out = set_column(t, ci, vals);
+                if t.columns[ci].recon.is_some() {
+                    let col = Column { dict: out.columns[ci].dict.clone(), codes: out.columns[ci].codes.clone(), recon: t.columns[ci].recon.clone() };
+                    out.columns[ci] = Arc::new(crate::recon::apply_edits(&col, &recons, None, crate::recon::Stats::Keep));
+                }
+                out
             }
             MultiValuedCellSplit { column_name, key_column_name, mode, separator, regex, field_lengths } => {
                 let ci = t.col(column_name)?;
