@@ -1097,7 +1097,7 @@ export function TransposeDialog({
         <DialogFooter>
           <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
           <Button disabled={blocked} onClick={apply}>
-            Transpose
+            {mode === "columnize" ? "Columnize" : "Transpose"}
           </Button>
         </DialogFooter>
       </DialogContent>

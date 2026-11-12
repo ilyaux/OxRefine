@@ -66,7 +66,12 @@ function cleared(f: Facet): Facet {
   return { ...timeFacet(f.columnName, f.expression), name: f.name }
 }
 
-const fail = (e: unknown) => void toast.add({ title: "Something went wrong", description: String((e as Error).message ?? e), type: "error" })
+const fail = (e: unknown) => {
+  const message = String((e as Error).message ?? e)
+  // a job the user cancelled stopped as asked: nothing went wrong and nothing changed
+  if (message === "Cancelled") return void toast.add({ title: "Cancelled", description: "Nothing was changed." })
+  toast.add({ title: "Something went wrong", description: message, type: "error" })
+}
 
 export function App() {
   const [summary, setSummary] = useState<Summary | null>(null)
