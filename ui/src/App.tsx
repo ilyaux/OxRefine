@@ -10,7 +10,7 @@ import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
 import { Facets, History } from "@/Sidebar"
-import { Bar, BarCell, BrandCell, CellButton, CellLink, Crumbs, Spacer, StateDot, StatusBar, StatusCell } from "@/components/instrument"
+import { Bar, BarCell, BrandCell, CellButton, CellLink, Crumbs, ProjectName, Spacer, StateDot, StatusBar, StatusCell } from "@/components/instrument"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -386,346 +386,348 @@ export function App() {
   })
 
   return (
-    <Toaster>
-      <div className="flex h-svh flex-col bg-background text-foreground">
-        {summary ? (
-          <Bar>
-            <BrandCell />
-            <Crumbs
-              parts={[
-                <button key="p" type="button" onClick={goHome} className="outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring">
-                  Projects
-                </button>,
-                <>
-                  <span className="truncate">{summary.name}</span>
-                  <span className="font-mono text-xs font-normal text-muted-foreground">
-                    {summary.rows.toLocaleString()} × {summary.columns.length}
-                  </span>
-                </>,
-              ]}
-            />
-            <CellButton keys="F" onClick={() => tool("facet")} title={toolColumn ? `Facet by ${toolColumn}` : undefined}>
-              Facet
-            </CellButton>
-            <CellButton keys="C" onClick={() => tool("cluster")} title={toolColumn ? `Cluster ${toolColumn}` : undefined}>
-              Cluster
-            </CellButton>
-            <CellButton keys="T" onClick={() => tool("transform")} title={toolColumn ? `Transform ${toolColumn}` : undefined}>
-              Transform
-            </CellButton>
-            <CellButton keys="R" onClick={() => tool("reconcile")} title={toolColumn ? `Reconcile ${toolColumn}` : undefined}>
-              Reconcile
-            </CellButton>
-            <CellButton onClick={applyRecipe}>Recipe</CellButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<CellButton />}>Rows</DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-60">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: true }).catch(() => {})}>Star matching rows</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: false }).catch(() => {})}>Unstar matching rows</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: true }).catch(() => {})}>Flag matching rows</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: false }).catch(() => {})}>Unflag matching rows</DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => apply({ op: "core/row-keep-matched", engineConfig: engine }).catch(() => {})}>Keep only matching rows</DropdownMenuItem>
-                  <DropdownMenuItem variant="destructive" onClick={() => apply({ op: "core/row-removal", engineConfig: engine }).catch(() => {})}>
-                    Remove matching rows
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Spacer />
-            <CellButton rule="left" aria-label="Undo" title="Undo (Ctrl Z)" disabled={!summary.cursor} onClick={() => goto(summary.cursor - 1)}>
-              <Undo2Icon className="size-4" />
-            </CellButton>
-            <CellButton rule="left" aria-label="Redo" title="Redo (Ctrl Y)" disabled={summary.cursor >= summary.history.length} onClick={() => goto(summary.cursor + 1)}>
-              <Redo2Icon className="size-4" />
-            </CellButton>
-            <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
-              <SettingsIcon className="size-4" />
-            </CellButton>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<CellButton rule="left" keys="E" />}>Export</DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Matching rows</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => exportRows("csv", "csv")}>CSV…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => exportRows("tsv", "tsv")}>TSV…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => exportRows("xlsx", "xlsx")}>Excel (.xlsx)…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => exportRows("ods", "ods")}>OpenDocument (.ods)…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => exportRows("html", "html")}>HTML table…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "*sv" })}>Custom tabular…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "template" })}>Templating…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "sql" })}>SQL…</DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Whole project</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={exportProject}>OpenRefine project…</DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel>Operation history</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => saveRecipe()}>Recipe JSON…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setModal({ kind: "extract" })}>Pick steps…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<CellButton rule="left" ink keys="I" />}>Import</DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={pasteData}>Paste data…</DropdownMenuItem>
-                  <DropdownMenuItem onClick={fromUrl}>Web address…</DropdownMenuItem>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={openOpenRefine}>OpenRefine project…</DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </Bar>
-        ) : (
-          <Bar>
-            <BrandCell version={VERSION} />
-            <BarCell className="font-medium">Projects</BarCell>
-            <Spacer />
-            <CellLink href="https://ilyaux.github.io/OxRefine/">Docs</CellLink>
-            <CellLink href="https://ilyaux.github.io/OxRefine/moving-over.html">Coming from OpenRefine</CellLink>
-            <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
-              <SettingsIcon className="size-4" />
-            </CellButton>
-          </Bar>
-        )}
-
-        {summary ? (
-          <>
-            <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
-              <div role="tablist" aria-label="Side panel" className="flex w-65 shrink-0 items-stretch border-r">
-                {(["facets", "history"] as const).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    role="tab"
-                    aria-selected={side === t}
-                    onClick={() => setSide(t)}
-                    className={cn(
-                      "flex flex-1 items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
-                      side === t ? "-mb-px border-b-2 border-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                    )}
-                  >
-                    {t === "facets" ? "Facets" : "History"}
-                    <span className="font-mono text-[11px] text-muted-foreground">{t === "facets" ? facets.length : summary.cursor}</span>
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
-                {total.toLocaleString()}
-                <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
-              </div>
-              <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
-                {facets.map((f, i) => {
-                  const label = chip(f)
-                  return (
-                    label && (
-                      <div key={i} className="flex shrink-0 items-center gap-3 border-r pl-3.5">
-                        <span className="font-mono">{label}</span>
-                        <button
-                          type="button"
-                          aria-label={`Clear the filter ${label}`}
-                          onClick={() => setFacets((fs) => fs.map((x, j) => (j === i ? cleared(x) : x)))}
-                          className="flex h-full items-center px-3 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    )
-                  )
-                })}
-                {facets.some(chip) && (
-                  <CellButton className="text-muted-foreground" onClick={() => setFacets((fs) => fs.map(cleared))}>
-                    Clear all
-                  </CellButton>
-                )}
-              </div>
-              <div role="group" aria-label="Show rows or records" className="flex items-stretch">
-                <CellButton rule="left" active={mode === "row-based"} onClick={() => setMode("row-based")} className={mode === "row-based" ? "font-medium" : "text-muted-foreground"}>
-                  Rows
-                </CellButton>
-                <CellButton rule="left" active={mode === "record-based"} onClick={() => setMode("record-based")} className={mode === "record-based" ? "font-medium" : "text-muted-foreground"}>
-                  Records
-                </CellButton>
-              </div>
-            </div>
-            <div className="flex min-h-0 flex-1">
-              <aside aria-label={side === "facets" ? "Facets" : "History"} className="w-65 shrink-0 overflow-y-auto border-r">
-                {side === "facets" ? (
-                  <Facets
-                    facets={facets}
-                    data={facetData}
-                    columns={summary.columns}
-                    onChange={setFacets}
-                    onEditChoice={editChoice}
-                    onLimit={setFacetLimit}
-                    onAdd={(c) => onAction({ kind: "facet", column: c })}
-                  />
-                ) : (
-                  <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
-                )}
-              </aside>
-              <main className="min-w-0 flex-1">
-                <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} />
-              </main>
-            </div>
-          </>
-        ) : (
-          <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
-        )}
-
-        <StatusBar>
-          <StatusCell className="text-foreground">
-            <StateDot />
-            ready
-          </StatusCell>
-          {lastMs && (
-            <StatusCell>
-              {lastMs.what} {lastMs.ms < 10 ? lastMs.ms.toFixed(1) : Math.round(lastMs.ms).toLocaleString()} ms
-            </StatusCell>
-          )}
-          {summary && (
-            <StatusCell>
-              {summary.cursor} step{summary.cursor === 1 ? "" : "s"}
-              {summary.id && " · saved"}
-            </StatusCell>
-          )}
-          <Spacer />
-          {summary && selected && selected.column && summary.columns.includes(selected.column) && (
-            <StatusCell rule="left" className="min-w-0 gap-2">
-              <span>
-                row {selected.row + 1} · {selected.column}
-              </span>
-              <span className="max-w-80 truncate border border-input bg-background px-1.5 text-foreground">{selected.value === null ? "null" : `"${selected.value.replace(/ /g, "·")}"`}</span>
-              {selected.value !== null && /^\s|\s$/.test(selected.value) && <span className="text-warn-text">{/^\s/.test(selected.value) ? "leading" : "trailing"} space</span>}
-              <span>Enter edit</span>
-            </StatusCell>
-          )}
+    <ProjectName.Provider value={summary?.name ?? null}>
+      <Toaster>
+        <div className="flex h-svh flex-col bg-background text-foreground">
           {summary ? (
-            <StatusCell rule="left">
-              <kbd className="text-[11.5px]">Ctrl K</kbd> commands
-            </StatusCell>
+            <Bar>
+              <BrandCell />
+              <Crumbs
+                parts={[
+                  <button key="p" type="button" onClick={goHome} className="outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring">
+                    Projects
+                  </button>,
+                  <>
+                    <span className="truncate">{summary.name}</span>
+                    <span className="font-mono text-xs font-normal text-muted-foreground">
+                      {summary.rows.toLocaleString()} × {summary.columns.length}
+                    </span>
+                  </>,
+                ]}
+              />
+              <CellButton keys="F" onClick={() => tool("facet")} title={toolColumn ? `Facet by ${toolColumn}` : undefined}>
+                Facet
+              </CellButton>
+              <CellButton keys="C" onClick={() => tool("cluster")} title={toolColumn ? `Cluster ${toolColumn}` : undefined}>
+                Cluster
+              </CellButton>
+              <CellButton keys="T" onClick={() => tool("transform")} title={toolColumn ? `Transform ${toolColumn}` : undefined}>
+                Transform
+              </CellButton>
+              <CellButton keys="R" onClick={() => tool("reconcile")} title={toolColumn ? `Reconcile ${toolColumn}` : undefined}>
+                Reconcile
+              </CellButton>
+              <CellButton onClick={applyRecipe}>Recipe</CellButton>
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<CellButton />}>Rows</DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-60">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: true }).catch(() => {})}>Star matching rows</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: false }).catch(() => {})}>Unstar matching rows</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: true }).catch(() => {})}>Flag matching rows</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => apply({ op: "core/row-flag", engineConfig: engine, flagged: false }).catch(() => {})}>Unflag matching rows</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => apply({ op: "core/row-keep-matched", engineConfig: engine }).catch(() => {})}>Keep only matching rows</DropdownMenuItem>
+                    <DropdownMenuItem variant="destructive" onClick={() => apply({ op: "core/row-removal", engineConfig: engine }).catch(() => {})}>
+                      Remove matching rows
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Spacer />
+              <CellButton rule="left" aria-label="Undo" title="Undo (Ctrl Z)" disabled={!summary.cursor} onClick={() => goto(summary.cursor - 1)}>
+                <Undo2Icon className="size-4" />
+              </CellButton>
+              <CellButton rule="left" aria-label="Redo" title="Redo (Ctrl Y)" disabled={summary.cursor >= summary.history.length} onClick={() => goto(summary.cursor + 1)}>
+                <Redo2Icon className="size-4" />
+              </CellButton>
+              <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
+                <SettingsIcon className="size-4" />
+              </CellButton>
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<CellButton rule="left" keys="E" />}>Export</DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Matching rows</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => exportRows("csv", "csv")}>CSV…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportRows("tsv", "tsv")}>TSV…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportRows("xlsx", "xlsx")}>Excel (.xlsx)…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportRows("ods", "ods")}>OpenDocument (.ods)…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportRows("html", "html")}>HTML table…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "*sv" })}>Custom tabular…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "template" })}>Templating…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "sql" })}>SQL…</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Whole project</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={exportProject}>OpenRefine project…</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Operation history</DropdownMenuLabel>
+                    <DropdownMenuItem onClick={() => saveRecipe()}>Recipe JSON…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setModal({ kind: "extract" })}>Pick steps…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger render={<CellButton rule="left" ink keys="I" />}>Import</DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={pasteData}>Paste data…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={fromUrl}>Web address…</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={openOpenRefine}>OpenRefine project…</DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </Bar>
           ) : (
-            <StatusCell rule="left">matches OpenRefine 3.10.1</StatusCell>
+            <Bar>
+              <BrandCell version={VERSION} />
+              <BarCell className="font-medium">Projects</BarCell>
+              <Spacer />
+              <CellLink href="https://ilyaux.github.io/OxRefine/">Docs</CellLink>
+              <CellLink href="https://ilyaux.github.io/OxRefine/moving-over.html">Coming from OpenRefine</CellLink>
+              <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
+                <SettingsIcon className="size-4" />
+              </CellButton>
+            </Bar>
           )}
-        </StatusBar>
-      </div>
 
-      <Jobs />
-      <Palette
-        open={palette}
-        onOpenChange={setPalette}
-        column={summary ? (focusCol && summary.columns.includes(focusCol) ? focusCol : (summary.columns[0] ?? null)) : null}
-        columns={summary?.columns ?? []}
-        onColumn={setFocusCol}
-        onAction={onAction}
-        commands={[
-          ...(summary
-            ? [
-                { label: "Undo", shortcut: "Ctrl+Z", run: () => summary.cursor > 0 && goto(summary.cursor - 1) },
-                { label: "Redo", shortcut: "Ctrl+Y", run: () => summary.cursor < summary.history.length && goto(summary.cursor + 1) },
-                { label: mode === "row-based" ? "Show records" : "Show rows", run: () => setMode(mode === "row-based" ? "record-based" : "row-based") },
-                { label: "Remove all facets", run: () => setFacets([]) },
-                { label: "Apply recipe…", run: applyRecipe },
-                { label: "Extract recipe…", run: () => setModal({ kind: "extract" }) },
-                { label: "Copy recipe JSON", run: () => void copyRecipe().catch(fail) },
-                { label: "Export matching rows as CSV…", run: () => exportRows("csv", "csv") },
-                { label: "Export matching rows as Excel…", run: () => exportRows("xlsx", "xlsx") },
-                { label: "Export matching rows as OpenDocument…", run: () => exportRows("ods", "ods") },
-                { label: "Export as an OpenRefine project…", run: exportProject },
-                { label: "Back to projects", run: goHome },
-              ]
-            : []),
-          { label: "Preferences…", run: () => setPrefsOpen(true) },
-          { label: "Import a file or folder…", run: openFile },
-          { label: "Import pasted data…", run: pasteData },
-          { label: "Import from a web address…", run: fromUrl },
-          { label: "Open an OpenRefine project…", run: openOpenRefine },
-        ]}
-      />
-      {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
-      {prefsOpen && <Preferences onClose={() => setPrefsOpen(false)} onError={fail} onChanged={() => setPrefsChanged((k) => k + 1)} />}
-      {staged && (
-        <ImportDialog
-          {...staged}
-          onClose={() => setStaged(null)}
-          onCreate={async (args) => {
-            await run("import", "open", { ...args, origin: staged.origin })
-            setFacets([])
-            setStaged(null)
-          }}
+          {summary ? (
+            <>
+              <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
+                <div role="tablist" aria-label="Side panel" className="flex w-65 shrink-0 items-stretch border-r">
+                  {(["facets", "history"] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      role="tab"
+                      aria-selected={side === t}
+                      onClick={() => setSide(t)}
+                      className={cn(
+                        "flex flex-1 items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                        side === t ? "-mb-px border-b-2 border-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                      )}
+                    >
+                      {t === "facets" ? "Facets" : "History"}
+                      <span className="font-mono text-[11px] text-muted-foreground">{t === "facets" ? facets.length : summary.cursor}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
+                  {total.toLocaleString()}
+                  <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
+                </div>
+                <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
+                  {facets.map((f, i) => {
+                    const label = chip(f)
+                    return (
+                      label && (
+                        <div key={i} className="flex shrink-0 items-center gap-3 border-r pl-3.5">
+                          <span className="font-mono">{label}</span>
+                          <button
+                            type="button"
+                            aria-label={`Clear the filter ${label}`}
+                            onClick={() => setFacets((fs) => fs.map((x, j) => (j === i ? cleared(x) : x)))}
+                            className="flex h-full items-center px-3 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )
+                    )
+                  })}
+                  {facets.some(chip) && (
+                    <CellButton className="text-muted-foreground" onClick={() => setFacets((fs) => fs.map(cleared))}>
+                      Clear all
+                    </CellButton>
+                  )}
+                </div>
+                <div role="group" aria-label="Show rows or records" className="flex items-stretch">
+                  <CellButton rule="left" active={mode === "row-based"} onClick={() => setMode("row-based")} className={mode === "row-based" ? "font-medium" : "text-muted-foreground"}>
+                    Rows
+                  </CellButton>
+                  <CellButton rule="left" active={mode === "record-based"} onClick={() => setMode("record-based")} className={mode === "record-based" ? "font-medium" : "text-muted-foreground"}>
+                    Records
+                  </CellButton>
+                </div>
+              </div>
+              <div className="flex min-h-0 flex-1">
+                <aside aria-label={side === "facets" ? "Facets" : "History"} className="w-65 shrink-0 overflow-y-auto border-r">
+                  {side === "facets" ? (
+                    <Facets
+                      facets={facets}
+                      data={facetData}
+                      columns={summary.columns}
+                      onChange={setFacets}
+                      onEditChoice={editChoice}
+                      onLimit={setFacetLimit}
+                      onAdd={(c) => onAction({ kind: "facet", column: c })}
+                    />
+                  ) : (
+                    <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
+                  )}
+                </aside>
+                <main className="min-w-0 flex-1">
+                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} />
+                </main>
+              </div>
+            </>
+          ) : (
+            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
+          )}
+
+          <StatusBar>
+            <StatusCell className="text-foreground">
+              <StateDot />
+              ready
+            </StatusCell>
+            {lastMs && (
+              <StatusCell>
+                {lastMs.what} {lastMs.ms < 10 ? lastMs.ms.toFixed(1) : Math.round(lastMs.ms).toLocaleString()} ms
+              </StatusCell>
+            )}
+            {summary && (
+              <StatusCell>
+                {summary.cursor} step{summary.cursor === 1 ? "" : "s"}
+                {summary.id && " · saved"}
+              </StatusCell>
+            )}
+            <Spacer />
+            {summary && selected && selected.column && summary.columns.includes(selected.column) && (
+              <StatusCell rule="left" className="min-w-0 gap-2">
+                <span>
+                  row {selected.row + 1} · {selected.column}
+                </span>
+                <span className="max-w-80 truncate border border-input bg-background px-1.5 text-foreground">{selected.value === null ? "null" : `"${selected.value.replace(/ /g, "·")}"`}</span>
+                {selected.value !== null && /^\s|\s$/.test(selected.value) && <span className="text-warn-text">{/^\s/.test(selected.value) ? "leading" : "trailing"} space</span>}
+                <span>Enter edit</span>
+              </StatusCell>
+            )}
+            {summary ? (
+              <StatusCell rule="left">
+                <kbd className="text-[11.5px]">Ctrl K</kbd> commands
+              </StatusCell>
+            ) : (
+              <StatusCell rule="left">matches OpenRefine 3.10.1</StatusCell>
+            )}
+          </StatusBar>
+        </div>
+
+        <Jobs />
+        <Palette
+          open={palette}
+          onOpenChange={setPalette}
+          column={summary ? (focusCol && summary.columns.includes(focusCol) ? focusCol : (summary.columns[0] ?? null)) : null}
+          columns={summary?.columns ?? []}
+          onColumn={setFocusCol}
+          onAction={onAction}
+          commands={[
+            ...(summary
+              ? [
+                  { label: "Undo", shortcut: "Ctrl+Z", run: () => summary.cursor > 0 && goto(summary.cursor - 1) },
+                  { label: "Redo", shortcut: "Ctrl+Y", run: () => summary.cursor < summary.history.length && goto(summary.cursor + 1) },
+                  { label: mode === "row-based" ? "Show records" : "Show rows", run: () => setMode(mode === "row-based" ? "record-based" : "row-based") },
+                  { label: "Remove all facets", run: () => setFacets([]) },
+                  { label: "Apply recipe…", run: applyRecipe },
+                  { label: "Extract recipe…", run: () => setModal({ kind: "extract" }) },
+                  { label: "Copy recipe JSON", run: () => void copyRecipe().catch(fail) },
+                  { label: "Export matching rows as CSV…", run: () => exportRows("csv", "csv") },
+                  { label: "Export matching rows as Excel…", run: () => exportRows("xlsx", "xlsx") },
+                  { label: "Export matching rows as OpenDocument…", run: () => exportRows("ods", "ods") },
+                  { label: "Export as an OpenRefine project…", run: exportProject },
+                  { label: "Back to projects", run: goHome },
+                ]
+              : []),
+            { label: "Preferences…", run: () => setPrefsOpen(true) },
+            { label: "Import a file or folder…", run: openFile },
+            { label: "Import pasted data…", run: pasteData },
+            { label: "Import from a web address…", run: fromUrl },
+            { label: "Open an OpenRefine project…", run: openOpenRefine },
+          ]}
         />
-      )}
-      {modal?.kind === "reconcile" && summary && (
-        <ReconcileDialog
-          column={modal.column}
-          columns={summary.columns}
-          engine={engine}
-          onApply={async (op) => {
-            await apply(op)
-            // as OpenRefine does when reconciling finishes: facets by judgment and by best score
-            const c = modal.column
-            setFacets((f) => [...f, { ...listFacet(c, RECON_FACETS[0][2]), name: `${c}: judgment` }, { ...rangeFacet(c, RECON_FACETS[1][2]), name: `${c}: best candidate's score` }])
-          }}
-          onClose={() => setModal(null)}
-        />
-      )}
-      {modal?.kind === "extend" && summary && (
-        <ExtendDialog column={modal.column} columns={summary.columns} engine={engine} onApply={apply} onClose={() => setModal(null)} />
-      )}
-      {modal?.kind === "transpose" && summary && (
-        <TransposeDialog column={modal.column} columns={summary.columns} mode={modal.mode} onApply={apply} onClose={() => setModal(null)} />
-      )}
-      {(modal?.kind === "transform" || modal?.kind === "add" || modal?.kind === "fetch" || modal?.kind === "facet-list" || modal?.kind === "facet-range") && summary && (
-        <TransformDialog
-          column={modal.column}
-          mode={modal.kind}
-          columns={summary.columns}
-          engine={engine}
-          onApply={apply}
-          onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
-          onClose={() => setModal(null)}
-        />
-      )}
-      {modal?.kind === "export" && summary && (
-        <ExportDialog
-          format={modal.format}
-          columns={summary.columns}
-          engine={engine}
-          onExport={(params) => {
-            setModal(null)
-            exportRows(modal.format, EXTENSION[modal.format], params)
-          }}
-          onClose={() => setModal(null)}
-        />
-      )}
-      {modal?.kind === "extract" && summary && (
-        <ExtractDialog
-          summary={summary}
-          onCopy={(steps) => copyRecipe(steps).catch(fail)}
-          onSave={(steps) => {
-            setModal(null)
-            saveRecipe(steps)
-          }}
-          onClose={() => setModal(null)}
-        />
-      )}
-      {modal?.kind === "sort" && <SortDialog column={modal.column} onApply={apply} onClose={() => setModal(null)} />}
-      {modal?.kind === "cluster" && (
-        <ClusterDialog column={modal.column} engine={engine} onApply={apply} onClose={() => setModal(null)} />
-      )}
-    </Toaster>
+        {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+        {prefsOpen && <Preferences onClose={() => setPrefsOpen(false)} onError={fail} onChanged={() => setPrefsChanged((k) => k + 1)} />}
+        {staged && (
+          <ImportDialog
+            {...staged}
+            onClose={() => setStaged(null)}
+            onCreate={async (args) => {
+              await run("import", "open", { ...args, origin: staged.origin })
+              setFacets([])
+              setStaged(null)
+            }}
+          />
+        )}
+        {modal?.kind === "reconcile" && summary && (
+          <ReconcileDialog
+            column={modal.column}
+            columns={summary.columns}
+            engine={engine}
+            onApply={async (op) => {
+              await apply(op)
+              // as OpenRefine does when reconciling finishes: facets by judgment and by best score
+              const c = modal.column
+              setFacets((f) => [...f, { ...listFacet(c, RECON_FACETS[0][2]), name: `${c}: judgment` }, { ...rangeFacet(c, RECON_FACETS[1][2]), name: `${c}: best candidate's score` }])
+            }}
+            onClose={() => setModal(null)}
+          />
+        )}
+        {modal?.kind === "extend" && summary && (
+          <ExtendDialog column={modal.column} columns={summary.columns} engine={engine} onApply={apply} onClose={() => setModal(null)} />
+        )}
+        {modal?.kind === "transpose" && summary && (
+          <TransposeDialog column={modal.column} columns={summary.columns} mode={modal.mode} onApply={apply} onClose={() => setModal(null)} />
+        )}
+        {(modal?.kind === "transform" || modal?.kind === "add" || modal?.kind === "fetch" || modal?.kind === "facet-list" || modal?.kind === "facet-range") && summary && (
+          <TransformDialog
+            column={modal.column}
+            mode={modal.kind}
+            columns={summary.columns}
+            engine={engine}
+            onApply={apply}
+            onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
+            onClose={() => setModal(null)}
+          />
+        )}
+        {modal?.kind === "export" && summary && (
+          <ExportDialog
+            format={modal.format}
+            columns={summary.columns}
+            engine={engine}
+            onExport={(params) => {
+              setModal(null)
+              exportRows(modal.format, EXTENSION[modal.format], params)
+            }}
+            onClose={() => setModal(null)}
+          />
+        )}
+        {modal?.kind === "extract" && summary && (
+          <ExtractDialog
+            summary={summary}
+            onCopy={(steps) => copyRecipe(steps).catch(fail)}
+            onSave={(steps) => {
+              setModal(null)
+              saveRecipe(steps)
+            }}
+            onClose={() => setModal(null)}
+          />
+        )}
+        {modal?.kind === "sort" && <SortDialog column={modal.column} onApply={apply} onClose={() => setModal(null)} />}
+        {modal?.kind === "cluster" && (
+          <ClusterDialog column={modal.column} engine={engine} onApply={apply} onClose={() => setModal(null)} />
+        )}
+      </Toaster>
+    </ProjectName.Provider>
   )
 }
 

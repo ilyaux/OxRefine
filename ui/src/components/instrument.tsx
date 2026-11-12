@@ -1,7 +1,7 @@
 /* The "Instrument" parts every screen is built from (design/README.md): bars made of full-height cells
    divided by 1 px rules, one ink cell for the main action, mono numbers, a status bar, metric cells,
    and full-window views with a breadcrumb that close on Esc. */
-import { Fragment, useEffect, type ComponentProps, type ReactNode } from "react"
+import { createContext, Fragment, useContext, useEffect, type ComponentProps, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
 /** The logo: three stacked bars, widest first. */
@@ -144,8 +144,12 @@ export function StripAction({ className, ...props }: CellProps) {
   return <CellButton rule="left" className={cn("px-6", className)} {...props} />
 }
 
+/** The open project's name, which every full view's breadcrumb starts with. */
+export const ProjectName = createContext<string | null>(null)
+
 /** A full-window view that replaces a dialog: the top bar with the breadcrumb and a Close cell, Esc closes. */
 export function FullView({ crumbs, onClose, bar, children, className }: { crumbs: ReactNode[]; onClose: () => void; bar?: ReactNode; children: ReactNode; className?: string }) {
+  const project = useContext(ProjectName)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       // Esc closes the view unless a menu or popup inside it is open and takes the key first
@@ -155,10 +159,10 @@ export function FullView({ crumbs, onClose, bar, children, className }: { crumbs
     return () => window.removeEventListener("keydown", onKey)
   }, [onClose])
   return (
-    <div role="region" aria-label={typeof crumbs.at(-1) === "string" ? (crumbs.at(-1) as string) : undefined} className={cn("fixed inset-0 z-40 flex flex-col bg-background text-foreground", className)}>
+    <div role="region" aria-label={typeof crumbs[0] === "string" ? crumbs[0] : undefined} className={cn("fixed inset-0 z-40 flex flex-col bg-background text-foreground", className)}>
       <Bar>
         <BrandCell />
-        <Crumbs parts={crumbs} />
+        <Crumbs parts={project ? [project, ...crumbs] : crumbs} />
         <Spacer />
         {bar}
         <CellButton rule="left" keys="Esc" onClick={onClose} className="text-muted-foreground">

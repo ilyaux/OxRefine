@@ -21,7 +21,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ExpressionEditor, recentExpressions, rememberExpression } from "@/ExpressionEditor"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Slider } from "@/components/ui/slider"
+import { FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
+import { cn } from "@/lib/utils"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
 const vis = (s: string | null) => (s === null ? "(null)" : s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
@@ -244,9 +245,9 @@ const SHOWN = 300
 
 /** OpenRefine's cluster facets: choices in the cluster, rows, average length of the choices and its variance. */
 const STATS = [
-  ["size", "Values in cluster"],
-  ["rows", "Rows in cluster"],
-  ["length", "Average length"],
+  ["size", "Values"],
+  ["rows", "Rows"],
+  ["length", "Avg length"],
   ["spread", "Length variance"],
 ] as const
 type Stat = (typeof STATS)[number][0]
@@ -262,29 +263,34 @@ const statsOf = (c: Cluster): Record<Stat, number> => {
 }
 const num = (n: number) => (Number.isInteger(n) ? n.toLocaleString() : n.toFixed(1))
 
+/** A cluster filter as two numeric inputs: values outside [from, to] hide the cluster. */
 function StatFilter({ label, values, value, onChange }: { label: string; values: number[]; value: [number, number] | null; onChange: (v: [number, number] | null) => void }) {
   const min = Math.min(...values)
   const max = Math.max(...values)
   const [lo, hi] = value ?? [min, max]
   if (!values.length || min === max) return null
-  const step = Number.isInteger(min) && Number.isInteger(max) && values.every(Number.isInteger) ? 1 : (max - min) / 100
+  const commit = (which: 0 | 1, s: string) => {
+    const n = Number(s)
+    if (s.trim() === "" || !Number.isFinite(n)) return
+    const next: [number, number] = which === 0 ? [n, hi] : [lo, n]
+    onChange(next[0] <= min && next[1] >= max ? null : next)
+  }
+  const box = (which: 0 | 1, v: number) => (
+    <input
+      key={`${which}:${v}`}
+      aria-label={`${label}: ${which ? "at most" : "at least"}`}
+      defaultValue={num(v)}
+      onBlur={(e) => commit(which, e.target.value.replace(/,/g, ""))}
+      onKeyDown={(e) => e.key === "Enter" && commit(which, e.currentTarget.value.replace(/,/g, ""))}
+      className="h-7 w-16 rounded-[3px] border border-input bg-background px-1.5 text-right font-mono text-[12px] outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    />
+  )
   return (
-    <Field className="min-w-40 flex-1 gap-1">
-      <FieldLabel className="justify-between text-xs">
-        {label}
-        <span className="tabular-nums text-muted-foreground">
-          {num(lo)} – {num(hi)}
-        </span>
-      </FieldLabel>
-      <Slider
-        aria-label={label}
-        min={min}
-        max={max}
-        step={step}
-        value={[lo, hi]}
-        onValueChange={(v) => Array.isArray(v) && onChange(v[0] <= min && v[1] >= max ? null : [v[0], v[1]])}
-      />
-    </Field>
+    <div className="flex items-center gap-1.5 px-3.5 py-1">
+      <span className="min-w-0 flex-1 truncate">{label}</span>
+      {box(0, lo)}
+      {box(1, hi)}
+    </div>
   )
 }
 
@@ -386,182 +392,204 @@ export function ClusterDialog({
     else setTick((t) => t + 1)
   }
 
+  // what checking the clusters would do: values merged into one each, and the cells that change
+  const merged = chosen.reduce((n, c) => n + c.values.length, 0)
+  const changing = chosen.reduce((n, c) => n + c.values.reduce((m, [v, k]) => m + (v === c.to ? 0 : k), 0), 0)
+  const top = (c: Cluster) => Math.max(1, ...c.map(([, n]) => n))
+  const radio = (name: string, value: string, current: string, label: string, set: (v: string) => void, disabled?: boolean) => (
+    <label
+      key={value}
+      className={cn("flex items-center gap-2.5 px-3.5 py-1.5", disabled ? "text-muted-foreground" : "cursor-pointer hover:bg-accent", current === value && "bg-secondary")}
+    >
+      <input type="radio" name={name} value={value} checked={current === value} disabled={disabled} onChange={() => set(value)} className="accent-foreground" />
+      {label}
+    </label>
+  )
+
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>Cluster and edit “{column}”</DialogTitle>
-          <DialogDescription>
-            {clusters
-              ? `${clusters.length.toLocaleString()} clusters found in ${ms.toFixed(1)} ms. Check the ones to merge and adjust the new value.`
-              : "Finding clusters…"}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-wrap items-end gap-3">
-          <Field className="w-auto">
-            <FieldLabel>Method</FieldLabel>
-            <ToggleGroup variant="outline" value={[kind]} onValueChange={(v) => v[0] && setKind(v[0] as "binning" | "knn")}>
-              <ToggleGroupItem value="binning">Key collision</ToggleGroupItem>
-              <ToggleGroupItem value="knn">Nearest neighbours</ToggleGroupItem>
-            </ToggleGroup>
-          </Field>
-          {kind === "binning" ? (
-            <>
-              <Field className="w-56">
-                <FieldLabel>Keying function</FieldLabel>
-                <Select value={keyer} onValueChange={(v) => v && setKeyer(String(v))}>
-                  <SelectTrigger aria-label="Keying function">
-                    <SelectValue>{(v: string) => KEYERS.find(([k]) => k === v)?.[1] ?? v}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {KEYERS.map(([v, label]) => (
-                        <SelectItem key={v} value={v}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              {keyer === "ngram-fingerprint" && (
-                <Field className="w-28">
-                  <FieldLabel htmlFor="cl-ngram">N-gram size</FieldLabel>
-                  <Input id="cl-ngram" type="number" min={1} value={ngram} onChange={(e) => setNgram(Math.max(1, Number(e.target.value) || 1))} />
-                </Field>
-              )}
-            </>
-          ) : (
-            <>
-              <Field className="w-44">
-                <FieldLabel>Distance</FieldLabel>
-                <Select value={distance} onValueChange={(v) => v && setDistance(String(v))}>
-                  <SelectTrigger aria-label="Distance">
-                    <SelectValue>{(v: string) => ({ levenshtein: "Levenshtein", ppm: "PPM" })[v] ?? v}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="levenshtein">Levenshtein</SelectItem>
-                      <SelectItem value="ppm" disabled>
-                        PPM (not available yet)
-                      </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <Field className="w-24">
-                <FieldLabel htmlFor="cl-radius">Radius</FieldLabel>
-                <Input id="cl-radius" type="number" min={0} step={0.5} value={radius} onChange={(e) => setRadius(Number(e.target.value) || 0)} />
-              </Field>
-              <Field className="w-32">
-                <FieldLabel htmlFor="cl-block">Block chars</FieldLabel>
-                <Input id="cl-block" type="number" min={1} value={block} onChange={(e) => setBlock(Math.max(1, Number(e.target.value) || 1))} />
-              </Field>
-            </>
-          )}
-        </div>
-        {clusters && clusters.length > 1 && (
-          <div className="flex flex-wrap gap-4">
-            {STATS.map(([k, label]) => (
-              <StatFilter
-                key={k}
-                label={label}
-                values={stats.map((s) => s[k])}
-                value={filters[k] ?? null}
-                onChange={(v) => setFilters((f) => ({ ...f, [k]: v ?? undefined }))}
-              />
-            ))}
-          </div>
-        )}
-        <ScrollArea className="h-96 rounded-lg border">
-          {error ? (
-            <div className="flex h-96 items-center justify-center p-4">
-              <FieldError>{error}</FieldError>
+    <FullView
+      crumbs={[
+        "Cluster",
+        <Tag key="c">{column}</Tag>,
+      ]}
+      onClose={onClose}
+    >
+      <div
+        className="flex min-h-0 flex-1 flex-col"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && chosen.length) {
+            e.preventDefault()
+            merge(true)
+          }
+        }}
+      >
+        <SummaryStrip>
+          <Metric label="values in checked clusters">
+            {merged.toLocaleString()} <span className="text-faint">→</span> <span className="text-data">{chosen.length.toLocaleString()}</span>
+          </Metric>
+          <Metric label="cells to change">{changing.toLocaleString()}</Metric>
+          <Metric label="clusters">
+            {chosen.length.toLocaleString()} <span className="text-muted-foreground">of {visible.length.toLocaleString()}</span>
+          </Metric>
+          <Metric label="found in">
+            {clusters ? (ms < 10 ? ms.toFixed(1) : Math.round(ms).toLocaleString()) : "…"} <span className="text-[13px] text-muted-foreground">ms</span>
+          </Metric>
+          <Spacer />
+          <StripAction disabled={!chosen.length} onClick={() => merge(false)}>
+            Merge and re-cluster
+          </StripAction>
+          <StripAction ink keys="Ctrl ↵" disabled={!chosen.length} onClick={() => merge(true)}>
+            Merge {chosen.length || ""} cluster{chosen.length === 1 ? "" : "s"}
+          </StripAction>
+        </SummaryStrip>
+        <div className="flex min-h-0 flex-1">
+          <aside aria-label="Clustering method" className="w-65 shrink-0 overflow-y-auto border-r pb-4">
+            <RailLabel>Method</RailLabel>
+            <div role="radiogroup" aria-label="Method">
+              {radio("cl-kind", "binning", kind, "Key collision", (v) => setKind(v as "binning" | "knn"))}
+              {radio("cl-kind", "knn", kind, "Nearest neighbour", (v) => setKind(v as "binning" | "knn"))}
             </div>
-          ) : !clusters ? (
-            <div className="flex h-96 items-center justify-center">
-              <Spinner />
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10">
-                    <Checkbox
-                      aria-label="Select all shown clusters"
-                      checked={visible.length > 0 && visible.every((i) => picks[i]?.merge)}
-                      onCheckedChange={(c) => {
-                        const shown = new Set(visible)
-                        setPicks((all) => all.map((p, i) => (shown.has(i) ? { ...p, merge: !!c } : p)))
-                      }}
-                    />
-                  </TableHead>
-                  <TableHead>Values in cluster</TableHead>
-                  <TableHead className="text-right">Rows</TableHead>
-                  <TableHead>New cell value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {visible.slice(0, SHOWN).map((i) => [clusters[i], i] as const).map(([c, i]) => (
-                  <TableRow key={c.map(([v]) => v).join("\u0000")}>
-                    <TableCell>
-                      <Checkbox
-                        aria-label={`Merge cluster ${i + 1}`}
-                        checked={picks[i]?.merge ?? false}
-                        onCheckedChange={(m) => set(i, { merge: !!m })}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        {c.map(([v, n]) => (
-                          <div key={v} className="flex items-center gap-2">
-                            <Button variant="link" size="xs" onClick={() => set(i, { to: v })}>
-                              <span className="font-mono">{vis(v)}</span>
-                            </Button>
-                            <Badge variant="secondary">{n.toLocaleString()}</Badge>
-                          </div>
-                        ))}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {c.reduce((s, [, n]) => s + n, 0).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        aria-label={`New value for cluster ${i + 1}`}
-                        value={picks[i]?.to ?? ""}
-                        onChange={(e) => set(i, { to: e.target.value, merge: true })}
-                      />
-                    </TableCell>
-                  </TableRow>
+            <div className="mt-3 border-t" />
+            {kind === "binning" ? (
+              <>
+                <RailLabel>Keying function</RailLabel>
+                <div role="radiogroup" aria-label="Keying function">
+                  {KEYERS.map(([v, label]) => radio("cl-keyer", v, keyer, label, setKeyer))}
+                </div>
+                {keyer === "ngram-fingerprint" && (
+                  <label className="flex items-center gap-2 px-3.5 pt-2">
+                    <span className="flex-1">N-gram size</span>
+                    <Input type="number" min={1} value={ngram} onChange={(e) => setNgram(Math.max(1, Number(e.target.value) || 1))} className="h-7 w-16 text-right font-mono" />
+                  </label>
+                )}
+              </>
+            ) : (
+              <>
+                <RailLabel>Distance</RailLabel>
+                <div role="radiogroup" aria-label="Distance">
+                  {radio("cl-distance", "levenshtein", distance, "Levenshtein", setDistance)}
+                  {radio("cl-distance", "ppm", distance, "PPM (not available yet)", setDistance, true)}
+                </div>
+                <label className="flex items-center gap-2 px-3.5 pt-2">
+                  <span className="flex-1">Radius</span>
+                  <Input type="number" min={0} step={0.5} value={radius} onChange={(e) => setRadius(Number(e.target.value) || 0)} className="h-7 w-16 text-right font-mono" />
+                </label>
+                <label className="flex items-center gap-2 px-3.5 pt-2">
+                  <span className="flex-1">Block chars</span>
+                  <Input type="number" min={1} value={block} onChange={(e) => setBlock(Math.max(1, Number(e.target.value) || 1))} className="h-7 w-16 text-right font-mono" />
+                </label>
+              </>
+            )}
+            {clusters && clusters.length > 1 && (
+              <>
+                <div className="mt-3 border-t" />
+                <RailLabel>Show clusters where</RailLabel>
+                {STATS.map(([k, label]) => (
+                  <StatFilter key={k} label={label} values={stats.map((s) => s[k])} value={filters[k] ?? null} onChange={(v) => setFilters((f) => ({ ...f, [k]: v ?? undefined }))} />
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </ScrollArea>
-        {clusters && (
-          <p className="text-sm text-muted-foreground">
-            {visible.length < clusters.length && `${visible.length.toLocaleString()} of ${clusters.length.toLocaleString()} clusters pass the filters. `}
-            {visible.length > SHOWN && `Showing the ${SHOWN} largest; merge some or narrow the filters to see the rest.`}
-          </p>
-        )}
-        <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
-          <Button variant="outline" disabled={!visible.length} onClick={() => navigator.clipboard.writeText(exported())}>
-            Copy clusters as JSON
-          </Button>
-          <Button variant="outline" disabled={!visible.length} onClick={download}>
-            Export clusters
-          </Button>
-          <Button variant="secondary" disabled={!chosen.length} onClick={() => merge(false)}>
-            Merge {chosen.length || ""} and re-cluster
-          </Button>
-          <Button disabled={!chosen.length} onClick={() => merge(true)}>
-            Merge and close
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+              </>
+            )}
+            <div className="mt-3 border-t" />
+            <div className="flex flex-col items-start gap-1 px-2 pt-2">
+              <Button variant="ghost" size="sm" disabled={!visible.length} onClick={() => navigator.clipboard.writeText(exported())}>
+                Copy clusters as JSON
+              </Button>
+              <Button variant="ghost" size="sm" disabled={!visible.length} onClick={download}>
+                Export clusters…
+              </Button>
+            </div>
+          </aside>
+          <div className="min-w-0 flex-1 overflow-y-auto">
+            {error ? (
+              <p role="alert" className="p-5 text-destructive">
+                {error}
+              </p>
+            ) : !clusters ? (
+              <div className="flex justify-center p-10">
+                <Spinner />
+              </div>
+            ) : !clusters.length ? (
+              <p className="p-5 text-muted-foreground">No clusters with this method. Try another keying function, or nearest neighbours with a larger radius.</p>
+            ) : (
+              <table className="w-full border-collapse">
+                <thead className="sticky top-0 z-10 bg-background">
+                  <tr className="text-left text-[11.5px] text-muted-foreground">
+                    <th scope="col" className="w-14 border-b border-b-foreground py-2.5 pl-4 font-normal">
+                      <input
+                        type="checkbox"
+                        aria-label="Check all shown clusters"
+                        checked={visible.length > 0 && visible.every((i) => picks[i]?.merge)}
+                        onChange={(e) => {
+                          const shown = new Set(visible)
+                          setPicks((all) => all.map((p, i) => (shown.has(i) ? { ...p, merge: e.target.checked } : p)))
+                        }}
+                        className="accent-foreground"
+                      />
+                    </th>
+                    <th scope="col" className="border-b border-b-foreground font-normal">
+                      Values in cluster
+                    </th>
+                    <th scope="col" className="w-28 border-b border-b-foreground pr-6 text-right font-normal">
+                      Rows
+                    </th>
+                    <th scope="col" className="w-80 border-b border-b-foreground pr-4 font-normal">
+                      Merge into
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.slice(0, SHOWN).map((i) => [clusters[i], i] as const).map(([c, i]) => {
+                    const on = picks[i]?.merge ?? false
+                    return (
+                      <tr key={c.map(([v]) => v).join("\u0000")} className={cn("align-top", !on && "bg-muted")}>
+                        <td className="border-b py-3 pl-4">
+                          <input type="checkbox" aria-label={`Merge cluster ${i + 1}`} checked={on} onChange={(e) => set(i, { merge: e.target.checked })} className="accent-foreground" />
+                        </td>
+                        <td className="border-b py-2">
+                          <ul className="flex flex-col">
+                            {c.map(([v, n], k) => (
+                              <li key={v} className="grid grid-cols-[minmax(0,1fr)_120px_64px] items-center gap-4 py-0.5">
+                                <button
+                                  type="button"
+                                  title="Merge into this value"
+                                  onClick={() => set(i, { to: v })}
+                                  className={cn("truncate text-left font-mono text-[12.5px] outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring", picks[i]?.to === v && "font-semibold")}
+                                >
+                                  {vis(v)}
+                                </button>
+                                <span aria-hidden="true" className="h-1 bg-row-rule">
+                                  <span className={cn("block h-1", k === 0 ? (on ? "bg-data" : "bg-ink-2") : "bg-faint")} style={{ width: `${(n / top(c)) * 100}%` }} />
+                                </span>
+                                <span className="text-right font-mono text-[12px] text-muted-foreground">{n.toLocaleString()}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+                        <td className="border-b py-2.5 pr-6 text-right font-mono text-[12.5px] font-semibold">{c.reduce((s, [, n]) => s + n, 0).toLocaleString()}</td>
+                        <td className="border-b py-2 pr-4">
+                          <Input
+                            aria-label={`New value for cluster ${i + 1}`}
+                            value={picks[i]?.to ?? ""}
+                            onChange={(e) => set(i, { to: e.target.value, merge: true })}
+                            className={cn("h-8", on && "border-foreground")}
+                          />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            )}
+            {clusters && (visible.length < clusters.length || visible.length > SHOWN) && (
+              <p className="px-4 py-3 text-xs text-muted-foreground">
+                {visible.length < clusters.length && `${visible.length.toLocaleString()} of ${clusters.length.toLocaleString()} clusters pass the filters. `}
+                {visible.length > SHOWN && `Showing the ${SHOWN} largest; merge some or narrow the filters to see the rest.`}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </FullView>
   )
 }
 
