@@ -18,7 +18,7 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2112%20of%202128%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2116%20of%202132%20checks-brightgreen">
 </p>
 
 <picture>
@@ -98,14 +98,14 @@ Each area is checked against fixtures produced by running the same cases through
 |---|---|
 | GREL expressions | 559 / 561 |
 | Operations, including single-cell edits, stars, flags, transposing, fetching URLs and `cross()` | 83 / 84 |
-| Facets: list, range, timeline, text, custom and records mode | 36 / 36 |
+| Facets: list, range, timeline, text, custom and records mode | 39 / 39 |
 | Import options: CSV/TSV, fixed-width, Excel, ODS, JSON, XML, and zip/tar/gzip/bzip2 archives | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
 | Exports: CSV/TSV, custom tabular, HTML, templating, Excel, ODS, SQL | 14 / 15 |
 | Clustering and GREL `phonetic()`: 6 keyers, Levenshtein kNN, 9 encoders × 127 values | 1,148 / 1,157 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
-| OpenRefine project archives opened with their full history and written back | 136 / 136 |
+| OpenRefine project archives opened with their full history and written back, metadata included | 137 / 137 |
 
 **[Documentation](https://ilyaux.github.io/OxRefine/)**: install, [where everything is if you know OpenRefine](https://ilyaux.github.io/OxRefine/feature-map.html), [moving your projects and recipes](https://ilyaux.github.io/OxRefine/moving-over.html), and the [GREL reference](https://ilyaux.github.io/OxRefine/grel.html).
 

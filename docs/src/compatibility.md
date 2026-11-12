@@ -6,14 +6,14 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 |---|---|
 | GREL expressions | 559 / 561 |
 | Operations | 83 / 84 |
-| Facets | 36 / 36 |
+| Facets | 39 / 39 |
 | Import options | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
 | Exports | 14 / 15 |
 | Clustering and GREL `phonetic()` | 1,148 / 1,157 |
 | Reconciliation | 49 / 49 |
-| OpenRefine project archives, read, replayed and written back | 136 / 136 |
+| OpenRefine project archives, read, replayed and written back, metadata included | 137 / 137 |
 
 ## How a suite works
 
