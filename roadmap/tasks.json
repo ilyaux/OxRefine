@@ -1107,6 +1107,17 @@
       "ref": "PreferenceStore, preferences.vt"
     },
     {
+      "id": "ui-instrument",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "doing",
+      "priority": "P1",
+      "size": "L",
+      "title": "Instrument UI design",
+      "detail": "The Instrument design (design/, not committed): ruled sheet instead of cards, tokens in index.css, bars as cells, ink primary action, Geist Mono values; Cluster, Transform, Reconcile, History, Import and Export as full-window views with a breadcrumb and Esc; Palette and Jobs as overlays. Logic and API unchanged; data the engine lacks is left out and listed.",
+      "ref": "design/README.md"
+    },
+    {
       "id": "qa-conformance",
       "phase": "p10",
       "milestone": "v0.2",

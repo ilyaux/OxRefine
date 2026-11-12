@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 118 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 119 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,7 +8,7 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 21 |
-| v0.5 | 42 | 2 |
+| v0.5 | 43 | 2 |
 | v1.0 | 6 | 0 |
 | later | 14 | 0 |
 
@@ -155,6 +155,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [~] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
 - [ ] **Translations** · v0.5 · P2 · M. UI strings in message files, language picker, OpenRefine's translations (40+ languages from its Weblate project) mapped onto ours where the meaning matches, Russian checked by hand. _OpenRefine: main/webapp/modules/core/langs_
 - [~] **Preferences** · v0.5 · P2 · M. A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest. _OpenRefine: PreferenceStore, preferences.vt_
+- [~] **Instrument UI design** · v0.5 · P1 · L. The Instrument design (design/, not committed): ruled sheet instead of cards, tokens in index.css, bars as cells, ink primary action, Geist Mono values; Cluster, Transform, Reconcile, History, Import and Export as full-window views with a breadcrumb and Esc; Palette and Jobs as overlays. Logic and API unchanged; data the engine lacks is left out and listed. _OpenRefine: design/README.md_
 
 ## Compatibility & QA
 

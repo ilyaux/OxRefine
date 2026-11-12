@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { ClipboardPasteIcon, FolderOpenIcon, GlobeIcon, HistoryIcon, TableIcon, TagIcon } from "lucide-react"
 import { call } from "@/api"
 import {
   AlertDialog,
@@ -11,17 +10,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 
 /** OpenRefine's project metadata, with its field names. */
 export type ProjectInfo = {
@@ -56,6 +52,36 @@ const when = (iso: string) => {
   return isNaN(d.getTime()) ? iso : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
 }
 
+/** "just now", "09:42", "yesterday", "Nov 9", "Oct 28, 2024". */
+const changed = (iso: string) => {
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return iso
+  const now = new Date()
+  const day = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime()
+  const days = Math.round((day(now) - day(d)) / 864e5)
+  if (now.getTime() - d.getTime() < 6e4) return "just now"
+  if (days === 0) return d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
+  if (days === 1) return "yesterday"
+  return d.toLocaleDateString(undefined, d.getFullYear() === now.getFullYear() ? { month: "short", day: "numeric" } : { dateStyle: "medium" })
+}
+
+const fileName = (path?: string) => path?.split(/[\\/]/).pop()
+
+/** One way to start a project: a full-width row with a rule above it. */
+function Source({ title, hint, keys, onClick }: { title: string; hint: string; keys?: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="grid w-full grid-cols-[1fr_auto] items-baseline gap-x-3 gap-y-0.5 border-t px-5 py-3 text-left outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+    >
+      <span className="font-medium">{title}</span>
+      {keys ? <kbd>{keys}</kbd> : <span />}
+      <span className="col-span-2 text-xs text-muted-foreground">{hint}</span>
+    </button>
+  )
+}
+
 export function Home({
   onImport,
   onPaste,
@@ -77,8 +103,12 @@ export function Home({
   const [deleting, setDeleting] = useState<ProjectMeta | null>(null)
   const [about, setAbout] = useState<ProjectMeta | null>(null)
   const [tag, setTag] = useState<string | null>(null)
+  const [filter, setFilter] = useState("")
   const tags = [...new Set((projects ?? []).flatMap((p) => p.info?.tags ?? []))].sort((a, b) => a.localeCompare(b))
-  const shown = (projects ?? []).filter((p) => !tag || p.info?.tags?.includes(tag))
+  const q = filter.trim().toLowerCase()
+  const shown = (projects ?? []).filter(
+    (p) => (!tag || p.info?.tags?.includes(tag)) && (!q || [p.name, p.source?.path, p.info?.description, ...(p.info?.tags ?? [])].some((x) => x?.toLowerCase().includes(q))),
+  )
   const load = () => call<ProjectMeta[]>("projects").then(({ data }) => setProjects(data), onError)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => void load(), [])
@@ -90,107 +120,113 @@ export function Home({
     load()
   }
 
+  const th = "border-b px-3 py-2.5 text-left text-[11.5px] font-normal text-muted-foreground"
+  const num = "border-b px-3 text-right font-mono text-[12.5px]"
   return (
-    <div className="mx-auto flex w-full max-w-5xl min-h-0 flex-1 flex-col gap-6 overflow-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>New project</CardTitle>
-          <CardDescription>
-            Import CSV, TSV, fixed-width or plain text, Excel (.xlsx, .xls), OpenDocument (.ods), JSON or XML from a file, a zip, tar or gzip archive, the clipboard or a web address.
-            Options and a preview come next; the original is never changed. OpenRefine projects (.openrefine.tar.gz) open with
-            their undo history.
-          </CardDescription>
-          <CardAction className="flex gap-2">
-            <Button variant="outline" onClick={onOpenRefine}>
-              <HistoryIcon data-icon="inline-start" />
-              OpenRefine project
-            </Button>
-            <Button variant="outline" onClick={onPaste}>
-              <ClipboardPasteIcon data-icon="inline-start" />
-              Paste data
-            </Button>
-            <Button variant="outline" onClick={onUrl}>
-              <GlobeIcon data-icon="inline-start" />
-              Web address
-            </Button>
-            <Button onClick={onImport}>
-              <FolderOpenIcon data-icon="inline-start" />
-              Choose a file
-            </Button>
-          </CardAction>
-        </CardHeader>
-      </Card>
+    <div className="flex min-h-0 flex-1 flex-wrap overflow-auto">
+      <aside aria-labelledby="new-h" className="flex max-w-[340px] flex-[1_1_300px] flex-col border-r">
+        <h2 id="new-h" className="px-5 pt-5 pb-3 font-semibold">
+          New project
+        </h2>
+        <Source title="From a file or folder" hint="Preview with OpenRefine's import options" keys="Ctrl O" onClick={onImport} />
+        <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={onPaste} />
+        <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={onUrl} />
+        <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={onOpenRefine} />
+        <div className="border-t" />
+        <p className="px-5 py-4 font-mono text-[11px] leading-relaxed text-muted-foreground">
+          csv tsv xlsx xls ods json xml txt
+          <br />
+          zip tar gz bz2 · openrefine.tar.gz
+        </p>
+      </aside>
 
-      <Card className="min-h-0">
-        <CardHeader>
-          <CardTitle>Your projects</CardTitle>
-          <CardDescription>Saved automatically after every step, with the full undo history.</CardDescription>
+      <main className="flex min-w-0 flex-[999_1_560px] flex-col">
+        <div className="flex flex-wrap items-center gap-3 border-b border-foreground px-5 py-3.5">
+          <h1 className="font-semibold">
+            Your projects{" "}
+            <span className="font-mono font-normal text-muted-foreground">{projects ? shown.length : ""}</span>
+          </h1>
           {tags.length > 0 && (
-            <CardAction>
-              <ToggleGroup variant="outline" size="sm" value={tag ? [tag] : []} onValueChange={(v: string[]) => setTag(v[0] ?? null)} aria-label="Show projects tagged">
-                {tags.map((t) => (
-                  <ToggleGroupItem key={t} value={t}>
-                    <TagIcon data-icon="inline-start" />
-                    {t}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </CardAction>
-          )}
-        </CardHeader>
-        <CardContent>
-          {!projects ? (
-            <div className="flex justify-center py-8">
-              <Spinner />
+            <div role="group" aria-label="Show projects tagged" className="flex flex-wrap items-center gap-1">
+              {tags.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={tag === t}
+                  onClick={() => setTag(tag === t ? null : t)}
+                  className={cn(
+                    "rounded-[3px] border px-2 font-mono text-[11.5px] leading-6 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    tag === t ? "border-foreground bg-foreground text-background" : "border-input text-ink-2 hover:bg-accent",
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
             </div>
-          ) : projects.length === 0 ? (
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <TableIcon />
-                </EmptyMedia>
-                <EmptyTitle>No projects yet</EmptyTitle>
-                <EmptyDescription>Choose a file above to create your first one.</EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Rows</TableHead>
-                  <TableHead className="text-right">Columns</TableHead>
-                  <TableHead>Last changed</TableHead>
-                  <TableHead className="text-right">
+          )}
+          <span className="flex-1" />
+          <label className="block flex-[0_1_260px]">
+            <span className="sr-only">Filter projects</span>
+            <Input type="search" placeholder="Filter…" value={filter} onChange={(e) => setFilter(e.target.value)} className="h-7.5" />
+          </label>
+        </div>
+        {!projects ? (
+          <div className="flex justify-center py-8">
+            <Spinner />
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="flex flex-col gap-1 px-5 py-8">
+            <span className="font-medium">No projects yet</span>
+            <span className="text-muted-foreground">Start one from the list on the left; it is saved after every step, with the full undo history.</span>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] border-collapse">
+              <thead>
+                <tr>
+                  <th scope="col" className={cn(th, "pl-5")}>
+                    Name
+                  </th>
+                  <th scope="col" className={cn(th, "text-right")}>
+                    Rows
+                  </th>
+                  <th scope="col" className={cn(th, "text-right")}>
+                    Cols
+                  </th>
+                  <th scope="col" className={cn(th, "text-right")}>
+                    Changed
+                  </th>
+                  <th scope="col" className={cn(th, "pr-5")}>
                     <span className="sr-only">Actions</span>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
                 {shown.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="max-w-80">
-                      <div className="flex flex-col items-start gap-1">
-                        <Button variant="link" className="h-auto max-w-full justify-start p-0" onClick={() => onOpen(p.id)}>
-                          <span className="truncate">{p.name}</span>
-                        </Button>
-                        {p.info?.description && <span className="max-w-full truncate text-xs text-muted-foreground">{p.info.description}</span>}
-                        {!!p.info?.tags?.length && (
-                          <div className="flex flex-wrap gap-1">
-                            {p.info.tags.map((t, i) => (
-                              <Badge key={i} variant="secondary">
-                                {t}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">{p.rows.toLocaleString()}</TableCell>
-                    <TableCell className="text-right tabular-nums">{p.columns}</TableCell>
-                    <TableCell className="text-muted-foreground">{when(p.modified)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
+                  <tr key={p.id} className="group/row hover:bg-muted">
+                    <td className="h-13 max-w-0 border-b py-2 pr-3 pl-5">
+                      <button type="button" onClick={() => onOpen(p.id)} className="flex max-w-full flex-col items-start gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <span className="max-w-full truncate font-medium group-hover/row:underline">{p.name}</span>
+                        {fileName(p.source?.path) && <span className="max-w-full truncate font-mono text-[11px] text-muted-foreground">{fileName(p.source?.path)}</span>}
+                      </button>
+                      {(p.info?.description || !!p.info?.tags?.length) && (
+                        <div className="mt-1 flex max-w-full flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+                          {p.info?.tags?.map((t, i) => (
+                            <span key={i} className="rounded-[3px] border border-input px-1 font-mono text-[11px] text-ink-2">
+                              {t}
+                            </span>
+                          ))}
+                          {p.info?.description && <span className="truncate">{p.info.description}</span>}
+                        </div>
+                      )}
+                    </td>
+                    <td className={num}>{p.rows.toLocaleString()}</td>
+                    <td className={cn(num, "text-muted-foreground")}>{p.columns}</td>
+                    <td className={cn(num, "text-xs text-muted-foreground")} title={when(p.modified)}>
+                      {changed(p.modified)}
+                    </td>
+                    <td className="border-b pr-3 pl-3 text-right whitespace-nowrap">
+                      <span className="inline-flex opacity-60 group-focus-within/row:opacity-100 group-hover/row:opacity-100">
                         <Button variant="ghost" size="sm" onClick={() => setAbout(p)}>
                           About
                         </Button>
@@ -200,15 +236,16 @@ export function Home({
                         <Button variant="ghost" size="sm" onClick={() => setDeleting(p)}>
                           Delete
                         </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      </span>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+              </tbody>
+            </table>
+            {shown.length === 0 && <p className="px-5 py-6 text-muted-foreground">No project matches.</p>}
+          </div>
+        )}
+      </main>
 
       {about && (
         <AboutDialog

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, SettingsIcon, TableIcon, Undo2Icon } from "lucide-react"
+import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
@@ -10,8 +10,7 @@ import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
 import { Facets, History } from "@/Sidebar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Bar, BarCell, BrandCell, CellButton, CellLink, Crumbs, Spacer, StateDot, StatusBar, StatusCell } from "@/components/instrument"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,11 +21,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Toaster, toast } from "@/components/ui/toast"
 import { checkForUpdates } from "@/updates"
+import pkg from "../package.json"
 import { Palette } from "@/Palette"
 
 type Modal =
@@ -40,6 +38,35 @@ type Modal =
   | null
 
 type Staged = { path: string; name?: string; origin?: string }
+
+const VERSION = pkg.version
+
+const num = (n: number) => (Math.abs(n) >= 1e15 ? "∞" : Number(n.toFixed(4)).toLocaleString())
+const day = (ms: number) => (Math.abs(ms) >= 8.64e15 ? "…" : new Date(ms).toISOString().slice(0, 10))
+
+/** What a facet filters, as a chip label (null when it lets everything through). */
+function chip(f: Facet): string | null {
+  if (f.type === "list") {
+    const picked = [...f.selection.map((s) => s.v.l || String(s.v.v)), ...(f.selectBlank ? ["(blank)"] : []), ...(f.selectError ? ["(error)"] : [])]
+    if (!picked.length) return null
+    const shown = picked.length > 3 ? `${picked.slice(0, 3).join(", ")} +${picked.length - 3}` : picked.join(", ")
+    return `${f.columnName} ${picked.length > 1 ? (f.invert ? "∉" : "∈") : f.invert ? "≠" : "="} ${shown}`
+  }
+  if (f.type === "text") return f.query ? `${f.columnName} ${f.invert ? "!~" : "~"} "${f.query}"` : null
+  const all = f.from <= -Number.MAX_VALUE && f.to >= Number.MAX_VALUE
+  const kinds = f.type === "range" ? f.selectNumeric && f.selectNonNumeric && f.selectBlank && f.selectError : f.selectTime && f.selectNonTime && f.selectBlank && f.selectError
+  if (all && kinds) return null
+  const range = all ? "" : f.type === "range" ? ` ∈ [${num(f.from)}, ${num(f.to)}]` : ` ∈ [${day(f.from)}, ${day(f.to)}]`
+  return `${f.columnName}${range}${kinds ? "" : " (some kinds)"}`
+}
+
+/** The facet with its filter cleared: no selection, no query, the full range. */
+function cleared(f: Facet): Facet {
+  if (f.type === "list") return { ...f, selection: [], selectBlank: false, selectError: false }
+  if (f.type === "text") return { ...f, query: "" }
+  if (f.type === "range") return { ...rangeFacet(f.columnName, f.expression), name: f.name }
+  return { ...timeFacet(f.columnName, f.expression), name: f.name }
+}
 
 const fail = (e: unknown) => void toast.add({ title: "Something went wrong", description: String((e as Error).message ?? e), type: "error" })
 
@@ -319,11 +346,31 @@ export function App() {
       })
   }
 
+  // the column the tool cells and keys work on: the one last used in the grid, else the first
+  const toolColumn = summary ? (focusCol && summary.columns.includes(focusCol) ? focusCol : (summary.columns[0] ?? null)) : null
+  const tool = (kind: "facet" | "cluster" | "transform" | "reconcile") => toolColumn && onAction({ kind, column: toolColumn })
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault()
         return setPalette((p) => !p)
+      }
+      const typing = (e.target as HTMLElement).closest("input,textarea,select,[contenteditable],[role=dialog],[role=menu]")
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "o" && !typing) {
+        e.preventDefault()
+        return openFile()
+      }
+      // one-key tools, only with nothing else open and the focus outside text fields
+      if (!e.ctrlKey && !e.metaKey && !e.altKey && !typing && !modal && !staged && !palette && !prefsOpen) {
+        const k = e.key.toLowerCase()
+        const tools: Record<string, () => void> = summary
+          ? { f: () => tool("facet"), c: () => tool("cluster"), t: () => tool("transform"), r: () => tool("reconcile"), i: openFile }
+          : { i: openFile }
+        if (tools[k]) {
+          e.preventDefault()
+          return tools[k]()
+        }
       }
       if (!summary || !(e.ctrlKey || e.metaKey) || (e.target as HTMLElement).closest("input,textarea,[contenteditable]")) return
       const k = e.key.toLowerCase()
@@ -339,43 +386,38 @@ export function App() {
   return (
     <Toaster>
       <div className="flex h-svh flex-col bg-background text-foreground">
-        <header className="flex items-center gap-2 border-b px-3 py-2">
-          <TableIcon />
-          <span className="font-semibold">OxRefine</span>
-          {summary && (
-            <Button variant="ghost" size="sm" onClick={goHome}>
-              <HouseIcon data-icon="inline-start" />
-              Projects
-            </Button>
-          )}
-          {summary && (
-            <>
-              <Separator orientation="vertical" className="mx-1 h-5" />
-              <span className="truncate text-sm">{summary.name}</span>
-              <Badge variant="secondary">
-                {summary.rows.toLocaleString()} rows × {summary.columns.length} columns
-              </Badge>
-            </>
-          )}
-          <div className="ml-auto flex items-center gap-1">
-            <Button variant="ghost" size="icon" aria-label="Preferences" onClick={() => setPrefsOpen(true)}>
-              <SettingsIcon />
-            </Button>
-            <Button variant="ghost" size="icon" aria-label="Undo" disabled={!summary?.cursor} onClick={() => goto(summary!.cursor - 1)}>
-              <Undo2Icon />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Redo"
-              disabled={!summary || summary.cursor >= summary.history.length}
-              onClick={() => goto(summary!.cursor + 1)}
-            >
-              <Redo2Icon />
-            </Button>
+        {summary ? (
+          <Bar>
+            <BrandCell />
+            <Crumbs
+              parts={[
+                <button key="p" type="button" onClick={goHome} className="outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring">
+                  Projects
+                </button>,
+                <>
+                  <span className="truncate">{summary.name}</span>
+                  <span className="font-mono text-xs font-normal text-muted-foreground">
+                    {summary.rows.toLocaleString()} × {summary.columns.length}
+                  </span>
+                </>,
+              ]}
+            />
+            <CellButton keys="F" onClick={() => tool("facet")} title={toolColumn ? `Facet by ${toolColumn}` : undefined}>
+              Facet
+            </CellButton>
+            <CellButton keys="C" onClick={() => tool("cluster")} title={toolColumn ? `Cluster ${toolColumn}` : undefined}>
+              Cluster
+            </CellButton>
+            <CellButton keys="T" onClick={() => tool("transform")} title={toolColumn ? `Transform ${toolColumn}` : undefined}>
+              Transform
+            </CellButton>
+            <CellButton keys="R" onClick={() => tool("reconcile")} title={toolColumn ? `Reconcile ${toolColumn}` : undefined}>
+              Reconcile
+            </CellButton>
+            <CellButton onClick={applyRecipe}>Recipe</CellButton>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="outline" disabled={!summary} />}>Rows</DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuTrigger render={<CellButton />}>Rows</DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-60">
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: true }).catch(() => {})}>Star matching rows</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => apply({ op: "core/row-star", engineConfig: engine, starred: false }).catch(() => {})}>Unstar matching rows</DropdownMenuItem>
@@ -391,15 +433,18 @@ export function App() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button variant="outline" disabled={!summary} onClick={applyRecipe}>
-              <FileUpIcon data-icon="inline-start" />
-              Apply recipe
-            </Button>
+            <Spacer />
+            <CellButton rule="left" aria-label="Undo" title="Undo (Ctrl Z)" disabled={!summary.cursor} onClick={() => goto(summary.cursor - 1)}>
+              <Undo2Icon className="size-4" />
+            </CellButton>
+            <CellButton rule="left" aria-label="Redo" title="Redo (Ctrl Y)" disabled={summary.cursor >= summary.history.length} onClick={() => goto(summary.cursor + 1)}>
+              <Redo2Icon className="size-4" />
+            </CellButton>
+            <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
+              <SettingsIcon className="size-4" />
+            </CellButton>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="outline" disabled={!summary} />}>
-                <DownloadIcon data-icon="inline-start" />
-                Export
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger render={<CellButton rule="left" keys="E" />}>Export</DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>Matching rows</DropdownMenuLabel>
@@ -427,10 +472,7 @@ export function App() {
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button />}>
-                <FolderOpenIcon data-icon="inline-start" />
-                Import
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger render={<CellButton rule="left" ink keys="I" />}>Import</DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
                 <DropdownMenuGroup>
                   <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
@@ -443,8 +485,19 @@ export function App() {
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </header>
+          </Bar>
+        ) : (
+          <Bar>
+            <BrandCell version={VERSION} />
+            <BarCell className="font-medium">Projects</BarCell>
+            <Spacer />
+            <CellLink href="https://ilyaux.github.io/OxRefine/">Docs</CellLink>
+            <CellLink href="https://ilyaux.github.io/OxRefine/moving-over.html">Coming from OpenRefine</CellLink>
+            <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
+              <SettingsIcon className="size-4" />
+            </CellButton>
+          </Bar>
+        )}
 
         {summary ? (
           <div className="flex min-h-0 flex-1">
@@ -464,33 +517,80 @@ export function App() {
                 </ScrollArea>
               </Tabs>
             </aside>
-            <main className="min-w-0 flex-1">
-              <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} />
+            <main className="flex min-w-0 flex-1 flex-col">
+              <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
+                <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
+                  {total.toLocaleString()}
+                  <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
+                </div>
+                <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
+                  {facets.map((f, i) => {
+                    const label = chip(f)
+                    return (
+                      label && (
+                        <div key={i} className="flex shrink-0 items-center gap-3 border-r pl-3.5">
+                          <span className="font-mono">{label}</span>
+                          <button
+                            type="button"
+                            aria-label={`Clear the filter ${label}`}
+                            onClick={() => setFacets((fs) => fs.map((x, j) => (j === i ? cleared(x) : x)))}
+                            className="flex h-full items-center px-3 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )
+                    )
+                  })}
+                  {facets.some(chip) && (
+                    <CellButton className="text-muted-foreground" onClick={() => setFacets((fs) => fs.map(cleared))}>
+                      Clear all
+                    </CellButton>
+                  )}
+                </div>
+                <div role="group" aria-label="Show rows or records" className="flex items-stretch">
+                  <CellButton rule="left" active={mode === "row-based"} onClick={() => setMode("row-based")} className={mode === "row-based" ? "font-medium" : "text-muted-foreground"}>
+                    Rows
+                  </CellButton>
+                  <CellButton rule="left" active={mode === "record-based"} onClick={() => setMode("record-based")} className={mode === "record-based" ? "font-medium" : "text-muted-foreground"}>
+                    Records
+                  </CellButton>
+                </div>
+              </div>
+              <div className="min-h-0 flex-1">
+                <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} />
+              </div>
             </main>
           </div>
         ) : (
           <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
         )}
 
-        <footer className="flex items-center gap-3 border-t px-3 py-1 text-xs text-muted-foreground">
-          {summary && (
-            <>
-              <ToggleGroup size="sm" variant="outline" value={[mode]} onValueChange={(v) => v[0] && setMode(v[0] as Engine["mode"])} aria-label="Show rows or records">
-                <ToggleGroupItem value="row-based">Rows</ToggleGroupItem>
-                <ToggleGroupItem value="record-based">Records</ToggleGroupItem>
-              </ToggleGroup>
-              <span className="tabular-nums">
-                {total.toLocaleString()} of {summary.rows.toLocaleString()} rows match
-              </span>
-            </>
-          )}
-          <span className={lastMs ? undefined : "ml-auto"}>Ctrl+K for commands</span>
+        <StatusBar>
+          <StatusCell className="text-foreground">
+            <StateDot />
+            ready
+          </StatusCell>
           {lastMs && (
-            <span className="ml-auto tabular-nums">
-              last {lastMs.what}: {lastMs.ms.toFixed(1)} ms
-            </span>
+            <StatusCell>
+              {lastMs.what} {lastMs.ms < 10 ? lastMs.ms.toFixed(1) : Math.round(lastMs.ms).toLocaleString()} ms
+            </StatusCell>
           )}
-        </footer>
+          {summary && (
+            <StatusCell>
+              {summary.cursor} step{summary.cursor === 1 ? "" : "s"}
+              {summary.id && " · saved"}
+            </StatusCell>
+          )}
+          <Spacer />
+          {summary ? (
+            <StatusCell rule="left">
+              <kbd className="text-[11.5px]">Ctrl K</kbd> commands
+            </StatusCell>
+          ) : (
+            <StatusCell rule="left">matches OpenRefine 3.10.1</StatusCell>
+          )}
+        </StatusBar>
       </div>
 
       <Jobs />
