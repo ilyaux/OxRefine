@@ -1,18 +1,18 @@
 # Where everything is
 
-OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows, facets and history in a side panel, and each column's operations in its menu. This page lists where each OpenRefine feature lives in OxRefine. **Ctrl+K** (⌘K on a Mac) opens a command palette that finds any action by name.
+OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows, facets and history in a side panel, and each column's operations in its menu. This page lists where each OpenRefine feature lives in OxRefine. **Ctrl+K** (⌘K on a Mac) opens a command palette that finds any action by name. The tools also have keys, shown next to them: <kbd>F</kbd> facet, <kbd>C</kbd> cluster, <kbd>T</kbd> transform and <kbd>R</kbd> reconcile on the column you last used, <kbd>E</kbd> export, <kbd>I</kbd> or <kbd>Ctrl O</kbd> import, <kbd>Esc</kbd> to close a view.
 
 ## Projects
 
 | OpenRefine | OxRefine |
 |---|---|
-| Create project → This computer | **Import → File…**, or a folder or archive |
-| Create project → Web addresses (URLs) | **Import → Web address…** |
-| Create project → Clipboard | **Import → Paste data…** |
+| Create project → This computer | **From a file or folder** on the home screen, or **Import → File…** in a project |
+| Create project → Web addresses (URLs) | **From a web address** on the home screen, or **Import → Web address…** |
+| Create project → Clipboard | **Paste from clipboard** on the home screen, or **Import → Paste data…** |
 | Create project → Database | Not yet |
 | Open project | Home screen, the project list |
-| Import project (`.openrefine.tar.gz`) | **Import → OpenRefine project…**; it opens with its undo history |
-| Export → OpenRefine project archive | **Export → OpenRefine project…**; OpenRefine opens it with OxRefine's history |
+| Import project (`.openrefine.tar.gz`) | **Open an OpenRefine project** on the home screen, or **Import → OpenRefine project…**; it opens with its undo history |
+| Export → OpenRefine project archive | **Export → OpenRefine project**; OpenRefine opens it with OxRefine's history |
 | Rename and delete projects | Home screen, the project's buttons |
 | Project tags and metadata | **About** next to the project in the list: tags, description, creator and the rest; click a tag at the top to show only its projects. OpenRefine project archives carry them both ways |
 | Preferences | The gear at the top right: theme, the facet choice limit, reconciliation services, recent expressions, and every preference by name and value |
@@ -21,9 +21,9 @@ OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows,
 
 | OpenRefine | OxRefine |
 |---|---|
-| Show as rows / records | **Rows** / **Records** at the bottom of the grid |
+| Show as rows / records | **Rows** / **Records** at the right of the bar above the grid |
 | Star and flag a row | The star and flag in each row |
-| All → Edit rows → Star / Flag / Remove matching rows | **Rows** in the toolbar |
+| All → Edit rows → Star / Flag / Remove matching rows | **Rows** in the top bar |
 | Keep only matching rows | **Rows → Keep only matching rows** |
 | Sort | **Sort rows by this column…** in the column menu |
 | Remove duplicate rows | **Remove duplicate rows by this column** in the column menu |
@@ -39,7 +39,7 @@ OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows,
 | Text filter | **Text filter** |
 | Reconcile → Facets | **Reconcile → Facets** |
 
-In a list facet, click a choice to include it, and hover a choice and click the pencil to change that value in every row. **Remove all facets** clears them all.
+In a list facet, click a choice to include it, and hover a choice and click the pencil to change that value in every row. Each filter shows as a chip above the grid; **Clear all** there clears every filter, and the × on a facet removes it.
 
 ## Editing cells
 
@@ -50,7 +50,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Fill down / Blank down | Same names |
 | Split multi-valued cells… / Join multi-valued cells… | Same names |
 | Cluster and edit… | **Cluster and edit…** |
-| Edit one cell | Hover the cell and click the pencil; it can also change every identical cell |
+| Edit one cell | Click the cell and press Enter (or double-click it, or use the pencil); it can also change every identical cell |
 
 ## Editing columns
 
@@ -76,9 +76,9 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 
 | OpenRefine | OxRefine |
 |---|---|
-| Undo / Redo tab | **History** tab in the side panel, plus undo and redo in the toolbar |
-| Undo / Redo → Extract… | **History → Extract…**, or **Ctrl+K → Extract recipe…** |
-| Undo / Redo → Apply… | **Apply recipe** in the toolbar |
+| Undo / Redo tab | **History** tab in the side panel, undo and redo in the top bar, and **Recipe** for the full history beside its recipe |
+| Undo / Redo → Extract… | **Recipe** in the top bar: tick the steps, then copy or save the JSON; also **History → Extract…** |
+| Undo / Redo → Apply… | **Recipe → Apply a recipe…** |
 
 ## Export
 

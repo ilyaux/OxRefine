@@ -7,7 +7,7 @@ You don't have to choose between the two tools. Recipes and whole projects move 
 ### From OpenRefine to OxRefine
 
 1. In OpenRefine, open the project and choose **Export → OpenRefine project archive to file**. You get a `.openrefine.tar.gz` file.
-2. In OxRefine, choose **Import → OpenRefine project…** and pick that file.
+2. In OxRefine, choose **Open an OpenRefine project** on the home screen (or **Import → OpenRefine project…** in a project) and pick that file.
 
 The project opens with its data, stars, flags, reconciliation data and **its undo history**: every step can be undone and redone as it could in OpenRefine. OxRefine rebuilds each step from OpenRefine's own change records, then checks that redoing the step gives OpenRefine's result.
 
@@ -15,7 +15,7 @@ A step that OxRefine can't redo, such as an operation from an extension it doesn
 
 ### From OxRefine to OpenRefine
 
-Choose **Export → OpenRefine project…** and import the file in OpenRefine with **Import project**. OpenRefine opens it with OxRefine's full history, and each step can be undone there.
+Choose **Export → OpenRefine project** and import the file in OpenRefine with **Import project**. OpenRefine opens it with OxRefine's full history, and each step can be undone there.
 
 Every archive in OxRefine's test suite is checked this way in a real OpenRefine 3.10.1, with every undo step compared.
 
@@ -23,8 +23,8 @@ Every archive in OxRefine's test suite is checked this way in a real OpenRefine 
 
 A recipe is the list of operations OpenRefine shows under **Undo / Redo → Extract**, as JSON. OxRefine reads and writes the same JSON, including the facets each step was limited to.
 
-- **Use an OpenRefine recipe in OxRefine:** choose **Apply recipe** and paste the JSON or pick a file.
-- **Save an OxRefine recipe:** choose **History → Extract…**, then pick the steps to keep, and copy or save the JSON. OpenRefine's **Apply…** accepts it.
+- **Use an OpenRefine recipe in OxRefine:** choose **Recipe → Apply a recipe…** and paste the JSON or pick a file.
+- **Save an OxRefine recipe:** choose **Recipe** in the top bar, tick the steps to keep, and copy or save the JSON. OpenRefine's **Apply…** accepts it.
 - **Run a recipe without opening the app:**
 
   ```bash

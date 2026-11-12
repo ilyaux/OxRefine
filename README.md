@@ -5,20 +5,26 @@ fuzzy matching, fuzzy deduplication, clustering, record linkage, entity resoluti
 reconciliation, GREL, faceted browsing, data transformation, ETL, spreadsheet cleanup, large CSV files,
 million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta alternative, Talend alternative
 -->
-<h1 align="center">OxRefine</h1>
-
 <p align="center">
-  <b>OpenRefine's way of cleaning messy data, rebuilt in Rust.</b><br>
-  Facet, cluster, transform and reconcile 100,000-row tables in milliseconds and million-row ones in under a second, with the same results as OpenRefine.
+  <img src="docs/readme/hero.svg" width="100%" alt="OxRefine: OpenRefine's way of cleaning messy data, rebuilt in Rust. The same million-row workflow takes 0.60 s in OxRefine and 16.8 s in OpenRefine.">
 </p>
 
 <p align="center">
-  <a href="https://ilyaux.github.io/OxRefine/"><img alt="Documentation" src="https://img.shields.io/badge/docs-ilyaux.github.io%2FOxRefine-blue"></a>
+  <a href="https://github.com/ilyaux/OxRefine/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/ilyaux/OxRefine?label=download&color=111113"></a>
   <a href="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ilyaux/OxRefine/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
-  <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
+  <a href="https://ilyaux.github.io/OxRefine/"><img alt="Documentation" src="https://img.shields.io/badge/docs-ilyaux.github.io%2FOxRefine-1D4ED8"></a>
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-111113">
+  <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-B7410E">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
   <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2116%20of%202132%20checks-brightgreen">
+</p>
+
+<p align="center">
+  <b><a href="https://github.com/ilyaux/OxRefine/releases/latest">Download</a></b>
+  &nbsp;·&nbsp; <a href="https://ilyaux.github.io/OxRefine/">Documentation</a>
+  &nbsp;·&nbsp; <a href="https://ilyaux.github.io/OxRefine/moving-over.html">Coming from OpenRefine</a>
+  &nbsp;·&nbsp; <a href="https://ilyaux.github.io/OxRefine/grel.html">GREL reference</a>
+  &nbsp;·&nbsp; <a href="#benchmark">Benchmark</a>
 </p>
 
 <picture>
@@ -32,14 +38,27 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 
 [OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
 
-- **About 20× faster, with 12–22× less memory.** A million-row workflow takes 0.6 s instead of 16.8 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 219 MB.
-- **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,018 of 2,034 checks match, and each known difference is written down with its reason.
-- **Your work moves both ways.** OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact.
-- **Desktop, browser, server or command line.** It runs as a native desktop app, in a browser (`ox serve`, like OpenRefine), on a server or in Docker behind an access token, or headless with `ox apply`.
+|  |  |
+|---|---|
+| **About 20× faster, 12–22× less memory** | A million-row workflow takes 0.6 s instead of 16.8 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 219 MB. |
+| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,116 of 2,132 checks match, and each known difference is written down with its reason. |
+| **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
+| **Desktop, browser, server or command line** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, or headless with `ox apply`. |
 
 ## Benchmark
 
-The same workflow ran through each tool's own HTTP API: CSV import, a text facet, fingerprint clustering, a 5-step OpenRefine recipe and CSV export. Each run used a fresh process on one Windows laptop, and OpenRefine had its default 1,400 MB heap.
+The same workflow ran through each tool's own HTTP API: CSV import, a text facet, fingerprint clustering, a 5-step OpenRefine recipe and CSV export. Each run used a fresh process on one Windows laptop, and OpenRefine had its default 1,400 MB heap. Every output cell is identical at every size (8,000,008 of 8,000,008 at a million rows).
+
+<img src="docs/readme/bench-time.svg" width="100%" alt="Whole-workflow time: 0.11 s against 2.1 s at 100k rows, 0.60 s against 16.8 s at 1M rows; at 2M rows OxRefine takes 1.2 s and OpenRefine runs out of memory.">
+
+The gap is widest where OpenRefine works row by row and OxRefine works once per distinct value:
+
+<img src="docs/readme/bench-steps.svg" width="100%" alt="Each step at 1M rows: import 5×, text facet 62×, clustering 121×, a 5-operation recipe 377×, export 8× faster.">
+
+<img src="docs/readme/bench-memory.svg" width="100%" alt="Peak memory: OxRefine grows from 23 to 219 MB between 100k and 2M rows; OpenRefine reaches 1,359 MB at 1M rows and runs out of its 1,400 MB heap at 2M.">
+
+<details>
+<summary>The numbers</summary>
 
 | Rows | OxRefine | OpenRefine | Faster | Peak RAM (OxRefine / OpenRefine) |
 |---|---|---|---|---|
@@ -49,7 +68,7 @@ The same workflow ran through each tool's own HTTP API: CSV import, a text facet
 | 1,000,000 | 0.60 s | 16.8 s | 28× | 116 / 1,359 MB |
 | 2,000,000 | 1.2 s | out of memory | | 219 MB / out of memory |
 
-Every output cell is identical at every size (8,000,008 of 8,000,008 at a million rows). Per step at a million rows:
+Per step at a million rows:
 
 | Step | OxRefine | OpenRefine |
 |---|---|---|
@@ -58,6 +77,8 @@ Every output cell is identical at every size (8,000,008 of 8,000,008 at a millio
 | Clustering | 19 ms | 2.2 s |
 | Recipe (5 operations) | 28 ms | 10.6 s |
 | Export | 0.20 s | 1.6 s |
+
+</details>
 
 <details>
 <summary>Reproducing it</summary>
@@ -68,6 +89,7 @@ Put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1`, then:
 cargo build --release
 node benchmarks/compare.mjs            # writes benchmarks/results.json
 node benchmarks/report.mjs             # turns it into benchmarks/report/index.html
+node tools/readme-assets.mjs           # redraws the charts in this README
 ```
 
 Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so steps under about 20 ms are noisy.
@@ -79,20 +101,27 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so s
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/src/images/cluster-dark.png">
-  <img alt="Clustering the city column: São Paulo and Zürich spellings grouped, with row counts and a new value for each cluster" src="docs/src/images/cluster.png">
+  <img alt="Clustering the city column: spellings of São Paulo, Köln and Kraków grouped, with row counts, a bar for each spelling and the value to merge into" src="docs/src/images/cluster.png">
 </picture>
 
-- **Import:** CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard or a web address. There is a preview wizard with OpenRefine's options.
-- **Explore:** text, numeric, timeline and custom facets, text filters, records mode, and a grid that stays fast at millions of rows.
-- **Clean:** GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, and `cross()` between projects.
-- **Cluster:** key collision (fingerprint, n-gram, metaphone and the other phonetic keyers) and nearest-neighbour (Levenshtein) clustering, with filters on cluster size, row count and length.
-- **Reconcile:** match a column against any W3C Reconciliation service, such as Wikidata or your own. You can judge candidates cell by cell or in bulk, search the service, preview entities, and add columns from the matched items.
-- **Keep track:** full undo and redo, saved projects, recipes, and progress with cancel for long steps.
-- **Export:** CSV and TSV, custom tabular, HTML, templating, Excel, OpenDocument, SQL, and OpenRefine projects.
+| | |
+|---|---|
+| **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard or a web address. A preview wizard with OpenRefine's options. |
+| **Explore** | Text, numeric, timeline and custom facets, text filters, records mode, and a grid that stays fast at millions of rows. |
+| **Clean** | GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, and `cross()` between projects. |
+| **Cluster** | Key collision (fingerprint, n-gram, metaphone and the other phonetic keyers) and nearest-neighbour (Levenshtein) clustering, with filters on cluster size, row count and length. |
+| **Reconcile** | Match a column against any W3C Reconciliation service, such as Wikidata or your own: judge candidates cell by cell or in bulk, search the service, preview entities, and add columns from the matched items. |
+| **Keep track** | Full undo and redo, saved projects, recipes, and progress with cancel for long steps. |
+| **Export** | CSV and TSV, custom tabular, HTML, templating, Excel, OpenDocument, SQL, and OpenRefine projects. |
 
 ## OpenRefine compatibility
 
 Each area is checked against fixtures produced by running the same cases through OpenRefine 3.10.1. Every difference that remains is listed, with its reason, in a `known_failures.txt` next to the fixtures.
+
+<img src="docs/readme/compat.svg" width="100%" alt="2,116 of 2,132 checks match OpenRefine 3.10.1, 99.2%, across ten suites.">
+
+<details>
+<summary>What each suite covers</summary>
 
 | Area | Cases matching OpenRefine |
 |---|---|
@@ -106,6 +135,8 @@ Each area is checked against fixtures produced by running the same cases through
 | Clustering and GREL `phonetic()`: 6 keyers, Levenshtein kNN, 9 encoders × 127 values | 1,148 / 1,157 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back, metadata included | 137 / 137 |
+
+</details>
 
 **[Documentation](https://ilyaux.github.io/OxRefine/)**: install, [where everything is if you know OpenRefine](https://ilyaux.github.io/OxRefine/feature-map.html), [moving your projects and recipes](https://ilyaux.github.io/OxRefine/moving-over.html), and the [GREL reference](https://ilyaux.github.io/OxRefine/grel.html).
 
@@ -174,7 +205,7 @@ A test fails when a new difference appears, and also when a known one starts pas
 ```
 crates/ox-core   the engine: tables, import, facets, operations, GREL, clustering, reconciliation, export, history
 crates/ox-cli    `ox apply` (batch) and `ox serve` (the browser app and its JSON API, UI built in)
-ui/              React + shadcn/ui: virtualized grid, facets, history, and the transform, cluster and reconcile dialogs
+ui/              React + shadcn/ui in the "Instrument" design: virtualized grid, facets, and full-window views for transform, cluster, reconcile, import, export and history
 ui/src-tauri     the desktop shell: one command that forwards to the engine
 tests/           OpenRefine conformance suites and their fixtures
 benchmarks/      data generator, recipe, comparison against OpenRefine, regression check, report

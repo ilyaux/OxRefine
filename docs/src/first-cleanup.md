@@ -4,7 +4,7 @@ A ten-minute walk through the usual loop: import, look at the problems with face
 
 ## 1. Import
 
-On the home screen, choose **Import → File…** and pick a CSV, Excel, ODS, JSON or XML file. You can also paste data, give a web address, or pick a zip file or folder of files. A preview shows how the data will be read. Adjust the options if a column looks wrong (separator, header rows, encoding), then create the project.
+On the home screen, choose **From a file or folder** and pick a CSV, Excel, ODS, JSON or XML file. You can also paste data, give a web address, or pick a zip file or folder of files. A preview shows how the data will be read. Adjust the options if a column looks wrong (separator, header rows, encoding), then create the project.
 
 ## 2. Find the mess with facets
 
@@ -31,4 +31,4 @@ Every step is listed in the **History** tab. Click an earlier step to go back to
 ## 6. Export, or save the recipe
 
 - **Export** writes the cleaned rows as CSV, TSV, Excel, OpenDocument, HTML, SQL or your own template. Only the rows that pass your facets are exported.
-- **History → Extract…** saves the steps as a recipe. It is the same JSON as OpenRefine's *Extract*. Apply it to next month's file with **Apply recipe**, or from the command line with `ox apply`.
+- **Recipe** in the top bar shows every step beside its recipe; tick the steps and save the JSON. It is the same JSON as OpenRefine's *Extract*. Apply it to next month's file with **Recipe → Apply a recipe…**, or from the command line with `ox apply`.

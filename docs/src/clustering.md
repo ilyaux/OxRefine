@@ -1,6 +1,6 @@
 # Clustering
 
-**Edit cells → Cluster and edit…** finds groups of different values that probably mean the same thing, and merges each group into one value you choose.
+**Edit cells → Cluster and edit…** (or <kbd>C</kbd> on the column you last used) finds groups of different values that probably mean the same thing, and merges each group into one value you choose.
 
 ![Clustering the city column](images/cluster.png)
 
@@ -16,9 +16,9 @@
 
 ## Working through clusters
 
-- Each cluster lists its values with their row counts. The most common value is suggested as the new one.
-- Tick the clusters to merge and edit the new value if needed. *Merge and re-cluster* keeps the dialog open, *Merge and close* finishes.
-- Filters narrow the list by cluster size, rows in the cluster, value length and length variance.
+- Each cluster lists its values with their row counts and a bar for each one's share. The most common value is suggested as the new one; click any value to use it instead.
+- Tick the clusters to merge and edit the new value if needed. The strip at the top shows what that does: how many values become how many, and how many cells change. *Merge and re-cluster* keeps the view open; *Merge N clusters* (<kbd>Ctrl ↵</kbd>) merges and closes it.
+- *Show clusters where* narrows the list by values in the cluster, rows, average length and length variance, each typed as a from / to pair.
 - *Copy clusters as JSON* and *Export clusters* save the clusters for review elsewhere.
 
 Each merge is one mass-edit step in the history, the same operation OpenRefine records.

@@ -4,11 +4,11 @@ Each operation applies to the rows your facets select, appears in the **History*
 
 ## Cells
 
-- **Transform…** runs a GREL expression on every cell, with a preview of the first rows before and after; a cell whose expression fails keeps its value.
+- **Transform…** (<kbd>T</kbd> on the column you last used) runs a GREL expression on every cell. The transform view shows the first rows before and after (or only the ones that change), a reference of every GREL function, and OpenRefine's *On error* (keep the original, set to blank, or store the error) and *repeat until no change* options; <kbd>Ctrl ↵</kbd> applies it.
 - **Common transforms:** trim, collapse whitespace, titlecase, uppercase, lowercase, to number, to date, to text, to blank.
 - **Fill down / Blank down:** fill blank cells with the value above, or blank out repeats.
 - **Split multi-valued cells… / Join multi-valued cells…:** turn `a; b; c` into one row per value within a record, and back.
-- **Edit one cell:** hover the cell and click the pencil. The editor can also change every identical cell at once.
+- **Edit one cell:** click the cell and press <kbd>Enter</kbd>, double-click it, or hover it and click the pencil. The editor can also change every identical cell at once. The status bar shows the selected cell's value with its spaces made visible, and says when it has a leading or trailing space.
 
 ## Columns
 
@@ -25,7 +25,7 @@ Each operation applies to the rows your facets select, appears in the **History*
 
 ## Rows
 
-From the **Rows** menu in the toolbar: star, flag, keep only, or remove the rows that match your facets. From a column's menu: **Sort rows by this column…** (a permanent reorder, as in OpenRefine) and **Remove duplicate rows by this column**.
+From the **Rows** menu in the top bar: star, flag, keep only, or remove the rows that match your facets. From a column's menu: **Sort rows by this column…** (a permanent reorder, as in OpenRefine) and **Remove duplicate rows by this column**.
 
 ## GREL
 

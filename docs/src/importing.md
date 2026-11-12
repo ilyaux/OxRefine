@@ -4,13 +4,13 @@
 
 - **A file:** CSV and TSV (any separator), fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, or plain lines.
 - **A folder or an archive:** zip, tar, gzip and bzip2 archives (`.tar.gz`, `.tar.bz2`), or a folder of files. Choose which files to import. Optional columns record the file and archive each row came from.
-- **The clipboard:** **Import → Paste data…** takes rows copied from a spreadsheet, CSV text, or plain lines.
-- **A web address:** **Import → Web address…** downloads the file and opens the same preview.
+- **The clipboard:** **Paste from clipboard** on the home screen (or **Import → Paste data…** in a project) takes rows copied from a spreadsheet, CSV text, or plain lines.
+- **A web address:** **From a web address** (or **Import → Web address…**) downloads the file and opens the same preview.
 - **An OpenRefine project:** see [Moving projects and recipes](moving-over.md).
 
 ## The preview
 
-OxRefine detects the format and shows the first rows as they will be read. The options match OpenRefine's:
+OxRefine detects the format and opens the import view: what it detected and the project name at the top, the options on the left, and the first rows as they will be read on the right, with the time they took to parse. **Create project** (<kbd>Ctrl ↵</kbd>) imports the file; <kbd>Esc</kbd> cancels. The options match OpenRefine's:
 
 - **Delimited text:** separator, encoding, header lines, lines to skip, quote handling, blank rows and cells, trimming, guessing cell types.
 - **Fixed-width:** column widths.

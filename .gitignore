@@ -3,3 +3,4 @@ node_modules/
 dist/
 benchmarks/data/
 docs/book/
+design/

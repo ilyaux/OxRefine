@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-label="OxRefine runs the same 1,000,000-row workflow in 0.60 s; OpenRefine takes 16.8 s">
+<title>OxRefine runs the same 1,000,000-row workflow in 0.60 s; OpenRefine takes 16.8 s</title>
+<style>
+svg{--bg:#FFFFFF;--ink:#111113;--mute:#5F5F66;--rule:#E4E4E0;--ox:#1D4ED8;--ox2:#5B7FE6;--or:#9A9AA0;--or2:#C6C6CA;--warn:#B45309}
+@media (prefers-color-scheme:dark){svg{--bg:#0D1117;--ink:#E6EDF3;--mute:#9198A1;--rule:#30363D;--ox:#4C8DFF;--ox2:#2B5CB8;--or:#7D8590;--or2:#484F58;--warn:#E3A008}}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink)}
+.m{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace}
+.mute{fill:var(--mute)}.b{font-weight:600}.bg{fill:var(--bg)}
+.ox{fill:var(--ox)}.ox2{fill:var(--ox2)}.or{fill:var(--or)}.or2{fill:var(--or2)}.warn{fill:var(--warn)}
+.rule{stroke:var(--rule);fill:none}.ink{stroke:var(--ink)}
+</style>
+<rect class="bg" width="1200" height="400"/>
+<rect class="rule" x="0.5" y="0.5" width="1199" height="399"/>
+
+<text x="48" y="118" font-size="60" class="b" letter-spacing="-2">OxRefine</text>
+<text x="50" y="164" font-size="20" class="mute">OpenRefine’s way of cleaning messy data,</text>
+<text x="50" y="192" font-size="20" class="mute">rebuilt in Rust.</text>
+<line class="rule" x1="48" x2="600" y1="236" y2="236"/>
+<text x="48" y="290" font-size="38" class="m b" letter-spacing="-1">28×</text>
+<text x="50" y="316" font-size="13" class="mute">faster at 1M rows</text>
+<text x="176" y="290" font-size="38" class="m b" letter-spacing="-1">12×</text>
+<text x="178" y="316" font-size="13" class="mute">less memory</text>
+<text x="304" y="290" font-size="38" class="m b" letter-spacing="-1">2,116<tspan class="mute" font-size="22"> / 2,132</tspan></text>
+<text x="306" y="316" font-size="13" class="mute">checks match OpenRefine</text>
+<text x="50" y="364" font-size="13" class="mute">Facet · cluster · transform with GREL · reconcile · undo — free, MIT</text>
+
+<rect class="rule" x="640.5" y="40.5" width="511" height="319"/>
+<text x="664" y="74" font-size="14" class="b">Same workflow, 1,000,000 rows</text>
+<text x="664" y="94" font-size="12" class="mute">import → text facet → clustering → 5-step recipe → export</text>
+<defs><clipPath id="cox"><rect x="664" y="138" width="16.6" height="22"><animate attributeName="width" values="0;16.6;16.6" keyTimes="0;0.029;1" dur="7s" repeatCount="indefinite"/></rect></clipPath><clipPath id="cor"><rect x="664" y="206" width="464" height="22"><animate attributeName="width" values="0;464;464" keyTimes="0;0.800;1" dur="7s" repeatCount="indefinite"/></rect></clipPath></defs>
+<text x="664" y="130" font-size="13" class="b">OxRefine</text>
+<text x="1128" y="130" font-size="13" class="m b" text-anchor="end">0.60 s<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.029;0.039;1" dur="7s" repeatCount="indefinite"/></text>
+<rect class="rule" x="664" y="138" width="464" height="22"/>
+<g clip-path="url(#cox)"><rect class="ox" x="664" y="138" width="9.5" height="22"/><rect class="ox2" x="673.5" y="138" width="0.3" height="22"/><rect class="ox" x="673.8" y="138" width="0.5" height="22"/><rect class="ox2" x="674.3" y="138" width="0.8" height="22"/><rect class="ox" x="675.1" y="138" width="5.6" height="22"/></g>
+<text x="690.6" y="154" font-size="12" class="mute">done, while OpenRefine is still importing<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.029;0.039;1" dur="7s" repeatCount="indefinite"/></text>
+<text x="664" y="198" font-size="13" class="b">OpenRefine 3.10.1</text>
+<text x="1128" y="198" font-size="13" class="m b" text-anchor="end">16.8 s<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.800;0.810;1" dur="7s" repeatCount="indefinite"/></text>
+<rect class="rule" x="664" y="206" width="464" height="22"/>
+<g clip-path="url(#cor)"><rect class="or" x="664" y="206" width="49.6" height="22"/><rect class="or2" x="713.6" y="206" width="16.6" height="22"/><rect class="or" x="730.2" y="206" width="61.9" height="22"/><rect class="or2" x="792.1" y="206" width="292" height="22"/><rect class="or" x="1084" y="206" width="44" height="22"/></g>
+<text class="mute" x="688.8" y="270" font-size="11" text-anchor="middle">import</text><text class="mute" x="761.1" y="270" font-size="11" text-anchor="middle">cluster</text><text class="mute" x="938" y="270" font-size="11" text-anchor="middle">recipe</text><text class="mute" x="1106" y="270" font-size="11" text-anchor="middle">export</text>
+<line class="rule" x1="664" x2="1128" y1="284" y2="284"/>
+<line class="rule" x1="664" x2="664" y1="284" y2="290"/><text class="m mute" x="664" y="304" font-size="11" text-anchor="middle">0 s</text><line class="rule" x1="801.7" x2="801.7" y1="284" y2="290"/><text class="m mute" x="801.7" y="304" font-size="11" text-anchor="middle">5 s</text><line class="rule" x1="939.4" x2="939.4" y1="284" y2="290"/><text class="m mute" x="939.4" y="304" font-size="11" text-anchor="middle">10 s</text><line class="rule" x1="1077.1" x2="1077.1" y1="284" y2="290"/><text class="m mute" x="1077.1" y="304" font-size="11" text-anchor="middle">15 s</text>
+<text x="664" y="340" font-size="11" class="mute">identical output: 8,000,008 of 8,000,008 cells · OpenRefine heap 1,400 MB</text>
+
+</svg>
