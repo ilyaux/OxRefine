@@ -86,7 +86,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 |---|---|
 | Tab-separated / Comma-separated values | **TSV…** / **CSV…** |
 | HTML table / Excel (.xlsx) / ODF spreadsheet | **HTML table…** / **Excel (.xlsx)…** / **OpenDocument (.ods)…** |
-| Excel 97 (.xls) | Not yet |
+| Excel 97 (.xls) | **Export → Excel 97** |
 | Custom tabular / SQL / Templating | **Custom tabular…** / **SQL…** / **Templating…** |
 | Export project | **OpenRefine project…** |
 

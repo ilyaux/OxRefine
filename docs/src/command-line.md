@@ -11,7 +11,7 @@ ox apply recipe.json input.csv -o cleaned.csv
 This replays an OpenRefine or OxRefine recipe on a file without opening a window. Use it for the same cleanup on every month's export, or as a step in a data pipeline.
 
 - **The input** can be any format OxRefine imports. It is read with the import defaults, as OpenRefine's wizard reads it.
-- **The output format** follows the file extension: `.csv`, `.tsv`, `.html`, `.xlsx`, `.ods` or `.sql`.
+- **The output format** follows the file extension: `.csv`, `.tsv`, `.html`, `.xlsx`, `.xls`, `.ods` or `.sql`.
 - **Either side can be an OpenRefine project** (`.openrefine.tar.gz`). The output project then carries the recipe's steps as its history.
 - **Timings:** each step's time is printed to the console.
 

@@ -10,7 +10,7 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 | Import options | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
-| Exports | 14 / 15 |
+| Exports | 16 / 17 |
 | Clustering and GREL `phonetic()` | 1,148 / 1,157 |
 | Reconciliation | 49 / 49 |
 | OpenRefine project archives, read, replayed and written back, metadata included | 137 / 137 |

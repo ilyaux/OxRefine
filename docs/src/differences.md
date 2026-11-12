@@ -2,7 +2,7 @@
 
 ## Known differences
 
-OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,132 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,134 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
 
 | Area | What differs | Why |
 |---|---|---|
@@ -22,7 +22,7 @@ Everything else checked matches exactly. That covers GREL results and errors, op
 - **Facets:** the scatterplot facet
 - **Clustering:** the PPM distance; custom clustering functions
 - **Expressions:** Python (Jython) and Clojure; `detectLanguage()`; `wikibaseIssues()`
-- **Export:** Excel 97 (`.xls`), Google Sheets
+- **Export:** Google Sheets
 - **Extensions:** Wikibase schemas and uploads, Wikimedia Commons, OpenRefine's extension modules
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use

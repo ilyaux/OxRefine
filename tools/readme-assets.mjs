@@ -17,7 +17,7 @@ const COMPAT = [
   ["Import options", 43, 45],
   ["Clipboard and web import", 18, 18],
   ["Messy-data corpus", 26, 27],
-  ["Exports", 14, 15],
+  ["Exports", 16, 17],
   ["Clustering and phonetic()", 1148, 1157],
   ["Reconciliation", 49, 49],
   ["OpenRefine project archives", 137, 137],

@@ -1,13 +1,13 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 33 of 119 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 32 of 119 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
 | Milestone | Tasks | Done |
 |---|---|---|
 | v0.1 | 10 | 10 |
-| v0.2 | 46 | 21 |
+| v0.2 | 46 | 20 |
 | v0.5 | 43 | 2 |
 | v1.0 | 6 | 0 |
 | later | 14 | 0 |
@@ -72,7 +72,7 @@ Every exporter OpenRefine ships.
 - [~] **SQL exporter** · v0.5 · P2 · M. CREATE TABLE + INSERT statements with column types and options. _OpenRefine: sql_
 - [~] **Custom tabular exporter** · v0.5 · P1 · M. Choose and order columns, format dates and recon values, save as a reusable preset. _OpenRefine: custom-tabular-exporter_
 - [~] **Export project archive** · v0.5 · P2 · M. Write .openrefine.tar.gz that OpenRefine can open, so moving back is possible. _OpenRefine: export-project_
-- [ ] **Excel 97 (.xls) export** · v0.5 · P2 · M. OpenRefine exports both .xls (BIFF8) and .xlsx. Write .xls with typed cells, the sheet named after the project, OpenRefine's cell limits (32767 chars, 65536 rows). _OpenRefine: XlsExporter (xlsx=false)_
+- [~] **Excel 97 (.xls) export** · v0.5 · P2 · M. OpenRefine exports both .xls (BIFF8) and .xlsx. Write .xls with typed cells, the sheet named after the project, OpenRefine's cell limits (32767 chars, 65536 rows). _OpenRefine: XlsExporter (xlsx=false)_
 
 ## Operations
 
@@ -100,7 +100,7 @@ The full expression language: ~130 functions, controls, errors and coercion.
 - [x] **Math functions (38)** · v0.5 · P1 · M. round, floor, ceil, mod, pow, log, trig, combin, fact, gcd/lcm, sum, min/max, randomNumber. _OpenRefine: expr/functions/math_
 - [x] **Dates** · v0.2 · P0 · M. toDate with Java-style patterns, datePart, inc, diff, now, toString with formats; time zones. _OpenRefine: ToDate, DatePart, Inc, Now_
 - [x] **Controls (15)** · v0.2 · P0 · M. if, with, forEach, forEachIndex, forRange, forNonBlank, filter, isBlank, isNull, isNumeric, isError and friends. _OpenRefine: grel/controls_
-- [x] **Other functions (13) and booleans (4)** · v0.2 · P0 · S. coalesce, cross, facetCount, get, hasField, jsonize, length, slice, toNumber, toString, type; and, or, not, xor. _OpenRefine: expr/functions, booleans_
+- [~] **Other functions (13) and booleans (4)** · v0.2 · P0 · S. coalesce, cross, facetCount, get, hasField, jsonize, length, slice, toNumber, toString, type; and, or, not, xor. _OpenRefine: expr/functions, booleans_
 - [x] **HTML/XML functions (11)** · v0.5 · P1 · M. parseHtml, parseXml, select with CSS selectors, htmlText, ownText, xmlAttr and others (scraper / roxmltree). _OpenRefine: expr/functions/html, xml_
 - [x] **parseJson and JSON paths** · v0.2 · P1 · S. Field access on parsed JSON like OpenRefine. _OpenRefine: ParseJson_
 - [x] **Error and type-coercion semantics** · v0.2 · P0 · M. Match OpenRefine's EvalError propagation, null handling and number formatting to the character. _OpenRefine: EvalError_

@@ -8,6 +8,7 @@
 | **Custom tabular** | Your choice of columns, separator, line endings, quoting, headers and blank rows |
 | **HTML table** | A standalone HTML page with the table |
 | **Excel** (`.xlsx`) | A worksheet named after the project, with numbers, dates and booleans typed |
+| **Excel 97** (`.xls`) | The same in the older Excel format, for software that needs it: at most 65,536 rows and 256 columns, and text cut at 32,767 characters a cell, as OpenRefine does |
 | **OpenDocument** (`.ods`) | The same as an OpenDocument spreadsheet |
 | **Templating** | Any text format from a prefix, a row template, a separator and a suffix, for example JSON |
 | **SQL** | `CREATE TABLE` and `INSERT` statements |

@@ -11,12 +11,13 @@ export type ExportFormat = "*sv" | "template" | "sql"
 export const EXTENSION: Record<ExportFormat, string> = { "*sv": "csv", template: "txt", sql: "sql" }
 
 /** Everything the Export view offers: the engine's row formats, then the whole project and its recipe. */
-export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "ods" | "html" | "project" | "recipe"
+export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe"
 const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] = [
   { id: "csv", label: "CSV", ext: "csv", text: true },
   { id: "tsv", label: "TSV", ext: "tsv", text: true },
   { id: "*sv", label: "Custom tabular", ext: "csv", text: true },
   { id: "xlsx", label: "Excel", ext: "xlsx", text: false },
+  { id: "xls", label: "Excel 97", ext: "xls", text: false },
   { id: "ods", label: "OpenDocument", ext: "ods", text: false },
   { id: "html", label: "HTML table", ext: "html", text: true },
   { id: "template", label: "Templating", ext: "txt", text: true },
@@ -30,6 +31,7 @@ const HINTS: Partial<Record<ExportKind, string>> = {
   tsv: "Every column, tab-separated, with a header row.",
   "*sv": "Pick columns, separator and quoting.",
   xlsx: "An Excel workbook with one sheet. It's a binary file, so there is no text preview.",
+  xls: "An Excel 97 workbook (.xls) with one sheet, for older software: at most 65,536 rows and 256 columns, and 32,767 characters a cell. It's a binary file, so there is no text preview.",
   ods: "An OpenDocument spreadsheet with one sheet. It's a binary file, so there is no text preview.",
   html: "An HTML table.",
   template: "Each row renders the template; {{ … }} holds a GREL expression such as cells[\"name\"].value.",

@@ -34,6 +34,8 @@ export const CASES = [
   { name: "custom skip blank rows", ...sv({ separator: "|", lineSeparator: "\r\n", outputColumnHeaders: true, outputBlankRows: false, columns: [{ name: "name" }, { name: "note" }] }) },
   { name: "xlsx", format: "xlsx", binary: true },
   { name: "xlsx of facet rows", format: "xlsx", engine: york, binary: true },
+  { name: "xls", format: "xls", binary: true },
+  { name: "xls of facet rows", format: "xls", engine: york, binary: true },
   { name: "ods", format: "ods", binary: true },
   { name: "ods of facet rows", format: "ods", engine: york, binary: true },
   {

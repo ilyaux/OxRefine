@@ -12,11 +12,13 @@ use serde_json::Value as J;
 use std::collections::BTreeSet;
 use std::io::Cursor;
 
-/// Cells of the first sheet as text, so ours and OpenRefine's compare whatever number types each picked.
+/// The sheet names, then the cells of the first sheet as text, so ours and OpenRefine's compare whatever
+/// number types each picked.
 fn sheet(bytes: &[u8]) -> Vec<Vec<String>> {
     let mut wb = calamine::open_workbook_auto_from_rs(Cursor::new(bytes.to_vec())).unwrap();
+    let names = wb.sheet_names();
     let range = wb.worksheet_range_at(0).unwrap().unwrap();
-    range
+    std::iter::once(names).chain(range
         .rows()
         .map(|r| {
             r.iter()
@@ -26,7 +28,7 @@ fn sheet(bytes: &[u8]) -> Vec<Vec<String>> {
                     c => c.to_string(),
                 })
                 .collect()
-        })
+        }))
         .collect()
 }
 
@@ -81,4 +83,35 @@ fn exports_match_openrefine() {
     }
     println!("Export conformance: {}/{} cases match OpenRefine 3.10.1 ({} known failures)", cases.len() - failing.len(), cases.len(), failing.len());
     assert!(report.is_empty(), "\n{}\n", report.join("\n"));
+}
+
+/// Excel 97: thousands of distinct strings (the shared string table runs over many CONTINUE records),
+/// characters that need UTF-16, and a cell past Excel's 32,767 characters all read back.
+#[test]
+fn xls_strings_survive_continue_records() {
+    let dir = std::env::temp_dir().join(format!("oxrefine-xls-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut csv = String::from("id,text\n");
+    let text = |i: usize| match i {
+        7 => "x".repeat(40_000),
+        _ if i % 3 == 0 => format!("Москва {i}"),
+        _ if i % 3 == 1 => format!("東京 {i} — ü"),
+        _ => format!("plain {i}"),
+    };
+    for i in 0..5000 {
+        csv += &format!("{i},{}\n", text(i));
+    }
+    std::fs::write(dir.join("in.csv"), csv).unwrap();
+    let p = Project::open(&dir.join("in.csv")).unwrap();
+    let t = p.table();
+    let rows: Vec<u32> = (0..t.rows as u32).collect();
+    let got = sheet(&export(t, &rows, "xls", &J::Null, "strings").unwrap());
+    assert_eq!(got[0], vec!["strings"]);
+    assert_eq!(got.len(), 5002, "sheet names, header, 5000 rows");
+    for i in 0..5000 {
+        let want = text(i);
+        let want: String = if want.len() > 32_767 { want.chars().take(32_767).collect() } else { want };
+        assert_eq!(got[i + 2][1], want, "row {i}");
+    }
+    let _ = std::fs::remove_dir_all(dir);
 }

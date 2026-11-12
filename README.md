@@ -16,7 +16,7 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-111113">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-B7410E">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2116%20of%202132%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2118%20of%202134%20checks-brightgreen">
 </p>
 
 <p align="center">
@@ -41,7 +41,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 |  |  |
 |---|---|
 | **About 20× faster, 12–22× less memory** | A million-row workflow takes 0.6 s instead of 16.8 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 219 MB. |
-| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,116 of 2,132 checks match, and each known difference is written down with its reason. |
+| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,118 of 2,134 checks match, and each known difference is written down with its reason. |
 | **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
 | **Desktop, browser, server or command line** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, or headless with `ox apply`. |
 
@@ -118,7 +118,7 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so s
 
 Each area is checked against fixtures produced by running the same cases through OpenRefine 3.10.1. Every difference that remains is listed, with its reason, in a `known_failures.txt` next to the fixtures.
 
-<img src="docs/readme/compat.svg" width="100%" alt="2,116 of 2,132 checks match OpenRefine 3.10.1, 99.2%, across ten suites.">
+<img src="docs/readme/compat.svg" width="100%" alt="2,118 of 2,134 checks match OpenRefine 3.10.1, 99.2%, across ten suites.">
 
 <details>
 <summary>What each suite covers</summary>
@@ -131,7 +131,7 @@ Each area is checked against fixtures produced by running the same cases through
 | Import options: CSV/TSV, fixed-width, Excel, ODS, JSON, XML, and zip/tar/gzip/bzip2 archives | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
-| Exports: CSV/TSV, custom tabular, HTML, templating, Excel, ODS, SQL | 14 / 15 |
+| Exports: CSV/TSV, custom tabular, HTML, templating, Excel (.xlsx and .xls), ODS, SQL | 16 / 17 |
 | Clustering and GREL `phonetic()`: 6 keyers, Levenshtein kNN, 9 encoders × 127 values | 1,148 / 1,157 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back, metadata included | 137 / 137 |
