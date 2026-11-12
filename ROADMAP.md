@@ -175,7 +175,7 @@ Keep the 10x lead as features land; close the import gap.
 - [~] **History as diffs** · v0.5 · P1 · M. Store changed codes instead of full column snapshots so long histories on big files stay small. _OpenRefine: project.rs_
 - [ ] **Datasets larger than RAM** · later · P2 · L. Memory-mapped column files and spill-to-disk for 50M+ rows. _OpenRefine: new_
 - [~] **Benchmark tracking** · v0.5 · P1 · S. Run the comparison on every release and publish the chart, and catch regressions: on Nov 11 a hand check against the first prototype found the list facet 6x slower (per-row string keys), peak RAM up 70% from saving (a JSON tree of the whole table) and export (the whole CSV in memory). Keep a baseline results.json, an OxRefine-only fast mode for CI, and fail on per-step slowdowns and memory growth beyond noise. _OpenRefine: benchmarks/compare.mjs, benchmarks/report.mjs_
-- [ ] **Import memory** · v0.5 · P2 · S. After the Nov 11 fixes peak RAM at 1M rows is 141 MB against the prototype's 122; the remainder is probably the parallel import's batches and per-worker dictionaries. Measure per step, trim without losing the 4x import speed-up. _OpenRefine: benchmarks/compare.mjs_
+- [~] **Import memory** · v0.5 · P2 · S. After the Nov 11 fixes peak RAM at 1M rows is 141 MB against the prototype's 122; the remainder is probably the parallel import's batches and per-worker dictionaries. Measure per step, trim without losing the 4x import speed-up. _OpenRefine: benchmarks/compare.mjs_
 
 ## Release
 

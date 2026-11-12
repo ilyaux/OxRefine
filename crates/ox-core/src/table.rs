@@ -1,54 +1,55 @@
 use crate::{grel, grel::Value, Result};
-use rustc_hash::FxHashMap as HashMap;
 use std::{path::Path, sync::Arc};
 
 const NONE: u32 = u32::MAX;
 
-/// Assigns dictionary codes. Strings have their own map so CSV import can look up a `&str`
-/// without allocating; every other value type goes through the general map.
+/// Assigns dictionary codes. The values live once, in the dictionary itself; the table only holds
+/// their codes (4 bytes a slot), so a column of a million distinct values costs the values plus a few
+/// MB, also while the table grows. Strings can be looked up as `&str`, without allocating.
 #[derive(Default)]
 pub struct Interner {
-    strs: HashMap<Box<str>, u32>,
-    other: HashMap<Value, u32>,
+    dict: Vec<Value>,
+    index: hashbrown::HashTable<u32>,
+}
+
+/// A string hashes the same as a `&str` and as `Value::Str`, so CSV import can look it up borrowed.
+fn hash_str(s: &str) -> u64 {
+    std::hash::BuildHasher::hash_one(&rustc_hash::FxBuildHasher, s)
+}
+
+fn hash_value(v: &Value) -> u64 {
+    match v {
+        Value::Str(s) => hash_str(s),
+        v => std::hash::BuildHasher::hash_one(&rustc_hash::FxBuildHasher, v),
+    }
 }
 
 impl Interner {
-    fn next(&self) -> u32 {
-        (self.strs.len() + self.other.len()) as u32
+    fn insert(&mut self, hash: u64, v: Value) -> u32 {
+        let i = self.dict.len() as u32;
+        self.dict.push(v);
+        let dict = &self.dict;
+        self.index.insert_unique(hash, i, |&j| hash_value(&dict[j as usize]));
+        i
     }
     pub fn intern_str(&mut self, s: &str) -> u32 {
-        if let Some(&i) = self.strs.get(s) {
+        let h = hash_str(s);
+        let dict = &self.dict;
+        if let Some(&i) = self.index.find(h, |&j| matches!(&dict[j as usize], Value::Str(t) if t == s)) {
             return i;
         }
-        let i = self.next();
-        self.strs.insert(s.into(), i);
-        i
+        self.insert(h, Value::Str(s.into()))
     }
     pub fn intern(&mut self, v: Value) -> u32 {
-        if let Value::Str(s) = v {
-            if let Some(&i) = self.strs.get(s.as_str()) {
-                return i;
-            }
-            let i = self.next();
-            self.strs.insert(s.into_boxed_str(), i);
+        let h = hash_value(&v);
+        let dict = &self.dict;
+        if let Some(&i) = self.index.find(h, |&j| dict[j as usize] == v) {
             return i;
         }
-        if let Some(&i) = self.other.get(&v) {
-            return i;
-        }
-        let i = self.next();
-        self.other.insert(v, i);
-        i
+        self.insert(h, v)
     }
     pub fn finish(self) -> Vec<Value> {
-        let mut dict = vec![Value::Null; self.strs.len() + self.other.len()];
-        for (s, i) in self.strs {
-            dict[i as usize] = Value::Str(s.into());
-        }
-        for (v, i) in self.other {
-            dict[i as usize] = v;
-        }
-        dict
+        self.dict
     }
 }
 

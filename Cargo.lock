@@ -2615,6 +2615,7 @@ dependencies = [
  "csv",
  "encoding_rs",
  "flate2",
+ "hashbrown 0.17.1",
  "libm",
  "md-5",
  "quick-xml",
