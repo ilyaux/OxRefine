@@ -740,6 +740,8 @@ pub struct Archive {
     pub stopped: Option<String>,
     /// whether cells carried reconciliation data
     pub recon: bool,
+    /// tags, description and the rest of metadata.json
+    pub info: crate::store::Info,
     entries: Vec<Entry>,
     changes: Vec<Option<Change>>,
     states: Vec<State>,
@@ -878,6 +880,7 @@ pub fn read(path: &Path) -> Result<Archive> {
     }
     Ok(Archive {
         name: meta["name"].as_str().filter(|n| !n.is_empty()).map_or_else(|| file_stem(path), String::from),
+        info: serde_json::from_value(meta.clone()).unwrap_or_default(),
         history: entries.iter().map(|e| e.description.clone()).collect(),
         cursor: past,
         first,
@@ -997,6 +1000,7 @@ impl Archive {
         let cursor = self.cursor - report.merged;
         let n = tables.len();
         let mut p = Project::from_steps(self.name, tables, ops);
+        p.info = self.info;
         // the history ends early when a redo couldn't be read; the cursor stays inside it
         p.goto(cursor.min(n - 1)).expect("cursor within the steps");
         (p, report)
@@ -1256,10 +1260,12 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
         d.push('\n');
     }
     let created = stamp.clone();
+    let i = &p.info;
     let meta = json!({
         "created": created, "modified": stamp, "name": p.name, "password": "", "encoding": "UTF-8", "encodingConfidence": 0,
-        "tags": [], "creator": "", "contributors": "", "subject": "", "description": "", "rowCount": t.rows, "title": "",
-        "version": "", "license": "", "homepage": "", "image": "", "importOptionMetadata": [], "customMetadata": {},
+        "tags": i.tags, "creator": i.creator, "contributors": i.contributors, "subject": i.subject, "description": i.description,
+        "rowCount": t.rows, "title": i.title, "version": i.version, "license": i.license, "homepage": i.homepage, "image": i.image,
+        "importOptionMetadata": [], "customMetadata": i.custom,
     });
 
     let file = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;

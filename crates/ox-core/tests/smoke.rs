@@ -112,6 +112,16 @@ fn projects_are_saved_and_reopened() {
 
     call(&mut s, "rename_project", json!({ "id": id, "name": "Renamed" }));
     assert_eq!(call(&mut s, "projects", json!({}))[0]["name"], "Renamed");
+
+    // metadata: on the open project (kept by later steps), then on a closed one, from the list alone
+    call(&mut s, "set_project_info", json!({ "id": id, "info": { "tags": ["birds, 2024"], "description": "Counts" } }));
+    call(&mut s, "apply", json!({ "op": {"op": "core/column-rename", "oldColumnName": "n", "newColumnName": "count"} }));
+    let listed = &call(&mut s, "projects", json!({}))[0]["info"];
+    assert_eq!((&listed["tags"], &listed["description"]), (&json!(["birds", "2024"]), &json!("Counts")));
+    call(&mut s, "close", json!({}));
+    call(&mut s, "set_project_info", json!({ "id": id, "info": { "tags": ["done"] } }));
+    let mut s = Session::with_store(store.clone());
+    assert_eq!(call(&mut s, "open_project", json!({ "id": id }))["info"]["tags"], json!(["done"]), "kept on disk");
     assert!(dispatch(&mut s, "delete_project", json!({ "id": "../../etc" })).is_err(), "ids can't escape the store");
     call(&mut s, "delete_project", json!({ "id": id }));
     assert_eq!(call(&mut s, "projects", json!({})), json!([]));

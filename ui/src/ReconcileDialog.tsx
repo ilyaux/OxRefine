@@ -29,7 +29,7 @@ export function loadServices(): Service[] {
     return [WIKIDATA]
   }
 }
-function saveServices(list: Service[]) {
+export function saveServices(list: Service[]) {
   try {
     localStorage.setItem(KEY, JSON.stringify(list.filter((s) => s.url !== WIKIDATA.url)))
   } catch {

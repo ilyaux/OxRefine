@@ -1,0 +1,24 @@
+{
+ "openrefine": "3.10.1",
+ "tags": "birds, 2024 , Field Work, birds",
+ "metadata": {
+  "name": "Bird survey",
+  "tags": [
+   "birds",
+   "2024",
+   "Field",
+   "Work",
+   "birds"
+  ],
+  "creator": "Ada Lovelace",
+  "contributors": "Bob, Cy",
+  "subject": "Birds",
+  "description": "Bird counts, 2024\nsecond line",
+  "title": "Birds 2024",
+  "version": "1.2",
+  "license": "",
+  "homepage": "",
+  "image": "",
+  "customMetadata": {}
+ }
+}

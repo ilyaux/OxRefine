@@ -64,13 +64,19 @@ fn facets_match_openrefine() {
         if rows != want {
             why = Some(format!("matching rows: expected {want:?}, got {rows:?}"));
         }
-        let panels = facet_counts(t, &engine).unwrap();
+        let limit = case["prefs"]["ui.browsing.listFacet.limit"].as_u64().map_or(ox_core::engine::FACET_LIMIT, |n| n as usize);
+        let panels = facet_counts(t, &engine, limit).unwrap();
         for (i, (exp, got)) in case["facets"].as_array().unwrap().iter().zip(&panels).enumerate() {
             if why.is_some() {
                 break;
             }
             let kind = case["engine"]["facets"][i]["type"].as_str().unwrap();
-            if kind == "list" {
+            if kind == "list" && exp["error"] == "Too many choices" {
+                // past the choice limit OpenRefine lists none and says how many there were
+                if got["tooMany"] != true || got["distinct"] != exp["choiceCount"] {
+                    why = Some(format!("facet {i}: expected too many choices ({}), got {got}", exp["choiceCount"]));
+                }
+            } else if kind == "list" {
                 let (e, g) = (openrefine_list(exp), ours_list(got));
                 if e != g {
                     why = Some(format!("facet {i}: expected {e:?}, got {g:?}"));

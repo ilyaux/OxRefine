@@ -133,3 +133,25 @@ fn openrefine_project_archives() {
     eprintln!("orproject conformance: {}/{n} cases keep their whole history", n - failing.len());
     assert!(report.is_empty(), "\n{}\n", report.join("\n"));
 }
+
+/// OpenRefine's project metadata (tests/metadata/, made by its gen.mjs): read from OpenRefine's archive
+/// field for field, tags split as set-project-tags splits them, and written back into OxRefine's archive
+/// (target/metadata-export/, which tests/metadata/check.mjs opens in OpenRefine).
+#[test]
+fn openrefine_project_metadata() {
+    let dir = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/metadata"));
+    let fx: J = serde_json::from_str(&std::fs::read_to_string(dir.join("fixtures.json")).unwrap()).unwrap();
+    let want = &fx["metadata"];
+    let (p, _) = orproject::read(&dir.join("project.openrefine.tar.gz")).unwrap().into_project();
+    assert_eq!(p.name, want["name"].as_str().unwrap());
+    let mut got = serde_json::to_value(&p.info).unwrap();
+    got["name"] = J::from(p.name.clone());
+    assert_eq!(&got, want, "metadata read from OpenRefine's archive");
+    let typed = ox_core::store::Info { tags: vec![fx["tags"].as_str().unwrap().into()], ..Default::default() }.tidy();
+    assert_eq!(J::from(typed.tags), want["tags"], "tags split as OpenRefine splits them");
+    let out = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../target/metadata-export"));
+    std::fs::create_dir_all(out).unwrap();
+    orproject::write(&p, &out.join("project.openrefine.tar.gz")).unwrap();
+    let (back, _) = orproject::read(&out.join("project.openrefine.tar.gz")).unwrap().into_project();
+    assert_eq!(back.info, p.info, "metadata survives OxRefine's own archive");
+}

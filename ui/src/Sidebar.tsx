@@ -4,6 +4,7 @@ import type { Facet, FacetData, ListData, ListFacet, RangeData, RangeFacet, Summ
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
@@ -20,11 +21,14 @@ export function Facets({
   data,
   onChange,
   onEditChoice,
+  onLimit,
 }: {
   facets: Facet[]
   data: FacetData[]
   onChange: (f: Facet[]) => void
   onEditChoice: (facet: ListFacet, choice: string) => void
+  /** raise the facet choice limit (a preference) */
+  onLimit: (n: number) => void
 }) {
   if (!facets.length)
     return (
@@ -65,13 +69,32 @@ export function Facets({
               <XIcon />
             </Button>
           </div>
-          {f.type === "list" && <ListChoices facet={f} data={data[i] as ListData | null} onChange={(nf) => update(i, nf)} onEdit={(c) => onEditChoice(f, c)} />}
+          {f.type === "list" && (data[i] as ListData | null)?.tooMany ? (
+            <TooMany data={data[i] as ListData} onLimit={onLimit} />
+          ) : (
+            f.type === "list" && <ListChoices facet={f} data={data[i] as ListData | null} onChange={(nf) => update(i, nf)} onEdit={(c) => onEditChoice(f, c)} />
+          )}
           {f.type === "text" && <TextQuery facet={f} onChange={(nf) => update(i, nf)} />}
           {f.type === "range" && <RangePanel facet={f} data={data[i] as RangeData | null} onChange={(nf) => update(i, nf)} />}
           {f.type === "timerange" && <TimePanel facet={f} data={data[i] as TimeData | null} onChange={(nf) => update(i, nf)} />}
         </div>
       ))}
     </div>
+  )
+}
+
+/** OpenRefine's "Too many choices": past the facet choice limit nothing is listed. */
+function TooMany({ data, onLimit }: { data: ListData; onLimit: (n: number) => void }) {
+  return (
+    <Alert>
+      <AlertTitle>{data.distinct.toLocaleString()} choices</AlertTitle>
+      <AlertDescription>More than the limit of {data.limit?.toLocaleString()}, so they aren't listed. Showing many choices can be slow.</AlertDescription>
+      <AlertAction>
+        <Button variant="outline" size="sm" onClick={() => onLimit(data.distinct)}>
+          Show all
+        </Button>
+      </AlertAction>
+    </Alert>
   )
 }
 

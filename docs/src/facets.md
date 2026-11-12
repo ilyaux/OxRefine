@@ -4,7 +4,7 @@ Facets show what is in a column and narrow the grid to the rows you pick. Every 
 
 ## Kinds
 
-- **Text facet:** each distinct value with its row count, by count or by name. Click choices to include them, use *invert* to exclude them instead, and use the pencil to change a value in every row.
+- **Text facet:** each distinct value with its row count, by count or by name. Click choices to include them, use *invert* to exclude them instead, and use the pencil to change a value in every row. As in OpenRefine, a facet with more than 2,000 choices lists none; **Show all** raises the limit, which you can also set in Preferences.
 - **Numeric facet:** a histogram with a range to drag, plus switches for non-numeric, blank and error cells.
 - **Timeline facet:** the same for dates.
 - **Text filter:** keeps the rows whose cell contains the text you type.

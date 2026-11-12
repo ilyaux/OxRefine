@@ -45,6 +45,10 @@ export const CASES = [
   { name: "text facet regex case-sensitive", engine: rows(text("name", "^[A-Z]\\w+ [A-Z]", { mode: "regex", caseSensitive: true })) },
   { name: "records: list counts and filter", engine: records(list("tags", "value", ["blue"])) },
   { name: "records: two facets", engine: records(list("city", "value", ["Chicago"]), text("tags", "red")) },
+  // the facet choice limit, a preference: more choices than that and OpenRefine lists none
+  { name: "choice limit exceeded", prefs: { "ui.browsing.listFacet.limit": 3 }, engine: rows(list("city")) },
+  { name: "choice limit not reached", prefs: { "ui.browsing.listFacet.limit": 30 }, engine: rows(list("city")) },
+  { name: "choice limit with a selection", prefs: { "ui.browsing.listFacet.limit": 2 }, engine: rows(list("city", "value", ["Boston"])) },
   { name: "row.record facet", engine: rows(list("id", "row.record.rowCount", [2])) },
   { name: "records: row.record facet", engine: records(list("name", "row.record.cells['tags'].value.length()", [3])) },
 

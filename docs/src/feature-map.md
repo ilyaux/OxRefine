@@ -14,7 +14,8 @@ OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows,
 | Import project (`.openrefine.tar.gz`) | **Import → OpenRefine project…**; it opens with its undo history |
 | Export → OpenRefine project archive | **Export → OpenRefine project…**; OpenRefine opens it with OxRefine's history |
 | Rename and delete projects | Home screen, the project's buttons |
-| Project tags and metadata | Not yet |
+| Project tags and metadata | **About** next to the project in the list: tags, description, creator and the rest; click a tag at the top to show only its projects. OpenRefine project archives carry them both ways |
+| Preferences | The gear at the top right: theme, the facet choice limit, reconciliation services, recent expressions, and every preference by name and value |
 
 ## Rows and records
 

@@ -4,7 +4,7 @@ use crate::{
     err, grel,
     import::{self, ImportOptions},
     ops::Op,
-    store::{History, Meta, Source, Store},
+    store::{History, Info, Meta, Source, Store},
     table::Table,
     Result,
 };
@@ -24,11 +24,13 @@ pub struct Project {
     cache: Option<(u64, String, Arc<Vec<u32>>)>,
     /// Set when the project lives in a store; every step is saved.
     pub meta: Option<Meta>,
+    /// OpenRefine's metadata: tags, description... (also in `meta` for the project list)
+    pub info: Info,
 }
 
 impl Project {
     pub fn new(name: impl Into<String>, table: Table) -> Project {
-        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None }
+        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None, info: Info::default() }
     }
 
     /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension),
@@ -47,6 +49,7 @@ impl Project {
             p.apply(op).map_err(|e| format!("replaying step {}: {e}", i + 1))?;
         }
         p.goto(history.cursor.min(p.ops.len()))?;
+        p.info = meta.info.clone();
         p.meta = Some(meta);
         Ok(p)
     }
@@ -54,7 +57,7 @@ impl Project {
     /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
     pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>) -> Project {
         let cursor = ops.len();
-        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None }
+        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None, info: Info::default() }
     }
 
     /// Every table, every step and the cursor (for writing the whole history out).
@@ -114,6 +117,7 @@ impl Project {
         json!({
             "id": self.meta.as_ref().map(|m| m.id.clone()),
             "name": self.name,
+            "info": self.info,
             "columns": t.names,
             "rows": t.rows,
             "history": self.ops.iter().map(Op::description).collect::<Vec<_>>(),
@@ -133,6 +137,7 @@ impl Project {
     /// Persist history after a change (no-op for unsaved projects).
     fn save(&mut self, store: Option<&Store>) -> Result<()> {
         let (Some(store), Some(meta)) = (store, self.meta.as_mut()) else { return Ok(()) };
+        meta.info = self.info.clone();
         let history = History { ops: self.ops.clone(), cursor: self.cursor };
         let t = &self.states[self.cursor];
         store.touch(meta, t, &history)
@@ -270,6 +275,9 @@ struct Args {
     text: String,
     url: String,
     origin: String,
+    info: Info,
+    /// a preference's value (`set_preference`)
+    value: Value,
 }
 
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
@@ -394,6 +402,22 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             }
             return Ok(json!(meta));
         }
+        // OpenRefine's metadata of a saved project (the open one or any other); tags are tidied as OpenRefine does
+        "set_project_info" => {
+            let st = store.ok_or("projects are not saved in this session")?;
+            let info = a.info.tidy();
+            if let Some(p) = s.project.as_mut().filter(|p| p.meta.as_ref().is_some_and(|m| m.id == a.id)) {
+                p.info = info;
+                p.save(Some(st))?;
+                return Ok(json!(p.meta));
+            }
+            return Ok(json!(st.set_info(&a.id, info)?));
+        }
+        "preferences" => return Ok(json!(store.map(Store::preferences).unwrap_or_default())),
+        "set_preference" => {
+            let st = store.ok_or("preferences are not saved in this session")?;
+            return Ok(json!(st.set_preference(&a.name, a.value)?));
+        }
         "delete_project" => {
             store.ok_or("projects are not saved in this session")?.delete(&a.id)?;
             if s.project.as_ref().is_some_and(|p| p.meta.as_ref().is_some_and(|m| m.id == a.id)) {
@@ -423,7 +447,11 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
             json!({ "total": rows.len(), "rows": page })
         }
-        "facets" => json!(engine::facet_counts(p.table(), &a.engine)?),
+        "facets" => {
+            let prefs = store.map(Store::preferences).unwrap_or_default();
+            let limit = prefs.get("ui.browsing.listFacet.limit").and_then(Value::as_u64).map_or(engine::FACET_LIMIT, |n| n as usize);
+            json!(engine::facet_counts(p.table(), &a.engine, limit)?)
+        }
         "recon_guess_types" => crate::recon::guess_types(p.table(), &a.column, &a.url)?,
         // what the column's service can add: its proposed properties for the column's type
         "recon_propose" => {

@@ -39,7 +39,7 @@ OpenRefine's data model: typed cells, records, persistent projects.
 - [~] **Project library** · v0.2 · P1 · M. Open/rename/delete/tag projects, recent list, metadata like OpenRefine's project index. _OpenRefine: get-all-project-metadata_
 - [~] **Open OpenRefine project archives** · v0.5 · P1 · L. Read .openrefine.tar.gz including history, so users can migrate existing projects in one step. _OpenRefine: import-project_
 - [~] **Reconciliation data in the cell model** · v0.5 · P1 · M. Every cell can carry a Recon: id, service, identifierSpace, schemaSpace, judgment (none / matched / new), judgmentAction, judgmentHistoryEntry, match (id, name, types, score), candidates (ranked), features (typeMatch, nameMatch, nameLevenshtein, nameWordDistance), matchRank. Stored beside the dictionary codes, not in them. GREL sees cell.recon.* (judgment, match, best, candidates, features, service…). Recon data reads from and writes to OpenRefine project archives (the recon pool in data.txt and change files) instead of being dropped, and survives operations that move cells (column copy, move, reorder, rows remove/reorder, fill down/blank down, records). _OpenRefine: Recon, ReconCandidate, ReconStats, Pool_
-- [ ] **Project metadata and tags** · v0.5 · P2 · M. OpenRefine's project metadata: tags, description, creator, contributors, subject, license, homepage, image, title, version, custom metadata fields; editable from the home page, projects filtered by tag, read from and written to archive metadata.json (tags and fields are read today but not shown). _OpenRefine: ProjectMetadata, SetProjectMetadataCommand, SetProjectTagsCommand_
+- [~] **Project metadata and tags** · v0.5 · P2 · M. OpenRefine's project metadata: tags, description, creator, contributors, subject, license, homepage, image, title, version, custom metadata fields; editable from the home page, projects filtered by tag, read from and written to archive metadata.json (tags and fields are read today but not shown). _OpenRefine: ProjectMetadata, SetProjectMetadataCommand, SetProjectTagsCommand_
 
 ## Import
 
@@ -154,7 +154,7 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [~] **Long-running jobs** · v0.2 · P0 · M. Background processes with progress and cancel (imports, URL fetching, reconciliation). _OpenRefine: get-processes, cancel-processes_
 - [~] **Themed scrollbars** · v0.2 · P1 · S. The grid scrollbars are the browser default light ones; style them with theme tokens in light and dark, wherever native scrolling is used. _OpenRefine: new_
 - [ ] **Translations** · v0.5 · P2 · M. UI strings in message files, language picker, OpenRefine's translations (40+ languages from its Weblate project) mapped onto ours where the meaning matches, Russian checked by hand. _OpenRefine: main/webapp/modules/core/langs_
-- [ ] **Preferences** · v0.5 · P2 · M. A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest. _OpenRefine: PreferenceStore, preferences.vt_
+- [~] **Preferences** · v0.5 · P2 · M. A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest. _OpenRefine: PreferenceStore, preferences.vt_
 
 ## Compatibility & QA
 

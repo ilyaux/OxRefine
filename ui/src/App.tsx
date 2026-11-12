@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, TableIcon, Undo2Icon } from "lucide-react"
+import { DownloadIcon, FileUpIcon, FolderOpenIcon, HouseIcon, Redo2Icon, SettingsIcon, TableIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
+import { Preferences } from "@/Preferences"
 import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
@@ -72,9 +73,13 @@ export function App() {
     checkForUpdates()
   }, [])
 
+  const [prefsChanged, setPrefsChanged] = useState(0)
+  const [prefsOpen, setPrefsOpen] = useState(false)
   useEffect(() => {
     if (summary) call<FacetData[]>("facets", { engine }).then(({ data }) => setFacetData(data), fail)
-  }, [summary, engine])
+  }, [summary, engine, prefsChanged])
+  const setFacetLimit = (n: number) =>
+    call("set_preference", { name: "ui.browsing.listFacet.limit", value: n }).then(() => setPrefsChanged((k) => k + 1), fail)
 
   const apply = (op: Op) => run(String(op.op).replace("core/", ""), "apply", { op }).catch((e) => (fail(e), Promise.reject(e)))
   const goto = (index: number) => run("history", "goto", { index }).catch(fail)
@@ -353,6 +358,9 @@ export function App() {
             </>
           )}
           <div className="ml-auto flex items-center gap-1">
+            <Button variant="ghost" size="icon" aria-label="Preferences" onClick={() => setPrefsOpen(true)}>
+              <SettingsIcon />
+            </Button>
             <Button variant="ghost" size="icon" aria-label="Undo" disabled={!summary?.cursor} onClick={() => goto(summary!.cursor - 1)}>
               <Undo2Icon />
             </Button>
@@ -448,7 +456,7 @@ export function App() {
                 </TabsList>
                 <ScrollArea className="min-h-0 flex-1">
                   <TabsContent value="facets">
-                    <Facets facets={facets} data={facetData} onChange={setFacets} onEditChoice={editChoice} />
+                    <Facets facets={facets} data={facetData} onChange={setFacets} onEditChoice={editChoice} onLimit={setFacetLimit} />
                   </TabsContent>
                   <TabsContent value="history">
                     <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
@@ -510,6 +518,7 @@ export function App() {
                 { label: "Back to projects", run: goHome },
               ]
             : []),
+          { label: "Preferences…", run: () => setPrefsOpen(true) },
           { label: "Import a file or folder…", run: openFile },
           { label: "Import pasted data…", run: pasteData },
           { label: "Import from a web address…", run: fromUrl },
@@ -517,6 +526,7 @@ export function App() {
         ]}
       />
       {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+      {prefsOpen && <Preferences onClose={() => setPrefsOpen(false)} onError={fail} onChanged={() => setPrefsChanged((k) => k + 1)} />}
       {staged && (
         <ImportDialog
           {...staged}

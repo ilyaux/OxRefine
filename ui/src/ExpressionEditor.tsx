@@ -199,6 +199,13 @@ export function recentExpressions(): string[] {
     return []
   }
 }
+export function forgetExpressions() {
+  try {
+    localStorage.removeItem(RECENT_KEY)
+  } catch {
+    /* storage unavailable: nothing to forget */
+  }
+}
 export function rememberExpression(e: string) {
   try {
     const list = [e, ...recentExpressions().filter((x) => x !== e)].slice(0, 20)

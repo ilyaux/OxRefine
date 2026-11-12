@@ -65,7 +65,8 @@ export type TextFacet = {
 export type Facet = ListFacet | TextFacet | RangeFacet | TimeFacet
 export type Engine = { facets: Facet[]; mode: "row-based" | "record-based" }
 /** Choices as [text, count, typed value], plus blank and error counts. */
-export type ListData = { distinct: number; choices: [string, number, unknown][]; blank: number; error: number }
+/** `tooMany`: more choices than the facet choice limit (`limit`), so none are listed, as in OpenRefine. */
+export type ListData = { distinct: number; choices: [string, number, unknown][]; blank: number; error: number; tooMany?: boolean; limit?: number }
 export type RangeData = {
   min?: number
   max?: number

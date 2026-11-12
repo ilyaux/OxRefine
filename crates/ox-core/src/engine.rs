@@ -594,7 +594,10 @@ impl<'a> Tally<'a> {
     }
 }
 
-fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice]) -> J {
+/// OpenRefine's default for the `ui.browsing.listFacet.limit` preference.
+pub const FACET_LIMIT: usize = 2000;
+
+fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], limit: usize) -> J {
     // counts per choice over the rows that pass the other facets; in records mode that is every row of
     // the passing records, and each row still counts once, as in OpenRefine
     let mut tally = Tally::default();
@@ -614,6 +617,10 @@ fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice]) -
         }
     }
     let (blank, error) = (tally.blank, tally.error);
+    // more choices than the limit and OpenRefine lists none ("Too many choices"); the selection still filters
+    if tally.counts.len() > limit {
+        return json!({ "distinct": tally.counts.len(), "tooMany": true, "limit": limit, "choices": [], "blank": blank, "error": error });
+    }
     let mut counts: HashMap<String, (usize, J)> = tally.counts.into_iter().map(|(k, (c, j))| (k.to_string(), (c, j.clone()))).collect();
     // selected choices stay listed even when nothing matches them now
     for c in selection {
@@ -623,15 +630,16 @@ fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice]) -
     choices.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
     json!({
         "distinct": choices.len(),
-        "choices": choices.iter().take(2000).map(|(k, c, j)| json!([k, c, j])).collect::<Vec<_>>(),
+        "choices": choices.iter().map(|(k, c, j)| json!([k, c, j])).collect::<Vec<_>>(),
         "blank": blank,
         "error": error,
     })
 }
 
 /// The panel data for each facet: choices and counts for list facets, histogram for range facets,
-/// null for text facets. Each facet is counted over the rows the other facets let through.
-pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<J>> {
+/// null for text facets. Each facet is counted over the rows the other facets let through. A list facet
+/// with more than `limit` choices lists none (OpenRefine's facet choice limit, normally [`FACET_LIMIT`]).
+pub fn facet_counts(t: &Table, cfg: &EngineConfig, limit: usize) -> Result<Vec<J>> {
     let ctx = Ctx::default();
     cfg.facets
         .iter()
@@ -640,7 +648,7 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<J>> {
             Facet::List { column_name, expression, selection, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
                 let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
-                Ok(list_panel(t, &ev, &others, selection))
+                Ok(list_panel(t, &ev, &others, selection, limit))
             }
             Facet::Range { column_name, expression, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;

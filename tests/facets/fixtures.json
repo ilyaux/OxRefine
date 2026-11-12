@@ -25,6 +25,11 @@
      "name": "city",
      "columnName": "city",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
      "choices": [
       {
        "v": {
@@ -82,12 +87,7 @@
        "c": 1,
        "s": false
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     }
+     ]
     }
    ],
    "matching": [
@@ -149,6 +149,7 @@
      "name": "city",
      "columnName": "city",
      "expression": "value",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -190,8 +191,7 @@
        "c": 0,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     },
     {
      "name": "name",
@@ -239,6 +239,7 @@
      "name": "city",
      "columnName": "city",
      "expression": "value.toLowercase().trim()",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -276,8 +277,7 @@
      "errorChoice": {
       "s": false,
       "c": 1
-     },
-     "invert": false
+     }
     }
    ],
    "matching": [
@@ -317,6 +317,11 @@
      "name": "city",
      "columnName": "city",
      "expression": "value",
+     "invert": true,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
      "choices": [
       {
        "v": {
@@ -374,12 +379,7 @@
        "c": 1,
        "s": false
       }
-     ],
-     "invert": true,
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     }
+     ]
     }
    ],
    "matching": [
@@ -418,6 +418,11 @@
      "name": "note",
      "columnName": "note",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": true,
+      "c": 4
+     },
      "choices": [
       {
        "v": {
@@ -451,12 +456,7 @@
        "c": 2,
        "s": false
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": true,
-      "c": 4
-     }
+     ]
     }
    ],
    "matching": [
@@ -498,6 +498,7 @@
      "name": "tags",
      "columnName": "tags",
      "expression": "value.split('|')",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -527,8 +528,7 @@
      "errorChoice": {
       "s": false,
       "c": 2
-     },
-     "invert": false
+     }
     }
    ],
    "matching": [
@@ -570,11 +570,11 @@
      "errorCount": 3,
      "name": "name",
      "columnName": "name",
-     "from": 9,
      "max": 11.02,
+     "from": 9,
      "min": 9,
      "expression": "value.length()",
-     "bins": [
+     "baseBins": [
       2,
       0,
       0,
@@ -678,9 +678,9 @@
       1,
       0
      ],
-     "step": 0.02,
      "to": 11.02,
-     "baseBins": [
+     "step": 0.02,
+     "bins": [
       2,
       0,
       0,
@@ -830,11 +830,11 @@
      "errorCount": 2,
      "name": "score",
      "columnName": "score",
-     "from": 0,
      "max": 13,
+     "from": 0,
      "min": -2,
      "expression": "value.toNumber()",
-     "bins": [
+     "baseBins": [
       1,
       0,
       1,
@@ -851,9 +851,9 @@
       0,
       2
      ],
-     "step": 1,
      "to": 10,
-     "baseBins": [
+     "step": 1,
+     "bins": [
       1,
       0,
       1,
@@ -912,11 +912,11 @@
      "errorCount": 2,
      "name": "score",
      "columnName": "score",
-     "from": 0,
      "max": 13,
+     "from": 0,
      "min": -2,
      "expression": "value.toNumber()",
-     "bins": [
+     "baseBins": [
       1,
       0,
       1,
@@ -933,9 +933,9 @@
       0,
       2
      ],
-     "step": 1,
      "to": 10,
-     "baseBins": [
+     "step": 1,
+     "bins": [
       1,
       0,
       1,
@@ -1054,11 +1054,11 @@
      "errorCount": 0,
      "name": "score",
      "columnName": "score",
-     "from": 3,
      "max": 13,
+     "from": 3,
      "min": -2,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       1,
@@ -1075,9 +1075,9 @@
       0,
       2
      ],
-     "step": 1,
      "to": 12,
-     "baseBins": [
+     "step": 1,
+     "bins": [
       1,
       0,
       1,
@@ -1150,11 +1150,11 @@
      "errorCount": 0,
      "name": "score",
      "columnName": "score",
-     "from": -2,
      "max": 13,
+     "from": -2,
      "min": -2,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       1,
@@ -1171,9 +1171,9 @@
       0,
       2
      ],
-     "step": 1,
      "to": 13,
-     "baseBins": [
+     "step": 1,
+     "bins": [
       1,
       0,
       1,
@@ -1243,6 +1243,11 @@
      "name": "score",
      "columnName": "score",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
      "choices": [
       {
        "v": {
@@ -1300,12 +1305,7 @@
        "c": 1,
        "s": false
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     }
+     ]
     }
    ],
    "matching": [
@@ -1352,6 +1352,7 @@
      "name": "name",
      "columnName": "name",
      "expression": "facetCount(value, 'value', 'name') > 1",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1369,8 +1370,7 @@
        "c": 5,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -1413,6 +1413,7 @@
      "name": "note",
      "columnName": "note",
      "expression": "isBlank(value)",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1430,8 +1431,7 @@
        "c": 4,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -1487,6 +1487,7 @@
      "name": "joined",
      "columnName": "joined",
      "expression": "isError(value)",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1504,8 +1505,7 @@
        "c": 3,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -1553,6 +1553,7 @@
      "name": "joined",
      "columnName": "joined",
      "expression": "value",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1598,8 +1599,7 @@
      "errorChoice": {
       "s": false,
       "c": 3
-     },
-     "invert": false
+     }
     }
    ],
    "matching": [
@@ -1666,6 +1666,7 @@
      "name": "id",
      "columnName": "id",
      "expression": "row.starred",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1683,8 +1684,7 @@
        "c": 6,
        "s": false
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -1748,6 +1748,7 @@
      "name": "id",
      "columnName": "id",
      "expression": "row.flagged",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -1765,8 +1766,7 @@
        "c": 2,
        "s": false
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -1847,6 +1847,11 @@
      "name": "tags",
      "columnName": "tags",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 2
+     },
      "choices": [
       {
        "v": {
@@ -1896,12 +1901,7 @@
        "c": 1,
        "s": false
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": false,
-      "c": 2
-     }
+     ]
     }
    ],
    "matching": [
@@ -1951,6 +1951,11 @@
      "name": "city",
      "columnName": "city",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
      "choices": [
       {
        "v": {
@@ -1992,12 +1997,7 @@
        "c": 1,
        "s": false
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     }
+     ]
     },
     {
      "name": "tags",
@@ -2011,6 +2011,200 @@
    "matching": [
     4,
     5
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "choice limit exceeded",
+   "prefs": {
+    "ui.browsing.listFacet.limit": 3
+   },
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "error": "Too many choices",
+     "expression": "value",
+     "invert": false,
+     "choiceCount": 7
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "choice limit not reached",
+   "prefs": {
+    "ui.browsing.listFacet.limit": 30
+   },
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
+     "choices": [
+      {
+       "v": {
+        "v": "New York",
+        "l": "New York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "boston ",
+        "l": "boston "
+       },
+       "c": 2,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Chicago",
+        "l": "Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "  Chicago",
+        "l": "  Chicago"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "New-York",
+        "l": "New-York"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "new york",
+        "l": "new york"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "Boston",
+        "l": "Boston"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "choice limit with a selection",
+   "prefs": {
+    "ui.browsing.listFacet.limit": 2
+   },
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "city",
+      "columnName": "city",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "Boston",
+         "l": "Boston"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "city",
+     "columnName": "city",
+     "error": "Too many choices",
+     "expression": "value",
+     "invert": false,
+     "choiceCount": 7
+    }
+   ],
+   "matching": [
+    2
    ],
    "filtered": 1
   },
@@ -2045,6 +2239,7 @@
      "name": "id",
      "columnName": "id",
      "expression": "row.record.rowCount",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -2062,8 +2257,7 @@
        "c": 4,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [
@@ -2105,6 +2299,7 @@
      "name": "name",
      "columnName": "name",
      "expression": "row.record.cells['tags'].value.length()",
+     "invert": false,
      "choices": [
       {
        "v": {
@@ -2138,8 +2333,7 @@
        "c": 0,
        "s": true
       }
-     ],
-     "invert": false
+     ]
     }
    ],
    "matching": [],
@@ -2190,11 +2384,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1656547200000,
      "max": 1710028800000,
+     "from": 1656547200000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -2285,9 +2479,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1710028800000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -2438,11 +2632,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1703980800000,
      "max": 1710028800000,
+     "from": 1703980800000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -2533,9 +2727,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1706745600000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -2684,11 +2878,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1656547200000,
      "max": 1710028800000,
+     "from": 1656547200000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -2779,9 +2973,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1710028800000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -2929,11 +3123,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1656547200000,
      "max": 1710028800000,
+     "from": 1656547200000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -3024,9 +3218,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1710028800000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -3153,16 +3347,16 @@
      "errorCount": 0,
      "name": "joined",
      "columnName": "joined",
-     "from": 1640995200000,
      "max": 1,
+     "from": 1640995200000,
      "min": -9223372036854776000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       0
      ],
-     "step": 1,
      "to": 1,
-     "baseBins": [
+     "step": 1,
+     "bins": [
       0
      ]
     }
@@ -3211,11 +3405,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1704067200000,
      "max": 1710028800000,
+     "from": 1704067200000,
      "min": 1656547200000,
      "expression": "value.toDate()",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -3306,9 +3500,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1709251200000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -3442,11 +3636,11 @@
      "errorCount": 0,
      "name": "id",
      "columnName": "id",
-     "from": 1704067800000,
      "max": 1704070560000,
+     "from": 1704067800000,
      "min": 1704067200000,
      "expression": "'2024-01-01'.toDate().inc(rowIndex * 7, 'minutes')",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -3505,9 +3699,9 @@
       0,
       1
      ],
-     "step": 60000,
      "to": 1704069600000,
-     "baseBins": [
+     "step": 60000,
+     "bins": [
       1,
       0,
       0,
@@ -3607,20 +3801,20 @@
      "errorCount": 0,
      "name": "id",
      "columnName": "id",
-     "from": 1704067200000,
      "max": 1704441600000,
+     "from": 1704067200000,
      "min": 1704067200000,
      "expression": "'2024-01-01'.toDate().inc(rowIndex * 13, 'hours')",
-     "bins": [
+     "baseBins": [
       2,
       2,
       2,
       2,
       1
      ],
-     "step": 86400000,
      "to": 1704240000000,
-     "baseBins": [
+     "step": 86400000,
+     "bins": [
       2,
       2,
       2,
@@ -3668,11 +3862,11 @@
      "errorCount": 0,
      "name": "id",
      "columnName": "id",
-     "from": -2208988800000,
      "max": 1577836800000,
+     "from": -2208988800000,
      "min": -2208988800000,
      "expression": "'1900-01-01'.toDate().inc(rowIndex * 15, 'years')",
-     "bins": [
+     "baseBins": [
       1,
       1,
       1,
@@ -3686,9 +3880,9 @@
       1,
       1
      ],
-     "step": 315569520000,
      "to": 1577836800000,
-     "baseBins": [
+     "step": 315569520000,
+     "bins": [
       1,
       1,
       1,
@@ -3748,17 +3942,17 @@
      "errorCount": 0,
      "name": "id",
      "columnName": "id",
-     "from": 1714867200000,
      "max": 1,
+     "from": 1714867200000,
      "min": 1714867200000,
      "expression": "'2024-05-05'.toDate()",
-     "bins": [
-      9
-     ],
-     "step": 1,
-     "to": 1,
      "baseBins": [
       0
+     ],
+     "to": 1,
+     "step": 1,
+     "bins": [
+      9
      ]
     }
    ],
@@ -3820,11 +4014,11 @@
      "errorCount": 3,
      "name": "joined",
      "columnName": "joined",
-     "from": 1705276800000,
      "max": 1710028800000,
+     "from": 1705276800000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
+     "baseBins": [
       1,
       0,
       0,
@@ -3915,9 +4109,9 @@
       0,
       1
      ],
-     "step": 604800000,
      "to": 1710028800000,
-     "baseBins": [
+     "step": 604800000,
+     "bins": [
       1,
       0,
       0,
@@ -4085,103 +4279,10 @@
      "errorCount": 0,
      "name": "joined",
      "columnName": "joined",
-     "from": 1656547200000,
      "max": 1710028800000,
+     "from": 1656547200000,
      "min": 1656547200000,
      "expression": "value",
-     "bins": [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-     ],
-     "step": 604800000,
-     "to": 1710028800000,
      "baseBins": [
       1,
       0,
@@ -4272,12 +4373,110 @@
       0,
       0,
       1
+     ],
+     "to": 1710028800000,
+     "step": 604800000,
+     "bins": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
      ]
     },
     {
      "name": "city",
      "columnName": "city",
      "expression": "value",
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     },
      "choices": [
       {
        "v": {
@@ -4335,12 +4534,7 @@
        "c": 1,
        "s": true
       }
-     ],
-     "invert": false,
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     }
+     ]
     }
    ],
    "matching": [

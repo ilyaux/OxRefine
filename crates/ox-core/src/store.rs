@@ -1,7 +1,7 @@
 //! Saved projects: one folder per project in the data directory.
 //!   data.oxt     original table, written once at import (binary: JSON header + u32 codes)
 //!   history.json operations and cursor, rewritten after every step (small and fast)
-//!   meta.json    name, dates, size and where the data came from
+//!   meta.json    name, dates, size, where the data came from, and OpenRefine's metadata (tags...)
 //! Reopening loads the original and replays the history, so undo/redo survives restarts.
 use crate::{
     err,
@@ -30,6 +30,36 @@ pub struct Meta {
     pub columns: usize,
     #[serde(default)]
     pub source: Option<Source>,
+    #[serde(default)]
+    pub info: Info,
+}
+
+/// OpenRefine's project metadata, with its field names: tags, a description and the rest of what
+/// its "About" dialog shows, and `customMetadata` from archives. Kept as typed, unchanged.
+#[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Info {
+    pub tags: Vec<String>,
+    pub title: String,
+    pub description: String,
+    pub creator: String,
+    pub contributors: String,
+    pub subject: String,
+    pub version: String,
+    pub license: String,
+    pub homepage: String,
+    pub image: String,
+    #[serde(rename = "customMetadata")]
+    pub custom: serde_json::Map<String, serde_json::Value>,
+}
+
+impl Info {
+    /// Tags as OpenRefine's set-project-tags makes them: split at commas and spaces, blanks dropped
+    /// (repeats stay, as there).
+    pub fn tidy(mut self) -> Info {
+        self.tags = self.tags.iter().flat_map(|t| t.split(|c: char| c == ',' || c.is_whitespace())).filter(|t| !t.is_empty()).map(String::from).collect();
+        self
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -121,7 +151,7 @@ impl Store {
         let dir = self.dir(&id)?;
         std::fs::create_dir_all(&dir).map_err(err)?;
         write_table(&dir.join("data.oxt"), table)?;
-        let meta = Meta { id, name: name.into(), created: now(), modified: now(), rows: table.rows, columns: table.names.len(), source };
+        let meta = Meta { id, name: name.into(), created: now(), modified: now(), rows: table.rows, columns: table.names.len(), source, info: Info::default() };
         self.save(&meta, &History::default())?;
         Ok(meta)
     }
@@ -146,6 +176,36 @@ impl Store {
         meta.modified = now();
         self.save(&meta, &history)?;
         Ok(meta)
+    }
+
+    /// Change a saved project's metadata without loading its data.
+    pub fn set_info(&self, id: &str, info: Info) -> Result<Meta> {
+        let path = self.dir(id)?.join("meta.json");
+        let mut meta: Meta = serde_json::from_slice(&std::fs::read(&path).map_err(|e| format!("project {id}: {e}"))?).map_err(err)?;
+        meta.info = info;
+        meta.modified = now();
+        write_atomic(&path, |w| serde_json::to_writer_pretty(w, &meta).map_err(std::io::Error::other))?;
+        Ok(meta)
+    }
+
+    /// Preferences, shared by every project like OpenRefine's workspace preferences: names as in
+    /// OpenRefine (`ui.browsing.listFacet.limit`...), any JSON value. In preferences.json next to the projects.
+    pub fn preferences(&self) -> serde_json::Map<String, serde_json::Value> {
+        let path = self.root.parent().unwrap_or(&self.root).join("preferences.json");
+        std::fs::read(path).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default()
+    }
+
+    /// Set one preference; null removes it.
+    pub fn set_preference(&self, name: &str, value: serde_json::Value) -> Result<serde_json::Map<String, serde_json::Value>> {
+        let mut prefs = self.preferences();
+        if value.is_null() {
+            prefs.remove(name);
+        } else {
+            prefs.insert(name.to_string(), value);
+        }
+        let path = self.root.parent().unwrap_or(&self.root).join("preferences.json");
+        write_atomic(&path, |w| serde_json::to_writer_pretty(w, &prefs).map_err(std::io::Error::other))?;
+        Ok(prefs)
     }
 
     pub fn delete(&self, id: &str) -> Result<()> {

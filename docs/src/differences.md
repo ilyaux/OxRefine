@@ -24,7 +24,6 @@ Everything else checked matches exactly. That covers GREL results and errors, op
 - **Expressions:** Python (Jython) and Clojure; `detectLanguage()`; `wikibaseIssues()`
 - **Export:** Excel 97 (`.xls`), Google Sheets
 - **Extensions:** Wikibase schemas and uploads, Wikimedia Commons, OpenRefine's extension modules
-- **Projects:** tags and metadata, a preferences page
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 
@@ -35,4 +34,5 @@ The full plan is in [ROADMAP.md](https://github.com/ilyaux/OxRefine/blob/main/RO
 - **Speed and memory.** OxRefine keeps each distinct value of a column once and works on distinct values, so facets, clustering and most transforms take milliseconds even on millions of rows.
 - **History is kept compactly.** Undo works the same way, but steps that only rename values share the previous step's data instead of copying it.
 - **One program for every setup.** The desktop app, the browser app (`ox serve`), the server mode and the command line run the same engine.
+- **Metadata OpenRefine doesn't keep.** OpenRefine 3.10.1 accepts a project's license, homepage and image but doesn't store them; OxRefine stores them and writes them into OpenRefine project archives, which OpenRefine then shows.
 - **Errors instead of crashes.** Where OpenRefine fails with an out-of-memory or stack-overflow error, OxRefine returns a GREL error and carries on. This covers `range()` and `forRange()` past 20 million elements, `factn()` with a step of zero or less, an expression nested more than 128 levels deep or chaining more than 512 operators, and a few huge `multinomial()` and `factn()` arguments.
