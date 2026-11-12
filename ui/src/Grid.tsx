@@ -63,7 +63,7 @@ const ROW_H = 30
 // Browsers cap an element's height (~16-33M px). Past this the scrollbar maps onto the rows
 // proportionally and the wheel is slowed down to match, so every row stays reachable.
 const MAX_H = 8_000_000
-const DEFAULT_W = 160
+const DEFAULT_W = 190
 // numbers right-aligned, numbers, dates and booleans in mono; errors in the error colour
 const TYPE_CLASS: Record<string, string> = {
   n: "text-right font-mono text-[12.5px]",
@@ -111,6 +111,59 @@ export const RECON_FACETS: [string, "list" | "range", string][] = [
   ["Judgment history entry", "list", "cell.recon.judgmentHistoryEntry"],
 ]
 
+/** What a column holds (the engine's `profile`): counts, the main type, and a small distribution. */
+type Profile = {
+  type: "text" | "number" | "date" | "boolean" | "error" | "empty"
+  distinct: number
+  empty: number
+  top?: [string, number][]
+  others?: number
+  unique?: boolean
+  bins?: number[]
+  min?: number | string | null
+  max?: number | string | null
+  mean?: number
+}
+
+const short = (n: number) => (Math.abs(n) >= 1e6 || (n !== 0 && Math.abs(n) < 1e-3) ? n.toExponential(2) : Number(n.toFixed(2)).toLocaleString())
+const month = (d: unknown) => (typeof d === "string" ? d.slice(0, 7) : "")
+
+/** The profile line under a column's name: counts or the range, in mono. */
+function profileLine(p: Profile) {
+  if (p.type === "number" && typeof p.min === "number" && typeof p.max === "number")
+    return `${short(p.min)} – ${short(p.max)}${p.mean !== undefined ? ` · μ ${short(p.mean)}` : ""}${p.empty ? ` · ${p.empty.toLocaleString()} empty` : ""}`
+  if (p.type === "date") return `${month(p.min)} – ${month(p.max)}${p.empty ? ` · ${p.empty.toLocaleString()} empty` : ""}`
+  return `${p.distinct.toLocaleString()} distinct · ${p.empty.toLocaleString()} empty`
+}
+
+/** A 14 px picture of the column: top values as a segmented bar (a value its facet selects in blue), a
+ * histogram for numbers and dates, a hatched strip when nearly every value is different. */
+function ProfileChart({ p, selected }: { p: Profile; selected: Set<string> }) {
+  if (p.unique)
+    return <div aria-hidden="true" title="Nearly every value is different" className="h-3.5 bg-[repeating-linear-gradient(90deg,var(--muted-foreground)_0_1px,transparent_1px_4px)] opacity-60" />
+  if (p.bins?.length) {
+    const top = Math.max(1, ...p.bins)
+    return (
+      <div aria-hidden="true" className="flex h-3.5 items-end gap-px">
+        {p.bins.map((b, i) => (
+          <span key={i} className="flex-1 bg-chart-4" style={{ height: b ? `${Math.max(12, (b / top) * 100)}%` : 0 }} />
+        ))}
+      </div>
+    )
+  }
+  if (!p.top?.length) return <div aria-hidden="true" className="h-3.5" />
+  const total = p.top.reduce((s, [, n]) => s + n, 0) + (p.others ?? 0)
+  const greys = ["bg-chart-5", "bg-chart-4", "bg-chart-3", "bg-chart-2", "bg-chart-1"]
+  return (
+    <div aria-hidden="true" className="flex h-3.5 gap-px" title={p.top.map(([v, n]) => `${v || "(blank)"}: ${n.toLocaleString()}`).join("\n")}>
+      {p.top.map(([v, n], i) => (
+        <span key={i} className={selected.has(v) ? "bg-data" : greys[i]} style={{ width: `${(n / total) * 100}%` }} />
+      ))}
+      {!!p.others && <span className="flex-1 bg-row-rule" />}
+    </div>
+  )
+}
+
 /** The grid's selected cell: its row, column and text (null for an empty cell). */
 export type SelectedCell = { row: number; column: string; value: string | null }
 
@@ -138,6 +191,7 @@ export function Grid({
   onApply,
   onFocusColumn,
   onSelect,
+  dataVersion,
 }: {
   columns: string[]
   engine: Engine
@@ -149,6 +203,8 @@ export function Grid({
   onFocusColumn?: (column: string) => void
   /** the selected cell changed (null: none) */
   onSelect?: (cell: SelectedCell | null) => void
+  /** changes when the data does (another step), not with the facets: the column profiles follow it */
+  dataVersion?: string
 }) {
   const scroller = useRef<HTMLDivElement>(null)
   const head = useRef<HTMLTableSectionElement>(null)
@@ -166,6 +222,19 @@ export function Grid({
   const pending = useRef(new Set<number>())
   const current = useRef(version)
   const records = engine.mode === "record-based"
+  // the column profiles of this version of the data, kept with the version they belong to
+  const [profiles, setProfiles] = useState<{ key: string; data: Profile[] } | null>(null)
+  useEffect(() => {
+    if (dataVersion === undefined) return
+    let live = true
+    call<Profile[]>("profile", {}, { quiet: true }).then(({ data }) => live && setProfiles({ key: dataVersion, data }), () => {})
+    return () => {
+      live = false
+    }
+  }, [dataVersion])
+  const profileOf = (j: number) => (profiles && profiles.key === dataVersion ? profiles.data[j] : undefined)
+  // values a list facet selects, per column, to show them in blue in the header's bar
+  const facetPicks = (c: string) => new Set(engine.facets.flatMap((f) => (f.type === "list" && f.columnName === c && (f.expression === "value" || f.expression === "grel:value") ? f.selection.map((x) => x.v.l || String(x.v.v)) : [])))
 
   const load = (b: number) => {
     if (pending.current.has(b)) return
@@ -307,9 +376,17 @@ export function Grid({
             <th scope="col" className="border-r border-b border-b-foreground">
               <span className="sr-only">Star and flag</span>
             </th>
-            {columns.map((c) => (
-              <th key={c} scope="col" className="relative border-r border-b border-b-foreground p-0 text-left font-normal" onPointerDownCapture={() => onFocusColumn?.(c)}>
-                <ColumnMenu column={c} onAction={onAction} />
+            {columns.map((c, j) => (
+              <th key={c} scope="col" className="relative border-r border-b border-b-foreground p-0 text-left align-top font-normal" onPointerDownCapture={() => onFocusColumn?.(c)}>
+                <ColumnMenu column={c} type={profileOf(j)?.type} onAction={onAction} />
+                {profileOf(j) && (
+                  <div className="flex flex-col gap-1.5 px-3 pb-2.5">
+                    <span className="-mt-1.5 truncate font-mono text-[11px] text-muted-foreground" title={profileLine(profileOf(j)!)}>
+                      {profileLine(profileOf(j)!)}
+                    </span>
+                    <ProfileChart p={profileOf(j)!} selected={facetPicks(c)} />
+                  </div>
+                )}
                 <div
                   role="separator"
                   aria-orientation="vertical"
@@ -450,7 +527,7 @@ function CellEditor({ editing, engine, onApply, onClose }: { editing: Editing; e
   )
 }
 
-function ColumnMenu({ column, onAction }: { column: string; onAction: (a: ColumnAction) => void }) {
+function ColumnMenu({ column, type, onAction }: { column: string; type?: string; onAction: (a: ColumnAction) => void }) {
   const act = (kind: Exclude<ColumnAction["kind"], "common" | "preset-facet">) => () => onAction({ kind, column })
   return (
     <DropdownMenu>
@@ -463,7 +540,9 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
           />
         }
       >
-        <span className="min-w-0 flex-1 truncate font-semibold">{column}</span>
+        <span className="min-w-0 truncate font-semibold">{column}</span>
+        {type && type !== "empty" && <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{type}</span>}
+        <span className="flex-1" />
         <ChevronDownIcon className="size-3.5 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">

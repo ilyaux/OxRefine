@@ -447,6 +447,8 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
             json!({ "total": rows.len(), "rows": page })
         }
+        // what each column holds, for the grid's headers (over every row; facets don't change it)
+        "profile" => json!(engine::profile(p.table())),
         "facets" => {
             let prefs = store.map(Store::preferences).unwrap_or_default();
             let limit = prefs.get("ui.browsing.listFacet.limit").and_then(Value::as_u64).map_or(engine::FACET_LIMIT, |n| n as usize);

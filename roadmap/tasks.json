@@ -1118,6 +1118,83 @@
       "ref": "design/README.md"
     },
     {
+      "id": "data-profile",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "doing",
+      "priority": "P1",
+      "size": "M",
+      "title": "Column profiles",
+      "detail": "Per column: distinct and empty counts, the type most cells have, and a small distribution (top values for text, a histogram for numbers and dates, a marker for near-unique columns), for the grid headers of the Instrument design.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-cluster-hints",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "M",
+      "title": "Values that cluster, per column",
+      "detail": "For each text column, how many values fall into clusters with the default keyer (\"37 variants of 9 places\"), and which cells, so the header links to Cluster and those cells get a dotted amber underline.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-memory",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "S",
+      "title": "Memory in the status bar",
+      "detail": "The process's current and peak memory, for the status bar and the jobs panel.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-job-stages",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "S",
+      "title": "Job stages",
+      "detail": "Jobs report their stages (read, parse, detect types, save) with their state and time, for the jobs panel.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-transform-distinct",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "M",
+      "title": "Transform preview by distinct value",
+      "detail": "The transform preview over distinct values with their row counts: how many distinct values change and how many remain after.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-recon-values",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "L",
+      "title": "Reconciliation results by value",
+      "detail": "One row per distinct value with its candidates and scores, and Match cell / Match all, for the Reconcile view.",
+      "ref": "design/README.md"
+    },
+    {
+      "id": "data-project-stats",
+      "phase": "p9",
+      "milestone": "v0.5",
+      "status": "todo",
+      "priority": "P2",
+      "size": "S",
+      "title": "Project size and steps on Home",
+      "detail": "Each project's history length and size on disk, for the project list.",
+      "ref": "design/README.md"
+    },
+    {
       "id": "qa-conformance",
       "phase": "p10",
       "milestone": "v0.2",

@@ -8,6 +8,8 @@ On the home screen, choose **From a file or folder** and pick a CSV, Excel, ODS,
 
 ## 2. Find the mess with facets
 
+Each column header already gives a first look: the column's main type, how many distinct and empty values it has (or, for numbers and dates, its range), and a small chart. Text columns show their most common values as a bar; numbers and dates show a histogram; a hatched strip means nearly every value is different. Values a facet selects turn blue in the bar.
+
 Open a column's menu (the arrow next to its name) and choose **Text facet**. The facet lists every distinct value with how many rows have it. Inconsistencies show up at once, such as `US`, `us`, `USA` and `United States`. Click a value to show only its rows; click more values to add them.
 
 ![Facets on country and city](images/screenshot.png)

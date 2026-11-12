@@ -664,3 +664,157 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig, limit: usize) -> Result<Vec<J
         })
         .collect()
 }
+
+/// Bins in a numeric or date column's histogram.
+const PROFILE_BINS: usize = 24;
+/// Values listed for a text column.
+const PROFILE_TOP: usize = 5;
+
+/// What each column holds, for the grid's headers: how many distinct values and empty cells, the type
+/// most non-empty cells have, and a small distribution of that type: for numbers and dates the range,
+/// the mean (numbers) and a histogram; for text the most common values, unless nearly every value is
+/// different (`unique`). Over every row, whatever the facets select; one pass over each column's codes,
+/// the rest per distinct value.
+pub fn profile(t: &Table) -> Vec<J> {
+    t.columns
+        .iter()
+        .map(|col| {
+            let mut counts = vec![0usize; col.dict.len()];
+            for &c in col.codes.iter() {
+                counts[c as usize] += 1;
+            }
+            let (mut distinct, mut empty) = (0usize, 0usize);
+            // rows per kind of value: text, number, date, boolean, error
+            let mut kinds = [0usize; 5];
+            for (v, &n) in col.dict.iter().zip(&counts) {
+                if n == 0 {
+                    continue;
+                }
+                if v.is_blank() {
+                    empty += n;
+                    continue;
+                }
+                distinct += 1;
+                kinds[match v {
+                    Value::Int(_) | Value::Num(_) => 1,
+                    Value::Date(_) => 2,
+                    Value::Bool(_) => 3,
+                    Value::Error(_) => 4,
+                    _ => 0,
+                }] += n;
+            }
+            let filled = t.rows - empty;
+            let names = ["text", "number", "date", "boolean", "error"];
+            let kind = if filled == 0 { "empty" } else { names[(0..5).max_by_key(|&k| (kinds[k], usize::MAX - k)).unwrap()] };
+            let mut out = json!({ "type": kind, "distinct": distinct, "empty": empty });
+            match kind {
+                "number" | "date" => {
+                    // the values of that type as numbers (dates as milliseconds since 1970), with their rows
+                    let points: Vec<(f64, usize)> = col
+                        .dict
+                        .iter()
+                        .zip(&counts)
+                        .filter(|(_, &n)| n > 0)
+                        .filter_map(|(v, &n)| match v {
+                            Value::Int(_) | Value::Num(_) if kind == "number" => v.as_f64().filter(|x| x.is_finite()).map(|x| (x, n)),
+                            Value::Date(d) if kind == "date" => Some((d.and_utc().timestamp_millis() as f64, n)),
+                            _ => None,
+                        })
+                        .collect();
+                    let min = points.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
+                    let max = points.iter().map(|p| p.0).fold(f64::NEG_INFINITY, f64::max);
+                    let mut bins = vec![0usize; PROFILE_BINS];
+                    for &(x, n) in &points {
+                        let i = if max > min { (((x - min) / (max - min)) * PROFILE_BINS as f64) as usize } else { 0 };
+                        bins[i.min(PROFILE_BINS - 1)] += n;
+                    }
+                    out["bins"] = json!(bins);
+                    if kind == "number" {
+                        let rows: usize = points.iter().map(|p| p.1).sum();
+                        out["min"] = json!(min);
+                        out["max"] = json!(max);
+                        out["mean"] = json!(points.iter().map(|p| p.0 * p.1 as f64).sum::<f64>() / rows.max(1) as f64);
+                    } else {
+                        let day = |ms: f64| chrono::DateTime::from_timestamp_millis(ms as i64).map(|d| d.format("%Y-%m-%d").to_string());
+                        out["min"] = json!(day(min));
+                        out["max"] = json!(day(max));
+                    }
+                }
+                "text" | "boolean" | "error" => {
+                    // nearly every value different: a list of top values would say nothing
+                    if distinct > 20 && distinct as f64 >= 0.9 * filled as f64 {
+                        out["unique"] = json!(true);
+                    } else {
+                        let mut seen: Vec<(usize, usize)> = counts.iter().enumerate().filter(|&(i, &n)| n > 0 && !col.dict[i].is_blank()).map(|(i, &n)| (n, i)).collect();
+                        let k = PROFILE_TOP.min(seen.len());
+                        if seen.len() > k {
+                            seen.select_nth_unstable_by(k, |a, b| b.0.cmp(&a.0));
+                        }
+                        let mut top: Vec<(usize, usize)> = seen[..k].to_vec();
+                        top.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.cmp(&b.1)));
+                        let listed: usize = top.iter().map(|p| p.0).sum();
+                        out["top"] = json!(top.iter().map(|&(n, i)| json!([col.dict[i].display(), n])).collect::<Vec<_>>());
+                        out["others"] = json!(filled - listed);
+                    }
+                }
+                _ => {}
+            }
+            out
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod profile_tests {
+    use super::profile;
+    use crate::{grel::Value, table::{Column, Table}};
+    use std::sync::Arc;
+
+    #[test]
+    fn profiles_each_kind() {
+        use Value::*;
+        let col = |v: Vec<Value>| Arc::new(Column::from_values(v));
+        let mut cities = vec![];
+        for (name, n) in [("Köln", 5), ("Kraków", 3), ("Zürich", 2), ("Paris", 1), ("Rome", 1), ("Oslo", 1), ("Bern", 1)] {
+            cities.extend(std::iter::repeat_n(Str(name.into()), n));
+        }
+        cities.push(Null);
+        cities.push(Str("".into()));
+        let rows = cities.len();
+        let nums: Vec<Value> = (0..rows).map(|i| if i % 4 == 0 { Num(i as f64 + 0.5) } else { Int(i as i64) }).collect();
+        let ids: Vec<Value> = (0..rows).map(|i| Str(format!("id{i}"))).collect();
+        let t = Table { names: vec!["city".into(), "n".into(), "id".into()], columns: vec![col(cities), col(nums), col(ids)], rows, starred: Arc::new(vec![false; rows]), flagged: Arc::new(vec![false; rows]), key: None };
+        let p = profile(&t);
+        assert_eq!(p[0]["type"], "text");
+        assert_eq!((p[0]["distinct"].as_u64(), p[0]["empty"].as_u64()), (Some(7), Some(2)));
+        assert_eq!(p[0]["top"][0], serde_json::json!(["Köln", 5]));
+        assert_eq!(p[0]["top"].as_array().unwrap().len(), 5);
+        assert_eq!(p[0]["others"], 2, "Oslo and Bern are past the top 5");
+        assert_eq!(p[1]["type"], "number");
+        assert_eq!((p[1]["min"].as_f64(), p[1]["max"].as_f64()), (Some(0.5), Some(15.0)));
+        assert_eq!(p[1]["bins"].as_array().unwrap().iter().map(|b| b.as_u64().unwrap()).sum::<u64>(), rows as u64);
+        assert!(p[2].get("unique").is_none(), "16 values are too few to call a column unique");
+    }
+
+    #[test]
+    fn dates_get_their_range_and_a_histogram() {
+        let day = |m: u32, d: u32| Value::Date(chrono::NaiveDate::from_ymd_opt(2024, m, d).unwrap().and_hms_opt(0, 0, 0).unwrap());
+        let v = vec![day(1, 15), day(3, 1), day(3, 1), day(6, 30), Value::Null];
+        let t = Table { names: vec!["joined".into()], columns: vec![Arc::new(Column::from_values(v))], rows: 5, starred: Arc::new(vec![false; 5]), flagged: Arc::new(vec![false; 5]), key: None };
+        let p = profile(&t);
+        assert_eq!(p[0]["type"], "date");
+        assert_eq!((p[0]["min"].as_str(), p[0]["max"].as_str()), (Some("2024-01-15"), Some("2024-06-30")));
+        assert_eq!((p[0]["distinct"].as_u64(), p[0]["empty"].as_u64()), (Some(3), Some(1)));
+        assert_eq!(p[0]["bins"].as_array().unwrap().iter().map(|b| b.as_u64().unwrap()).sum::<u64>(), 4);
+    }
+
+    #[test]
+    fn near_unique_columns_list_no_top_values() {
+        let rows = 100;
+        let ids: Vec<Value> = (0..rows).map(|i| Value::Str(format!("user{}@example.com", i % 95))).collect();
+        let t = Table { names: vec!["email".into()], columns: vec![Arc::new(Column::from_values(ids))], rows, starred: Arc::new(vec![false; rows]), flagged: Arc::new(vec![false; rows]), key: None };
+        let p = profile(&t);
+        assert_eq!((p[0]["distinct"].as_u64(), p[0]["unique"].as_bool()), (Some(95), Some(true)));
+        assert!(p[0].get("top").is_none());
+    }
+}

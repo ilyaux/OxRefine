@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 32 of 119 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 32 of 126 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -8,7 +8,7 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 |---|---|---|
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 20 |
-| v0.5 | 43 | 2 |
+| v0.5 | 50 | 2 |
 | v1.0 | 6 | 0 |
 | later | 14 | 0 |
 
@@ -126,7 +126,7 @@ All key-collision keyers and nearest-neighbour methods.
 
 - [~] **Phonetic keyers** · v0.5 · P1 · M. Metaphone3, Cologne phonetic, Daitch-Mokotoff, Beider-Morse. _OpenRefine: binning keyers_
 - [~] **Nearest-neighbour clustering** · v0.5 · P1 · L. Levenshtein distance with n-gram blocking, radius and block size; parallel, with progress and cancel. _OpenRefine: knn: levenshtein_
-- [ ] **PPM distance for nearest neighbours** · v0.5 · P2 · S. Prediction by Partial Matching distance, as OpenRefine computes it with its bundled arithmetic coder (needs permission to download the reference code). 2 known failures today. _OpenRefine: PPMDistance, arithcode_
+- [~] **PPM distance for nearest neighbours** · v0.5 · P2 · S. Prediction by Partial Matching distance, as OpenRefine computes it with its bundled arithmetic coder (needs permission to download the reference code). 2 known failures today. _OpenRefine: PPMDistance, arithcode_
 - [~] **Cluster dialog parity** · v0.5 · P2 · S. Filter clusters by size, row count, value length and spread; export clusters as JSON. _OpenRefine: clustering-dialog_
 - [ ] **Custom clustering functions** · later · P2 · M. OpenRefine 3.8+ lets users add key-collision keyers and kNN distances written in GREL/Python, saved in preferences and listed in the cluster dialog. _OpenRefine: ClusteringFunctionsCommand, preferences: ui.clustering.customKeyingFunctions_
 
@@ -156,6 +156,13 @@ Everything OpenRefine's UI does, in a modern, keyboard-first app.
 - [ ] **Translations** · v0.5 · P2 · M. UI strings in message files, language picker, OpenRefine's translations (40+ languages from its Weblate project) mapped onto ours where the meaning matches, Russian checked by hand. _OpenRefine: main/webapp/modules/core/langs_
 - [~] **Preferences** · v0.5 · P2 · M. A preferences page like OpenRefine's: facet choice limit (ui.browsing.listFacet.limit), rows per page, reconciliation services, starred/history expressions, custom clustering functions, language; plus raw key/value editing for the rest. _OpenRefine: PreferenceStore, preferences.vt_
 - [~] **Instrument UI design** · v0.5 · P1 · L. The Instrument design (design/, not committed): ruled sheet instead of cards, tokens in index.css, bars as cells, ink primary action, Geist Mono values; Cluster, Transform, Reconcile, History, Import and Export as full-window views with a breadcrumb and Esc; Palette and Jobs as overlays. Logic and API unchanged; data the engine lacks is left out and listed. _OpenRefine: design/README.md_
+- [~] **Column profiles** · v0.5 · P1 · M. Per column: distinct and empty counts, the type most cells have, and a small distribution (top values for text, a histogram for numbers and dates, a marker for near-unique columns), for the grid headers of the Instrument design. _OpenRefine: design/README.md_
+- [ ] **Values that cluster, per column** · v0.5 · P2 · M. For each text column, how many values fall into clusters with the default keyer ("37 variants of 9 places"), and which cells, so the header links to Cluster and those cells get a dotted amber underline. _OpenRefine: design/README.md_
+- [ ] **Memory in the status bar** · v0.5 · P2 · S. The process's current and peak memory, for the status bar and the jobs panel. _OpenRefine: design/README.md_
+- [ ] **Job stages** · v0.5 · P2 · S. Jobs report their stages (read, parse, detect types, save) with their state and time, for the jobs panel. _OpenRefine: design/README.md_
+- [ ] **Transform preview by distinct value** · v0.5 · P2 · M. The transform preview over distinct values with their row counts: how many distinct values change and how many remain after. _OpenRefine: design/README.md_
+- [ ] **Reconciliation results by value** · v0.5 · P2 · L. One row per distinct value with its candidates and scores, and Match cell / Match all, for the Reconcile view. _OpenRefine: design/README.md_
+- [ ] **Project size and steps on Home** · v0.5 · P2 · S. Each project's history length and size on disk, for the project list. _OpenRefine: design/README.md_
 
 ## Compatibility & QA
 

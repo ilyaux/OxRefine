@@ -552,7 +552,7 @@ export function App() {
                   )}
                 </aside>
                 <main className="min-w-0 flex-1">
-                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} />
+                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} dataVersion={`${summary.name}:${summary.cursor}:${summary.history.length}`} />
                 </main>
               </div>
             </>
