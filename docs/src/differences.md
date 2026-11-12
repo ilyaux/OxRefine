@@ -2,7 +2,7 @@
 
 ## Known differences
 
-OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,134 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,136 checks, 14 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
 
 | Area | What differs | Why |
 |---|---|---|
@@ -12,7 +12,6 @@ OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [H
 | JSON import | OpenRefine can't read integers beyond 64 bits and creates no project | Deliberate: OxRefine imports them as numbers |
 | `detectLanguage()` | OxRefine doesn't identify languages yet (2 cases) | Needs a language-identification model |
 | Beider-Morse keys | Names with more than 20 phonetic alternatives can get a different key (7 cases) | Apache Commons Codec truncates its list while building it, and keeps a different 20 |
-| PPM clustering | The PPM distance for nearest-neighbour clustering isn't available (2 cases) | Not ported yet |
 
 Everything else checked matches exactly. That covers GREL results and errors, operations, facet counts, import options, exports, clustering, reconciliation, and project archives with their full history.
 
@@ -20,7 +19,7 @@ Everything else checked matches exactly. That covers GREL results and errors, op
 
 - **Import:** databases (PostgreSQL, MySQL, MariaDB, SQLite), RDF (N-Triples, Turtle, RDF/XML, JSON-LD), MARC, wikitext tables, PC-Axis, Google Sheets
 - **Facets:** the scatterplot facet
-- **Clustering:** the PPM distance; custom clustering functions
+- **Clustering:** custom clustering functions
 - **Expressions:** Python (Jython) and Clojure; `detectLanguage()`; `wikibaseIssues()`
 - **Export:** Google Sheets
 - **Extensions:** Wikibase schemas and uploads, Wikimedia Commons, OpenRefine's extension modules

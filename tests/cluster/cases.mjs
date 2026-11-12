@@ -50,4 +50,6 @@ export const CLUSTERERS = [
   knn("levenshtein", 3, 2),
   knn("ppm", 1, 6),
   knn("ppm", 2, 3),
+  knn("ppm", 4, 2),
+  knn("ppm", 0.5, 4),
 ]

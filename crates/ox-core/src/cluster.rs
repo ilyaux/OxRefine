@@ -220,11 +220,11 @@ fn blocks(s: &str, n: usize) -> Vec<String> {
 /// answer on one core; with more cores it splits the work and can miss neighbours across the parts.
 /// The neighbour sets depend only on which pairs are close, so pairs are checked on all cores.
 pub fn knn<'a>(values: &[(&'a str, u32)], distance: &str, radius: f64, block: usize) -> Result<Vec<Vec<(&'a str, u32)>>> {
-    match distance {
-        "levenshtein" => {}
-        "ppm" => return Err("the ppm distance is not supported yet; use levenshtein".into()),
+    let ppm = match distance {
+        "levenshtein" => false,
+        "ppm" => true,
         m => return Err(format!("unknown distance `{m}` (levenshtein, ppm)")),
-    }
+    };
     // SecondString compares the strings lowercased
     let lower: Vec<Vec<char>> = values.iter().map(|(v, _)| v.to_lowercase().chars().collect()).collect();
     let max = if radius < 0.0 { usize::MAX } else { radius.floor() as usize };
@@ -243,7 +243,9 @@ pub fn knn<'a>(values: &[(&'a str, u32)], distance: &str, radius: f64, block: us
     let close = par_map(&tasks, "Comparing values", |&(k, i)| {
         let b = &blocks[k];
         let a = b[i];
-        b[i + 1..].iter().filter(|&&c| within(&lower[a as usize], &lower[c as usize], max).is_some()).map(|&c| (a, c)).collect::<Vec<_>>()
+        // Levenshtein compares lowercased text (SecondString); PPM compares the values as they are (vicino)
+        let near = |c: u32| if ppm { crate::ppm::distance(values[a as usize].0, values[c as usize].0) <= radius || radius < 0.0 } else { within(&lower[a as usize], &lower[c as usize], max).is_some() };
+        b[i + 1..].iter().filter(|&&c| near(c)).map(|&c| (a, c)).collect::<Vec<_>>()
     })?;
     let mut near: HashMap<u32, BTreeSet<&str>> = HashMap::new();
     for (a, b) in close.into_iter().flatten() {

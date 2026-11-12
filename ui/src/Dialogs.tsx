@@ -576,7 +576,7 @@ export function ClusterDialog({
                 <RailLabel>Distance</RailLabel>
                 <div role="radiogroup" aria-label="Distance">
                   {radio("cl-distance", "levenshtein", distance, "Levenshtein", setDistance)}
-                  {radio("cl-distance", "ppm", distance, "PPM (not available yet)", setDistance, true)}
+                  {radio("cl-distance", "ppm", distance, "PPM", setDistance)}
                 </div>
                 <label className="flex items-center gap-2 px-3.5 pt-2">
                   <span className="flex-1">Radius</span>

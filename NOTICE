@@ -21,6 +21,12 @@ crates/ox-core/src/double_metaphone.rs is adapted from rphonetic 4.0.0
 (https://github.com/Dalvany/rphonetic, Apache License 2.0), a port of Apache
 Commons Codec's DoubleMetaphone; the changes are described at its top.
 
+crates/ox-core/src/ppm.rs reproduces the PPM distance OpenRefine 3.10.1 uses for
+nearest-neighbour clustering: vicino 1.2.1's PPMDistance (the SIMILE project, MIT)
+over arithcode 1.2's order-8 PPM model and arithmetic coder (Bob Carpenter), both
+bundled with OpenRefine. It was written from the behaviour of those compiled
+classes, quirks included, and is checked against them (tests/cluster/ppm-gen.mjs).
+
 crates/ox-core/src/metaphone3.rs is adapted from the metaphone3 crate 0.2.0
 (https://github.com/kakserpom/metaphone3-rs, MIT License), a port of Lawrence
 Philips' Metaphone 3 (BSD License); the changes are described at its top.

@@ -20,7 +20,7 @@ text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <text x="50" y="316" font-size="13" class="mute">faster at 1M rows</text>
 <text x="176" y="290" font-size="38" class="m b" letter-spacing="-1">12×</text>
 <text x="178" y="316" font-size="13" class="mute">less memory</text>
-<text x="304" y="290" font-size="38" class="m b" letter-spacing="-1">2,118<tspan class="mute" font-size="22"> / 2,134</tspan></text>
+<text x="304" y="290" font-size="38" class="m b" letter-spacing="-1">2,122<tspan class="mute" font-size="22"> / 2,136</tspan></text>
 <text x="306" y="316" font-size="13" class="mute">checks match OpenRefine</text>
 <text x="50" y="364" font-size="13" class="mute">Facet · cluster · transform with GREL · reconcile · undo — free, MIT</text>
 

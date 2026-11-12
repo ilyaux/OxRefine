@@ -6,5 +6,3 @@ phonetic beider-morse "Coca-Cola" # same Beider-Morse truncation difference
 phonetic beider-morse "Coca Cola" # same Beider-Morse truncation difference
 phonetic beider-morse "CocaCola" # same Beider-Morse truncation difference
 beider-morse {} # follows from the Beider-Morse keys above (Catharine, Alexander)
-ppm {"radius":1,"blocking-ngram-size":6} # PPM distance not ported yet: it needs the arithcode compressor OpenRefine bundles
-ppm {"radius":2,"blocking-ngram-size":3} # PPM distance not ported yet

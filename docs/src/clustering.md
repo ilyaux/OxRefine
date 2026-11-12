@@ -12,7 +12,7 @@
 - **n-gram fingerprint** does the same on character n-grams, which catches typos inside words;
 - **metaphone3**, **cologne phonetic**, **Daitch-Mokotoff** and **Beider-Morse** group values that sound alike.
 
-**Nearest neighbours** groups values within a distance of each other, using **Levenshtein** edit distance. The *radius* sets how far apart values can be, and the *block size* speeds up the search on large columns. The PPM distance isn't available yet.
+**Nearest neighbours** groups values within a distance of each other. **Levenshtein** counts the edits between two values, ignoring case. **PPM** compares how well the two values compress together against how well each compresses with itself, so values that share long runs of characters come out close; it is OpenRefine's own PPM distance, byte for byte. The *radius* sets how far apart values can be (PPM distances are fractions, so radii like 0.5 make sense), and the *block size* speeds up the search on large columns.
 
 ## Working through clusters
 
