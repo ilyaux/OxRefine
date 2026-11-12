@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Popover, PopoverContent } from "@/components/ui/popover"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cn } from "cn"
@@ -60,16 +59,17 @@ function ReconMark({ r, text }: { r: Recon; text: string | null }) {
   )
 }
 const BLOCK = 200
-const ROW_H = 33
+const ROW_H = 30
 // Browsers cap an element's height (~16-33M px). Past this the scrollbar maps onto the rows
 // proportionally and the wheel is slowed down to match, so every row stays reachable.
 const MAX_H = 8_000_000
 const DEFAULT_W = 160
+// numbers right-aligned, numbers, dates and booleans in mono; errors in the error colour
 const TYPE_CLASS: Record<string, string> = {
-  n: "text-right tabular-nums text-(--syntax-number)",
-  d: "tabular-nums text-(--syntax-variable)",
-  b: "text-(--syntax-function)",
-  e: "text-destructive",
+  n: "text-right font-mono text-[12.5px]",
+  d: "font-mono text-[12.5px]",
+  b: "font-mono text-[12.5px]",
+  e: "font-mono text-[12.5px] text-destructive",
 }
 const EDIT_TYPE: Record<string, string> = { n: "number", b: "boolean", d: "date" }
 type Editing = { row: number; column: string; value: string; type: string; anchor: HTMLElement }
@@ -111,6 +111,9 @@ export const RECON_FACETS: [string, "list" | "range", string][] = [
   ["Judgment history entry", "list", "cell.recon.judgmentHistoryEntry"],
 ]
 
+/** The grid's selected cell: its row, column and text (null for an empty cell). */
+export type SelectedCell = { row: number; column: string; value: string | null }
+
 export type ColumnAction =
   | {
       kind:
@@ -134,6 +137,7 @@ export function Grid({
   onAction,
   onApply,
   onFocusColumn,
+  onSelect,
 }: {
   columns: string[]
   engine: Engine
@@ -143,6 +147,8 @@ export function Grid({
   onApply: (op: Op) => Promise<void>
   /** the column the user last worked on (its menu or a cell), for the command palette */
   onFocusColumn?: (column: string) => void
+  /** the selected cell changed (null: none) */
+  onSelect?: (cell: SelectedCell | null) => void
 }) {
   const scroller = useRef<HTMLDivElement>(null)
   const head = useRef<HTMLTableSectionElement>(null)
@@ -152,6 +158,11 @@ export function Grid({
   const [widths, setWidths] = useState<Record<string, number>>({})
   const [editing, setEditing] = useState<Editing | null>(null)
   const [judging, setJudging] = useState<Judging | null>(null)
+  // the selected cell, by position in the view it was picked in: [row index, column index]; another view
+  // (other filters, another step) has none
+  const [picked, setPicked] = useState<{ version: string; at: [number, number] } | null>(null)
+  const sel = picked?.version === version ? picked.at : null
+  const setSel = (at: [number, number] | null) => setPicked(at && { version, at })
   const pending = useRef(new Set<number>())
   const current = useRef(version)
   const records = engine.mode === "record-based"
@@ -238,63 +249,118 @@ export function Grid({
   const annotate = (row: number, what: { starred: boolean } | { flagged: boolean }) => onApply({ op: "ox/row-annotate", row, ...what }).catch(() => {})
 
   const rows = Array.from({ length: Math.max(0, count) }, (_, i) => first + i)
+  const rowAt = (i: number) => blocks.get(Math.floor(i / BLOCK))?.[i % BLOCK]
+  const selRow = sel ? rowAt(sel[0]) : undefined
+
+  // the status bar follows the selection, and the data under it as pages load or change
+  useEffect(() => {
+    if (!sel || !selRow || !columns[sel[1]]) return onSelect?.(null)
+    onSelect?.({ row: selRow[0], column: columns[sel[1]], value: selRow[1][sel[1]] ?? null })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sel, selRow, columns])
+
+  const edit = (i: number, j: number) => {
+    const row = rowAt(i)
+    const cell = scroller.current?.querySelector<HTMLElement>(`[data-cell="${i}:${j}"]`)
+    if (!row || !cell || !columns[j]) return
+    onFocusColumn?.(columns[j])
+    setEditing({ row: row[0], column: columns[j], value: row[1][j] ?? "", type: EDIT_TYPE[row[4]?.[j] ?? "s"] ?? "text", anchor: cell })
+  }
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (!sel || editing || judging || (e.target as HTMLElement).closest("input,textarea,button[aria-haspopup]")) return
+    const [i, j] = sel
+    const move = (di: number, dj: number) => {
+      e.preventDefault()
+      const ni = Math.max(0, Math.min(total - 1, i + di))
+      const nj = Math.max(0, Math.min(columns.length - 1, j + dj))
+      setSel([ni, nj])
+      onFocusColumn?.(columns[nj])
+      // keep the row in view: scroll by whole rows when it leaves the visible window
+      const el = scroller.current
+      if (el && (ni < first + 1 || ni > first + count - 3)) el.scrollTop += ((ni - i) * ROW_H) / ratio
+    }
+    if (e.key === "ArrowDown") move(1, 0)
+    else if (e.key === "ArrowUp") move(-1, 0)
+    else if (e.key === "ArrowRight" || (e.key === "Tab" && !e.shiftKey)) move(0, 1)
+    else if (e.key === "ArrowLeft" || (e.key === "Tab" && e.shiftKey)) move(0, -1)
+    else if (e.key === "Enter") {
+      e.preventDefault()
+      edit(i, j)
+    } else if (e.key === "Escape") setSel(null)
+  }
+
   return (
-    <div ref={scroller} className="h-full overflow-auto [&_[data-slot=table-container]]:overflow-visible">
-      <Table className="table-fixed" style={{ width: 72 + 64 + columns.reduce((s, c) => s + width(c), 0) }}>
+    <div ref={scroller} tabIndex={0} aria-label="Rows" onKeyDown={onKeyDown} className="h-full overflow-auto outline-none">
+      <table className="table-fixed border-separate border-spacing-0" style={{ width: 56 + 52 + columns.reduce((s, c) => s + width(c), 0) }}>
         <colgroup>
-          <col style={{ width: 72 }} />
-          <col style={{ width: 64 }} />
+          <col style={{ width: 56 }} />
+          <col style={{ width: 52 }} />
           {columns.map((c) => (
             <col key={c} style={{ width: width(c) }} />
           ))}
         </colgroup>
-        <TableHeader ref={head} className="sticky top-0 z-10 bg-background">
-          <TableRow>
-            <TableHead className="text-right text-muted-foreground">{records ? "record" : "#"}</TableHead>
-            <TableHead className="text-muted-foreground">
+        <thead ref={head} className="sticky top-0 z-10 bg-muted">
+          <tr>
+            <th scope="col" className="border-r border-b border-b-foreground px-2 py-2 text-right align-bottom font-mono text-[11.5px] font-normal text-muted-foreground">
+              {records ? "rec" : "#"}
+            </th>
+            <th scope="col" className="border-r border-b border-b-foreground">
               <span className="sr-only">Star and flag</span>
-            </TableHead>
+            </th>
             {columns.map((c) => (
-              <TableHead key={c} className="relative" onPointerDownCapture={() => onFocusColumn?.(c)}>
+              <th key={c} scope="col" className="relative border-r border-b border-b-foreground p-0 text-left font-normal" onPointerDownCapture={() => onFocusColumn?.(c)}>
                 <ColumnMenu column={c} onAction={onAction} />
                 <div
                   role="separator"
                   aria-orientation="vertical"
                   aria-label={`Resize ${c}`}
-                  className="absolute inset-y-0 right-0 w-1.5 cursor-col-resize hover:bg-border"
+                  className="absolute inset-y-0 -right-px w-1.5 cursor-col-resize hover:bg-foreground/20"
                   onPointerDown={resize(c)}
                   onDoubleClick={() => setWidths(({ [c]: _, ...w }) => w)}
                 />
-              </TableHead>
+              </th>
             ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+          </tr>
+        </thead>
+        <tbody>
           {topPad > 0 && <tr style={{ height: topPad }} />}
           {rows.map((i) => {
-            const row = blocks.get(Math.floor(i / BLOCK))?.[i % BLOCK]
+            const row = rowAt(i)
             const label = !row ? "" : records ? (row[5] == null ? "" : row[5] + 1) : row[0] + 1
             return (
-              <TableRow key={i} style={{ height: ROW_H }}>
-                <TableCell className="text-right font-mono text-xs text-muted-foreground tabular-nums">{label}</TableCell>
-                <TableCell className="py-0">
+              <tr key={i} style={{ height: ROW_H }} className="group/row">
+                <td className="border-r border-b border-row-rule px-2 text-right font-mono text-[11.5px] text-muted-foreground">{label}</td>
+                <td className="border-r border-b border-row-rule">
                   {row && (
-                    <span className="flex">
+                    <span className="flex justify-center">
                       <Button variant="ghost" size="icon-xs" aria-label={row[2] ? "Unstar row" : "Star row"} aria-pressed={row[2]} onClick={() => annotate(row[0], { starred: !row[2] })}>
-                        <StarIcon className={row[2] ? "fill-current" : "opacity-30"} />
+                        <StarIcon className={row[2] ? "fill-current" : "opacity-25"} />
                       </Button>
                       <Button variant="ghost" size="icon-xs" aria-label={row[3] ? "Unflag row" : "Flag row"} aria-pressed={row[3]} onClick={() => annotate(row[0], { flagged: !row[3] })}>
-                        <FlagIcon className={row[3] ? "fill-current" : "opacity-30"} />
+                        <FlagIcon className={row[3] ? "fill-current" : "opacity-25"} />
                       </Button>
                     </span>
                   )}
-                </TableCell>
+                </td>
                 {columns.map((c, j) => {
                   const text = row?.[1][j] ?? null
                   const type = row?.[4]?.[j] ?? "s"
                   const recon = row?.[6]?.[j]
+                  const on = sel?.[0] === i && sel?.[1] === j
                   return (
-                    <TableCell key={c} className={cn("group/cell relative truncate", TYPE_CLASS[type])} title={recon ? undefined : (text ?? undefined)}>
+                    <td
+                      key={c}
+                      data-cell={`${i}:${j}`}
+                      aria-selected={on}
+                      className={cn(
+                        "group/cell relative truncate border-r border-b border-row-rule px-3",
+                        TYPE_CLASS[type],
+                        on && "outline-[1.5px] -outline-offset-1 outline-foreground outline-solid",
+                      )}
+                      title={recon ? undefined : (text ?? undefined)}
+                      onClick={() => row && (setSel([i, j]), onFocusColumn?.(c))}
+                      onDoubleClick={() => row && edit(i, j)}
+                    >
                       {text}
                       {recon && row && (
                         <Button
@@ -308,24 +374,24 @@ export function Grid({
                       )}
                       {row && (
                         <Button
-                          variant="secondary"
+                          variant="outline"
                           size="icon-xs"
                           aria-label={`Edit ${c} in row ${row[0] + 1}`}
-                          className="absolute top-1/2 right-1 -translate-y-1/2 opacity-0 group-hover/cell:opacity-100 focus-visible:opacity-100"
-                          onClick={(e) => (onFocusColumn?.(c), setEditing({ row: row[0], column: c, value: text ?? "", type: EDIT_TYPE[type] ?? "text", anchor: e.currentTarget.parentElement! }))}
+                          className="absolute top-1/2 right-1 -translate-y-1/2 bg-background opacity-0 group-hover/cell:opacity-100 focus-visible:opacity-100"
+                          onClick={(e) => (e.stopPropagation(), setSel([i, j]), edit(i, j))}
                         >
                           <PencilIcon />
                         </Button>
                       )}
-                    </TableCell>
+                    </td>
                   )
                 })}
-              </TableRow>
+              </tr>
             )
           })}
           {bottomPad > 0 && <tr style={{ height: bottomPad }} />}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
       {editing && <CellEditor editing={editing} engine={engine} onApply={onApply} onClose={() => setEditing(null)} />}
       {judging && <ReconPanel judging={judging} engine={engine} onApply={onApply} onClose={() => setJudging(null)} />}
     </div>
@@ -388,9 +454,17 @@ function ColumnMenu({ column, onAction }: { column: string; onAction: (a: Column
   const act = (kind: Exclude<ColumnAction["kind"], "common" | "preset-facet">) => () => onAction({ kind, column })
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="sm" />}>
-        {column}
-        <ChevronDownIcon data-icon="inline-end" />
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            aria-label={`${column}: column menu`}
+            className="flex w-full items-center gap-1.5 px-3 py-2.5 text-left outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+          />
+        }
+      >
+        <span className="min-w-0 flex-1 truncate font-semibold">{column}</span>
+        <ChevronDownIcon className="size-3.5 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-64">
         <DropdownMenuGroup>

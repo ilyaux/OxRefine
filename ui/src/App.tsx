@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
-import { Grid, RECON_FACETS, type ColumnAction } from "@/Grid"
+import { Grid, RECON_FACETS, type ColumnAction, type SelectedCell } from "@/Grid"
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
 import { Preferences } from "@/Preferences"
@@ -20,10 +20,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Toaster, toast } from "@/components/ui/toast"
 import { checkForUpdates } from "@/updates"
+import { cn } from "@/lib/utils"
 import pkg from "../package.json"
 import { Palette } from "@/Palette"
 
@@ -81,6 +80,9 @@ export function App() {
   // a file to import: picked from disk, or pasted / downloaded and staged by the engine
   const [staged, setStaged] = useState<Staged | null>(null)
   const [palette, setPalette] = useState(false)
+  const [side, setSide] = useState<"facets" | "history">("facets")
+  // the grid's selected cell, shown in the status bar
+  const [selected, setSelected] = useState<SelectedCell | null>(null)
   // the column the command palette works on: the one last used in the grid
   const [focusCol, setFocusCol] = useState<string | null>(null)
 
@@ -500,68 +502,85 @@ export function App() {
         )}
 
         {summary ? (
-          <div className="flex min-h-0 flex-1">
-            <aside className="flex w-80 shrink-0 flex-col border-r">
-              <Tabs defaultValue="facets" className="flex min-h-0 flex-1 flex-col p-2">
-                <TabsList className="w-full">
-                  <TabsTrigger value="facets">Facets / Filters</TabsTrigger>
-                  <TabsTrigger value="history">History ({summary.cursor})</TabsTrigger>
-                </TabsList>
-                <ScrollArea className="min-h-0 flex-1">
-                  <TabsContent value="facets">
-                    <Facets facets={facets} data={facetData} onChange={setFacets} onEditChoice={editChoice} onLimit={setFacetLimit} />
-                  </TabsContent>
-                  <TabsContent value="history">
-                    <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
-                  </TabsContent>
-                </ScrollArea>
-              </Tabs>
-            </aside>
-            <main className="flex min-w-0 flex-1 flex-col">
-              <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
-                <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
-                  {total.toLocaleString()}
-                  <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
-                </div>
-                <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
-                  {facets.map((f, i) => {
-                    const label = chip(f)
-                    return (
-                      label && (
-                        <div key={i} className="flex shrink-0 items-center gap-3 border-r pl-3.5">
-                          <span className="font-mono">{label}</span>
-                          <button
-                            type="button"
-                            aria-label={`Clear the filter ${label}`}
-                            onClick={() => setFacets((fs) => fs.map((x, j) => (j === i ? cleared(x) : x)))}
-                            className="flex h-full items-center px-3 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      )
+          <>
+            <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
+              <div role="tablist" aria-label="Side panel" className="flex w-65 shrink-0 items-stretch border-r">
+                {(["facets", "history"] as const).map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    role="tab"
+                    aria-selected={side === t}
+                    onClick={() => setSide(t)}
+                    className={cn(
+                      "flex flex-1 items-center justify-center gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                      side === t ? "-mb-px border-b-2 border-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                    )}
+                  >
+                    {t === "facets" ? "Facets" : "History"}
+                    <span className="font-mono text-[11px] text-muted-foreground">{t === "facets" ? facets.length : summary.cursor}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
+                {total.toLocaleString()}
+                <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
+              </div>
+              <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
+                {facets.map((f, i) => {
+                  const label = chip(f)
+                  return (
+                    label && (
+                      <div key={i} className="flex shrink-0 items-center gap-3 border-r pl-3.5">
+                        <span className="font-mono">{label}</span>
+                        <button
+                          type="button"
+                          aria-label={`Clear the filter ${label}`}
+                          onClick={() => setFacets((fs) => fs.map((x, j) => (j === i ? cleared(x) : x)))}
+                          className="flex h-full items-center px-3 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                        >
+                          ×
+                        </button>
+                      </div>
                     )
-                  })}
-                  {facets.some(chip) && (
-                    <CellButton className="text-muted-foreground" onClick={() => setFacets((fs) => fs.map(cleared))}>
-                      Clear all
-                    </CellButton>
-                  )}
-                </div>
-                <div role="group" aria-label="Show rows or records" className="flex items-stretch">
-                  <CellButton rule="left" active={mode === "row-based"} onClick={() => setMode("row-based")} className={mode === "row-based" ? "font-medium" : "text-muted-foreground"}>
-                    Rows
+                  )
+                })}
+                {facets.some(chip) && (
+                  <CellButton className="text-muted-foreground" onClick={() => setFacets((fs) => fs.map(cleared))}>
+                    Clear all
                   </CellButton>
-                  <CellButton rule="left" active={mode === "record-based"} onClick={() => setMode("record-based")} className={mode === "record-based" ? "font-medium" : "text-muted-foreground"}>
-                    Records
-                  </CellButton>
-                </div>
+                )}
               </div>
-              <div className="min-h-0 flex-1">
-                <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} />
+              <div role="group" aria-label="Show rows or records" className="flex items-stretch">
+                <CellButton rule="left" active={mode === "row-based"} onClick={() => setMode("row-based")} className={mode === "row-based" ? "font-medium" : "text-muted-foreground"}>
+                  Rows
+                </CellButton>
+                <CellButton rule="left" active={mode === "record-based"} onClick={() => setMode("record-based")} className={mode === "record-based" ? "font-medium" : "text-muted-foreground"}>
+                  Records
+                </CellButton>
               </div>
-            </main>
-          </div>
+            </div>
+            <div className="flex min-h-0 flex-1">
+              <aside aria-label={side === "facets" ? "Facets" : "History"} className="w-65 shrink-0 overflow-y-auto border-r">
+                {side === "facets" ? (
+                  <Facets
+                    facets={facets}
+                    data={facetData}
+                    columns={summary.columns}
+                    onChange={setFacets}
+                    onEditChoice={editChoice}
+                    onLimit={setFacetLimit}
+                    onAdd={(c) => onAction({ kind: "facet", column: c })}
+                  />
+                ) : (
+                  <History summary={summary} onGoto={goto} onExtract={() => setModal({ kind: "extract" })} />
+                )}
+              </aside>
+              <main className="min-w-0 flex-1">
+                <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} />
+              </main>
+            </div>
+          </>
         ) : (
           <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
         )}
@@ -583,6 +602,16 @@ export function App() {
             </StatusCell>
           )}
           <Spacer />
+          {summary && selected && selected.column && summary.columns.includes(selected.column) && (
+            <StatusCell rule="left" className="min-w-0 gap-2">
+              <span>
+                row {selected.row + 1} · {selected.column}
+              </span>
+              <span className="max-w-80 truncate border border-input bg-background px-1.5 text-foreground">{selected.value === null ? "null" : `"${selected.value.replace(/ /g, "·")}"`}</span>
+              {selected.value !== null && /^\s|\s$/.test(selected.value) && <span className="text-warn-text">{/^\s/.test(selected.value) ? "leading" : "trailing"} space</span>}
+              <span>Enter edit</span>
+            </StatusCell>
+          )}
           {summary ? (
             <StatusCell rule="left">
               <kbd className="text-[11.5px]">Ctrl K</kbd> commands
