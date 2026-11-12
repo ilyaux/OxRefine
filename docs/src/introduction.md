@@ -1,6 +1,6 @@
 # OxRefine
 
-OxRefine is a free, open-source tool for cleaning messy tabular data, built on [OpenRefine](https://openrefine.org)'s way of working: facet, filter, cluster near-duplicates, transform with GREL, reconcile against Wikidata, and undo anything. The engine is new and written in Rust. It is about 20 times faster than OpenRefine 3.10.1 and uses 10–18 times less memory, with the same results.
+OxRefine is a free, open-source tool for cleaning messy tabular data, built on [OpenRefine](https://openrefine.org)'s way of working: facet, filter, cluster near-duplicates, transform with GREL, reconcile against Wikidata, and undo anything. The engine is new and written in Rust. It is about 20 times faster than OpenRefine 3.10.1 and uses 12–22 times less memory, with the same results.
 
 ![OxRefine with 100,000 messy rows and facets on country and city](images/screenshot.png)
 

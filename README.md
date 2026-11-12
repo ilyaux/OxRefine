@@ -32,7 +32,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 
 [OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
 
-- **About 20× faster, with 10–18× less memory.** A million-row workflow takes 0.7 s instead of 16.5 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 259 MB.
+- **About 20× faster, with 12–22× less memory.** A million-row workflow takes 0.6 s instead of 16.8 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 219 MB.
 - **The same results.** Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,018 of 2,034 checks match, and each known difference is written down with its reason.
 - **Your work moves both ways.** OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact.
 - **Desktop, browser, server or command line.** It runs as a native desktop app, in a browser (`ox serve`, like OpenRefine), on a server or in Docker behind an access token, or headless with `ox apply`.
@@ -43,21 +43,21 @@ The same workflow ran through each tool's own HTTP API: CSV import, a text facet
 
 | Rows | OxRefine | OpenRefine | Faster | Peak RAM (OxRefine / OpenRefine) |
 |---|---|---|---|---|
-| 100,000 | 0.18 s | 2.6 s | 14× | 23 / 415 MB |
-| 250,000 | 0.21 s | 5.1 s | 24× | 44 / 781 MB |
-| 500,000 | 0.36 s | 9.0 s | 25× | 76 / 971 MB |
-| 1,000,000 | 0.70 s | 16.5 s | 24× | 141 / 1,360 MB |
-| 2,000,000 | 1.3 s | out of memory | | 259 MB / out of memory |
+| 100,000 | 0.11 s | 2.1 s | 19× | 23 / 419 MB |
+| 250,000 | 0.20 s | 3.9 s | 19× | 37 / 797 MB |
+| 500,000 | 0.37 s | 9.5 s | 26× | 63 / 972 MB |
+| 1,000,000 | 0.60 s | 16.8 s | 28× | 116 / 1,359 MB |
+| 2,000,000 | 1.2 s | out of memory | | 219 MB / out of memory |
 
 Every output cell is identical at every size (8,000,008 of 8,000,008 at a million rows). Per step at a million rows:
 
 | Step | OxRefine | OpenRefine |
 |---|---|---|
-| Import | 0.43 s | 2.1 s |
-| Text facet | 9 ms | 0.6 s |
-| Clustering | 17 ms | 2.0 s |
-| Recipe (5 operations) | 32 ms | 10.3 s |
-| Export | 0.21 s | 1.6 s |
+| Import | 0.35 s | 1.8 s |
+| Text facet | 10 ms | 0.6 s |
+| Clustering | 19 ms | 2.2 s |
+| Recipe (5 operations) | 28 ms | 10.6 s |
+| Export | 0.20 s | 1.6 s |
 
 <details>
 <summary>Reproducing it</summary>

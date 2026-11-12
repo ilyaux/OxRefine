@@ -21,4 +21,4 @@ The defaults match OpenRefine's import wizard, so a file opens the way OpenRefin
 
 ## Big files
 
-Delimited files of 8 MB or more are read on every CPU core. A million-row CSV imports in about 0.4 s. A progress bar shows long imports, and you can cancel them.
+Delimited files of 8 MB or more are read on every CPU core. A million-row CSV imports in about 0.35 s. A progress bar shows long imports, and you can cancel them.
