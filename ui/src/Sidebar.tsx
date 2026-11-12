@@ -4,7 +4,7 @@ import type { Facet, FacetData, ListData, ListFacet, RangeData, RangeFacet, Summ
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { cn, maxOf } from "@/lib/utils"
 
 const SHOWN = 200
 const fmt = (n: number) => (Math.abs(n) >= 1e6 || (n !== 0 && Math.abs(n) < 1e-3) ? n.toExponential(2) : Number(n.toFixed(6)).toLocaleString())
@@ -136,7 +136,7 @@ function ListChoices({ facet, data, onChange, onEdit }: { facet: ListFacet; data
       selection: selected(label) ? facet.selection.filter((s) => (s.v.l || String(s.v.v)) !== label) : [...facet.selection, { v: { v, l: label } }],
     })
   const choices = order === "name" ? [...data.choices].sort((a, b) => a[0].localeCompare(b[0])) : data.choices
-  const top = Math.max(1, ...data.choices.map((c) => c[1]), data.blank, data.error)
+  const top = maxOf([...data.choices.map((c) => c[1]), data.blank, data.error], 1)
   const editable = facet.expression === "value" || facet.expression === "grel:value"
   const special: [string, number, boolean, () => void][] = [
     ["(blank)", data.blank, facet.selectBlank, () => onChange({ ...facet, selectBlank: !facet.selectBlank })],
@@ -197,7 +197,7 @@ function ListChoices({ facet, data, onChange, onEdit }: { facet: ListFacet; data
 
 /** A histogram over an ink baseline: counts inside the facet's range in the data colour, the rest grey. */
 function Histogram({ label, bins, baseBins, inside, ticks }: { label: string; bins: number[]; baseBins: number[]; inside: (i: number) => boolean; ticks: string[] }) {
-  const top = Math.max(1, ...baseBins)
+  const top = maxOf(baseBins, 1)
   const w = 100 / baseBins.length
   return (
     <div className="px-3.5">

@@ -20,7 +20,7 @@ import { ExpressionEditor, recentExpressions, rememberExpression } from "@/Expre
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { CellButton, FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
 import docs from "@/grel-docs.json"
-import { cn } from "@/lib/utils"
+import { cn, maxOf, minOf } from "@/lib/utils"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
 const vis = (s: string | null) => (s === null ? "(null)" : s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
@@ -350,6 +350,8 @@ export function TransformDialog({
 
 type Cluster = [string, number][]
 const SHOWN = 300
+/** values listed per cluster; the rest are counted (a numeric column under a phonetic key can put every value in one) */
+const LISTED = 50
 
 /** OpenRefine's cluster facets: choices in the cluster, rows, average length of the choices and its variance. */
 const STATS = [
@@ -373,8 +375,8 @@ const num = (n: number) => (Number.isInteger(n) ? n.toLocaleString() : n.toFixed
 
 /** A cluster filter as two numeric inputs: values outside [from, to] hide the cluster. */
 function StatFilter({ label, values, value, onChange }: { label: string; values: number[]; value: [number, number] | null; onChange: (v: [number, number] | null) => void }) {
-  const min = Math.min(...values)
-  const max = Math.max(...values)
+  const min = minOf(values)
+  const max = maxOf(values)
   const [lo, hi] = value ?? [min, max]
   if (!values.length || min === max) return null
   const commit = (which: 0 | 1, s: string) => {
@@ -503,7 +505,7 @@ export function ClusterDialog({
   // what checking the clusters would do: values merged into one each, and the cells that change
   const merged = chosen.reduce((n, c) => n + c.values.length, 0)
   const changing = chosen.reduce((n, c) => n + c.values.reduce((m, [v, k]) => m + (v === c.to ? 0 : k), 0), 0)
-  const top = (c: Cluster) => Math.max(1, ...c.map(([, n]) => n))
+  const top = (c: Cluster) => maxOf(c.map(([, n]) => n), 1)
   const radio = (name: string, value: string, current: string, label: string, set: (v: string) => void, disabled?: boolean) => (
     <label
       key={value}
@@ -649,13 +651,13 @@ export function ClusterDialog({
                   {visible.slice(0, SHOWN).map((i) => [clusters[i], i] as const).map(([c, i]) => {
                     const on = picks[i]?.merge ?? false
                     return (
-                      <tr key={c.map(([v]) => v).join("\u0000")} className={cn("align-top", !on && "bg-muted")}>
+                      <tr key={`${i}:${c[0][0]}`} className={cn("align-top", !on && "bg-muted")}>
                         <td className="border-b py-3 pl-4">
                           <input type="checkbox" aria-label={`Merge cluster ${i + 1}`} checked={on} onChange={(e) => set(i, { merge: e.target.checked })} className="accent-foreground" />
                         </td>
                         <td className="border-b py-2">
                           <ul className="flex flex-col">
-                            {c.map(([v, n], k) => (
+                            {c.slice(0, LISTED).map(([v, n], k) => (
                               <li key={v} className="grid grid-cols-[minmax(0,1fr)_120px_64px] items-center gap-4 py-0.5">
                                 <button
                                   type="button"
@@ -671,6 +673,9 @@ export function ClusterDialog({
                                 <span className="text-right font-mono text-[12px] text-muted-foreground">{n.toLocaleString()}</span>
                               </li>
                             ))}
+                            {c.length > LISTED && (
+                              <li className="py-0.5 font-mono text-[12px] text-muted-foreground">+ {(c.length - LISTED).toLocaleString()} more values</li>
+                            )}
                           </ul>
                         </td>
                         <td className="border-b py-2.5 pr-6 text-right font-mono text-[12.5px] font-semibold">{c.reduce((s, [, n]) => s + n, 0).toLocaleString()}</td>
