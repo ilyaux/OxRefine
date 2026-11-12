@@ -69,6 +69,11 @@ export const CASES = [
   { name: "transform reads other cells", ops: [transform("note", "cells['name'].value + ' @ ' + cells['city'].value", all, "set-to-blank")] },
   { name: "transform in facet only", ops: [transform("city", "value.trim().toTitlecase()", text("city", "york"))] },
   { name: "transform record mode facet", ops: [transform("tags", "value.toUppercase()", text("city", "chicago", "record-based"))] },
+  // row.record: the record each row belongs to (a blank id continues the record above)
+  { name: "transform with row.record", ops: [transform("note", "row.record.index + ':' + row.record.rowCount + ':' + row.record.cells['tags'].value.join('/')", all, "set-to-blank")] },
+  { name: "column-addition with row.record", ops: [{ op: "core/column-addition", engineConfig: all, baseColumnName: "name", newColumnName: "record name", columnInsertIndex: 2,
+    expression: "grel:row.record.cells['name'].value[0] + ' (' + (rowIndex - row.record.fromRowIndex) + ')'", onError: "set-to-blank" }] },
+  { name: "transform with row.record in record mode", ops: [transform("city", "row.record.cells['city'].value.join(' + ')", text("tags", "blue", "record-based"))] },
   { name: "column-addition per row", ops: [{ op: "core/column-addition", engineConfig: all, baseColumnName: "score", newColumnName: "double", columnInsertIndex: 5,
     expression: "grel:value.toNumber() * 2", onError: "set-to-blank" }] },
   { name: "mass-edit with blank", ops: [{ op: "core/mass-edit", engineConfig: all, columnName: "city", expression: "value",

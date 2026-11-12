@@ -18,8 +18,8 @@ pub enum Value {
     Json(Box<serde_json::Value>),
     /// A parsed HTML/XML element or document, kept as markup (re-parsed on demand).
     Html(Box<Markup>),
-    /// cell / row / cells objects exposed to expressions.
-    Obj(Vec<(String, Value)>),
+    /// cell / row / cells / record objects exposed to expressions, with the Java class they stand for.
+    Obj(Class, Vec<(String, Value)>),
     /// A regex literal passed as a function argument.
     Re(Box<regex::Regex>),
     /// cell.recon and what hangs off it (candidates, features).
@@ -28,6 +28,37 @@ pub enum Value {
 }
 
 pub use Value::*;
+
+/// OpenRefine's classes behind GREL's objects: previews show `[object <shown>]`, type() the class name.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum Class {
+    Cell,
+    Row,
+    Cells,
+    Record,
+    RecordCells,
+}
+
+impl Class {
+    pub fn shown(self) -> &'static str {
+        match self {
+            Class::Cell => "Cell",
+            Class::Row => "Row",
+            Class::Cells => "CellTuple",
+            Class::Record => "WrappedRecord",
+            Class::RecordCells => "RecordCells",
+        }
+    }
+    pub fn java(self) -> &'static str {
+        match self {
+            Class::Cell => "com.google.refine.expr.WrappedCell",
+            Class::Row => "com.google.refine.expr.WrappedRow",
+            Class::Cells => "com.google.refine.expr.CellTuple",
+            Class::Record => "com.google.refine.expr.WrappedRow$WrappedRecord",
+            Class::RecordCells => "com.google.refine.expr.WrappedRow$RecordCells",
+        }
+    }
+}
 
 /// Markup behind a parsed HTML/XML value; boxed so common cell values stay small.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -91,7 +122,8 @@ impl Value {
                 serde_json::Value::Bool(_) => "boolean",
                 _ => "object",
             },
-            Html(_) | Obj(_) => "object",
+            Html(_) => "object",
+            Obj(c, _) => c.java(),
             Recon(r) => r.type_name(),
             Re(_) => "regex",
             Error(_) => "error",
@@ -106,6 +138,7 @@ impl Value {
             Num(n) => render_num(*n),
             Array(_) => json_pretty(self, 0),
             Date(d) => format!("[date {}]", fmt_date(d)),
+            Obj(c, _) => format!("[object {}]", c.shown()),
             _ => self.to_java_string(),
         })
     }
@@ -122,7 +155,7 @@ impl Value {
             Array(a) => format!("[{}]", a.iter().map(|v| v.to_java_string()).collect::<Vec<_>>().join(", ")),
             Json(j) => j.to_string(),
             Html(h) => h.markup.clone(),
-            Obj(f) => format!("{{{}}}", f.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect::<Vec<_>>().join(", ")),
+            Obj(_, f) => format!("{{{}}}", f.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect::<Vec<_>>().join(", ")),
             Re(r) => r.as_str().to_string(),
             Recon(r) => r.to_java_string(),
             Error(e) => e.clone(),
@@ -196,14 +229,7 @@ pub fn json_pretty(v: &Value, depth: usize) -> String {
         Array(a) => format!("[ {} ]", a.iter().map(|x| json_pretty(x, depth)).collect::<Vec<_>>().join(", ")),
         Json(j) => json_node_pretty(j, depth),
         Html(h) => json_str(&h.markup),
-        Obj(f) => {
-            let pad = "  ".repeat(depth + 1);
-            let items: Vec<_> = f.iter().map(|(k, v)| format!("{pad}{} : {}", json_str(k), json_pretty(v, depth + 1))).collect();
-            format!("{{
-{}
-{}}}", items.join(",
-"), "  ".repeat(depth))
-        }
+        Obj(c, _) => format!("[object {}]", c.shown()),
         Re(r) => json_str(r.as_str()),
         Recon(r) => json_str(&r.to_java_string()),
         Error(e) => json_str(e),
@@ -250,7 +276,7 @@ impl PartialEq for Value {
             (Array(a), Array(b)) => a == b,
             (Json(a), Json(b)) => a == b,
             (Html(a), Html(b)) => a == b,
-            (Obj(a), Obj(b)) => a == b,
+            (Obj(c, a), Obj(d, b)) => c == d && a == b,
             (Re(a), Re(b)) => a.as_str() == b.as_str(),
             (Recon(a), Recon(b)) => a == b,
             _ => false,
@@ -271,7 +297,10 @@ impl Hash for Value {
             Array(a) => a.hash(h),
             Json(j) => j.to_string().hash(h),
             Html(x) => x.hash(h),
-            Obj(f) => f.hash(h),
+            Obj(c, f) => {
+                c.hash(h);
+                f.hash(h)
+            }
             Re(r) => r.as_str().hash(h),
             Recon(r) => r.to_java_string().hash(h),
         }

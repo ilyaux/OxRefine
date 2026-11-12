@@ -24,11 +24,7 @@
     {
      "name": "city",
      "columnName": "city",
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -87,7 +83,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     }
     }
    ],
    "matching": [
@@ -148,7 +148,7 @@
     {
      "name": "city",
      "columnName": "city",
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -191,7 +191,7 @@
        "s": true
       }
      ],
-     "expression": "value"
+     "invert": false
     },
     {
      "name": "name",
@@ -238,11 +238,7 @@
     {
      "name": "city",
      "columnName": "city",
-     "invert": false,
-     "errorChoice": {
-      "s": false,
-      "c": 1
-     },
+     "expression": "value.toLowercase().trim()",
      "choices": [
       {
        "v": {
@@ -277,7 +273,11 @@
        "s": false
       }
      ],
-     "expression": "value.toLowercase().trim()"
+     "errorChoice": {
+      "s": false,
+      "c": 1
+     },
+     "invert": false
     }
    ],
    "matching": [
@@ -316,11 +316,7 @@
     {
      "name": "city",
      "columnName": "city",
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     },
-     "invert": true,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -379,7 +375,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": true,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     }
     }
    ],
    "matching": [
@@ -417,11 +417,7 @@
     {
      "name": "note",
      "columnName": "note",
-     "blankChoice": {
-      "s": true,
-      "c": 4
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -456,7 +452,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": true,
+      "c": 4
+     }
     }
    ],
    "matching": [
@@ -497,11 +497,7 @@
     {
      "name": "tags",
      "columnName": "tags",
-     "invert": false,
-     "errorChoice": {
-      "s": false,
-      "c": 2
-     },
+     "expression": "value.split('|')",
      "choices": [
       {
        "v": {
@@ -528,7 +524,11 @@
        "s": false
       }
      ],
-     "expression": "value.split('|')"
+     "errorChoice": {
+      "s": false,
+      "c": 2
+     },
+     "invert": false
     }
    ],
    "matching": [
@@ -574,7 +574,7 @@
      "max": 11.02,
      "min": 9,
      "expression": "value.length()",
-     "baseBins": [
+     "bins": [
       2,
       0,
       0,
@@ -678,9 +678,9 @@
       1,
       0
      ],
-     "to": 11.02,
      "step": 0.02,
-     "bins": [
+     "to": 11.02,
+     "baseBins": [
       2,
       0,
       0,
@@ -834,7 +834,7 @@
      "max": 13,
      "min": -2,
      "expression": "value.toNumber()",
-     "baseBins": [
+     "bins": [
       1,
       0,
       1,
@@ -851,9 +851,9 @@
       0,
       2
      ],
-     "to": 10,
      "step": 1,
-     "bins": [
+     "to": 10,
+     "baseBins": [
       1,
       0,
       1,
@@ -916,7 +916,7 @@
      "max": 13,
      "min": -2,
      "expression": "value.toNumber()",
-     "baseBins": [
+     "bins": [
       1,
       0,
       1,
@@ -933,9 +933,9 @@
       0,
       2
      ],
-     "to": 10,
      "step": 1,
-     "bins": [
+     "to": 10,
+     "baseBins": [
       1,
       0,
       1,
@@ -991,8 +991,8 @@
      "blankCount": 1,
      "errorCount": 0,
      "name": "score",
-     "error": "No numeric value present.",
      "columnName": "score",
+     "error": "No numeric value present.",
      "expression": "value"
     }
    ],
@@ -1058,7 +1058,7 @@
      "max": 13,
      "min": -2,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       1,
@@ -1075,9 +1075,9 @@
       0,
       2
      ],
-     "to": 12,
      "step": 1,
-     "bins": [
+     "to": 12,
+     "baseBins": [
       1,
       0,
       1,
@@ -1154,7 +1154,7 @@
      "max": 13,
      "min": -2,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       1,
@@ -1171,9 +1171,9 @@
       0,
       2
      ],
-     "to": 13,
      "step": 1,
-     "bins": [
+     "to": 13,
+     "baseBins": [
       1,
       0,
       1,
@@ -1242,11 +1242,7 @@
     {
      "name": "score",
      "columnName": "score",
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -1305,7 +1301,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     }
     }
    ],
    "matching": [
@@ -1351,7 +1351,7 @@
     {
      "name": "name",
      "columnName": "name",
-     "invert": false,
+     "expression": "facetCount(value, 'value', 'name') > 1",
      "choices": [
       {
        "v": {
@@ -1370,7 +1370,7 @@
        "s": true
       }
      ],
-     "expression": "facetCount(value, 'value', 'name') > 1"
+     "invert": false
     }
    ],
    "matching": [
@@ -1412,7 +1412,7 @@
     {
      "name": "note",
      "columnName": "note",
-     "invert": false,
+     "expression": "isBlank(value)",
      "choices": [
       {
        "v": {
@@ -1431,7 +1431,7 @@
        "s": true
       }
      ],
-     "expression": "isBlank(value)"
+     "invert": false
     }
    ],
    "matching": [
@@ -1486,7 +1486,7 @@
     {
      "name": "joined",
      "columnName": "joined",
-     "invert": false,
+     "expression": "isError(value)",
      "choices": [
       {
        "v": {
@@ -1505,7 +1505,7 @@
        "s": true
       }
      ],
-     "expression": "isError(value)"
+     "invert": false
     }
    ],
    "matching": [
@@ -1552,11 +1552,7 @@
     {
      "name": "joined",
      "columnName": "joined",
-     "invert": false,
-     "errorChoice": {
-      "s": false,
-      "c": 3
-     },
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -1599,7 +1595,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "errorChoice": {
+      "s": false,
+      "c": 3
+     },
+     "invert": false
     }
    ],
    "matching": [
@@ -1665,7 +1665,7 @@
     {
      "name": "id",
      "columnName": "id",
-     "invert": false,
+     "expression": "row.starred",
      "choices": [
       {
        "v": {
@@ -1684,7 +1684,7 @@
        "s": false
       }
      ],
-     "expression": "row.starred"
+     "invert": false
     }
    ],
    "matching": [
@@ -1747,7 +1747,7 @@
     {
      "name": "id",
      "columnName": "id",
-     "invert": false,
+     "expression": "row.flagged",
      "choices": [
       {
        "v": {
@@ -1766,7 +1766,7 @@
        "s": false
       }
      ],
-     "expression": "row.flagged"
+     "invert": false
     }
    ],
    "matching": [
@@ -1846,11 +1846,7 @@
     {
      "name": "tags",
      "columnName": "tags",
-     "blankChoice": {
-      "s": false,
-      "c": 2
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -1901,7 +1897,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 2
+     }
     }
    ],
    "matching": [
@@ -1950,11 +1950,7 @@
     {
      "name": "city",
      "columnName": "city",
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -1997,7 +1993,11 @@
        "s": false
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     }
     },
     {
      "name": "tags",
@@ -2013,6 +2013,137 @@
     5
    ],
    "filtered": 1
+  },
+  {
+   "name": "row.record facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "id",
+      "columnName": "id",
+      "expression": "row.record.rowCount",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": 2,
+         "l": "2"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "id",
+     "columnName": "id",
+     "expression": "row.record.rowCount",
+     "choices": [
+      {
+       "v": {
+        "v": 1,
+        "l": "1"
+       },
+       "c": 5,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 2,
+        "l": "2"
+       },
+       "c": 4,
+       "s": true
+      }
+     ],
+     "invert": false
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    4,
+    5
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "records: row.record facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "name",
+      "columnName": "name",
+      "expression": "row.record.cells['tags'].value.length()",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": 3,
+         "l": "3"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "name": "name",
+     "columnName": "name",
+     "expression": "row.record.cells['tags'].value.length()",
+     "choices": [
+      {
+       "v": {
+        "v": 0,
+        "l": "0"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 1,
+        "l": "1"
+       },
+       "c": 6,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 2,
+        "l": "2"
+       },
+       "c": 2,
+       "s": false
+      },
+      {
+       "v": {
+        "v": 3,
+        "l": "3"
+       },
+       "c": 0,
+       "s": true
+      }
+     ],
+     "invert": false
+    }
+   ],
+   "matching": [],
+   "filtered": 0
   },
   {
    "name": "timeline full range",
@@ -2063,7 +2194,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -2154,9 +2285,9 @@
       0,
       1
      ],
-     "to": 1710028800000,
      "step": 604800000,
-     "bins": [
+     "to": 1710028800000,
+     "baseBins": [
       1,
       0,
       0,
@@ -2311,7 +2442,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -2402,9 +2533,9 @@
       0,
       1
      ],
-     "to": 1706745600000,
      "step": 604800000,
-     "bins": [
+     "to": 1706745600000,
+     "baseBins": [
       1,
       0,
       0,
@@ -2557,7 +2688,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -2648,9 +2779,9 @@
       0,
       1
      ],
-     "to": 1710028800000,
      "step": 604800000,
-     "bins": [
+     "to": 1710028800000,
+     "baseBins": [
       1,
       0,
       0,
@@ -2802,7 +2933,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -2893,9 +3024,9 @@
       0,
       1
      ],
-     "to": 1710028800000,
      "step": 604800000,
-     "bins": [
+     "to": 1710028800000,
+     "baseBins": [
       1,
       0,
       0,
@@ -3026,12 +3157,12 @@
      "max": 1,
      "min": -9223372036854776000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       0
      ],
-     "to": 1,
      "step": 1,
-     "bins": [
+     "to": 1,
+     "baseBins": [
       0
      ]
     }
@@ -3084,7 +3215,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value.toDate()",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -3175,9 +3306,9 @@
       0,
       1
      ],
-     "to": 1709251200000,
      "step": 604800000,
-     "bins": [
+     "to": 1709251200000,
+     "baseBins": [
       1,
       0,
       0,
@@ -3315,7 +3446,7 @@
      "max": 1704070560000,
      "min": 1704067200000,
      "expression": "'2024-01-01'.toDate().inc(rowIndex * 7, 'minutes')",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -3374,9 +3505,9 @@
       0,
       1
      ],
-     "to": 1704069600000,
      "step": 60000,
-     "bins": [
+     "to": 1704069600000,
+     "baseBins": [
       1,
       0,
       0,
@@ -3480,16 +3611,16 @@
      "max": 1704441600000,
      "min": 1704067200000,
      "expression": "'2024-01-01'.toDate().inc(rowIndex * 13, 'hours')",
-     "baseBins": [
+     "bins": [
       2,
       2,
       2,
       2,
       1
      ],
-     "to": 1704240000000,
      "step": 86400000,
-     "bins": [
+     "to": 1704240000000,
+     "baseBins": [
       2,
       2,
       2,
@@ -3541,7 +3672,7 @@
      "max": 1577836800000,
      "min": -2208988800000,
      "expression": "'1900-01-01'.toDate().inc(rowIndex * 15, 'years')",
-     "baseBins": [
+     "bins": [
       1,
       1,
       1,
@@ -3555,9 +3686,9 @@
       1,
       1
      ],
-     "to": 1577836800000,
      "step": 315569520000,
-     "bins": [
+     "to": 1577836800000,
+     "baseBins": [
       1,
       1,
       1,
@@ -3621,13 +3752,13 @@
      "max": 1,
      "min": 1714867200000,
      "expression": "'2024-05-05'.toDate()",
-     "baseBins": [
-      0
-     ],
-     "to": 1,
-     "step": 1,
      "bins": [
       9
+     ],
+     "step": 1,
+     "to": 1,
+     "baseBins": [
+      0
      ]
     }
    ],
@@ -3693,7 +3824,7 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
+     "bins": [
       1,
       0,
       0,
@@ -3784,9 +3915,9 @@
       0,
       1
      ],
-     "to": 1710028800000,
      "step": 604800000,
-     "bins": [
+     "to": 1710028800000,
+     "baseBins": [
       1,
       0,
       0,
@@ -3958,99 +4089,6 @@
      "max": 1710028800000,
      "min": 1656547200000,
      "expression": "value",
-     "baseBins": [
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      2,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      1
-     ],
-     "to": 1710028800000,
-     "step": 604800000,
      "bins": [
       0,
       0,
@@ -4141,16 +4179,105 @@
       0,
       0,
       0
+     ],
+     "step": 604800000,
+     "to": 1710028800000,
+     "baseBins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      2,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
      ]
     },
     {
      "name": "city",
      "columnName": "city",
-     "blankChoice": {
-      "s": false,
-      "c": 1
-     },
-     "invert": false,
+     "expression": "value",
      "choices": [
       {
        "v": {
@@ -4209,7 +4336,11 @@
        "s": true
       }
      ],
-     "expression": "value"
+     "invert": false,
+     "blankChoice": {
+      "s": false,
+      "c": 1
+     }
     }
    ],
    "matching": [

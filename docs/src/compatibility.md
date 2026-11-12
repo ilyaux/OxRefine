@@ -4,9 +4,9 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 470 / 472 |
-| Operations | 80 / 81 |
-| Facets | 34 / 34 |
+| GREL expressions | 559 / 561 |
+| Operations | 83 / 84 |
+| Facets | 36 / 36 |
 | Import options | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
@@ -36,6 +36,10 @@ For project archives, the check runs both ways:
 ## Reconciliation without the internet
 
 The reconciliation suite runs a small local reconciliation service, records every query OpenRefine sends with the answer it gets, and replays those answers to OxRefine. The test therefore covers the exact queries, batching, auto-matching rules and error messages, with no network access.
+
+## Damaged input
+
+A fuzz test takes the suites' own GREL expressions and sample files of every format, damages them at random, and feeds them through the GREL parser and evaluator and every importer. Any crash fails the test. Each change runs a short session, and long sessions of millions of inputs run before releases. Inputs that once crashed are kept as regression cases. Expressions are limited to 128 levels of nesting or 512 chained operators, so no expression can overflow the stack.
 
 ## Speed
 

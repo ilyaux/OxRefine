@@ -202,11 +202,18 @@ fn dedupe(items: impl Iterator<Item = Item>) -> Vec<Item> {
 #[derive(Default)]
 pub struct Ctx {
     counts: RefCell<HashMap<(String, String), std::result::Result<HashMap<String, i64>, String>>>,
+    /// the first row of each record, for `row.record`
+    record_starts: std::cell::OnceCell<Vec<usize>>,
 }
 
 const BLANK_KEY: &str = "\u{0}blank";
 
 impl Ctx {
+    /// The first row of each record in `t`, computed once per request.
+    pub fn record_starts(&self, t: &Table) -> &[usize] {
+        self.record_starts.get_or_init(|| record_starts(t))
+    }
+
     /// facetCount(choice, expression, column): rows of `column` whose expression gives `choice`.
     pub fn facet_count(&self, t: &Table, choice: &Value, expr: &str, column: &str) -> Value {
         let k = (expr.to_string(), column.to_string());
@@ -335,8 +342,8 @@ fn compile(t: &Table, f: &Facet, ctx: &Ctx) -> Result<Option<Pass>> {
                 return Ok(None);
             }
             let ci = t.col(column_name)?;
-            let pat = if mode == "regex" { grel::parse::java_regex(query) } else { regex::escape(query) };
-            let re = RegexBuilder::new(&pat).case_insensitive(!case_sensitive).build().map_err(err)?;
+            let re = if mode == "regex" { grel::parse::user_regex(query, !case_sensitive) } else { RegexBuilder::new(&regex::escape(query)).case_insensitive(!case_sensitive).build() };
+            let re = re.map_err(err)?;
             Ok(Some(Pass::Code(ci, t.columns[ci].dict.iter().map(|v| re.is_match(&v.display()) != *invert).collect())))
         }
         Facet::Range { column_name, expression, from, to, select_numeric, select_non_numeric, select_blank, select_error, .. } => {
@@ -385,10 +392,15 @@ fn filter_with(t: &Table, cfg: &EngineConfig, skip: Option<usize>, ctx: &Ctx) ->
     Ok(out)
 }
 
+/// The first row of each record, by the table's key column.
+pub fn record_starts(t: &Table) -> Vec<usize> {
+    let starts = t.record_starts(t.key_index());
+    (0..t.rows).filter(|&r| starts[r]).collect()
+}
+
 /// Row ranges of the records, by the table's key column.
 fn records(t: &Table) -> Vec<(usize, usize)> {
-    let starts = t.record_starts(t.key_index());
-    let s: Vec<usize> = (0..t.rows).filter(|&r| starts[r]).collect();
+    let s = record_starts(t);
     s.iter().enumerate().map(|(i, &a)| (a, s.get(i + 1).copied().unwrap_or(t.rows))).collect()
 }
 
@@ -582,25 +594,11 @@ impl<'a> Tally<'a> {
     }
 }
 
-fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice], record_mode: bool) -> J {
-    // counts per choice, over rows (or records) that pass the other facets
+fn list_panel(t: &Table, ev: &Evaluated, others: &[u32], selection: &[Choice]) -> J {
+    // counts per choice over the rows that pass the other facets; in records mode that is every row of
+    // the passing records, and each row still counts once, as in OpenRefine
     let mut tally = Tally::default();
-    if record_mode {
-        let keep: HashSet<u32> = others.iter().copied().collect();
-        for (a, b) in records(t) {
-            if keep.contains(&(a as u32)) {
-                let mut seen: Vec<&Item> = vec![];
-                for r in a..b {
-                    for it in ev.of(t, r) {
-                        if !seen.contains(&it) {
-                            seen.push(it);
-                        }
-                    }
-                }
-                tally.add(seen, 1);
-            }
-        }
-    } else if ev.per_code {
+    if ev.per_code {
         // rows by dictionary code first: one pass over the codes, then each distinct value once
         let codes = &t.columns[ev.col].codes;
         let mut n = vec![0usize; ev.items.len()];
@@ -642,7 +640,7 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig) -> Result<Vec<J>> {
             Facet::List { column_name, expression, selection, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
                 let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
-                Ok(list_panel(t, &ev, &others, selection, cfg.mode == "record-based"))
+                Ok(list_panel(t, &ev, &others, selection))
             }
             Facet::Range { column_name, expression, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;

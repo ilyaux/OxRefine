@@ -19,7 +19,7 @@ const VARIABLES: [string, string][] = [
   ["value", "The cell's value"],
   ["cell", "The cell: cell.value, cell.recon"],
   ["cells", "All cells of the row: cells[\"Column\"].value"],
-  ["row", "The row: row.index, row.starred, row.flagged, row.cells"],
+  ["row", "The row: row.index, row.starred, row.flagged, row.cells, row.record"],
   ["rowIndex", "The row number, starting at 0"],
 ]
 

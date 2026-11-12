@@ -37,9 +37,9 @@ The descriptions below are OpenRefine's own, from OpenRefine 3.10.1.
 | \`value\` | The value of the current cell |
 | \`cell\` | The current cell: \`cell.value\`, and \`cell.recon\` for its reconciliation data |
 | \`cells\` | The row's cells by column name: \`cells["Name"].value\` |
-| \`row\` | The current row: \`row.index\`, \`row.starred\`, \`row.flagged\`, \`row.cells\` |
+| \`row\` | The current row: \`row.index\`, \`row.starred\`, \`row.flagged\`, \`row.cells\`, \`row.record\` |
+| \`row.record\` | The record the row belongs to: \`index\` (the record's number), \`fromRowIndex\`, \`toRowIndex\` (the row after its last), \`rowCount\`, and \`cells["Name"].value\`, the record's non-blank values in that column as an array. Records are defined by the first column, as in records mode, and this works in rows mode too |
 | \`rowIndex\` | The row's position, from 0 |
-| \`record\` | Not in OxRefine yet. In OpenRefine, the current record in records mode |
 
 ## Operators
 

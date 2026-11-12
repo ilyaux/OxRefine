@@ -45,6 +45,8 @@ export const CASES = [
   { name: "text facet regex case-sensitive", engine: rows(text("name", "^[A-Z]\\w+ [A-Z]", { mode: "regex", caseSensitive: true })) },
   { name: "records: list counts and filter", engine: records(list("tags", "value", ["blue"])) },
   { name: "records: two facets", engine: records(list("city", "value", ["Chicago"]), text("tags", "red")) },
+  { name: "row.record facet", engine: rows(list("id", "row.record.rowCount", [2])) },
+  { name: "records: row.record facet", engine: records(list("name", "row.record.cells['tags'].value.length()", [3])) },
 
   // timeline facets (OpenRefine's timerange): from and to are milliseconds since 1970
   { name: "timeline full range", ops: dates, engine: rows(time("joined", "value", "2022-01-01T00:00:00Z", "2025-01-01T00:00:00Z")) },

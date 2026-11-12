@@ -1,6 +1,6 @@
 {
  "openrefine": "3.10.1",
- "generated": "2026-11-10",
+ "generated": "2026-11-12",
  "columns": [
   "v",
   "w"
@@ -290,6 +290,1330 @@
     "x1,234.56",
     "xaGVsbG8gd29ybGQ=",
     "xO'Neil McDonald-Smith"
+   ]
+  },
+  {
+   "expr": "record",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "type(record)",
+   "rows": "all",
+   "results": [
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined",
+    "undefined"
+   ]
+  },
+  {
+   "expr": "record.index",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "row.record",
+   "rows": "all",
+   "results": [
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]",
+    "[object WrappedRecord]"
+   ]
+  },
+  {
+   "expr": "type(row.record)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord",
+    "com.google.refine.expr.WrappedRow$WrappedRecord"
+   ]
+  },
+  {
+   "expr": "row.record.index",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20"
+   ]
+  },
+  {
+   "expr": "row.record.fromRowIndex",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "4",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21"
+   ]
+  },
+  {
+   "expr": "row.record.toRowIndex",
+   "rows": "all",
+   "results": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "6",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22"
+   ]
+  },
+  {
+   "expr": "row.record.rowCount",
+   "rows": "all",
+   "results": [
+    "1",
+    "1",
+    "1",
+    "1",
+    "2",
+    "2",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "expr": "row.record.foo",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "row.record.cells",
+   "rows": "all",
+   "results": [
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]",
+    "[object RecordCells]"
+   ]
+  },
+  {
+   "expr": "type(row.record.cells)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells",
+    "com.google.refine.expr.WrappedRow$RecordCells"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w']",
+   "rows": "all",
+   "results": [
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[  ]",
+    "[ [object Cell], [object Cell] ]",
+    "[ [object Cell], [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]"
+   ]
+  },
+  {
+   "expr": "type(row.record.cells['w'])",
+   "rows": "all",
+   "results": [
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].value",
+   "rows": "all",
+   "results": [
+    "[ \"x\" ]",
+    "[ \"y\" ]",
+    "[ \"4\" ]",
+    "[  ]",
+    "[ \"z\", \"w\" ]",
+    "[ \"z\", \"w\" ]",
+    "[ \"q\" ]",
+    "[ \"7\" ]",
+    "[ \"a,b\" ]",
+    "[ \"1\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]"
+   ]
+  },
+  {
+   "expr": "row.record.cells.w.value",
+   "rows": "all",
+   "results": [
+    "[ \"x\" ]",
+    "[ \"y\" ]",
+    "[ \"4\" ]",
+    "[  ]",
+    "[ \"z\", \"w\" ]",
+    "[ \"z\", \"w\" ]",
+    "[ \"q\" ]",
+    "[ \"7\" ]",
+    "[ \"a,b\" ]",
+    "[ \"1\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]",
+    "[ \"x\" ]"
+   ]
+  },
+  {
+   "expr": "row.record.cells['v'].value",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"Hello World\" ]",
+    "[ \"3\" ]",
+    "[ \"2.50\" ]",
+    "[ \"-17\" ]",
+    "[ \"-17\" ]",
+    "[ \"New York, NY\" ]",
+    "[ \"café Ünïcödé\" ]",
+    "[ \"2024-03-15\" ]",
+    "[ \"2024-03-15T10:20:30Z\" ]",
+    "[ \"<p>Hello <b>World</b></p>\" ]",
+    "[ \"{\\\"a\\\": 1, \\\"b\\\": [1, 2, {\\\"c\\\": \\\"x\\\"}]}\" ]",
+    "[ \"a,b,,c\" ]",
+    "[ \"true\" ]",
+    "[ \"1e3\" ]",
+    "[ \"  multiple   spaces\\there  \" ]",
+    "[ \"ALL CAPS sentence. second one!\" ]",
+    "[ \"https://example.com/path?q=1&r=two#frag\" ]",
+    "[ \"0042\" ]",
+    "[ \"1,234.56\" ]",
+    "[ \"aGVsbG8gd29ybGQ=\" ]",
+    "[ \"O'Neil McDonald-Smith\" ]"
+   ]
+  },
+  {
+   "expr": "type(row.record.cells['w'].value)",
+   "rows": "all",
+   "results": [
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array",
+    "array"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].value.join('|')",
+   "rows": "all",
+   "results": [
+    "x",
+    "y",
+    "4",
+    "",
+    "z|w",
+    "z|w",
+    "q",
+    "7",
+    "a,b",
+    "1",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].value.length()",
+   "rows": "all",
+   "results": [
+    "1",
+    "1",
+    "1",
+    "0",
+    "2",
+    "2",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1",
+    "1"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].value[0]",
+   "rows": "all",
+   "results": [
+    "x",
+    "y",
+    "4",
+    {
+     "message": "java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "z",
+    "z",
+    "q",
+    "7",
+    "a,b",
+    "1",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].recon",
+   "rows": "all",
+   "results": [
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[  ]",
+    "[ null, null ]",
+    "[ null, null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]"
+   ]
+  },
+  {
+   "expr": "row.record.cells['nope']",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "row.record.cells['nope'].value",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "forEach(row.record.cells['w'].value, x, x + '!')",
+   "rows": "all",
+   "results": [
+    "[ \"x!\" ]",
+    "[ \"y!\" ]",
+    "[ \"4!\" ]",
+    "[  ]",
+    "[ \"z!\", \"w!\" ]",
+    "[ \"z!\", \"w!\" ]",
+    "[ \"q!\" ]",
+    "[ \"7!\" ]",
+    "[ \"a,b!\" ]",
+    "[ \"1!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]",
+    "[ \"x!\" ]"
+   ]
+  },
+  {
+   "expr": "row.record.cells['v'].value.length() > 1",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "expr": "rowIndex - row.record.fromRowIndex",
+   "rows": "all",
+   "results": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "expr": "row.record.cells['v'].value.toString()",
+   "rows": "all",
+   "results": [
+    "[ hello world ]",
+    "[Hello World]",
+    "[3]",
+    "[2.50]",
+    "[-17]",
+    "[-17]",
+    "[New York, NY]",
+    "[café Ünïcödé]",
+    "[2024-03-15]",
+    "[2024-03-15T10:20:30Z]",
+    "[<p>Hello <b>World</b></p>]",
+    "[{\"a\": 1, \"b\": [1, 2, {\"c\": \"x\"}]}]",
+    "[a,b,,c]",
+    "[true]",
+    "[1e3]",
+    "[  multiple   spaces\there  ]",
+    "[ALL CAPS sentence. second one!]",
+    "[https://example.com/path?q=1&r=two#frag]",
+    "[0042]",
+    "[1,234.56]",
+    "[aGVsbG8gd29ybGQ=]",
+    "[O'Neil McDonald-Smith]"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'].foo",
+   "rows": "all",
+   "results": [
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[  ]",
+    "[ null, null ]",
+    "[ null, null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]",
+    "[ null ]"
+   ]
+  },
+  {
+   "expr": "row",
+   "rows": "all",
+   "results": [
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]",
+    "[object Row]"
+   ]
+  },
+  {
+   "expr": "type(row)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow",
+    "com.google.refine.expr.WrappedRow"
+   ]
+  },
+  {
+   "expr": "cells",
+   "rows": "all",
+   "results": [
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]"
+   ]
+  },
+  {
+   "expr": "type(cells)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple"
+   ]
+  },
+  {
+   "expr": "cell",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    null,
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]"
+   ]
+  },
+  {
+   "expr": "type(cell)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "undefined",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell"
+   ]
+  },
+  {
+   "expr": "cells['w']",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    null,
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]"
+   ]
+  },
+  {
+   "expr": "type(cells['w'])",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "undefined",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell"
+   ]
+  },
+  {
+   "expr": "row.cells",
+   "rows": "all",
+   "results": [
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]",
+    "[object CellTuple]"
+   ]
+  },
+  {
+   "expr": "type(row.cells)",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple",
+    "com.google.refine.expr.CellTuple"
+   ]
+  },
+  {
+   "expr": "[cell]",
+   "rows": "all",
+   "results": [
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ null ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]",
+    "[ [object Cell] ]"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'][0]",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]"
+   ]
+  },
+  {
+   "expr": "type(row.record.cells['w'][0])",
+   "rows": "all",
+   "results": [
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell",
+    "com.google.refine.expr.WrappedCell"
+   ]
+  },
+  {
+   "expr": "row.record.cells['w'][0].value",
+   "rows": "all",
+   "results": [
+    "x",
+    "y",
+    "4",
+    {
+     "message": "java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    },
+    "z",
+    "z",
+    "q",
+    "7",
+    "a,b",
+    "1",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x",
+    "x"
+   ]
+  },
+  {
+   "expr": "cell.foo",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "cells.foo",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "row.foo",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "expr": "cell.recon",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
    ]
   },
   {
@@ -6842,6 +8166,336 @@
    "rows": "first",
    "results": [
     "1"
+   ]
+  },
+  {
+   "expr": "range(2147483646, 2147483647)",
+   "rows": "first",
+   "results": [
+    "[ 2147483646 ]"
+   ]
+  },
+  {
+   "expr": "range(2147483647, 2147483650)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range(3000000000)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range(0, 9223372036854775807, 4611686018427387904)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range(1, 5, 0)",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "range(5, 1)",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "range(-3)",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "expr": "range()",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range(1, 2, 3, 4)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range('1, 10, 4')",
+   "rows": "first",
+   "results": [
+    "[ 1, 5, 9 ]"
+   ]
+  },
+  {
+   "expr": "range(' 2 ,5')",
+   "rows": "first",
+   "results": [
+    "[ 2, 3, 4 ]"
+   ]
+  },
+  {
+   "expr": "range('a')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range('1,2,3,4')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "combin(100, 50)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.RuntimeException: Range limit exceeded"
+    }
+   ]
+  },
+  {
+   "expr": "combin(66, 33)",
+   "rows": "first",
+   "results": [
+    "7219428434016265740"
+   ]
+  },
+  {
+   "expr": "combin(67, 33)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.RuntimeException: Range limit exceeded"
+    }
+   ]
+  },
+  {
+   "expr": "combin(62, 31)",
+   "rows": "first",
+   "results": [
+    "465428353255261088"
+   ]
+  },
+  {
+   "expr": "combin(5, -1)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0"
+    }
+   ]
+  },
+  {
+   "expr": "combin(5, 7)",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "combin(5, 0)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "multinomial(30, 30)",
+   "rows": "first",
+   "results": [
+    "118264581564861424"
+   ]
+  },
+  {
+   "expr": "multinomial(40, 40)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArithmeticException: Integer overflow computing multinomial"
+    }
+   ]
+  },
+  {
+   "expr": "multinomial(-1, 2)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.IllegalArgumentException: n (-1) must be >= 0"
+    }
+   ]
+  },
+  {
+   "expr": "multinomial(10, 11)",
+   "rows": "first",
+   "results": [
+    "352716"
+   ]
+  },
+  {
+   "expr": "multinomial()",
+   "rows": "first",
+   "results": [
+    {
+     "message": "multinomial expects at least one number"
+    }
+   ]
+  },
+  {
+   "expr": "multinomial(3)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "multinomial(0, 0)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "factn(100, 1)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArithmeticException: Integer overflow computing factorial"
+    }
+   ]
+  },
+  {
+   "expr": "factn(25, 1)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.ArithmeticException: Integer overflow computing factorial"
+    }
+   ]
+  },
+  {
+   "expr": "factn(20, 1)",
+   "rows": "first",
+   "results": [
+    "2432902008176640000"
+   ]
+  },
+  {
+   "expr": "factn(-5, 2)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.IllegalArgumentException: Can't compute the factorial of a negative number"
+    }
+   ]
+  },
+  {
+   "expr": "factn(0, 1)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "expr": "fact(-1)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.IllegalArgumentException: Can't compute the factorial of a negative number"
+    }
+   ]
+  },
+  {
+   "expr": "factn(9000000000000000000, 1)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "java.lang.IllegalArgumentException: Can't compute the factorial of a negative number"
+    }
+   ]
+  },
+  {
+   "expr": "value.if('o')",
+   "rows": "first",
+   "parseError": "Parsing error at offset 9: Unknown function if"
+  },
+  {
+   "expr": "value.forEach(v)",
+   "rows": "first",
+   "parseError": "Parsing error at offset 14: Unknown function forEach"
+  },
+  {
+   "expr": "value.with('a')",
+   "rows": "first",
+   "parseError": "Parsing error at offset 11: Unknown function with"
+  },
+  {
+   "expr": "range(1.5)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range('3000000000')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)"
+    }
+   ]
+  },
+  {
+   "expr": "range(10000000).length()",
+   "rows": "first",
+   "results": [
+    "10000000"
+   ]
+  },
+  {
+   "expr": "forRange(0, 3000000000, 1000000000, i, i)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1000000000, 2000000000 ]"
+   ]
+  },
+  {
+   "expr": "forRange(0, 5, 0, i, i)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Invalid argument"
+    }
    ]
   },
   {

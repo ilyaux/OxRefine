@@ -2,7 +2,7 @@
 //! Behaviour is pinned to OpenRefine 3.10.1 by tests/ops_conformance.rs.
 use crate::{
     engine::{self, EngineConfig},
-    grel::{self, funcs::parse_number, parse::java_regex, Value},
+    grel::{self, funcs::parse_number, parse::user_regex, Value},
     table::{Column, Table},
     Result,
 };
@@ -493,7 +493,7 @@ fn storable(v: Value) -> Value {
         return v;
     }
     match v {
-        Value::Array(_) | Value::Json(_) | Value::Html(_) | Value::Obj(_) | Value::Re(_) => Value::err(format!("{} value not storable", v.type_name())),
+        Value::Array(_) | Value::Json(_) | Value::Html(_) | Value::Obj(..) | Value::Re(_) => Value::err(format!("{} value not storable", v.type_name())),
         v => v,
     }
 }
@@ -589,7 +589,7 @@ fn split_lengths(s: &str, lengths: &[usize]) -> Vec<String> {
 }
 
 fn splitter(mode: &str, sep: &str, regex: bool, lengths: &[usize], limit: usize) -> Result<impl Fn(&str) -> Vec<String>> {
-    let re = if regex && mode != "lengths" { Some(Regex::new(&java_regex(sep)).map_err(|e| format!("invalid separator regex: {e}"))?) } else { None };
+    let re = if regex && mode != "lengths" { Some(user_regex(sep, false).map_err(|e| format!("invalid separator regex: {e}"))?) } else { None };
     let (mode, sep, lengths) = (mode.to_string(), sep.to_string(), lengths.to_vec());
     Ok(move |s: &str| if mode == "lengths" { split_lengths(s, &lengths) } else { split_text(s, &sep, re.as_ref(), limit) })
 }

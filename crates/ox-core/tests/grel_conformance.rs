@@ -7,7 +7,7 @@ use std::collections::BTreeSet;
 
 struct FixtureRow<'a> {
     index: usize,
-    cells: &'a [J],
+    inputs: &'a [J],
 }
 impl Row for FixtureRow<'_> {
     fn index(&self) -> usize {
@@ -18,7 +18,14 @@ impl Row for FixtureRow<'_> {
     }
     fn cell(&self, column: &str) -> Option<Value> {
         let i = ["v", "w"].iter().position(|c| *c == column)?;
-        Some(cell(&self.cells[i]))
+        Some(cell(&self.inputs[self.index][i]))
+    }
+    // records by the first column, as in OpenRefine: a row with a blank `v` belongs to the record above
+    fn record(&self) -> Value {
+        let starts: Vec<usize> = (0..self.inputs.len()).filter(|&r| r == 0 || !cell(&self.inputs[r][0]).is_null()).collect();
+        let index = starts.partition_point(|&s| s <= self.index) - 1;
+        let to = starts.get(index + 1).copied().unwrap_or(self.inputs.len());
+        grel::eval::record_value(index, starts[index], to, &["v".into(), "w".into()], |r, c| (cell(&self.inputs[r][c]), None))
     }
 }
 
@@ -62,7 +69,7 @@ fn grel_matches_openrefine() {
             (None, Err(e)) => bad = Some(format!("parse failed: {e}")),
             (None, Ok(p)) => {
                 for (i, exp) in case["results"].as_array().unwrap().iter().enumerate() {
-                    let row = FixtureRow { index: i, cells: inputs[i].as_array().unwrap() };
+                    let row = FixtureRow { index: i, inputs };
                     let got = p.eval(cell(&inputs[i][0]), &row);
                     if !same(exp, &got) {
                         bad = Some(format!("row {i}: expected {exp}, got {}", match &got {

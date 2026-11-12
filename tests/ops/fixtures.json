@@ -3522,6 +3522,785 @@
    "operations": 1
   },
   {
+   "name": "transform with row.record",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "columnName": "note",
+     "expression": "grel:row.record.index + ':' + row.record.rowCount + ':' + row.record.cells['tags'].value.join('/')",
+     "onError": "set-to-blank",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "0:2:red|green/blue"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      {
+       "v": "0:2:red|green/blue"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      {
+       "v": "1:1:green"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "2:1:"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "3:2:red|blue|green"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      {
+       "v": "3:2:red|blue|green"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "4:1:blue"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "5:1:red"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "6:1:green|red"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Text transform on 9 cells in column note: grel:row.record.index + ':' + row.record.rowCount + ':' + row.record.cells['tags'].value.join('/')"
+   ],
+   "operations": 1
+  },
+  {
+   "name": "column-addition with row.record",
+   "ops": [
+    {
+     "op": "core/column-addition",
+     "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+     },
+     "baseColumnName": "name",
+     "newColumnName": "record name",
+     "columnInsertIndex": 2,
+     "expression": "grel:row.record.cells['name'].value[0] + ' (' + (rowIndex - row.record.fromRowIndex) + ')'",
+     "onError": "set-to-blank"
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "record name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "Alice Smith (0)"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "Alice Smith (1)"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "bob jones (0)"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "Carol King (0)"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      {
+       "v": "Carol King (0)"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "Carol King (1)"
+      },
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "Dan  Brown (0)"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "Eve Adams (0)"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Create new column record name based on column name by filling 8 rows with grel:row.record.cells['name'].value[0] + ' (' + (rowIndex - row.record.fromRowIndex) + ')'"
+   ],
+   "operations": 1
+  },
+  {
+   "name": "transform with row.record in record mode",
+   "ops": [
+    {
+     "op": "core/text-transform",
+     "engineConfig": {
+      "facets": [
+       {
+        "type": "text",
+        "name": "tags",
+        "columnName": "tags",
+        "query": "blue",
+        "mode": "text",
+        "caseSensitive": false,
+        "invert": false
+       }
+      ],
+      "mode": "record-based"
+     },
+     "columnName": "city",
+     "expression": "grel:row.record.cells['city'].value.join(' + ')",
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "columns": [
+    "id",
+    "name",
+    "tags",
+    "city",
+    "score",
+    "joined",
+    "note"
+   ],
+   "rows": [
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "1"
+      },
+      {
+       "v": "Alice Smith"
+      },
+      {
+       "v": "red|green"
+      },
+      {
+       "v": "New York + new york"
+      },
+      {
+       "v": "10"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      {
+       "v": "first"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "blue"
+      },
+      {
+       "v": "New York + new york"
+      },
+      null,
+      {
+       "v": "2024-02-01"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "2"
+      },
+      {
+       "v": "bob jones"
+      },
+      {
+       "v": "green"
+      },
+      {
+       "v": "Boston"
+      },
+      {
+       "v": "7.5"
+      },
+      {
+       "v": "2023-12-31"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston "
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "3"
+      },
+      {
+       "v": "Carol King"
+      },
+      null,
+      {
+       "v": "boston  + Chicago"
+      },
+      {
+       "v": "12"
+      },
+      null,
+      {
+       "v": "dup"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      null,
+      null,
+      {
+       "v": "red|blue|green"
+      },
+      {
+       "v": "boston  + Chicago"
+      },
+      {
+       "v": "x"
+      },
+      {
+       "v": "2024-03-10"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "4"
+      },
+      {
+       "v": "Dan  Brown"
+      },
+      {
+       "v": "blue"
+      },
+      {
+       "v": "  Chicago"
+      },
+      {
+       "v": "3"
+      },
+      {
+       "v": "not a date"
+      },
+      {
+       "v": "last"
+      }
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "5"
+      },
+      null,
+      {
+       "v": "red"
+      },
+      null,
+      {
+       "v": "0"
+      },
+      {
+       "v": "2024-01-15"
+      },
+      null
+     ]
+    },
+    {
+     "starred": false,
+     "flagged": false,
+     "cells": [
+      {
+       "v": "6"
+      },
+      {
+       "v": "Eve Adams"
+      },
+      {
+       "v": "green|red"
+      },
+      {
+       "v": "New-York"
+      },
+      {
+       "v": "-2"
+      },
+      {
+       "v": "2022-06-30"
+      },
+      {
+       "v": "quoted, comma"
+      }
+     ]
+    }
+   ],
+   "history": [
+    "Text transform on 4 cells in column city: grel:row.record.cells['city'].value.join(' + ')"
+   ],
+   "operations": 1
+  },
+  {
    "name": "column-addition per row",
    "ops": [
     {
@@ -17544,7 +18323,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column name using expression grel:\"http://127.0.0.1:1918/echo/\" + escape(value, \"url\")"
+    "Create column fetched at index 1 by fetching URLs based on column name using expression grel:\"http://127.0.0.1:17122/echo/\" + escape(value, \"url\")"
    ],
    "operations": 1
   },
@@ -17818,7 +18597,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column city using expression grel:\"http://127.0.0.1:1918/echo/\" + escape(value, \"url\")"
+    "Create column fetched at index 1 by fetching URLs based on column city using expression grel:\"http://127.0.0.1:17122/echo/\" + escape(value, \"url\")"
    ],
    "operations": 1
   },
@@ -17860,7 +18639,7 @@
        "v": "1"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "Alice Smith"
@@ -17888,7 +18667,7 @@
      "cells": [
       null,
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       null,
       {
@@ -17912,7 +18691,7 @@
        "v": "2"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "bob jones"
@@ -17940,7 +18719,7 @@
        "v": "3"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "Carol King"
@@ -17966,7 +18745,7 @@
        "v": "3"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "Carol King"
@@ -17990,7 +18769,7 @@
      "cells": [
       null,
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       null,
       {
@@ -18016,7 +18795,7 @@
        "v": "4"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "Dan  Brown"
@@ -18046,7 +18825,7 @@
        "v": "5"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       null,
       {
@@ -18070,7 +18849,7 @@
        "v": "6"
       },
       {
-       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:1918/status/404"
+       "e": "org.apache.hc.client5.http.ClientProtocolException: HTTP error 404 : Not Found for URL http://127.0.0.1:17122/status/404"
       },
       {
        "v": "Eve Adams"
@@ -18094,7 +18873,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:1918/status/404\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:17122/status/404\""
    ],
    "operations": 1
   },
@@ -18352,7 +19131,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:1918/status/404\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:17122/status/404\""
    ],
    "operations": 1
   },
@@ -18633,7 +19412,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:1918/header\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:17122/header\""
    ],
    "operations": 1
   },
@@ -18909,7 +19688,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:1918/count/nocache\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:17122/count/nocache\""
    ],
    "operations": 1
   },
@@ -19185,7 +19964,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:1918/count/cache\""
+    "Create column fetched at index 1 by fetching URLs based on column id using expression grel:\"http://127.0.0.1:17122/count/cache\""
    ],
    "operations": 1
   },
@@ -19453,7 +20232,7 @@
     }
    ],
    "history": [
-    "Create column fetched at index 1 by fetching URLs based on column note using expression grel:if(isBlank(value), null, \"http://127.0.0.1:1918/echo/\" + escape(value, \"url\"))"
+    "Create column fetched at index 1 by fetching URLs based on column note using expression grel:if(isBlank(value), null, \"http://127.0.0.1:17122/echo/\" + escape(value, \"url\"))"
    ],
    "operations": 1
   },

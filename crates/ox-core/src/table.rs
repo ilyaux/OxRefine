@@ -204,6 +204,20 @@ impl grel::Row for RowRef<'_> {
             None => Value::err("facetCount needs a project"),
         }
     }
+    fn record(&self) -> Value {
+        let t = self.table;
+        let owned;
+        let starts = match self.ctx {
+            Some(ctx) => ctx.record_starts(t),
+            None => {
+                owned = crate::engine::record_starts(t);
+                &owned
+            }
+        };
+        let index = starts.partition_point(|&s| s <= self.row).saturating_sub(1);
+        let (from, to) = (starts.get(index).copied().unwrap_or(0), starts.get(index + 1).copied().unwrap_or(t.rows));
+        grel::eval::record_value(index, from, to, &t.names, |r, c| (t.columns[c].get(r).clone(), t.columns[c].recon(r).cloned()))
+    }
 }
 
 impl Table {

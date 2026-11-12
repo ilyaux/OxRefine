@@ -2,7 +2,7 @@
 
 ## Known differences
 
-OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,034 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,128 checks, 16 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
 
 | Area | What differs | Why |
 |---|---|---|
@@ -35,3 +35,4 @@ The full plan is in [ROADMAP.md](https://github.com/ilyaux/OxRefine/blob/main/RO
 - **Speed and memory.** OxRefine keeps each distinct value of a column once and works on distinct values, so facets, clustering and most transforms take milliseconds even on millions of rows.
 - **History is kept compactly.** Undo works the same way, but steps that only rename values share the previous step's data instead of copying it.
 - **One program for every setup.** The desktop app, the browser app (`ox serve`), the server mode and the command line run the same engine.
+- **Errors instead of crashes.** Where OpenRefine fails with an out-of-memory or stack-overflow error, OxRefine returns a GREL error and carries on. This covers `range()` and `forRange()` past 20 million elements, `factn()` with a step of zero or less, an expression nested more than 128 levels deep or chaining more than 512 operators, and a few huge `multinomial()` and `factn()` arguments.

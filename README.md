@@ -18,7 +18,7 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-orange">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2018%20of%202034%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2112%20of%202128%20checks-brightgreen">
 </p>
 
 <picture>
@@ -96,9 +96,9 @@ Each area is checked against fixtures produced by running the same cases through
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 470 / 472 |
-| Operations, including single-cell edits, stars, flags, transposing, fetching URLs and `cross()` | 80 / 81 |
-| Facets: list, range, timeline, text, custom and records mode | 34 / 34 |
+| GREL expressions | 559 / 561 |
+| Operations, including single-cell edits, stars, flags, transposing, fetching URLs and `cross()` | 83 / 84 |
+| Facets: list, range, timeline, text, custom and records mode | 36 / 36 |
 | Import options: CSV/TSV, fixed-width, Excel, ODS, JSON, XML, and zip/tar/gzip/bzip2 archives | 43 / 45 |
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |

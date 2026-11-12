@@ -2,7 +2,7 @@
 use super::{
     funcs,
     parse::Expr,
-    value::{from_json, Value, Value::*},
+    value::{from_json, Class, Value, Value::*},
 };
 use std::cmp::Ordering;
 
@@ -29,6 +29,27 @@ pub trait Row {
     fn current_recon(&self) -> Option<std::sync::Arc<crate::recon::Recon>> {
         None
     }
+    /// `row.record`: the record this row belongs to, built with [`record_value`]; null outside a table.
+    fn record(&self) -> Value {
+        Null
+    }
+}
+
+/// A record as `row.record` shows it: its number, row range (`to` exclusive), and `cells["Name"]`, the
+/// non-blank cells of each column within the record. `cell(row, column)` reads a cell.
+pub fn record_value(index: usize, from: usize, to: usize, names: &[String], cell: impl Fn(usize, usize) -> (Value, Option<std::sync::Arc<crate::recon::Recon>>)) -> Value {
+    // ponytail: every column is collected on access; fetch one column lazily if huge records get slow
+    let cells = names.iter().enumerate().map(|(c, n)| {
+        let list = (from..to).map(|r| cell(r, c)).map(|(v, recon)| cell_obj(v, recon)).filter(|c| !c.is_null()).collect();
+        (n.clone(), Array(list))
+    });
+    Obj(Class::Record, vec![
+        ("index".into(), Int(index as i64)),
+        ("fromRowIndex".into(), Int(from as i64)),
+        ("toRowIndex".into(), Int(to as i64)),
+        ("rowCount".into(), Int((to - from) as i64)),
+        ("cells".into(), Obj(Class::RecordCells, cells.collect())),
+    ])
 }
 
 /// No row context (constant expressions, per-distinct-value evaluation).
@@ -57,15 +78,19 @@ impl<'a> Env<'a> {
     }
 }
 
+/// A cell object; a blank cell is null, as OpenRefine has no cell there.
 fn cell_obj(v: Value, recon: Option<std::sync::Arc<crate::recon::Recon>>) -> Value {
+    if v.is_null() && recon.is_none() {
+        return Null;
+    }
     let recon = recon.map_or(Null, |r| crate::recon::View::Recon(r).into());
-    Obj(vec![("value".into(), v), ("recon".into(), recon)])
+    Obj(Class::Cell, vec![("value".into(), v), ("recon".into(), recon)])
 }
 
 /// A `cell` object an expression returned: its value and Recon (column additions copy both).
 pub fn as_cell(v: &Value) -> Option<(Value, Option<std::sync::Arc<crate::recon::Recon>>)> {
     match v {
-        Obj(f) if f.len() == 2 && f[0].0 == "value" && f[1].0 == "recon" => {
+        Obj(Class::Cell, f) => {
             let recon = match &f[1].1 {
                 Value::Recon(r) => match &**r {
                     crate::recon::View::Recon(r) => Some(r.clone()),
@@ -97,7 +122,7 @@ fn var(name: &str, env: &Env) -> Value {
 }
 
 fn cells(row: &dyn Row) -> Value {
-    Obj(row.columns().into_iter().map(|c| {
+    Obj(Class::Cells, row.columns().into_iter().map(|c| {
         let v = row.cell(&c).unwrap_or(Null);
         let recon = row.recon(&c);
         (c, cell_obj(v, recon))
@@ -106,7 +131,7 @@ fn cells(row: &dyn Row) -> Value {
 
 /// A row as GREL's `row` sees it (also what cross() returns for each match).
 pub fn row_value(row: &dyn Row) -> Value {
-    Obj(vec![
+    Obj(Class::Row, vec![
         ("index".into(), Int(row.index() as i64)),
         ("cells".into(), cells(row)),
         ("starred".into(), Bool(row.starred())),
@@ -118,7 +143,9 @@ pub fn field(o: Value, name: &str) -> Value {
     match o {
         Error(_) => o,
         Value::Recon(r) => r.field(name),
-        Obj(fields) => fields.into_iter().find(|(k, _)| k == name).map_or(Null, |(_, v)| v),
+        Obj(_, fields) => fields.into_iter().find(|(k, _)| k == name).map_or(Null, |(_, v)| v),
+        // a field of an array is that field of each element: row.record.cells["Name"].value
+        Array(items) => Array(items.into_iter().map(|v| field(v, name)).collect()),
         Json(j) => match *j {
             serde_json::Value::Object(mut m) => m.remove(name).map_or(Null, from_json),
             _ => Null,
@@ -133,7 +160,14 @@ pub fn eval(e: &Expr, env: &mut Env) -> Value {
         Expr::Regex(r) => Re(Box::new(r.clone())),
         Expr::Var(name) => var(name, env),
         Expr::Array(items) => Array(items.iter().map(|x| eval(x, env)).collect()),
-        Expr::Field(o, name) => field(eval(o, env), name),
+        Expr::Field(o, name) => match (eval(o, env), name.as_str()) {
+            // built only when asked for; rows from cross() belong to another project and have none here
+            (Obj(Class::Row, f), "record") => match f.first() {
+                Some((_, Int(i))) if *i == env.row.index() as i64 => env.row.record(),
+                _ => Null,
+            },
+            (v, name) => field(v, name),
+        },
         Expr::Index(o, idx) => {
             let mut args = vec![eval(o, env)];
             args.extend(idx.iter().map(|x| eval(x, env)));
@@ -161,7 +195,7 @@ pub fn eval(e: &Expr, env: &mut Env) -> Value {
                 return err.clone();
             }
             let key = match vals.first() {
-                Some(Obj(f)) => f.iter().find(|(k, _)| k == "value").map_or(Null, |(_, v)| v.clone()),
+                Some(Obj(_, f)) => f.iter().find(|(k, _)| k == "value").map_or(Null, |(_, v)| v.clone()),
                 Some(v) => v.clone(),
                 None => Null,
             };
@@ -237,7 +271,7 @@ fn operator(op: &str, a: &Value, b: &Value) -> Value {
 /// Java equals(): arrays and objects compare by identity, so never equal here.
 fn same(a: &Value, b: &Value) -> bool {
     match (a, b) {
-        (Array(_), _) | (Json(_), _) | (Obj(_), _) => false,
+        (Array(_), _) | (Json(_), _) | (Obj(..), _) => false,
         _ => a == b,
     }
 }
@@ -324,7 +358,10 @@ fn control(name: &str, a: &[Expr], env: &mut Env) -> Value {
                     return Err(Value::err("forRange expects three numbers"));
                 };
                 if step == 0.0 {
-                    return Err(Value::err("forRange step must not be zero"));
+                    return Err(Value::err("Invalid argument"));
+                }
+                if ((to - from) / step).ceil() > funcs::MAX_ARRAY as f64 {
+                    return Err(Value::err(format!("forRange would run more than {} times", funcs::MAX_ARRAY)));
                 }
                 let integral = nums.iter().all(|v| matches!(v, Int(_)));
                 let n = need_var(3)?;
@@ -332,6 +369,9 @@ fn control(name: &str, a: &[Expr], env: &mut Env) -> Value {
                 let mut x = from;
                 while (step > 0.0 && x < to) || (step < 0.0 && x > to) {
                     out.push(with_var(env, &n, if integral { Int(x as i64) } else { Num(x) }, &a[4]));
+                    if x + step == x {
+                        break; // a step too small to move a large number any further
+                    }
                     x += step;
                 }
                 Array(out)

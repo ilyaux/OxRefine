@@ -107,7 +107,7 @@ The full expression language: ~130 functions, controls, errors and coercion.
 - [~] **cross() across projects** · v0.5 · P1 · M. Lookup into another open project by key column, with an index cache. _OpenRefine: Cross_
 - [ ] **Python and Clojure expressions** · later · P2 · L. Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). _OpenRefine: JythonEvaluable, ClojureEvaluable_
 - [ ] **detectLanguage()** · v0.5 · P2 · M. GREL detectLanguage(s): ISO 639-1 code from OpenRefine's language-detector n-gram profiles, the same answers on the fixture texts (currently 2 known failures). _OpenRefine: DetectLanguage, optimaize language-detector_
-- [ ] **GREL record variable** · v0.5 · P2 · S. In records mode OpenRefine's expressions see the current record: record.index, record.fromRowIndex, record.toRowIndex, record.rowCount, record.cells["Name"].value (an array of the record's values). OxRefine's GREL returns null for record today (found while writing the GREL reference). Fixtures from OpenRefine for each field, in transforms, new columns and facets. _OpenRefine: WrappedRecord, RecordModel_
+- [~] **GREL record variable** · v0.5 · P2 · S. In records mode OpenRefine's expressions see the current record: record.index, record.fromRowIndex, record.toRowIndex, record.rowCount, record.cells["Name"].value (an array of the record's values). OxRefine's GREL returns null for record today (found while writing the GREL reference). Fixtures from OpenRefine for each field, in transforms, new columns and facets. _OpenRefine: WrappedRecord, RecordModel_
 
 ## Facets
 
@@ -163,7 +163,7 @@ Prove parity automatically against real OpenRefine.
 - [x] **Operation conformance suite** · v0.2 · P0 · L. Run every operation through OpenRefine's API and ours on the same corpus and diff outputs cell by cell (extends compare.mjs). _OpenRefine: benchmarks/compare.mjs_
 - [x] **GREL conformance suite** · v0.2 · P0 · M. Thousands of expressions evaluated in both engines, including errors and edge values. _OpenRefine: preview-expression_
 - [~] **Messy-data test corpus** · v0.2 · P0 · M. Real-world files: encodings, ragged rows, embedded newlines, huge cells, mixed types. _OpenRefine: tests/_
-- [ ] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
+- [~] **Fuzz importers and GREL parser** · v0.5 · P2 · S. cargo-fuzz targets for every parser. _OpenRefine: new_
 - [~] **CI on Windows, macOS, Linux** · v0.2 · P0 · S. GitHub Actions: build, tests, UI typecheck, conformance on a small corpus. _OpenRefine: new_
 - [~] **Follow HTTP redirects** · v0.5 · P1 · S. Reconciliation services, fetch-URL steps and import from a web address follow redirects as OpenRefine's HttpClient does (301/302/303/307/308, POST kept on 307/308). Found on Nov 11: wikidata.reconci.link answers 307 and ureq refused it, so the Wikidata preset had to point at the final host. _OpenRefine: HttpClient_
 

@@ -46,6 +46,25 @@ pub fn is_function(n: &str) -> bool {
     FUNCTIONS.contains(&n)
 }
 
+/// n choose k, or None past i64. Each step stays exact (the product of i+1 consecutive numbers is divisible by
+/// (i+1)!) and the value at least doubles early on, so overflow comes within about 126 steps.
+fn binomial(n: i64, k: i64) -> Option<i64> {
+    let k = k.min(n - k) as u128;
+    let n = n as u128;
+    let mut r: u128 = 1;
+    for i in 0..k {
+        r = r * (n - i) / (i + 1);
+        if r > i64::MAX as u128 {
+            return None;
+        }
+    }
+    Some(r as i64)
+}
+
+/// The longest array `range` and `forRange` build. OpenRefine runs out of memory somewhere past 50 million
+/// elements; an error is kinder than a crash. ponytail: a fixed cap, a memory budget if real projects need more.
+pub const MAX_ARRAY: i64 = 20_000_000;
+
 macro_rules! fail {
     ($($t:tt)*) => { return Value::err(format!($($t)*)) };
 }
@@ -228,7 +247,7 @@ pub fn call(name: &str, a: &[Value]) -> Value {
         },
         "hasField" => match (a0, a1) {
             (Json(j), Str(k)) => Bool(j.as_object().is_some_and(|m| m.contains_key(k))),
-            (Obj(f), Str(k)) => Bool(f.iter().any(|(n, _)| n == k)),
+            (Obj(_, f), Str(k)) => Bool(f.iter().any(|(n, _)| n == k)),
             _ => Bool(false),
         },
         "get" => get(a0, a1, a.get(2)),
@@ -525,26 +544,30 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("diff expects two strings or two dates and a unit"),
         },
         "range" => {
-            let nums: Vec<i64> = match a {
-                [Str(s)] => s.split(',').filter_map(|p| p.trim().parse().ok()).collect(),
-                _ => a.iter().filter_map(Value::as_i64).collect(),
+            const BAD: &str = "range expects a string of the form 'a, b, c' or integers a, b, c where a and b are the start and the end of the range respectively and c is the step (increment)";
+            // Java ints, as in OpenRefine: bigger bounds are an error rather than a huge array
+            let int = |v: &Value| match v {
+                Int(i) => i32::try_from(*i).ok().map(i64::from),
+                Str(s) => s.trim().parse::<i32>().ok().map(i64::from),
+                _ => None,
             };
-            let (from, to, step) = match nums.as_slice() {
-                [n] => (0, *n, 1),
-                [f, t] => (*f, *t, 1),
-                [f, t, s] => (*f, *t, *s),
-                _ => fail!("range expects one to three numbers"),
+            let nums: Option<Vec<i64>> = match a {
+                [Str(s)] => s.split(',').map(|p| int(&Str(p.into()))).collect(),
+                _ if a.iter().all(|v| matches!(v, Int(_))) => a.iter().map(int).collect(),
+                _ => None,
             };
-            if step == 0 {
-                fail!("range step must not be zero");
+            let (from, to, step) = match nums.as_deref() {
+                Some(&[n]) => (0, n, 1),
+                Some(&[f, t]) => (f, t, 1),
+                Some(&[f, t, s]) => (f, t, s),
+                _ => fail!("{BAD}"),
+            };
+            // a zero step or a backwards range is empty, as in OpenRefine
+            let len = if step > 0 && to > from { (to - from + step - 1) / step } else if step < 0 && to < from { (from - to - step - 1) / -step } else { 0 };
+            if len > MAX_ARRAY {
+                fail!("range would have {len} elements, more than {MAX_ARRAY}");
             }
-            let mut out = vec![];
-            let mut x = from;
-            while (step > 0 && x < to) || (step < 0 && x > to) {
-                out.push(Int(x));
-                x += step;
-            }
-            Array(out)
+            Array((0..len).map(|k| Int(from + k * step)).collect())
         }
         "parseUri" => match a0 {
             Str(s) => match url::Url::parse(s) {
@@ -693,11 +716,20 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("fact expects a non-negative number"),
         },
         "factn" => match (a0.as_i64(), a1.as_i64()) {
-            (Some(n), Some(k)) if k > 0 => {
+            // OpenRefine takes Java ints here, so bigger numbers wrap around as Java's (int) does
+            (Some(n), Some(k)) => {
+                let (n, k) = (n as i32 as i64, k as i32 as i64);
+                if n < 0 {
+                    fail!("java.lang.IllegalArgumentException: Can't compute the factorial of a negative number");
+                }
+                if k <= 0 {
+                    fail!("factn expects a positive step"); // OpenRefine recurses until its stack overflows
+                }
                 let mut p: i64 = 1;
                 let mut x = n;
                 while x > 0 {
-                    p = p.wrapping_mul(x);
+                    let Some(q) = p.checked_mul(x) else { fail!("java.lang.ArithmeticException: Integer overflow computing factorial") };
+                    p = q;
                     x -= k;
                 }
                 Int(p)
@@ -705,23 +737,25 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("factn expects two numbers"),
         },
         "combin" => match (a0.as_i64(), a1.as_i64()) {
-            (Some(n), Some(k)) if (0..=n).contains(&k) => {
-                let mut r: i64 = 1;
-                for i in 0..k.min(n - k) {
-                    r = r * (n - i) / (i + 1);
-                }
-                Int(r)
-            }
+            (Some(_), Some(k)) if k < 0 => fail!("java.lang.ArrayIndexOutOfBoundsException: Index 0 out of bounds for length 0"),
+            (Some(n), Some(k)) if k > n => Int(0),
+            (Some(n), Some(k)) => binomial(n, k).map_or_else(|| Value::err("java.lang.RuntimeException: Range limit exceeded"), Int),
             _ => fail!("combin expects two numbers, n >= k >= 0"),
         },
         "multinomial" => {
             let Some(ks) = a.iter().map(Value::as_i64).collect::<Option<Vec<i64>>>() else { fail!("multinomial expects numbers") };
+            if ks.is_empty() {
+                fail!("multinomial expects at least one number");
+            }
+            // the product of binomial(k1 + ... + ki, ki)
             let (mut r, mut total) = (1i64, 0i64);
             for k in ks {
-                for i in 1..=k {
-                    total += 1;
-                    r = r * total / i;
+                total = total.saturating_add(k);
+                if total < 0 || k < 0 {
+                    fail!("java.lang.IllegalArgumentException: n ({total}) must be >= 0");
                 }
+                let Some(q) = binomial(total, k).and_then(|b| r.checked_mul(b)) else { fail!("java.lang.ArithmeticException: Integer overflow computing multinomial") };
+                r = q;
             }
             Int(r)
         }
@@ -809,7 +843,7 @@ pub fn call(name: &str, a: &[Value]) -> Value {
 fn get(o: &Value, from: &Value, to: Option<&Value>) -> Value {
     match (o, from) {
         (Null, _) => Null,
-        (Obj(_), Str(k)) => super::eval::field(o.clone(), k),
+        (Obj(..), Str(k)) => super::eval::field(o.clone(), k),
         (Json(j), Str(k)) if j.is_object() => super::eval::field(o.clone(), k),
         (Str(s), _) => {
             let Some(i) = from.as_i64() else { fail!("get expects a number index") };

@@ -31,6 +31,16 @@ export const INPUTS = [
 // Evaluated on every input row.
 export const PER_ROW = [
   "value", "cell.value", "row.index", "rowIndex", "cells['w'].value", "cells.w.value", "cells['w'].value + value",
+  // the current record (rows 4 and 5 are one record: row 5's key cell is blank); `record` alone is unbound in OpenRefine
+  "record", "type(record)", "record.index",
+  "row.record", "type(row.record)", "row.record.index", "row.record.fromRowIndex", "row.record.toRowIndex", "row.record.rowCount", "row.record.foo",
+  "row.record.cells", "type(row.record.cells)", "row.record.cells['w']", "type(row.record.cells['w'])", "row.record.cells['w'].value", "row.record.cells.w.value",
+  "row.record.cells['v'].value", "type(row.record.cells['w'].value)", "row.record.cells['w'].value.join('|')", "row.record.cells['w'].value.length()",
+  "row.record.cells['w'].value[0]", "row.record.cells['w'].recon", "row.record.cells['nope']", "row.record.cells['nope'].value",
+  "forEach(row.record.cells['w'].value, x, x + '!')", "row.record.cells['v'].value.length() > 1", "rowIndex - row.record.fromRowIndex",
+  "row.record.cells['v'].value.toString()", "row.record.cells['w'].foo",
+  "row", "type(row)", "cells", "type(cells)", "cell", "type(cell)", "cells['w']", "type(cells['w'])", "row.cells", "type(row.cells)", "[cell]",
+  "row.record.cells['w'][0]", "type(row.record.cells['w'][0])", "row.record.cells['w'][0].value", "cell.foo", "cells.foo", "row.foo", "cell.recon",
   "value.trim()", "value.strip()", "trim(value)", "value.toUppercase()", "value.toLowercase()", "value.toTitlecase()",
   "value.length()", "length(value)", "value.trim().length()", "value.toString()", "toString(value)", "type(value)",
   "value + '!'", "value + 1", "value == '3'", "value != null", "value == null",
@@ -101,6 +111,15 @@ export const CONSTANT = [
   // strings
   "'abc'.substring(1)", "'abc'[5]", "'abc'[1, 10]", "'abc'.slice(-10)", "'a,b,c'.split(',')", "'a b'.split(' ').length()",
   "range(5)", "range(1, 5)", "range(1, 10, 3)", "range(5, 1, -1)", "'x'.length()",
+  // range takes Java ints: bigger bounds, a zero step or a wrong argument count are errors; forRange takes any number
+  "range(2147483646, 2147483647)", "range(2147483647, 2147483650)", "range(3000000000)", "range(0, 9223372036854775807, 4611686018427387904)",
+  "range(1, 5, 0)", "range(5, 1)", "range(-3)", "range()", "range(1, 2, 3, 4)", "range('1, 10, 4')", "range(' 2 ,5')", "range('a')", "range('1,2,3,4')",
+  "combin(100, 50)", "combin(66, 33)", "combin(67, 33)", "combin(62, 31)", "combin(5, -1)", "combin(5, 7)", "combin(5, 0)",
+  "multinomial(30, 30)", "multinomial(40, 40)", "multinomial(-1, 2)", "multinomial(10, 11)", "multinomial()", "multinomial(3)", "multinomial(0, 0)",
+  "factn(100, 1)", "factn(25, 1)", "factn(20, 1)", "factn(-5, 2)", "factn(0, 1)", "fact(-1)", "factn(9000000000000000000, 1)",
+  // controls can't be called as methods
+  "value.if('o')", "value.forEach(v)", "value.with('a')",
+  "range(1.5)", "range('3000000000')", "range(10000000).length()", "forRange(0, 3000000000, 1000000000, i, i)", "forRange(0, 5, 0, i, i)",
   "'hello world'.toTitlecase()", "'hELLO wORLD'.toTitlecase()", "'o\\'neil mcdonald-smith'.toTitlecase()",
   "'  x  '.trim()", "'a\\tb'.split('\\t')", "'a\\nb'.length()", "'single \"quoted\"'", "\"esc\\\"aped\"", "'\\\\'", "'\\u0041'",
   "'Ünïcödé'.fingerprint()", "'Ünïcödé'.unicode()", "'Straße'.toUppercase()", "'ß'.toUppercase()", "'ΑΒΓ'.toLowercase()",
