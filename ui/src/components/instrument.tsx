@@ -148,8 +148,26 @@ export function StripAction({ className, ...props }: CellProps) {
 export const ProjectName = createContext<string | null>(null)
 
 /** A full-window view that replaces a dialog: the top bar with the breadcrumb and a Close cell, Esc closes. */
-export function FullView({ crumbs, onClose, bar, children, className }: { crumbs: ReactNode[]; onClose: () => void; bar?: ReactNode; children: ReactNode; className?: string }) {
-  const project = useContext(ProjectName)
+export function FullView({
+  crumbs,
+  root,
+  closeLabel = "Close",
+  onClose,
+  bar,
+  children,
+  className,
+}: {
+  crumbs: ReactNode[]
+  /** what the breadcrumb starts with instead of the open project's name */
+  root?: ReactNode
+  closeLabel?: string
+  onClose: () => void
+  bar?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
+  const open = useContext(ProjectName)
+  const project = root === undefined ? open : root
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       // Esc closes the view unless a menu or popup inside it is open and takes the key first
@@ -166,7 +184,7 @@ export function FullView({ crumbs, onClose, bar, children, className }: { crumbs
         <Spacer />
         {bar}
         <CellButton rule="left" keys="Esc" onClick={onClose} className="text-muted-foreground">
-          Close
+          {closeLabel}
         </CellButton>
       </Bar>
       {children}
