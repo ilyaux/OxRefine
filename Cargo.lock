@@ -2855,7 +2855,7 @@ dependencies = [
 
 [[package]]
 name = "ox-cli"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "getrandom 0.3.4",
  "ox-core",
@@ -2865,7 +2865,7 @@ dependencies = [
 
 [[package]]
 name = "ox-core"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "base64 0.22.1",
  "bzip2",
@@ -2896,7 +2896,7 @@ dependencies = [
 
 [[package]]
 name = "oxrefine"
-version = "0.5.1"
+version = "0.5.2"
 dependencies = [
  "ox-core",
  "serde_json",
