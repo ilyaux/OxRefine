@@ -6,7 +6,7 @@ import { Grid, RECON_FACETS, type ColumnAction, type SelectedCell } from "@/Grid
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
 import { Preferences } from "@/Preferences"
-import { EXTENSION, ExportDialog, type ExportFormat } from "@/ExportDialog"
+import { ExportDialog, type ExportKind } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
 import { Facets, History } from "@/Sidebar"
@@ -16,7 +16,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -31,7 +30,7 @@ type Modal =
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "reconcile"; column: string }
   | { kind: "extend"; column: string }
-  | { kind: "export"; format: ExportFormat }
+  | { kind: "export"; format: ExportKind }
   | { kind: "extract" }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onUpload?: (f: File) => Promise<void>; onSubmit: (v: string) => Promise<void> }
   | null
@@ -367,7 +366,7 @@ export function App() {
       if (!e.ctrlKey && !e.metaKey && !e.altKey && !typing && !modal && !staged && !palette && !prefsOpen) {
         const k = e.key.toLowerCase()
         const tools: Record<string, () => void> = summary
-          ? { f: () => tool("facet"), c: () => tool("cluster"), t: () => tool("transform"), r: () => tool("reconcile"), i: openFile }
+          ? { f: () => tool("facet"), c: () => tool("cluster"), t: () => tool("transform"), r: () => tool("reconcile"), e: () => setModal({ kind: "export", format: "csv" }), i: openFile }
           : { i: openFile }
         if (tools[k]) {
           e.preventDefault()
@@ -446,34 +445,9 @@ export function App() {
               <CellButton rule="left" aria-label="Preferences" title="Preferences" onClick={() => setPrefsOpen(true)}>
                 <SettingsIcon className="size-4" />
               </CellButton>
-              <DropdownMenu>
-                <DropdownMenuTrigger render={<CellButton rule="left" keys="E" />}>Export</DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Matching rows</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => exportRows("csv", "csv")}>CSV…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportRows("tsv", "tsv")}>TSV…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportRows("xlsx", "xlsx")}>Excel (.xlsx)…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportRows("ods", "ods")}>OpenDocument (.ods)…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportRows("html", "html")}>HTML table…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "*sv" })}>Custom tabular…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "template" })}>Templating…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setModal({ kind: "export", format: "sql" })}>SQL…</DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Whole project</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={exportProject}>OpenRefine project…</DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Operation history</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => saveRecipe()}>Recipe JSON…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setModal({ kind: "extract" })}>Pick steps…</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => copyRecipe().catch(fail)}>Copy recipe JSON</DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <CellButton rule="left" keys="E" onClick={() => setModal({ kind: "export", format: "csv" })}>
+                Export
+              </CellButton>
               <DropdownMenu>
                 <DropdownMenuTrigger render={<CellButton rule="left" ink keys="I" />}>Import</DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-52">
@@ -703,11 +677,16 @@ export function App() {
         {modal?.kind === "export" && summary && (
           <ExportDialog
             format={modal.format}
+            name={summary.name}
             columns={summary.columns}
             engine={engine}
-            onExport={(params) => {
+            rows={total}
+            allRows={summary.rows}
+            onExport={(format, ext, params) => {
               setModal(null)
-              exportRows(modal.format, EXTENSION[modal.format], params)
+              if (format === "project") exportProject()
+              else if (format === "recipe") saveRecipe()
+              else exportRows(format, ext, params)
             }}
             onClose={() => setModal(null)}
           />
