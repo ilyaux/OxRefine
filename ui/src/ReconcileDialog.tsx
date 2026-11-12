@@ -5,14 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Spinner } from "@/components/ui/spinner"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { SuggestBox } from "@/ReconPanel"
+import { FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
+import { cn } from "@/lib/utils"
 
 type Service = { url: string; name: string }
 type Manifest = { name?: string; identifierSpace: string; schemaSpace: string; defaultTypes?: { id: string; name: string }[] }
@@ -136,125 +134,162 @@ export function ReconcileDialog({
   }
 
   const others = columns.filter((c) => c !== column)
+  const service = services.find((x) => x.url === url)
+  const row = "flex cursor-pointer items-center gap-2.5 border-b border-row-rule px-5 py-2.5 hover:bg-accent"
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Reconcile “{column}”</DialogTitle>
-          <DialogDescription>Match each cell to an entity of a reconciliation service. Cells with the same text are asked once.</DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="max-h-[65vh]">
-          <FieldGroup className="pr-3">
-            <Field>
-              <FieldLabel>Service</FieldLabel>
-              <Select value={url} onValueChange={(v) => v && setUrl(String(v))}>
-                <SelectTrigger aria-label="Service">
-                  <SelectValue>{(v: string) => services.find((s) => s.url === v)?.name ?? v}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {services.map((s) => (
-                      <SelectItem key={s.url} value={s.url}>
-                        {s.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <InputGroup>
-                <InputGroupInput aria-label="Add a service by its URL" placeholder="Add a service: https://…" value={adding} onChange={(e) => setAdding(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add()} />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton onClick={add} disabled={!adding.trim()}>
-                    <PlusIcon data-icon="inline-start" />
-                    Add
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
-            </Field>
-            <FieldSet>
-              <FieldLegend variant="label">Reconcile against type</FieldLegend>
-              {!manifest || !guesses ? (
-                !error && (
-                  <FieldDescription className="flex items-center gap-2">
-                    <Spinner />
-                    Asking the service about a sample of this column…
-                  </FieldDescription>
-                )
-              ) : (
-                <RadioGroup value={type} onValueChange={(v) => setType(String(v))}>
-                  {choices.map((c) => (
-                    <Field key={c.id} orientation="horizontal">
-                      <RadioGroupItem value={c.id} id={`rt-${c.id}`} />
-                      <FieldLabel htmlFor={`rt-${c.id}`} className="font-normal">
-                        {c.name} <span className="text-muted-foreground">({c.id}, {c.hint})</span>
-                      </FieldLabel>
-                    </Field>
-                  ))}
-                  <Field orientation="horizontal">
-                    <RadioGroupItem value={CUSTOM} id="rt-custom" />
-                    <FieldLabel htmlFor="rt-custom" className="font-normal">
-                      Another type
-                    </FieldLabel>
-                    <Input aria-label="Type id" placeholder="Type id, like Q5" value={custom} onChange={(e) => (setCustom(e.target.value), setType(CUSTOM))} className="max-w-48" />
-                  </Field>
-                  {"suggest" in (manifest ?? {}) && <SuggestBox service={url} kind="type" placeholder="Search for a type" onPick={(s) => (setCustom(s.id), setType(CUSTOM))} />}
-                  <Field orientation="horizontal">
-                    <RadioGroupItem value={NONE} id="rt-none" />
-                    <FieldLabel htmlFor="rt-none" className="font-normal">
-                      No particular type
-                    </FieldLabel>
-                  </Field>
-                </RadioGroup>
-              )}
-            </FieldSet>
-            {others.length > 0 && (
-              <Field>
-                <FieldLabel>Also use other columns</FieldLabel>
-                <FieldDescription>A property id (like P17 for country) sends that column's cell along with each query; matched cells send their entity.</FieldDescription>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Column</TableHead>
-                      <TableHead>As property</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {others.map((c) => (
-                      <TableRow key={c}>
-                        <TableCell>{c}</TableCell>
-                        <TableCell>
-                          <Input aria-label={`Property for ${c}`} placeholder="—" value={props[c] ?? ""} onChange={(e) => setProps((p) => ({ ...p, [c]: e.target.value }))} />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Field>
+    <FullView crumbs={["Reconcile", <Tag key="c">{column}</Tag>]} onClose={onClose}>
+      <div
+        className="flex min-h-0 flex-1 flex-col"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !blocked) {
+            e.preventDefault()
+            apply()
+          }
+        }}
+      >
+        <SummaryStrip>
+          <Metric label="service" className="[&>span:last-child]:font-sans [&>span:last-child]:text-[15px]">
+            {service?.name ?? url}
+          </Metric>
+          <Metric label="type" className="[&>span:last-child]:font-sans [&>span:last-child]:text-[15px]">
+            {chosen ? (
+              <>
+                {chosen.name} <span className="font-mono text-[12px] text-muted-foreground">{chosen.id}</span>
+              </>
+            ) : type === NONE ? (
+              <span className="text-muted-foreground">any</span>
+            ) : (
+              "…"
             )}
-            <Field orientation="horizontal">
-              <Checkbox id="rc-auto" checked={autoMatch} onCheckedChange={(v) => setAutoMatch(!!v)} />
-              <FieldLabel htmlFor="rc-auto" className="font-normal">
-                Match automatically when the service is confident
-              </FieldLabel>
-            </Field>
-            <Field>
-              <FieldLabel htmlFor="rc-limit">Candidates per cell</FieldLabel>
-              <Input id="rc-limit" type="number" min={0} placeholder="As many as the service sends" value={limit} onChange={(e) => setLimit(e.target.value)} className="max-w-64" />
-            </Field>
-            {error && <FieldError>{error}</FieldError>}
-          </FieldGroup>
-        </ScrollArea>
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={apply} disabled={blocked}>
-            {busy && <Spinner data-icon="inline-start" />}
+          </Metric>
+          <Spacer />
+          <StripAction ink keys="Ctrl ↵" disabled={blocked} onClick={apply}>
+            {busy && <Spinner />}
             Start reconciling
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </StripAction>
+        </SummaryStrip>
+        <div className="flex min-h-0 flex-1">
+          <aside aria-label="Service and options" className="w-75 shrink-0 overflow-y-auto border-r pb-4">
+            <RailLabel>Service</RailLabel>
+            <div role="radiogroup" aria-label="Service">
+              {services.map((x) => (
+                <label key={x.url} className={cn("flex cursor-pointer items-center gap-2.5 px-3.5 py-1.5 hover:bg-accent", x.url === url && "bg-secondary")}>
+                  <input type="radio" name="rc-service" checked={x.url === url} onChange={() => setUrl(x.url)} className="accent-foreground" />
+                  <span className="min-w-0 flex-1 truncate" title={x.url}>
+                    {x.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <form
+              className="flex gap-1.5 px-3.5 pt-2"
+              onSubmit={(e) => {
+                e.preventDefault()
+                add()
+              }}
+            >
+              <Input aria-label="Add a service by its URL" placeholder="Add a service: https://…" value={adding} onChange={(e) => setAdding(e.target.value)} className="h-7.5" />
+              <Button type="submit" variant="outline" size="sm" disabled={!adding.trim()}>
+                <PlusIcon data-icon="inline-start" />
+                Add
+              </Button>
+            </form>
+            <div className="mt-3 border-t" />
+            <RailLabel>Options</RailLabel>
+            <label className="flex cursor-pointer items-start gap-2.5 px-3.5 py-1.5">
+              <input type="checkbox" checked={autoMatch} onChange={(e) => setAutoMatch(e.target.checked)} className="mt-0.5 accent-foreground" />
+              Match automatically when the service is confident
+            </label>
+            <label className="flex items-center gap-2 px-3.5 py-1.5">
+              <span className="min-w-0 flex-1">Candidates per cell</span>
+              <input
+                type="number"
+                min={0}
+                placeholder="all"
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                className="h-7.5 w-20 rounded-[3px] border border-input bg-background px-2 text-right font-mono text-[12.5px] outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </label>
+            <p className="px-3.5 pt-3 text-xs text-muted-foreground">Cells with the same text are asked once. Judge single cells in the grid afterwards.</p>
+          </aside>
+          <div className="min-w-0 flex-1 overflow-y-auto">
+            {error && (
+              <p role="alert" className="border-b px-5 py-3 text-destructive">
+                {error}
+              </p>
+            )}
+            <div className="flex h-10 items-center border-b border-b-foreground px-5">
+              <span className="font-semibold">Reconcile against type</span>
+            </div>
+            {!manifest || !guesses ? (
+              !error && (
+                <p className="flex items-center gap-2 px-5 py-4 text-muted-foreground">
+                  <Spinner />
+                  Asking the service about a sample of this column…
+                </p>
+              )
+            ) : (
+              <div role="radiogroup" aria-label="Type">
+                {choices.map((c) => (
+                  <label key={c.id} className={cn(row, type === c.id && "bg-secondary")}>
+                    <input type="radio" name="rc-type" checked={type === c.id} onChange={() => setType(c.id)} className="accent-foreground" />
+                    <span className="flex-1">
+                      {c.name} <span className="font-mono text-[11.5px] text-muted-foreground">{c.id}</span>
+                    </span>
+                    <span className="text-xs text-muted-foreground">{c.hint}</span>
+                  </label>
+                ))}
+                <label className={cn(row, type === CUSTOM && "bg-secondary")}>
+                  <input type="radio" name="rc-type" checked={type === CUSTOM} onChange={() => setType(CUSTOM)} className="accent-foreground" />
+                  <span>Another type</span>
+                  <Input aria-label="Type id" placeholder="Type id, like Q5" value={custom} onChange={(e) => (setCustom(e.target.value), setType(CUSTOM))} className="h-7.5 max-w-48 font-mono" />
+                </label>
+                {"suggest" in (manifest ?? {}) && (
+                  <div className="border-b border-row-rule px-5 py-2.5">
+                    <SuggestBox service={url} kind="type" placeholder="Search for a type" onPick={(x) => (setCustom(x.id), setType(CUSTOM))} />
+                  </div>
+                )}
+                <label className={cn(row, type === NONE && "bg-secondary")}>
+                  <input type="radio" name="rc-type" checked={type === NONE} onChange={() => setType(NONE)} className="accent-foreground" />
+                  No particular type
+                </label>
+              </div>
+            )}
+            {others.length > 0 && (
+              <>
+                <div className="mt-6 flex h-10 items-center gap-3 border-b border-b-foreground px-5">
+                  <span className="font-semibold">Also use other columns</span>
+                  <span className="text-xs text-muted-foreground">a property id (like P17 for country) sends that column's cell with each query</span>
+                </div>
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="text-left text-[11.5px] text-muted-foreground">
+                      <th scope="col" className="border-b px-5 py-2 font-normal">
+                        column
+                      </th>
+                      <th scope="col" className="border-b px-5 py-2 font-normal">
+                        as property
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {others.map((c) => (
+                      <tr key={c}>
+                        <td className="border-b border-row-rule px-5 py-1.5">{c}</td>
+                        <td className="border-b border-row-rule px-5 py-1.5">
+                          <Input aria-label={`Property for ${c}`} placeholder="—" value={props[c] ?? ""} onChange={(e) => setProps((p) => ({ ...p, [c]: e.target.value }))} className="h-7.5 max-w-48 font-mono" />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </FullView>
   )
 }
 
