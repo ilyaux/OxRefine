@@ -1,5 +1,5 @@
 {
   "identifier": "default",
   "windows": ["main"],
-  "permissions": ["core:default", "dialog:allow-open", "dialog:allow-save", "updater:default", "process:allow-restart"]
+  "permissions": ["core:default", "dialog:allow-open", "dialog:allow-save", "updater:default", "process:allow-restart", "opener:default"]
 }

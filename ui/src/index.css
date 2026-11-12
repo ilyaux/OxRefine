@@ -204,4 +204,12 @@
     font-size: 11px;
     color: var(--muted-foreground);
   }
+  /* anything clickable shows the hand, and darkens a little while pressed (the text colour over its
+     ground, so ink cells lighten instead), whatever its own hover colour is */
+  :where(button, a[href], summary, select, label:has(input, button), [role="button"], [role="tab"], [role="menuitem"], [role="menuitemradio"], [role="menuitemcheckbox"], [role="option"], [role="switch"], [role="checkbox"], [role="radio"]):not(:disabled, [aria-disabled="true"], [data-disabled]) {
+    cursor: pointer;
+  }
+  :where(button, a[href], [role="button"], [role="tab"], [role="menuitem"], [role="option"]):not(:disabled, [aria-disabled="true"], [data-disabled]):active {
+    background-image: linear-gradient(color-mix(in oklch, currentColor 10%, transparent), color-mix(in oklch, currentColor 10%, transparent));
+  }
 }

@@ -293,13 +293,18 @@ function AboutDialog({ project, onSave, onClose }: { project: ProjectMeta; onSav
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-lg">
-        <form onSubmit={submit} className="flex flex-col gap-4">
+      <DialogContent className="max-h-[90svh] overflow-x-hidden overflow-y-auto sm:max-w-lg">
+        <form onSubmit={submit} className="flex min-w-0 flex-col gap-4">
           <DialogHeader>
             <DialogTitle>About “{project.name}”</DialogTitle>
             <DialogDescription>
               Created {when(project.created)}, last changed {when(project.modified)}
-              {project.source?.path ? `, imported from ${project.source.path}` : ""}. OpenRefine project archives carry these fields both ways.
+              {project.source?.path && (
+                <>
+                  , imported from <span className="font-mono text-[11.5px] break-all">{project.source.path}</span>
+                </>
+              )}
+              . OpenRefine project archives carry these fields both ways.
             </DialogDescription>
           </DialogHeader>
           <FieldGroup>

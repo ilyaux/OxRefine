@@ -61,7 +61,7 @@ export function CellButton({ keys, ink, rule = "right", active, className, child
 export function CellLink({ className, rule = "left", ...props }: ComponentProps<"a"> & { rule?: "left" | "right" }) {
   return (
     <a
-      className={cn("flex items-center px-4 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", rule === "left" ? "border-l" : "border-r", className)}
+      className={cn("flex items-center px-4 text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", rule === "left" ? "border-l" : "border-r", className)}
       target="_blank"
       rel="noreferrer"
       {...props}
