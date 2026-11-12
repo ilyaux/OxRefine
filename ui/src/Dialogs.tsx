@@ -15,12 +15,12 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/c
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Spinner } from "@/components/ui/spinner"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 import { ExpressionEditor, recentExpressions, rememberExpression } from "@/ExpressionEditor"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
+import { CellButton, FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
+import docs from "@/grel-docs.json"
 import { cn } from "@/lib/utils"
 
 /** Leading/trailing spaces are the usual culprit in near-duplicates, so make them visible. */
@@ -40,11 +40,56 @@ export function useDebounced<T>(value: T, ms = 200) {
 }
 
 const TITLES = {
-  transform: (c: string) => `Transform “${c}”`,
-  add: (c: string) => `Add column based on “${c}”`,
-  fetch: (c: string) => `Add column by fetching URLs based on “${c}”`,
-  "facet-list": (c: string) => `Custom text facet on “${c}”`,
-  "facet-range": (c: string) => `Custom numeric facet on “${c}”`,
+  transform: "Transform",
+  add: "Add column",
+  fetch: "Fetch URLs",
+  "facet-list": "Custom text facet",
+  "facet-range": "Custom numeric facet",
+}
+
+type Doc = { params?: string; returns?: string; description?: string }
+const FUNCTIONS = Object.entries(docs.functions as Record<string, Doc>).sort(([a], [b]) => a.localeCompare(b, "en", { sensitivity: "base" }))
+
+/** The GREL function reference: search, the picked function's description, and the list. */
+function FunctionReference() {
+  const [q, setQ] = useState("")
+  const [picked, setPicked] = useState("toTitlecase")
+  const shown = FUNCTIONS.filter(([n, d]) => !q || n.toLowerCase().includes(q.toLowerCase()) || d.description?.toLowerCase().includes(q.toLowerCase()))
+  const doc = (docs.functions as Record<string, Doc>)[picked]
+  return (
+    <aside aria-label="GREL functions" className="flex w-75 shrink-0 flex-col border-l">
+      <label className="flex h-9.5 shrink-0 items-center border-b bg-muted">
+        <span className="sr-only">Search functions</span>
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search functions…" className="h-full w-full bg-transparent px-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset" />
+      </label>
+      {doc && (
+        <div className="border-b px-4 py-4">
+          <div className="font-mono text-[12.5px] font-semibold">
+            {picked}({doc.params ?? ""})
+          </div>
+          <p className="mt-1.5 leading-relaxed text-ink-2">{doc.description}</p>
+        </div>
+      )}
+      <ul className="min-h-0 flex-1 overflow-y-auto">
+        {shown.map(([n, d]) => (
+          <li key={n}>
+            <button
+              type="button"
+              aria-pressed={n === picked}
+              onClick={() => setPicked(n)}
+              className={cn("flex w-full items-baseline gap-2 border-b border-row-rule px-4 py-2 text-left outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", n === picked && "bg-secondary")}
+            >
+              <span className="min-w-0 flex-1 truncate font-mono text-[12.5px]">
+                {n}({d.params ?? ""})
+              </span>
+              <span className="shrink-0 text-[11px] text-muted-foreground">{d.returns}</span>
+            </button>
+          </li>
+        ))}
+        {!shown.length && <li className="px-4 py-3 text-muted-foreground">No function matches.</li>}
+      </ul>
+    </aside>
+  )
 }
 const HINTS = {
   transform: "Runs on the rows matching the current facets: once per distinct value, or once per row when it reads other cells.",
@@ -59,6 +104,7 @@ export function TransformDialog({
   mode,
   columns,
   engine,
+  rows,
   onApply,
   onFacet,
   onClose,
@@ -67,6 +113,8 @@ export function TransformDialog({
   mode: keyof typeof TITLES
   columns: string[]
   engine: Engine
+  /** how many rows match the facets: the ones the transform runs on */
+  rows?: number
   onApply: (op: Op) => Promise<void>
   onFacet?: (expression: string) => void
   onClose: () => void
@@ -80,14 +128,21 @@ export function TransformDialog({
   const [cache, setCache] = useState(true)
   const [headers, setHeaders] = useState("")
   const [preview, setPreview] = useState<[string | null, Result][]>([])
+  const [ms, setMs] = useState<number | null>(null)
   const [error, setError] = useState("")
+  // OpenRefine's text-transform options; their defaults are what this dialog always used
+  const [onError, setOnError] = useState("keep-original")
+  const [repeat, setRepeat] = useState(false)
+  const [onlyChanged, setOnlyChanged] = useState(false)
   const debounced = useDebounced(expr)
 
   useEffect(() => {
     call<[string | null, Result][]>("preview", { engine, column, expression: debounced, limit: 20 })
-      .then(({ data }) => (setPreview(data), setError("")))
+      .then(({ data, ms }) => (setPreview(data), setMs(ms), setError("")))
       .catch((e) => setError(e.message))
   }, [debounced, column, engine])
+  const changed = (a: string | null, b: Result) => !(typeof b === "string" || b === null) || b !== a
+  const shownPreview = onlyChanged ? preview.filter(([a, b]) => changed(a, b)) : preview
 
   const named = mode === "add" || mode === "fetch"
   const nameTaken = named && columns.includes(name.trim())
@@ -134,108 +189,163 @@ export function TransformDialog({
             engineConfig: engine,
             columnName: column,
             expression: grel(expr),
-            onError: "keep-original",
-            repeat: false,
+            onError,
+            repeat,
             repeatCount: 10,
           }
     ).then(onClose)
   }
 
+  const field = "flex items-center gap-2.5 border-r px-4"
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>{TITLES[mode](column)}</DialogTitle>
-          <DialogDescription>{HINTS[mode]}</DialogDescription>
-        </DialogHeader>
-        <FieldGroup>
-          {named && (
-            <Field data-invalid={nameTaken}>
-              <FieldLabel htmlFor="new-column">New column name</FieldLabel>
-              <Input id="new-column" value={name} aria-invalid={nameTaken} onChange={(e) => setName(e.target.value)} />
-              {nameTaken && <FieldError>A column with this name already exists.</FieldError>}
-            </Field>
-          )}
-          {mode === "fetch" && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field>
-                <FieldLabel htmlFor="fetch-delay">Delay between requests (ms)</FieldLabel>
-                <Input id="fetch-delay" type="number" min={0} value={delay} onChange={(e) => setDelay(Math.max(0, Number(e.target.value) || 0))} />
-              </Field>
-              <Field>
-                <FieldLabel>When a request fails</FieldLabel>
-                <ToggleGroup variant="outline" value={[fetchError]} onValueChange={(v) => v[0] && setFetchError(v[0])}>
-                  <ToggleGroupItem value="set-to-blank">Leave blank</ToggleGroupItem>
-                  <ToggleGroupItem value="store-error">Store the error</ToggleGroupItem>
-                </ToggleGroup>
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="fetch-headers">HTTP headers</FieldLabel>
-                <Textarea id="fetch-headers" className="font-mono" rows={2} placeholder="Authorization: Bearer …" value={headers} onChange={(e) => setHeaders(e.target.value)} />
-                <FieldDescription>One per line, as Name: value.</FieldDescription>
-              </Field>
-              <Field orientation="horizontal">
-                <Checkbox id="fetch-cache" checked={cache} onCheckedChange={(c) => setCache(!!c)} />
-                <FieldLabel htmlFor="fetch-cache">Fetch each distinct URL once</FieldLabel>
-              </Field>
-            </div>
-          )}
-          <Field data-invalid={!!error}>
-            <div className="flex items-end justify-between gap-2">
-              <FieldLabel htmlFor="expression">{mode === "fetch" ? "URL expression (GREL)" : "GREL expression"}</FieldLabel>
-              {recent.length > 0 && (
-                <Select value="" onValueChange={(v) => v && setExpr(String(v))}>
-                  <SelectTrigger size="sm" className="max-w-60" aria-label="Recent expressions">
-                    <SelectValue placeholder="Recent expressions" />
-                  </SelectTrigger>
-                  <SelectContent align="end">
-                    <SelectGroup>
-                      {recent.map((r) => (
-                        <SelectItem key={r} value={r}>
-                          <span className="truncate font-mono">{r}</span>
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
+    <FullView
+      crumbs={[
+        TITLES[mode],
+        <Tag key="c">{column}</Tag>,
+        ...(rows !== undefined ? [<span key="r" className="font-mono text-xs font-normal text-muted-foreground">{rows.toLocaleString()} rows</span>] : []),
+      ]}
+      onClose={onClose}
+    >
+      <div className="flex min-h-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex h-9.5 shrink-0 items-stretch border-b">
+            <span className="-mb-px flex items-center border-r border-b-2 border-b-foreground px-4 font-medium">GREL</span>
+            <Spacer />
+            <span role="status" className={cn("flex items-center gap-1.5 border-l px-4 font-mono text-[11.5px]", error ? "text-destructive" : "text-ok-text")}>
+              <span aria-hidden="true" className={cn("size-1.5", error ? "bg-destructive" : "bg-ok")} />
+              {error ? "error" : `ok · ${preview.length} rows${ms !== null ? ` · ${ms < 10 ? ms.toFixed(1) : Math.round(ms)} ms` : ""}`}
+            </span>
+          </div>
+          <div className="shrink-0 border-b px-4 py-3">
             <ExpressionEditor id="expression" value={expr} onChange={setExpr} onSubmit={apply} columns={columns} invalid={!!error} autoFocus />
             {error ? (
-              <FieldError>{error}</FieldError>
+              <p role="alert" className="pt-2 text-xs text-destructive">
+                {error}
+              </p>
             ) : (
-              <FieldDescription>
-                Ctrl+Space suggests functions; Ctrl+Enter applies. e.g. value.trim().toTitlecase() · value.replace(/\s+/, ' ')
-              </FieldDescription>
+              <p className="pt-2 text-xs text-muted-foreground">
+                {HINTS[mode]} <kbd>Ctrl Space</kbd> suggests functions, <kbd>Ctrl ↵</kbd> applies.
+              </p>
             )}
-          </Field>
-        </FieldGroup>
-        <ScrollArea className="h-64 rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{column}</TableHead>
-                <TableHead>Result</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {preview.map(([a, b], i) => (
-                <TableRow key={i}>
-                  <TableCell className="max-w-xs truncate font-mono">{vis(a)}</TableCell>
-                  <TableCell className="max-w-xs truncate font-mono">{show(b)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </ScrollArea>
-        <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
-          <Button disabled={blocked} onClick={apply}>
-            {mode.startsWith("facet") ? "Add facet" : "Apply"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            {recent.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-2 text-xs text-muted-foreground">
+                Recent:
+                {recent.slice(0, 5).map((r) => (
+                  <button key={r} type="button" onClick={() => setExpr(r)} className="max-w-60 truncate rounded-[3px] border border-input px-1.5 font-mono text-[11.5px] text-ink-2 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring">
+                    {r}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          {named && (
+            <div className="flex shrink-0 flex-wrap items-start gap-x-6 gap-y-3 border-b border-b-foreground px-4 py-3">
+              {named && (
+                <label className="flex flex-col gap-1">
+                  <span className="text-[11.5px] text-muted-foreground">New column name</span>
+                  <Input value={name} aria-invalid={nameTaken} onChange={(e) => setName(e.target.value)} className="h-8 w-60" />
+                  {nameTaken && <span className="text-xs text-destructive">A column with this name already exists.</span>}
+                </label>
+              )}
+              {mode === "fetch" && (
+                <>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-[11.5px] text-muted-foreground">Delay between requests (ms)</span>
+                    <Input type="number" min={0} value={delay} onChange={(e) => setDelay(Math.max(0, Number(e.target.value) || 0))} className="h-8 w-32 font-mono" />
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-[11.5px] text-muted-foreground">When a request fails</span>
+                    <select value={fetchError} onChange={(e) => setFetchError(e.target.value)} className="h-8 rounded-[3px] border border-input bg-background px-2">
+                      <option value="set-to-blank">leave blank</option>
+                      <option value="store-error">store the error</option>
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-[11.5px] text-muted-foreground">HTTP headers, one per line as Name: value</span>
+                    <Textarea className="min-h-8 w-72 font-mono" rows={1} placeholder="Authorization: Bearer …" value={headers} onChange={(e) => setHeaders(e.target.value)} />
+                  </label>
+                  <label className="flex items-center gap-2 self-center">
+                    <input type="checkbox" checked={cache} onChange={(e) => setCache(e.target.checked)} className="accent-foreground" />
+                    Fetch each distinct URL once
+                  </label>
+                </>
+              )}
+            </div>
+          )}
+          <div className={cn("flex h-10 shrink-0 items-center gap-3 border-b px-5", !named && "border-t border-t-foreground")}>
+            <span className="font-semibold">Preview</span>
+            <span className="font-mono text-xs text-muted-foreground">
+              {preview.filter(([a, b]) => changed(a, b)).length} of {preview.length} rows change
+            </span>
+            <Spacer />
+            <label className="flex items-center gap-2 text-ink-2">
+              <input type="checkbox" checked={onlyChanged} onChange={(e) => setOnlyChanged(e.target.checked)} className="accent-foreground" />
+              only changed
+            </label>
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <table className="w-full table-fixed border-collapse">
+              <thead>
+                <tr className="text-left text-[11.5px] text-muted-foreground">
+                  <th scope="col" className="border-b px-5 py-2 font-normal">
+                    {column}
+                  </th>
+                  <th scope="col" className="w-10 border-b font-normal">
+                    <span className="sr-only">becomes</span>
+                  </th>
+                  <th scope="col" className="border-b px-5 py-2 font-normal">
+                    result
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {shownPreview.map(([a, b], i) => {
+                  const err = b !== null && typeof b === "object"
+                  return (
+                    <tr key={i} className="h-8.5">
+                      <td className="truncate border-b px-5 font-mono text-[12.5px] text-ink-2">{vis(a)}</td>
+                      <td aria-hidden="true" className="border-b text-center text-faint">
+                        →
+                      </td>
+                      <td className="truncate border-b px-5 font-mono text-[12.5px]">
+                        <span className={cn(err ? "text-destructive" : changed(a, b) && "bg-data/8")}>{show(b)}</span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+            {onlyChanged && !shownPreview.length && <p className="px-5 py-4 text-muted-foreground">Nothing changes in these rows.</p>}
+          </div>
+          <div className="flex h-11 shrink-0 items-stretch border-t">
+            {mode === "transform" && (
+              <>
+                <label className={field}>
+                  <span className="text-muted-foreground">On error</span>
+                  <select value={onError} onChange={(e) => setOnError(e.target.value)} className="h-7.5 rounded-[3px] border border-input bg-background px-2">
+                    <option value="keep-original">keep original</option>
+                    <option value="set-to-blank">set to blank</option>
+                    <option value="store-error">store error</option>
+                  </select>
+                </label>
+                <label className={field}>
+                  <input type="checkbox" checked={repeat} onChange={(e) => setRepeat(e.target.checked)} className="accent-foreground" />
+                  <span className="text-ink-2">repeat until no change</span>
+                </label>
+              </>
+            )}
+            <Spacer />
+            <CellButton rule="left" onClick={onClose}>
+              Cancel
+            </CellButton>
+            <CellButton rule="left" ink keys="Ctrl ↵" disabled={blocked} onClick={apply} className="px-6">
+              {mode.startsWith("facet") ? "Add facet" : rows !== undefined ? `Apply to ${rows.toLocaleString()} rows` : "Apply"}
+            </CellButton>
+          </div>
+        </div>
+        <FunctionReference />
+      </div>
+    </FullView>
   )
 }
 

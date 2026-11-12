@@ -694,6 +694,7 @@ export function App() {
             mode={modal.kind}
             columns={summary.columns}
             engine={engine}
+            rows={total}
             onApply={apply}
             onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
             onClose={() => setModal(null)}
