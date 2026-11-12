@@ -1457,6 +1457,17 @@
       "title": "Extensions",
       "detail": "A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules); a documented API and one example extension.",
       "ref": "Butterfly modules, ClientSideResourceManager"
+    },
+    {
+      "id": "ext-mcp",
+      "phase": "p13",
+      "milestone": "v1.0",
+      "status": "todo",
+      "priority": "P1",
+      "size": "L",
+      "title": "MCP server for AI assistants",
+      "detail": "`ox mcp`: a Model Context Protocol server (stdio) over the same commands as `ox serve`, so AI assistants can list, import and open projects, read column profiles, rows and facet counts, cluster, preview GREL, apply operations or recipes, undo and export. Every change goes into the project history; file access stays inside the data folder and the given paths. Docs for Claude Desktop and Claude Code.",
+      "ref": "no counterpart; the protocol is at modelcontextprotocol.io"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # OxRefine roadmap: full OpenRefine parity in Rust
 
-Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 32 of 126 tasks done.
+Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`. 32 of 127 tasks done.
 
 Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence, full GREL core, all common operations, parity tests). **v0.5** covers the remaining formats, clustering methods and exporters plus installers and launch. **v1.0** adds reconciliation and full UI parity. **later** lists what only a minority of OpenRefine users need.
 
@@ -9,7 +9,7 @@ Milestones: **v0.2** is a daily driver for cleaning CSV/Excel/JSON (persistence,
 | v0.1 | 10 | 10 |
 | v0.2 | 46 | 20 |
 | v0.5 | 50 | 2 |
-| v1.0 | 6 | 0 |
+| v1.0 | 7 | 0 |
 | later | 14 | 0 |
 
 ## Prototype
@@ -207,3 +207,4 @@ OpenRefine's bundled extensions: database, Wikibase, scripting.
 - [ ] **Wikimedia Commons import** · later · P2 · M. OpenRefine's commons extension: import files from Commons categories (with depth), file names reconciled to M-ids, the wikitext of each file page as an option. _OpenRefine: extensions/commons_
 - [ ] **Google Sheets and Drive** · later · P2 · L. OpenRefine's gdata extension: import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in. _OpenRefine: extensions/gdata_
 - [ ] **Extensions** · later · P2 · L. A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules); a documented API and one example extension. _OpenRefine: Butterfly modules, ClientSideResourceManager_
+- [ ] **MCP server for AI assistants** · v1.0 · P1 · L. `ox mcp`: a Model Context Protocol server (stdio) over the same commands as `ox serve`, so AI assistants can list, import and open projects, read column profiles, rows and facet counts, cluster, preview GREL, apply operations or recipes, undo and export. Every change goes into the project history; file access stays inside the data folder and the given paths. Docs for Claude Desktop and Claude Code. _OpenRefine: no counterpart; the protocol is at modelcontextprotocol.io_
