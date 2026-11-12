@@ -1,8 +1,9 @@
 // Catch performance regressions: run two OxRefine builds through the benchmark's steps on the same
 // machine, alternately, and fail when the new one is clearly slower or uses clearly more memory.
 //   node benchmarks/check.mjs --base <ox binary> [--new <ox binary>] [--runs 3] [rows...]
-// --new defaults to target/release/ox. Each step compares medians; a step regresses when the new
-// median is over 1.3x the base one plus 15 ms (shorter steps are noise), peak RAM over 1.1x plus 8 MB.
+// --new defaults to target/release/ox. Times compare each build's fastest run (a busy runner only ever
+// adds time, so one slow disk flush can't fail the check); a step regresses when the new time is over
+// 1.3x the base one plus 15 ms (shorter steps are noise). Peak RAM compares medians: over 1.1x plus 8 MB.
 import { mkdirSync } from "node:fs"
 import { join } from "node:path"
 import { DATA, OX, STEPS, dataset, runOx } from "./ox.mjs"
@@ -22,6 +23,7 @@ if (!base) {
 }
 mkdirSync(DATA, { recursive: true })
 const median = (xs) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)]
+const best = (xs) => Math.min(...xs)
 const TIME = { factor: 1.3, slack: 15 }
 const RAM = { factor: 1.1, slack: 8 }
 
@@ -36,7 +38,8 @@ for (const n of sizes) {
     got.new.push(await runOx(csv, join(DATA, `check_new_${n}.csv`), { bin: next, port: 3042 }))
   }
   for (const step of [...STEPS, "peak"]) {
-    const [b, x] = [median(got.base.map((r) => r[step])), median(got.new.map((r) => r[step]))]
+    const pick = step === "peak" ? median : best
+    const [b, x] = [pick(got.base.map((r) => r[step])), pick(got.new.map((r) => r[step]))]
     const lim = step === "peak" ? RAM : TIME
     const bad = x > b * lim.factor + lim.slack
     failed ||= bad
