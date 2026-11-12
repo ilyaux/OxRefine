@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
+import { useCommandState } from "cmdk"
 import {
   Command,
   CommandDialog,
@@ -13,6 +14,31 @@ import {
 import { COMMON, PRESETS, type ColumnAction } from "@/Grid"
 
 type Kind = Exclude<ColumnAction["kind"], "common" | "preset-facet">
+
+/** The one-key tools, shown in the key column. */
+const KEYS: Partial<Record<Kind, string>> = { facet: "F", transform: "T", cluster: "C", reconcile: "R" }
+
+/** The label with the typed text in bold where it matches. */
+function Mark({ text, q }: { text: string; q: string }) {
+  const i = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1
+  // one span, so the item's flex gap doesn't split the word around the match
+  if (i < 0) return <span>{text}</span>
+  return (
+    <span>
+      {text.slice(0, i)}
+      <b className="font-semibold">{text.slice(i, i + q.length)}</b>
+      {text.slice(i + q.length)}
+    </span>
+  )
+}
+
+/** How many commands match the typed text. */
+function Count() {
+  const n = useCommandState((state) => state.filtered.count)
+  return <span className="shrink-0 font-mono text-[11.5px] text-muted-foreground">{n} results</span>
+}
+
+const Hint = ({ children }: { children: ReactNode }) => <span className="flex items-center border-r px-3 font-mono text-[11px] text-muted-foreground">{children}</span>
 
 /** Every column-menu command, in the menu's order and wording. */
 const COLUMN_COMMANDS: [Kind, string][] = [
@@ -91,7 +117,9 @@ export function Palette({
           }
           value={search}
           onValueChange={setSearch}
-        />
+        >
+          <Count />
+        </CommandInput>
         <CommandList>
           <CommandEmpty>No command matches.</CommandEmpty>
           {column && (
@@ -103,7 +131,8 @@ export function Palette({
                     value={`${label} ${column}`}
                     onSelect={() => run(() => onAction({ kind, column }))}
                   >
-                    {label}
+                    <Mark text={label} q={search} />
+                    {KEYS[kind] && <CommandShortcut>{KEYS[kind]}</CommandShortcut>}
                   </CommandItem>
                 ))}
                 {COMMON.map(([label, expression]) => (
@@ -116,7 +145,7 @@ export function Palette({
                       )
                     }
                   >
-                    {label}
+                    <Mark text={label} q={search} />
                   </CommandItem>
                 ))}
                 {PRESETS.map(([label, facet, expression]) => (
@@ -137,7 +166,7 @@ export function Palette({
                       )
                     }
                   >
-                    {label}
+                    <Mark text={label} q={search} />
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -154,7 +183,7 @@ export function Palette({
                     value={`column ${c}`}
                     onSelect={() => (onColumn(c), setSearch(""))}
                   >
-                    Column “{c}”
+                    <Mark text={`Column “${c}”`} q={search} />
                   </CommandItem>
                 ))}
             </CommandGroup>
@@ -167,12 +196,18 @@ export function Palette({
                 value={c.label}
                 onSelect={() => run(c.run)}
               >
-                {c.label}
+                <Mark text={c.label} q={search} />
                 {c.shortcut && <CommandShortcut>{c.shortcut}</CommandShortcut>}
               </CommandItem>
             ))}
           </CommandGroup>
         </CommandList>
+        <div className="flex h-8 shrink-0 items-stretch border-t">
+          <Hint>↑↓ move</Hint>
+          <Hint>↵ run</Hint>
+          <span className="flex-1" />
+          <span className="flex items-center border-l px-3 font-mono text-[11px] text-muted-foreground">Esc close</span>
+        </div>
       </Command>
     </CommandDialog>
   )
