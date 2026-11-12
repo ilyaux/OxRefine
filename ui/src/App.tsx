@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
-import { AskDialog, ClusterDialog, ExtractDialog, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
+import { AskDialog, ClusterDialog, HistoryView, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction, type SelectedCell } from "@/Grid"
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { Home } from "@/Home"
@@ -416,7 +416,7 @@ export function App() {
               <CellButton keys="R" onClick={() => tool("reconcile")} title={toolColumn ? `Reconcile ${toolColumn}` : undefined}>
                 Reconcile
               </CellButton>
-              <CellButton onClick={applyRecipe}>Recipe</CellButton>
+              <CellButton onClick={() => setModal({ kind: "extract" })}>Recipe</CellButton>
               <DropdownMenu>
                 <DropdownMenuTrigger render={<CellButton />}>Rows</DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-60">
@@ -692,13 +692,12 @@ export function App() {
           />
         )}
         {modal?.kind === "extract" && summary && (
-          <ExtractDialog
+          <HistoryView
             summary={summary}
+            onGoto={goto}
             onCopy={(steps) => copyRecipe(steps).catch(fail)}
-            onSave={(steps) => {
-              setModal(null)
-              saveRecipe(steps)
-            }}
+            onSave={(steps) => saveRecipe(steps)}
+            onApplyRecipe={applyRecipe}
             onClose={() => setModal(null)}
           />
         )}

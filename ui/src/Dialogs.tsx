@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Spinner } from "@/components/ui/spinner"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
@@ -820,74 +819,129 @@ export function AskDialog({
   )
 }
 
-/** OpenRefine's Undo/Redo → Extract: pick steps, see their JSON, copy or save it. */
-export function ExtractDialog({
+/** OpenRefine's Undo/Redo as a full view: every step (go to one to undo or redo to it), and the recipe of
+ * the steps picked, to copy or save; single-cell edits and undone steps can't go into a recipe. */
+export function HistoryView({
   summary,
+  onGoto,
   onCopy,
   onSave,
+  onApplyRecipe,
   onClose,
 }: {
-  summary: { history: string[]; recipe: boolean[]; cursor: number }
+  summary: { name: string; rows: number; columns: string[]; history: string[]; recipe: boolean[]; cursor: number }
+  onGoto: (index: number) => void
   onCopy: (steps: number[]) => Promise<void>
   onSave: (steps: number[]) => void
+  onApplyRecipe: () => void
   onClose: () => void
 }) {
   const usable = summary.history.map((_, i) => i).filter((i) => i < summary.cursor && summary.recipe[i])
-  const [steps, setSteps] = useState(usable)
-  const [json, setJson] = useState("")
+  const [picked, setPicked] = useState<number[] | null>(null)
+  // until the user picks, every step that can go into a recipe is in it
+  const steps = (picked ?? usable).filter((i) => usable.includes(i))
+  const [json, setJson] = useState<{ key: string; text: string } | null>(null)
+  const key = steps.join(",")
   useEffect(() => {
-    if (!steps.length) return setJson("[]")
-    call("export_recipe", { steps }).then(({ data }) => setJson(JSON.stringify(data, null, 2)), () => {})
-  }, [steps])
-  const toggle = (i: number, on: boolean) => setSteps((s) => (on ? [...s, i].sort((a, b) => a - b) : s.filter((x) => x !== i)))
+    if (!steps.length) return
+    let live = true
+    call("export_recipe", { steps }).then(({ data }) => live && setJson({ key, text: JSON.stringify(data, null, 2) }), () => {})
+    return () => {
+      live = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
+  const toggle = (i: number) => setPicked(steps.includes(i) ? steps.filter((x) => x !== i) : [...steps, i].sort((a, b) => a - b))
+  const undone = summary.history.length - summary.cursor
+  const rows = ["Create project", ...summary.history]
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>Extract operation history</DialogTitle>
-          <DialogDescription>
-            Pick the steps to keep. The JSON applies in OpenRefine (Undo/Redo → Apply) or with ox apply. As in OpenRefine, single-cell edits and
-            single-row stars or flags can't be extracted, and undone steps are not listed.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid min-h-0 gap-4 md:grid-cols-2">
-          <ScrollArea className="h-96 rounded-md border p-2">
-            <div className="flex flex-col gap-1">
-              <Field orientation="horizontal">
-                <Checkbox
-                  id="ex-all"
-                  checked={steps.length === usable.length && usable.length > 0}
-                  indeterminate={steps.length > 0 && steps.length < usable.length}
-                  onCheckedChange={(c) => setSteps(c ? usable : [])}
-                />
-                <FieldLabel htmlFor="ex-all">All steps</FieldLabel>
-              </Field>
-              {summary.history.slice(0, summary.cursor).map((d, i) => (
-                <Field key={i} orientation="horizontal" data-disabled={!summary.recipe[i] || undefined}>
-                  <Checkbox id={`ex-${i}`} disabled={!summary.recipe[i]} checked={steps.includes(i)} onCheckedChange={(c) => toggle(i, !!c)} />
-                  <FieldLabel htmlFor={`ex-${i}`} className="font-normal">
-                    <span className="w-6 shrink-0 tabular-nums text-muted-foreground">{i + 1}.</span>
-                    {d}
-                  </FieldLabel>
-                </Field>
-              ))}
+    <FullView crumbs={["History"]} onClose={onClose}>
+      <div className="flex min-h-0 flex-1">
+        <section aria-label="Steps" className="flex min-w-0 flex-1 flex-col border-r">
+          <div className="flex h-11 shrink-0 items-center gap-2 border-b border-b-foreground px-5">
+            <span className="font-semibold">Steps</span>
+            <span className="font-mono text-xs text-muted-foreground">
+              {summary.cursor} applied{undone ? ` · ${undone} undone` : ""}
+            </span>
+            <Spacer />
+            <kbd>Ctrl Z / Ctrl Y</kbd>
+          </div>
+          <ol className="min-h-0 flex-1 overflow-y-auto">
+            {rows.map((d, i) => {
+              const step = i - 1
+              const current = i === summary.cursor
+              const isUndone = i > summary.cursor
+              const canPick = i > 0 && usable.includes(step)
+              return (
+                <li
+                  key={i}
+                  className={cn(
+                    "flex items-start gap-3 border-b px-5 py-3",
+                    current && "bg-secondary",
+                    isUndone && "bg-[repeating-linear-gradient(135deg,transparent_0_6px,var(--row-rule)_6px_7px)] text-muted-foreground",
+                  )}
+                >
+                  <span className="w-6 shrink-0 pt-px text-right font-mono text-[12px] text-muted-foreground">{i}</span>
+                  {i === 0 ? (
+                    <span aria-hidden="true" className="mt-1 size-2.5 shrink-0" />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      aria-label={`Put step ${i} in the recipe`}
+                      disabled={!canPick}
+                      checked={steps.includes(step)}
+                      onChange={() => toggle(step)}
+                      title={canPick ? "In the recipe" : isUndone ? "Undone steps can't go into a recipe" : "Single-cell edits can't go into a recipe, as in OpenRefine"}
+                      className="mt-0.5 accent-foreground"
+                    />
+                  )}
+                  <button
+                    type="button"
+                    aria-current={current ? "step" : undefined}
+                    onClick={() => onGoto(i)}
+                    className="flex min-w-0 flex-1 flex-col items-start text-left outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <span className={cn("font-medium", isUndone && "line-through")}>{d}</span>
+                    {i === 0 && (
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {summary.name} · {summary.rows.toLocaleString()} rows · {summary.columns.length} columns now
+                      </span>
+                    )}
+                  </button>
+                  <span className={cn("shrink-0 text-xs", current ? "font-medium text-foreground" : "text-muted-foreground")}>{current ? "current" : isUndone ? "redo" : ""}</span>
+                </li>
+              )
+            })}
+          </ol>
+        </section>
+        <section aria-label="Recipe" className="flex w-[50%] shrink-0 flex-col bg-muted">
+          <div className="flex h-11 shrink-0 items-stretch border-b border-b-foreground">
+            <div className="flex items-center gap-2 px-5">
+              <span className="font-semibold">Recipe</span>
+              <span className="font-mono text-xs text-muted-foreground">
+                {steps.length} step{steps.length === 1 ? "" : "s"} · OpenRefine JSON
+              </span>
             </div>
-          </ScrollArea>
-          <ScrollArea className="h-96 rounded-md border bg-muted">
-            <pre className="p-2 font-mono text-xs whitespace-pre">{json}</pre>
-          </ScrollArea>
-        </div>
-        <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Close</DialogClose>
-          <Button variant="outline" disabled={!steps.length} onClick={() => onCopy(steps)}>
-            Copy JSON
-          </Button>
-          <Button disabled={!steps.length} onClick={() => onSave(steps)}>
-            Save…
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            <Spacer />
+            <CellButton rule="left" onClick={onApplyRecipe}>
+              Apply a recipe…
+            </CellButton>
+            <CellButton rule="left" disabled={!steps.length} onClick={() => onCopy(steps)}>
+              Copy
+            </CellButton>
+            <CellButton rule="left" ink disabled={!steps.length} onClick={() => onSave(steps)}>
+              Save .json
+            </CellButton>
+          </div>
+          <pre className="min-h-0 flex-1 overflow-auto p-5 font-mono text-[12.5px] leading-relaxed whitespace-pre">
+            {!steps.length ? "[]" : json?.key === key ? json.text : ""}
+          </pre>
+          <p className="shrink-0 border-t px-5 py-3 text-xs text-muted-foreground">
+            Runs unchanged in OpenRefine 3.10.1: Undo/Redo → Apply, or with <code>ox apply</code>. Single-cell edits and single-row stars or flags can't be extracted, as in OpenRefine.
+          </p>
+        </section>
+      </div>
+    </FullView>
   )
 }
 
