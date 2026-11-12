@@ -72,8 +72,11 @@ export function App() {
   const [summary, setSummary] = useState<Summary | null>(null)
   const [facets, setFacets] = useState<Facet[]>([])
   const [mode, setMode] = useState<Engine["mode"]>("row-based")
-  const [facetData, setFacetData] = useState<FacetData[]>([])
+  // facet counts with the facets they were computed for: after a facet is removed or added, the old
+  // counts no longer line up by position, so each facet looks up its own by what it facets on
+  const [facetData, setFacetData] = useState<{ facets: Facet[]; data: FacetData[] }>({ facets: [], data: [] })
   const [total, setTotal] = useState(0)
+  const [records, setRecords] = useState<[number, number] | undefined>()
   const [lastMs, setLastMs] = useState<{ what: string; ms: number } | null>(null)
   const [modal, setModal] = useState<Modal>(null)
   // a file to import: picked from disk, or pasted / downloaded and staged by the engine
@@ -104,7 +107,7 @@ export function App() {
   const [prefsChanged, setPrefsChanged] = useState(0)
   const [prefsOpen, setPrefsOpen] = useState(false)
   useEffect(() => {
-    if (summary) call<FacetData[]>("facets", { engine }).then(({ data }) => setFacetData(data), fail)
+    if (summary) call<FacetData[]>("facets", { engine }).then(({ data }) => setFacetData({ facets: engine.facets, data }), fail)
   }, [summary, engine, prefsChanged])
   const setFacetLimit = (n: number) =>
     call("set_preference", { name: "ui.browsing.listFacet.limit", value: n }).then(() => setPrefsChanged((k) => k + 1), fail)
@@ -498,8 +501,8 @@ export function App() {
                   ))}
                 </div>
                 <div className="flex items-center border-r px-3.5 font-mono whitespace-nowrap">
-                  {total.toLocaleString()}
-                  <span className="text-muted-foreground">&nbsp;/ {summary.rows.toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
+                  {(mode === "record-based" && records ? records[0] : total).toLocaleString()}
+                  <span className="text-muted-foreground">&nbsp;/ {(mode === "record-based" && records ? records[1] : summary.rows).toLocaleString()} {mode === "record-based" ? "records" : "rows"}</span>
                 </div>
                 <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
                   {facets.map((f, i) => {
@@ -540,7 +543,10 @@ export function App() {
                   {side === "facets" ? (
                     <Facets
                       facets={facets}
-                      data={facetData}
+                      data={facets.map((f) => {
+                        const j = facetData.facets.findIndex((g) => g.type === f.type && g.columnName === f.columnName && g.name === f.name && ("expression" in g ? g.expression : "") === ("expression" in f ? f.expression : ""))
+                        return j < 0 ? null : facetData.data[j]
+                      })}
                       columns={summary.columns}
                       onChange={setFacets}
                       onEditChoice={editChoice}
@@ -552,7 +558,7 @@ export function App() {
                   )}
                 </aside>
                 <main className="min-w-0 flex-1">
-                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={setTotal} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} dataVersion={`${summary.name}:${summary.cursor}:${summary.history.length}`} />
+                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={(n, rec) => (setTotal(n), setRecords(rec))} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} dataVersion={`${summary.name}:${summary.cursor}:${summary.history.length}`} />
                 </main>
               </div>
             </>

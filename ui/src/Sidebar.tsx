@@ -23,7 +23,7 @@ export function Facets({
   onAdd,
 }: {
   facets: Facet[]
-  data: FacetData[]
+  data: (FacetData | null)[]
   columns: string[]
   onChange: (f: Facet[]) => void
   onEditChoice: (facet: ListFacet, choice: string) => void
@@ -36,7 +36,8 @@ export function Facets({
   return (
     <div className="flex flex-col">
       {facets.map((f, i) => (
-        <section key={`${f.type}:${f.columnName}:${i}`} aria-label={`Facet ${f.name}`} className="flex flex-col border-b pb-3">
+        // keyed by what the facet is, not where it is, so removing one above keeps the others' sort and inputs
+        <section key={facetKey(facets, i)} aria-label={`Facet ${f.name}`} className="flex flex-col border-b pb-3">
           <div className="flex items-center gap-1 py-2.5 pr-1.5 pl-3.5">
             <div className="flex min-w-0 flex-1 flex-col">
               <span className="truncate font-semibold">{f.name}</span>
@@ -94,6 +95,12 @@ export function Facets({
       )}
     </div>
   )
+}
+
+/** A facet's identity: type, column and expression, plus how many identical facets come before it. */
+const facetKey = (facets: Facet[], i: number) => {
+  const id = (f: Facet) => `${f.type}:${f.columnName}:${"expression" in f ? f.expression : ""}`
+  return `${id(facets[i])}:${facets.slice(0, i).filter((f) => id(f) === id(facets[i])).length}`
 }
 
 /** The count next to a facet's name: how many choices, or the range it covers. */

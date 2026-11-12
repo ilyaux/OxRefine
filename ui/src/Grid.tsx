@@ -196,7 +196,8 @@ export function Grid({
   columns: string[]
   engine: Engine
   version: string
-  onTotal: (n: number) => void
+  /** how many rows match; in records mode also how many records match, of how many */
+  onTotal: (rows: number, records?: [number, number]) => void
   onAction: (a: ColumnAction) => void
   onApply: (op: Op) => Promise<void>
   /** the column the user last worked on (its menu or a cell), for the command palette */
@@ -240,11 +241,11 @@ export function Grid({
     if (pending.current.has(b)) return
     pending.current.add(b)
     const v = version
-    call<{ total: number; rows: Row[] }>("rows", { engine, start: b * BLOCK, limit: BLOCK })
+    call<{ total: number; rows: Row[]; records?: number; recordTotal?: number }>("rows", { engine, start: b * BLOCK, limit: BLOCK })
       .then(({ data }) => {
         if (current.current !== v) return
         setTotal(data.total)
-        onTotal(data.total)
+        onTotal(data.total, data.records === undefined ? undefined : [data.records, data.recordTotal ?? 0])
         setBlocks((m) => new Map(m).set(b, data.rows))
       })
       .catch(() => pending.current.delete(b))

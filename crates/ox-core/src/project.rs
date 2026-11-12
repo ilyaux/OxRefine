@@ -445,7 +445,15 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 t.record_starts(t.key_index()).into_iter().enumerate().map(|(r, s)| { if s && r > 0 { n += 1 } n }).collect()
             });
             let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
-            json!({ "total": rows.len(), "rows": page })
+            match &starts {
+                // records mode counts records, not their rows: those matching, and all of them
+                Some(n) => {
+                    let mut seen = rows.iter().map(|&r| n[r as usize]).collect::<Vec<_>>();
+                    seen.dedup();
+                    json!({ "total": rows.len(), "rows": page, "records": seen.len(), "recordTotal": n.last().map_or(0, |&l| l as usize + 1) })
+                }
+                None => json!({ "total": rows.len(), "rows": page }),
+            }
         }
         // what each column holds, for the grid's headers (over every row; facets don't change it)
         "profile" => json!(engine::profile(p.table())),
