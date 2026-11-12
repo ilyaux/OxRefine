@@ -901,7 +901,7 @@
       "id": "cl-ppm",
       "phase": "p7",
       "milestone": "v0.5",
-      "status": "backlog",
+      "status": "doing",
       "priority": "P2",
       "size": "S",
       "title": "PPM distance for nearest neighbours",
