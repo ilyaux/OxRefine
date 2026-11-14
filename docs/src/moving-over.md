@@ -13,6 +13,14 @@ The project opens with its data, stars, flags, reconciliation data and **its und
 
 A step that OxRefine can't redo, such as an operation from an extension it doesn't support yet, is merged into the starting data together with everything before it. You then see the data exactly as OpenRefine had it; only that part of the history can't be undone. OxRefine tells you when this happens and why.
 
+### Projects with additional extension data
+
+When an archive contains data OxRefine cannot interpret, such as a Wikibase schema, unknown overlay models or extra files, OxRefine keeps an untouched copy of the entire source archive with the saved project. This also preserves unsupported history and survives an app restart. A warning stays visible while the project is open.
+
+If its table, history and project metadata remain unchanged, **Export → OpenRefine project** returns that original archive. After changes, this export is refused before touching the destination file: unknown extension data may refer to rows or columns that have changed. You can still export the edited table as CSV or Excel, and use **Export preserved original** in the warning bar to retrieve the untouched archive separately. That original does not include changes made in OxRefine.
+
+This preserves data; it does not run the extension or make its schemas editable. Missing or damaged preserved archives cause an error instead of being silently discarded.
+
 ### From OxRefine to OpenRefine
 
 Choose **Export → OpenRefine project** and import the file in OpenRefine with **Import project**. OpenRefine opens it with OxRefine's full history, and each step can be undone there.

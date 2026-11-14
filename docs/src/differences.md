@@ -28,6 +28,8 @@ Everything else checked matches exactly. That covers GREL results and errors, op
 
 The full plan is in [ROADMAP.md](https://github.com/ilyaux/OxRefine/blob/main/ROADMAP.md).
 
+Additional extension data, including Wikibase schemas, is preserved as part of the original archive. Editing that data is not supported. Projects carrying it have conservative export restrictions to prevent loss or stale references; see [moving projects](moving-over.md#projects-with-additional-extension-data).
+
 ## Things that work differently on purpose
 
 - **Speed and memory.** OxRefine keeps each distinct value of a column once and works on distinct values, so facets, clustering and most transforms take milliseconds even on millions of rows.

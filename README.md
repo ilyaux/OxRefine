@@ -118,6 +118,8 @@ Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so s
 
 Each area is checked against fixtures produced by running the same cases through OpenRefine 3.10.1. Every difference that remains is listed, with its reason, in a `known_failures.txt` next to the fixtures.
 
+Archives with unsupported extension data, such as Wikibase schemas or extra files, keep an untouched source copy across restarts. Exporting the current project back to OpenRefine requires unchanged data, history and metadata; the preserved original can always be exported separately. See [extension-data preservation](docs/src/moving-over.md#projects-with-additional-extension-data).
+
 <img src="docs/readme/compat.svg" width="100%" alt="2,122 of 2,136 checks match OpenRefine 3.10.1, 99.2%, across ten suites.">
 
 <details>
@@ -198,7 +200,7 @@ Each suite in `tests/<suite>/` has three files:
 - `gen.mjs`: runs the cases through OpenRefine 3.10.1 and writes `fixtures.json`.
 - `known_failures.txt`: the deliberate differences, each with its reason.
 
-A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs OpenRefine 3.10.1 next to the repository (see `tools/openrefine.mjs`). `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. CI runs all of this on Windows, macOS and Linux.
+A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs OpenRefine 3.10.1 next to the repository (see `tools/openrefine.mjs`). `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. `node tests/orproject/extensions/check.mjs` also checks a preserved Wikibase schema and its history after a saved project is reopened. CI runs the Rust suites on Windows, macOS and Linux, and typechecks and builds the UI.
 
 ## Project layout
 

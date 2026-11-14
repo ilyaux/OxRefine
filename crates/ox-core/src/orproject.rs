@@ -21,6 +21,7 @@ use crate::{
 };
 use serde::Deserialize;
 use serde_json::{json, Value as J};
+use sha1::{Digest, Sha1};
 use std::{
     collections::{BTreeMap, HashMap},
     io::{BufRead, BufReader, Cursor, Read, Write},
@@ -30,6 +31,58 @@ use std::{
 
 /// What OpenRefine 3.10.1 writes at the top of its data and change files.
 const VERSION: &str = "3.10-SNAPSHOT";
+
+pub(crate) const ARCHIVE_WARNING: &str = "Additional OpenRefine data is preserved in the original archive. Exporting the current project back to OpenRefine requires unchanged data, history and project metadata. You can always export the preserved original separately; CSV and Excel exports of edited data remain available.";
+
+/// An opaque source archive is kept whole: extensions may reference rows, columns and history.
+#[derive(Clone, serde::Serialize, Deserialize)]
+pub struct OriginalArchive {
+    pub digest: String,
+    pub baseline: String,
+    #[serde(skip)]
+    pub bytes: Arc<Vec<u8>>,
+}
+
+impl OriginalArchive {
+    pub(crate) fn validate(&self) -> Result<()> {
+        if self.bytes.is_empty() || format!("{:x}", Sha1::digest(&*self.bytes)) != self.digest {
+            return Err("the preserved original archive is missing or damaged; it cannot be exported safely".into());
+        }
+        Ok(())
+    }
+}
+
+struct Fingerprint(Sha1);
+impl Write for Fingerprint {
+    fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+        self.0.update(bytes);
+        Ok(bytes.len())
+    }
+    fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
+}
+
+// Hash logical data, not dictionary codes or regenerated reconciliation IDs/timestamps. Streaming
+// keeps the check bounded in memory and avoids replaying recipes or making requests during export.
+fn project_fingerprint(p: &Project) -> Result<String> {
+    let (_, ops, cursor) = p.history_parts();
+    let t = p.table();
+    let mut out = Fingerprint(Sha1::new());
+    serde_json::to_writer(&mut out, &(&p.name, &p.info, ops, cursor, &t.names, t.rows, &t.key, &*t.starred, &*t.flagged)).map_err(err)?;
+    for col in &t.columns {
+        serde_json::to_writer(&mut out, &col.recon.as_ref().map(|r| (&r.config, &r.stats))).map_err(err)?;
+        for row in 0..t.rows {
+            let recon = col.recon(row).map(|r| {
+                let mut value = r.to_json(true);
+                value.as_object_mut().unwrap().remove("id");
+                value.as_object_mut().unwrap().remove("judgmentHistoryEntry");
+                value
+            });
+            let value = col.get(row);
+            serde_json::to_writer(&mut out, &(value.type_name(), crate::store::cell_to_json(value), recon)).map_err(err)?;
+        }
+    }
+    Ok(format!("{:x}", out.0.finalize()))
+}
 
 /// Whether a file is an OpenRefine project export: a gzipped tar with OpenRefine's `data.zip` in it
 /// (a tar.gz of data files is imported as an archive instead).
@@ -745,6 +798,8 @@ pub struct Archive {
     entries: Vec<Entry>,
     changes: Vec<Option<Change>>,
     states: Vec<State>,
+    source: Arc<Vec<u8>>,
+    opaque: bool,
 }
 
 /// What happened to OpenRefine's history on the way in.
@@ -755,23 +810,26 @@ pub struct Report {
     /// undone steps that were dropped
     pub dropped: usize,
     pub reason: Option<String>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub warnings: Vec<String>,
 }
 
-fn files(path: &Path) -> Result<HashMap<String, Vec<u8>>> {
-    let f = std::fs::File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(BufReader::new(f)));
+fn files(bytes: &[u8]) -> Result<(HashMap<String, Vec<u8>>, bool)> {
+    let mut tar = tar::Archive::new(flate2::read::GzDecoder::new(Cursor::new(bytes)));
     let mut out = HashMap::new();
+    let mut opaque = false;
     for e in tar.entries().map_err(|e| format!("not an OpenRefine project archive: {e}"))? {
         let mut e = e.map_err(|e| format!("damaged project archive: {e}"))?;
         if !e.header().entry_type().is_file() {
+            opaque = true;
             continue;
         }
         let name = e.path().map_err(err)?.to_string_lossy().replace('\\', "/");
         let mut bytes = vec![];
         e.read_to_end(&mut bytes).map_err(|e| format!("damaged project archive: {e}"))?;
-        out.insert(name.trim_start_matches("./").to_string(), bytes);
+        opaque |= out.insert(name.trim_start_matches("./").to_string(), bytes).is_some();
     }
-    Ok(out)
+    Ok((out, opaque))
 }
 
 fn unzip(bytes: &[u8], name: &str) -> Result<String> {
@@ -783,12 +841,26 @@ fn unzip(bytes: &[u8], name: &str) -> Result<String> {
 
 /// Read an archive and work out the table at every history step it can.
 pub fn read(path: &Path) -> Result<Archive> {
+    let bytes = std::fs::read(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    read_bytes(Arc::new(bytes), &file_stem(path))
+}
+
+fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
     crate::jobs::progress("Reading the OpenRefine project", 0);
-    let mut files = files(path)?;
+    let (mut files, mut opaque) = files(&source)?;
+    opaque |= files.keys().any(|name| {
+        !matches!(name.as_str(), "data.zip" | "metadata.json" | "metadata.old.json")
+            && !name.strip_prefix("history/").and_then(|n| n.strip_suffix(".change.zip")).is_some_and(|n| n.parse::<i64>().is_ok())
+    });
     let meta: J = files.get("metadata.json").map(|b| serde_json::from_slice(b).unwrap_or(J::Null)).unwrap_or(J::Null);
+    const META_FIELDS: &[&str] = &["created", "modified", "name", "password", "encoding", "encodingConfidence", "tags", "creator", "contributors", "subject", "description", "rowCount", "title", "version", "license", "homepage", "image", "importOptionMetadata", "customMetadata", "preferences"];
+    opaque |= meta.as_object().is_some_and(|m| m.keys().any(|k| !META_FIELDS.contains(&k.as_str())));
     let data = files.remove("data.zip").ok_or("not an OpenRefine project archive (no data.zip)")?;
     let mut z = zip::ZipArchive::new(Cursor::new(&data)).map_err(err)?;
-    let pool = read_pool(&unzip(&data, "pool.txt").unwrap_or_default());
+    opaque |= z.file_names().any(|n| !n.is_ok_and(|n| matches!(n.as_ref(), "data.txt" | "pool.txt")));
+    let pool_text = unzip(&data, "pool.txt").unwrap_or_default();
+    opaque |= pool_text.lines().any(|line| !line.starts_with('{') && line.split_once('=').is_some_and(|(key, _)| key != "reconCount"));
+    let pool = read_pool(&pool_text);
     let recon = !pool.is_empty();
 
     // data.txt: version, column model, history, overlay models, then the rows
@@ -803,11 +875,15 @@ pub fn read(path: &Path) -> Result<Archive> {
             "keyColumnIndex" => key_at = num(v)?,
             "columnCount" => {
                 for _ in 0..num(v)? {
-                    cols.push(serde_json::from_str::<Col>(&next()?).map_err(err)?);
+                    let column: J = serde_json::from_str(&next()?).map_err(err)?;
+                    opaque |= column.as_object().is_some_and(|m| m.keys().any(|k| !["cellIndex", "name", "originalName", "reconConfig", "reconStats"].contains(&k.as_str())));
+                    cols.push(serde_json::from_value::<Col>(column).map_err(err)?);
                 }
             }
             "columnGroupCount" => {
-                for _ in 0..num(v)? {
+                let count = num(v)?;
+                opaque |= count > 0;
+                for _ in 0..count {
                     next()?;
                 }
             }
@@ -828,7 +904,8 @@ pub fn read(path: &Path) -> Result<Archive> {
                 }
                 break;
             }
-            _ => {}
+            "columnModel" | "history" | "maxCellIndex" | "/e/" | "" => {}
+            _ => opaque = true,
         }
     }
     let key = cols.get(key_at).map(|c| c.name.clone());
@@ -879,7 +956,7 @@ pub fn read(path: &Path) -> Result<Archive> {
         }
     }
     Ok(Archive {
-        name: meta["name"].as_str().filter(|n| !n.is_empty()).map_or_else(|| file_stem(path), String::from),
+        name: meta["name"].as_str().filter(|n| !n.is_empty()).map_or_else(|| fallback_name.to_string(), String::from),
         info: serde_json::from_value(meta.clone()).unwrap_or_default(),
         history: entries.iter().map(|e| e.description.clone()).collect(),
         cursor: past,
@@ -889,6 +966,8 @@ pub fn read(path: &Path) -> Result<Archive> {
         entries,
         changes,
         states,
+        source,
+        opaque,
     })
 }
 
@@ -1003,6 +1082,15 @@ impl Archive {
         p.info = self.info;
         // the history ends early when a redo couldn't be read; the cursor stays inside it
         p.goto(cursor.min(n - 1)).expect("cursor within the steps");
+        if self.opaque || report.merged > 0 || report.dropped > 0 {
+            let digest = format!("{:x}", Sha1::digest(&*self.source));
+            let baseline = match project_fingerprint(&p) {
+                Ok(value) => value,
+                Err(e) => { report.warnings.push(format!("Only the preserved original can be exported: {e}")); String::new() }
+            };
+            p.original = Some(OriginalArchive { digest, baseline, bytes: self.source });
+            report.warnings.push(ARCHIVE_WARNING.into());
+        }
         (p, report)
     }
 }
@@ -1236,6 +1324,12 @@ fn change_text(a: &Table, b: &Table, op: &Op, pool: &mut PoolOut) -> String {
 
 /// Write `p` as an archive OpenRefine 3.10 opens, history and undone steps included.
 pub fn write(p: &Project, path: &Path) -> Result<()> {
+    if let Some(original) = &p.original {
+        if original.baseline.is_empty() || project_fingerprint(p)? != original.baseline {
+            return Err("Cannot export the edited project without losing or invalidating additional OpenRefine data. Export the preserved original archive instead, or export the edited table as CSV or Excel.".into());
+        }
+        return write_original(p, path);
+    }
     let (tables, ops, cursor) = p.history_parts();
     crate::jobs::progress("Writing the OpenRefine project", ops.len() as u64 + 1);
     let now = chrono::Utc::now();
@@ -1287,4 +1381,11 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
         crate::jobs::tick(1)?;
     }
     tar.into_inner().map_err(err)?.finish().map_err(err)?.flush().map_err(err)
+}
+
+/// Explicitly export the untouched source, including extension files and unsupported history.
+pub fn write_original(p: &Project, path: &Path) -> Result<()> {
+    let original = p.original.as_ref().ok_or("this project has no preserved original archive")?;
+    original.validate()?;
+    crate::store::write_atomic(path, |w| w.write_all(&original.bytes))
 }

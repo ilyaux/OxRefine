@@ -26,11 +26,12 @@ pub struct Project {
     pub meta: Option<Meta>,
     /// OpenRefine's metadata: tags, description... (also in `meta` for the project list)
     pub info: Info,
+    pub(crate) original: Option<crate::orproject::OriginalArchive>,
 }
 
 impl Project {
     pub fn new(name: impl Into<String>, table: Table) -> Project {
-        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None, info: Info::default() }
+        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension),
@@ -51,13 +52,17 @@ impl Project {
         p.goto(history.cursor.min(p.ops.len()))?;
         p.info = meta.info.clone();
         p.meta = Some(meta);
+        if history.original.as_ref().is_some_and(|a| a.bytes.is_empty()) {
+            return Err("the preserved original archive is missing; the project cannot be opened safely".into());
+        }
+        p.original = history.original;
         Ok(p)
     }
 
     /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
     pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>) -> Project {
         let cursor = ops.len();
-        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None, info: Info::default() }
+        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Every table, every step and the cursor (for writing the whole history out).
@@ -67,6 +72,10 @@ impl Project {
 
     pub fn table(&self) -> &Table {
         &self.states[self.cursor]
+    }
+
+    pub fn archive_warning(&self) -> Option<&'static str> {
+        self.original.as_ref().map(|_| crate::orproject::ARCHIVE_WARNING)
     }
 
     pub fn apply(&mut self, mut op: Op) -> Result<()> {
@@ -124,6 +133,7 @@ impl Project {
             // per step: whether it can go into an extracted recipe
             "recipe": self.ops.iter().map(Op::in_recipe).collect::<Vec<_>>(),
             "cursor": self.cursor,
+            "archiveWarning": self.archive_warning(),
             // reconciled columns: the service and how far along judging is
             "recon": t.names.iter().zip(&t.columns).filter_map(|(n, c)| {
                 let rc = c.recon.as_ref()?;
@@ -138,7 +148,7 @@ impl Project {
     fn save(&mut self, store: Option<&Store>) -> Result<()> {
         let (Some(store), Some(meta)) = (store, self.meta.as_mut()) else { return Ok(()) };
         meta.info = self.info.clone();
-        let history = History { ops: self.ops.clone(), cursor: self.cursor };
+        let history = History { ops: self.ops.clone(), cursor: self.cursor, original: self.original.clone() };
         let t = &self.states[self.cursor];
         store.touch(meta, t, &history)
     }
@@ -542,8 +552,12 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 json!(rows.len())
             }
         }
-        "export_project" => {
-            crate::orproject::write(p, Path::new(&a.path))?;
+        "export_project" | "export_original_project" => {
+            if cmd == "export_original_project" {
+                crate::orproject::write_original(p, Path::new(&a.path))?;
+            } else {
+                crate::orproject::write(p, Path::new(&a.path))?;
+            }
             json!(a.path)
         }
         // `steps` picks history steps by index (the History panel's Extract); default: up to the cursor

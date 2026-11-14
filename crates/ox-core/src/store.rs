@@ -73,6 +73,8 @@ pub struct Source {
 pub struct History {
     pub ops: Vec<Op>,
     pub cursor: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub original: Option<crate::orproject::OriginalArchive>,
 }
 
 #[derive(Clone)]
@@ -85,14 +87,21 @@ fn now() -> String {
 }
 
 /// Write via a temporary file and rename, so a crash never leaves a half-written file.
-fn write_atomic(path: &Path, f: impl FnOnce(&mut dyn Write) -> std::io::Result<()>) -> Result<()> {
-    let tmp = path.with_extension("tmp");
-    {
-        let mut w = BufWriter::new(std::fs::File::create(&tmp).map_err(err)?);
+pub(crate) fn write_atomic(path: &Path, f: impl FnOnce(&mut dyn Write) -> std::io::Result<()>) -> Result<()> {
+    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let tmp = path.with_extension(format!("{}-{}.tmp", std::process::id(), NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
+    let file = std::fs::OpenOptions::new().write(true).create_new(true).open(&tmp).map_err(err)?;
+    let result = (|| {
+        let mut w = BufWriter::new(file);
         f(&mut w).map_err(err)?;
         w.flush().map_err(err)?;
+        drop(w);
+        std::fs::rename(&tmp, path).map_err(err)
+    })();
+    if result.is_err() {
+        let _ = std::fs::remove_file(&tmp);
     }
-    std::fs::rename(&tmp, path).map_err(err)
+    result
 }
 
 impl Store {
@@ -158,6 +167,13 @@ impl Store {
 
     pub fn save(&self, meta: &Meta, history: &History) -> Result<()> {
         let dir = self.dir(&meta.id)?;
+        if let Some(original) = &history.original {
+            let path = dir.join("original.openrefine.tar.gz");
+            if !path.exists() {
+                original.validate()?;
+                write_atomic(&path, |w| w.write_all(&original.bytes))?;
+            }
+        }
         write_atomic(&dir.join("history.json"), |w| serde_json::to_writer(w, history).map_err(std::io::Error::other))?;
         write_atomic(&dir.join("meta.json"), |w| serde_json::to_writer_pretty(w, meta).map_err(std::io::Error::other))
     }
@@ -166,7 +182,13 @@ impl Store {
         let dir = self.dir(id)?;
         let read = |f: &str| std::fs::read(dir.join(f)).map_err(|e| format!("project {id}: {f}: {e}"));
         let meta: Meta = serde_json::from_slice(&read("meta.json")?).map_err(err)?;
-        let history: History = serde_json::from_slice(&read("history.json")?).map_err(err)?;
+        let mut history: History = serde_json::from_slice(&read("history.json")?).map_err(err)?;
+        if let Some(original) = &mut history.original {
+            original.bytes = read("original.openrefine.tar.gz")?.into();
+            original.validate()?;
+        } else if dir.join("original.openrefine.tar.gz").exists() {
+            return Err("a preserved original archive has no history manifest; the project cannot be opened safely".into());
+        }
         Ok((meta, read_table(&read("data.oxt")?)?, history))
     }
 
@@ -228,7 +250,7 @@ impl Store {
 
 const MAGIC: &[u8; 4] = b"OXT1";
 
-fn cell_to_json(v: &Value) -> serde_json::Value {
+pub(crate) fn cell_to_json(v: &Value) -> serde_json::Value {
     match v {
         Value::Null => serde_json::Value::Null,
         Value::Str(s) => json!(s),

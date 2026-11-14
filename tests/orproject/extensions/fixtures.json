@@ -1,0 +1,48 @@
+{
+  "openrefine": "3.10.1",
+  "schema": {
+    "entityEdits": [],
+    "siteIri": "http://www.wikidata.org/entity/",
+    "entityTypeSiteIRI": {
+      "item": "http://www.wikidata.org/entity/"
+    },
+    "mediaWikiApiEndpoint": "https://www.wikidata.org/w/api.php"
+  },
+  "history": [
+    "Text transform on 1 cells in column name: grel:value.trim()",
+    "Save Wikibase schema",
+    "Text transform on 2 cells in column qty: grel:value.toNumber()"
+  ],
+  "table": {
+    "columns": [
+      "name",
+      "qty"
+    ],
+    "rows": [
+      {
+        "starred": false,
+        "flagged": false,
+        "cells": [
+          {
+            "v": "alice"
+          },
+          {
+            "v": 1
+          }
+        ]
+      },
+      {
+        "starred": false,
+        "flagged": false,
+        "cells": [
+          {
+            "v": "bob"
+          },
+          {
+            "v": 2
+          }
+        ]
+      }
+    ]
+  }
+}

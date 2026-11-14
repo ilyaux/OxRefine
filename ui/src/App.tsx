@@ -147,9 +147,10 @@ export function App() {
     const notes = [
       r.merged && `${r.merged > 1 ? `The first ${r.merged} steps were` : "The first step was"} merged into the starting data and can't be undone.`,
       r.dropped && `${r.dropped} undone step${r.dropped > 1 ? "s were" : " was"} left out.`,
-      r.reason && `Reason: ${r.reason}.`,
+      r.reason && (data.archiveWarning ? "The full history remains available in the preserved original archive." : `Reason: ${r.reason}.`),
+      ...(r.warnings ?? []).filter((warning) => warning !== data.archiveWarning),
     ].filter(Boolean)
-    if (notes.length) toast.add({ title: "Opened with part of its history", description: notes.join(" "), type: "warning", timeout: 0 })
+    if (notes.length) toast.add({ title: r.merged || r.dropped ? "Opened with part of its history" : "Additional project data preserved", description: notes.join(" "), type: "warning", timeout: 0 })
   }
   // an OpenRefine project opens with its history; anything else goes through the import wizard
   const openFile = () =>
@@ -158,13 +159,15 @@ export function App() {
       return data.format === "openrefine-project" ? importProject(path) : setStaged({ path })
     })
   const openOpenRefine = () => withPath("open", "Open an OpenRefine project (.openrefine.tar.gz)", importProject)
-  const exportProject = () =>
-    withPath("openrefine", "Export as an OpenRefine project", async (path) => {
+  const exportArchive = (original: boolean) =>
+    withPath("openrefine", original ? "Export the preserved original archive" : "Export as an OpenRefine project", async (path) => {
       const file = isProjectArchive(path) ? path : path.replace(/\.gz$/i, "") + ".openrefine.tar.gz"
-      const { ms } = await call("export_project", { path: file })
+      const { ms } = await call(original ? "export_original_project" : "export_project", { path: file })
       setLastMs({ what: "export", ms })
-      toast.add({ title: "Project exported", description: `${file} opens in OpenRefine with its history.`, type: "success" })
+      toast.add({ title: original ? "Preserved original exported" : "Project exported", description: original ? "Includes the original data and history. Changes made in OxRefine are not included." : `${file} opens in OpenRefine with its history.`, type: "success" })
     })
+  const exportProject = () => exportArchive(false)
+  const exportOriginalProject = () => exportArchive(true)
   const pasteData = () =>
     setModal({
       kind: "ask",
@@ -486,6 +489,12 @@ export function App() {
 
           {summary ? (
             <>
+              {summary.archiveWarning && (
+                <div role="status" className="flex shrink-0 items-center gap-4 border-b bg-muted px-4 py-2 text-[12.5px]">
+                  <p className="min-w-0 flex-1">{summary.archiveWarning}</p>
+                  <button type="button" className="shrink-0 underline underline-offset-2 focus-visible:outline-2" onClick={exportOriginalProject}>Export preserved original…</button>
+                </div>
+              )}
               <div className="flex h-10 shrink-0 items-stretch border-b text-[12.5px]">
                 <div role="tablist" aria-label="Side panel" className="flex w-65 shrink-0 items-stretch border-r">
                   {(["facets", "history"] as const).map((t) => (

@@ -33,6 +33,9 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
         .map_err(|e| format!("{recipe}: {e}"))?;
     let t = Instant::now();
     let mut p = Project::open(input.as_ref())?;
+    if let Some(warning) = p.archive_warning() {
+        eprintln!("warning: {warning}");
+    }
     let (rows, cols) = (p.table().rows, p.table().names.len());
     eprintln!("import  {:>9.1} ms   {rows} rows x {cols} columns", ms(t));
     let t = Instant::now();
@@ -41,7 +44,8 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
     }
     eprintln!("apply   {:>9.1} ms   {} operations", ms(t), p.recipe().len());
     let t = Instant::now();
-    if ox_core::orproject::is_archive(out.as_ref()) {
+    let output_name = out.to_ascii_lowercase();
+    if output_name.ends_with(".tar.gz") || output_name.ends_with(".tgz") {
         ox_core::orproject::write(&p, out.as_ref())?;
         eprintln!("export  {:>9.1} ms   {out}", ms(t));
         return Ok(());

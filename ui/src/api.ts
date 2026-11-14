@@ -10,10 +10,11 @@ export type Summary = {
   /** per step: whether it goes into an extracted recipe (single-cell edits do not, as in OpenRefine) */
   recipe: boolean[]
   cursor: number
+  archiveWarning?: string | null
 }
 
 /** What happened to an OpenRefine project's history on import. */
-export type ImportReport = { merged: number; dropped: number; reason: string | null }
+export type ImportReport = { merged: number; dropped: number; reason: string | null; warnings?: string[] }
 
 /** OpenRefine project archives open with their history instead of going through the import wizard. */
 export const isProjectArchive = (path: string) => /\.(tar\.gz|tgz)$/i.test(path)
