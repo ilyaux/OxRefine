@@ -56,36 +56,41 @@ fn inspect_defaults_use_qualified_marcxml_paths_and_ignore_text_encoding() {
     assert_eq!(import(&source("multiple-records.mrc"), None, &ignored).unwrap().rows, table.rows);
 }
 
-struct Temp(PathBuf);
-impl Temp {
-    fn new() -> Self { Self(std::env::temp_dir().join(format!("oxrefine-marc-{}-{}.mrc", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()))) }
+struct Temp {
+    path: PathBuf,
+    _dir: tempfile::TempDir,
 }
-impl Drop for Temp { fn drop(&mut self) { let _ = fs::remove_file(&self.0); } }
+impl Temp {
+    fn new() -> Self {
+        let dir = tempfile::Builder::new().prefix("oxrefine-marc-").tempdir().unwrap();
+        Self { path: dir.path().join("input.mrc"), _dir: dir }
+    }
+}
 
 #[test]
 fn concatenated_records_validate_all_frames_and_empty_input_is_an_error() {
     let temp = Temp::new();
-    fs::write(&temp.0, []).unwrap();
-    match import(&temp.0, None, &ImportOptions::default()) { Err(e) => assert!(e.contains("no ISO2709 records")), Ok(_) => panic!("empty MARC must report no records") }
+    fs::write(&temp.path, []).unwrap();
+    match import(&temp.path, None, &ImportOptions::default()) { Err(e) => assert!(e.contains("no ISO2709 records"), "{}: {e}", temp.path.display()), Ok(_) => panic!("empty MARC must report no records") }
     let record = fs::read(source("utf8.mrc")).unwrap();
-    fs::write(&temp.0, record.repeat(200)).unwrap();
-    assert_eq!(import(&temp.0, None, &ImportOptions::default()).unwrap().rows, 200);
+    fs::write(&temp.path, record.repeat(200)).unwrap();
+    assert_eq!(import(&temp.path, None, &ImportOptions::default()).unwrap().rows, 200);
     let mut broken = fs::read(source("ascii.mrc")).unwrap(); broken.extend(&record[..15]);
-    fs::write(&temp.0, broken).unwrap();
+    fs::write(&temp.path, broken).unwrap();
     let options = ImportOptions { limit: 1, ..Default::default() };
-    match import(&temp.0, None, &options) { Err(e) => assert!(e.contains("MARC record 2")), Ok(_) => panic!("conversion validates the full stream before the XML row limit") }
+    match import(&temp.path, None, &options) { Err(e) => assert!(e.contains("MARC record 2"), "{}: {e}", temp.path.display()), Ok(_) => panic!("conversion validates the full stream before the XML row limit") }
 }
 
 #[test]
 fn conversion_can_be_cancelled_between_records_without_mixing_progress_units() {
     let temp = Temp::new();
     let record = fs::read(source("ascii.mrc")).unwrap();
-    let mut file = fs::File::create(&temp.0).unwrap();
+    let mut file = fs::File::create(&temp.path).unwrap();
     for _ in 0..50_000 { file.write_all(&record).unwrap(); }
     drop(file);
-    let owner = temp.0.file_name().unwrap().to_string_lossy().into_owned();
+    let owner = temp.path.to_string_lossy().into_owned();
     let task_owner = owner.clone();
-    let path = temp.0.clone();
+    let path = temp.path.clone();
     let handle = std::thread::spawn(move || jobs::with_owner(Some(&task_owner), || jobs::run_result("MARC conversion test", || import(&path, None, &ImportOptions::default()))));
     let started = Instant::now();
     let id = loop {
@@ -95,7 +100,15 @@ fn conversion_can_be_cancelled_between_records_without_mixing_progress_units() {
             assert!(job["done"].as_u64().unwrap() <= job["total"].as_u64().unwrap());
             break job["id"].as_u64().unwrap();
         }
-        assert!(started.elapsed() < Duration::from_secs(10), "MARC conversion did not enter its byte stage");
+        if handle.is_finished() {
+            let error = match handle.join() {
+                Ok(Err(e)) => e,
+                Ok(Ok(table)) => format!("completed with {} rows before cancellation", table.rows),
+                Err(panic) => std::panic::resume_unwind(panic),
+            };
+            panic!("MARC conversion exited before its byte stage: {error}; jobs: {list}");
+        }
+        assert!(started.elapsed() < Duration::from_secs(10), "MARC conversion did not enter its byte stage; jobs: {list}");
         std::thread::sleep(Duration::from_millis(1));
     };
     assert!(jobs::cancel_owned(&owner, id));
