@@ -95,6 +95,8 @@ node tools/readme-assets.mjs           # redraws the charts in this README
 Set `OR_MEM=4096M` to give OpenRefine more heap. There is one run per size, so steps under about 20 ms are noisy.
 
 `node benchmarks/check.mjs --base <an older ox binary>` runs two builds through the same steps on the same machine and fails when a step is clearly slower (over 1.3× and 15 ms) or uses clearly more memory (over 1.1× and 8 MB). CI runs it on every push and pull request against the previous build.
+
+The opt-in [cardinality and history workloads](benchmarks/README.md) also cover low, mixed and fully unique transformed values, row-dependent GREL, merging edits, long histories, undo/redo and saved-project reopening. They verify every output row and record time and process memory for each phase. These workloads measure different data from the people benchmark above; its OpenRefine speedup does not apply to them.
 </details>
 
 ## What it does
@@ -201,6 +203,8 @@ Each suite in `tests/<suite>/` has three files:
 - `known_failures.txt`: the deliberate differences, each with its reason.
 
 A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs OpenRefine 3.10.1 next to the repository (see `tools/openrefine.mjs`). `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. `node tests/orproject/extensions/check.mjs` also checks a preserved Wikibase schema and its history after a saved project is reopened. CI runs the Rust suites on Windows, macOS and Linux, and typechecks and builds the UI.
+
+Additional [recipe-reuse fixtures](tests/recipes/sources.json) use small CC0 ecology data excerpts with authored cleanup recipes. CLI and HTTP integration tests cover changed inputs, partial failures, cancellation and saved-project restart. These scenarios supplement the compatibility totals above; unsupported Jython and Wikibase dependencies are checked for explicit errors.
 
 ## Project layout
 

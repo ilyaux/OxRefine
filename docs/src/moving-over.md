@@ -41,6 +41,16 @@ A recipe is the list of operations OpenRefine shows under **Undo / Redo → Extr
 
   The input and the output can also be OpenRefine project archives.
 
+### Reusing a recipe on another file
+
+A recipe refers to columns by name and can depend on their types, record boundaries and external services. Try it on a copy of the new input before relying on it in a pipeline. A missing column or unsupported expression language is an error; an expression's cell errors follow that operation's **On error** setting.
+
+OxRefine validates the operation list before starting. If a supported operation fails while running, the earlier completed steps remain in the project's history. In the browser and desktop app those steps are saved, and the view refreshes to show them; undo them in **History** if needed. This is also true when a recipe is cancelled between steps. The error identifies the failing step and reports the earlier steps left applied. A recipe is not a transaction that rolls the whole table back.
+
+OpenRefine checks some dependencies earlier: the reference rejects recipes with missing columns or unknown functions before applying any steps. OxRefine currently resolves these at each step, so a reused recipe can leave a partial result. See [the tested difference](differences.md#recipe-validation-and-partial-failures).
+
+`ox apply` exits with a failure status and does not write the output when a step fails. Its partially transformed table exists only in that process. An existing output file is left untouched.
+
 ### What travels in a recipe
 
 As in OpenRefine, a recipe contains the operations that act on the whole column or table: transforms, mass edits, splits, reconciliation and so on. Single-cell edits and starring or flagging one row are recorded in the history, but are not part of a recipe.

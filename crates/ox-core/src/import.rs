@@ -130,7 +130,8 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
 /// name), with OpenRefine's options. `format` (an OpenRefine format id or our short name) applies to
 /// every file; None picks it from the file name.
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
-    crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), 0);
+    crate::jobs::progress("Inspecting input", 0);
+    crate::jobs::tick(0)?;
     let u = crate::unpack::unpack(path)?;
     if !u.several() && u.files[0].1 == path && !o.include_file_sources {
         return import_file(path, format_for(path, format), o);
@@ -156,6 +157,11 @@ fn import_file(path: &Path, f: Format, o: &ImportOptions) -> Result<Table> {
         Format::Json | Format::JsonLines => import_json(path, f == Format::JsonLines, o),
         Format::Xml => import_xml(path, o),
     }
+}
+
+fn parsing(o: &ImportOptions) {
+    // Type detection happens as cells are parsed, not in a separate pass.
+    crate::jobs::progress(if o.guess_cell_value_types { "Parsing and detecting types" } else { "Parsing" }, 0);
 }
 
 /// The format the wizard would guess for one file: by extension, except that text whose first line
@@ -353,7 +359,7 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
     };
     let path = stage_folder(dir)?.join(format!("{name}{ext}"));
     let mut file = File::create(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-    crate::jobs::progress(&format!("Downloading {name}"), size);
+    crate::jobs::progress_units(&format!("Downloading {name}"), size, "bytes");
     if let Err(e) = std::io::copy(&mut crate::jobs::Counted(res.body_mut().as_reader()), &mut file) {
         drop(file);
         let _ = std::fs::remove_dir_all(path.parent().unwrap_or(&path));
@@ -561,11 +567,13 @@ fn guess_separator(path: &Path) -> Result<Option<char>> {
 /// OpenRefine's line-based importer: every `linesPerRow` lines make one row.
 fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
     let text = decode(path, &o.encoding)?;
+    parsing(o);
     let per = o.lines_per_row.max(1) as usize;
     let text = plain_breaks(&text);
     let lines: Vec<&str> = text.lines().collect();
     let mut b = Builder::new(o);
     for chunk in lines.chunks(per) {
+        crate::jobs::tick(1)?;
         if !b.push(chunk.iter().map(|s| Field::Text(s))) {
             break;
         }
@@ -577,9 +585,11 @@ fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
 /// as they are, spaces included); whatever is left past the last width is one more cell.
 fn import_fixed(path: &Path, o: &ImportOptions) -> Result<Table> {
     let text = decode(path, &o.encoding)?;
+    parsing(o);
     let text = plain_breaks(&text);
     let mut b = Builder::new(o);
     for line in text.lines() {
+        crate::jobs::tick(1)?;
         let chars: Vec<char> = line.chars().collect();
         let mut cells: Vec<String> = vec![];
         let mut at = 0;
@@ -774,6 +784,12 @@ fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut c
         let mut batch = Batch::default();
         let mut parsed = Ok(());
         loop {
+            if b.line & 1023 == 0 {
+                if let Err(e) = crate::jobs::tick(0) {
+                    parsed = Err(e);
+                    break;
+                }
+            }
             if o.limit >= 0 && (start + sent) as i64 >= o.limit {
                 break;
             }
@@ -827,7 +843,9 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     let mut b = Builder::new(o);
     if !o.process_quotes {
         let text = decode(path, &o.encoding)?;
-        loose_records(&plain_breaks(&text), sep, quote, |rec| b.push(rec.iter().map(|s| Field::Text(s))));
+        parsing(o);
+        loose_records(&plain_breaks(&text), sep, quote, |rec| crate::jobs::tick(1).is_ok() && b.push(rec.iter().map(|s| Field::Text(s))));
+        crate::jobs::tick(0)?;
         return Ok(b.finish());
     }
     if !sep.is_ascii() || !quote.is_ascii() {
@@ -843,6 +861,9 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     let first_data = (o.ignore_lines.max(0) + o.header_lines.max(0) + o.skip_data_lines.max(0)) as usize;
     let mut feed = |rdr: &mut csv::Reader<Box<dyn Read>>, parallel: bool| -> Result<()> {
         while rdr.read_byte_record(&mut rec).map_err(err)? {
+            if b.line & 1023 == 0 {
+                crate::jobs::tick(0)?;
+            }
             // header lines and the first row go through the builder; big files hand the rest to all cores
             if parallel && b.line >= first_data && b.line > 0 {
                 return feed_parallel(&mut b, rdr, &mut rec);
@@ -856,7 +877,9 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     if is_utf8(&o.encoding) {
         let f = File::open(path).map_err(err)?;
         let parallel = f.metadata().is_ok_and(|m| m.len() >= parallel_from);
-        crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
+        // This path streams bytes into the parser and interns/types cells in the same pass.
+        let label = if o.guess_cell_value_types { "Reading, parsing and detecting types" } else { "Reading and parsing" };
+        crate::jobs::progress_units(label, f.metadata().map_or(0, |m| m.len()), "bytes");
         let reader = std::io::BufReader::with_capacity(1 << 20, crate::jobs::Counted(f));
         // ponytail: line breaks are judged from the first 64 KB; a file whose first "\r" comes later keeps it as data
         let head = read_head(path)?;
@@ -868,6 +891,7 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
         feed(&mut builder().from_reader(file), parallel)?;
     } else {
         let text = decode(path, &o.encoding)?;
+        parsing(o);
         let parallel = text.len() as u64 >= parallel_from;
         let bytes: Box<dyn Read> = Box::new(std::io::Cursor::new(plain_breaks(&text).into_owned().into_bytes()));
         feed(&mut builder().from_reader(bytes), parallel)?;
@@ -878,7 +902,7 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
 fn decode(path: &Path, label: &str) -> Result<String> {
     let mut bytes = vec![];
     let f = File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
-    crate::jobs::progress(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()));
+    crate::jobs::progress_units(&format!("Reading {}", path.file_name().map_or(String::new(), |n| n.to_string_lossy().into_owned())), f.metadata().map_or(0, |m| m.len()), "bytes");
     crate::jobs::Counted(f).read_to_end(&mut bytes).map_err(|e| if crate::jobs::is_cancel(&e) { crate::jobs::CANCELLED.to_string() } else { format!("{}: {e}", path.display()) })?;
     if is_utf8(label) {
         return Ok(String::from_utf8_lossy(&bytes).into_owned());
@@ -975,6 +999,8 @@ fn sheet_value(d: &calamine::Data, ods: bool) -> Value {
 
 fn import_sheets(path: &Path, o: &ImportOptions) -> Result<Table> {
     use calamine::Reader;
+    crate::jobs::progress("Reading workbook", 0);
+    crate::jobs::tick(0)?;
     let ods = path.extension().is_some_and(|e| e.eq_ignore_ascii_case("ods"));
     let mut wb = calamine::open_workbook_auto(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let names = wb.sheet_names();
@@ -989,6 +1015,8 @@ fn import_sheets(path: &Path, o: &ImportOptions) -> Result<Table> {
     }
     let mut tables = vec![];
     for i in picks {
+        parsing(o);
+        crate::jobs::tick(0)?;
         let name = names.get(i).ok_or_else(|| format!("no sheet number {i}"))?.clone();
         let range = wb.worksheet_range(&name).map_err(err)?;
         let (r0, c0) = range.start().map_or((0, 0), |(r, c)| (r as usize, c as usize));
@@ -998,6 +1026,7 @@ fn import_sheets(path: &Path, o: &ImportOptions) -> Result<Table> {
             go = go && b.push(std::iter::empty());
         }
         for row in range.rows() {
+            crate::jobs::tick(1)?;
             if !go {
                 break;
             }
@@ -1182,6 +1211,8 @@ fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mu
 
 fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
     let text = decode(path, &o.encoding)?;
+    parsing(o);
+    crate::jobs::tick(0)?;
     let root: serde_json::Value = if lines {
         serde_json::Value::Array(text.lines().filter(|l| !l.trim().is_empty()).map(serde_json::from_str).collect::<std::result::Result<_, _>>().map_err(err)?)
     } else {
@@ -1206,6 +1237,7 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
     let mut group = Group::default();
     let mut records = vec![];
     for node in nodes.into_iter().take(if o.limit >= 0 { o.limit as usize } else { usize::MAX }) {
+        crate::jobs::tick(1)?;
         let mut rec = JsonRecord { rows: vec![vec![]] };
         group.reset();
         walk_json(node, &record_name, &mut group, &mut rec, o);
@@ -1347,7 +1379,10 @@ fn walk_xml(e: &XEl, prefix: &str, group: &mut Group, rec: &mut JsonRecord, o: &
 }
 
 fn import_xml(path: &Path, o: &ImportOptions) -> Result<Table> {
-    let root = parse_xml(&decode(path, &o.encoding)?)?;
+    let text = decode(path, &o.encoding)?;
+    parsing(o);
+    crate::jobs::tick(0)?;
+    let root = parse_xml(&text)?;
     let want = if o.record_path.is_empty() { vec![root.name.clone()] } else { o.record_path.clone() };
     // the elements at the record path, from the root down
     let mut nodes: Vec<&XEl> = if want[0] == root.name { vec![&root] } else { vec![] };
@@ -1364,6 +1399,7 @@ fn import_xml(path: &Path, o: &ImportOptions) -> Result<Table> {
     let mut group = Group::default();
     let mut records = vec![];
     for node in nodes.into_iter().take(if o.limit >= 0 { o.limit as usize } else { usize::MAX }) {
+        crate::jobs::tick(1)?;
         let mut rec = JsonRecord { rows: vec![vec![]] };
         group.reset();
         walk_xml(node, &name, &mut group, &mut rec, o);

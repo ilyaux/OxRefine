@@ -1,0 +1,15 @@
+{
+  "dataset": "Portal Project Teaching Database",
+  "authors": "Ernest, Morgan; Brown, James; Valone, Thomas; White, Ethan P.",
+  "doi": "https://doi.org/10.6084/m9.figshare.1314459",
+  "repository": "https://github.com/weecology/portal-teachingdb",
+  "revision": "d524501a66f1a325f9f8909de27237672cc8734a",
+  "license": "CC0-1.0",
+  "licenseSource": "https://github.com/weecology/portal-teachingdb/blob/d524501a66f1a325f9f8909de27237672cc8734a/LICENSE",
+  "files": [
+    { "local": "portal-species.csv", "source": "species.csv", "selection": "header and first eight data rows, unchanged" },
+    { "local": "portal-surveys.csv", "source": "surveys.csv", "selection": "header and first eight data rows, unchanged" }
+  ],
+  "recipes": "Authored representative ecology workflows for OxRefine tests, not recipes donated by users or extracted from a published project. Modified input cases are explicitly generated in cases.mjs.",
+  "reference": "OpenRefine 3.10.1; tests/recipes/gen.mjs generates typed tables, history and per-step errors locally without external services."
+}

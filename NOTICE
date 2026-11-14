@@ -7,6 +7,13 @@ Test fixtures under tests/ were produced by running OpenRefine 3.10.1, and the
 GREL function descriptions in ui/src/grel-docs.json come from OpenRefine 3.10.1
 (get-expression-language-info), used under the same BSD 3-Clause License.
 
+The small species and surveys CSV excerpts under tests/recipes/ come from the
+Portal Project Teaching Database by Morgan Ernest, James Brown, Thomas Valone
+and Ethan P. White (https://doi.org/10.6084/m9.figshare.1314459), released under
+CC0-1.0. tests/recipes/sources.json records the exact repository revision and
+selection. The accompanying recipes and modified-input scenarios were authored
+for OxRefine's tests; they are not user-submitted workflows.
+
 crates/ox-core/assets/commons-codec/ holds the Beider-Morse and Daitch-Mokotoff
 rule files from Apache Commons Codec 1.20.0 (the version OpenRefine 3.10.1
 uses), under the Apache License 2.0 (LICENSE.txt in that folder):

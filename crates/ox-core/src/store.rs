@@ -150,6 +150,7 @@ impl Store {
     }
 
     pub fn create(&self, name: &str, table: &Table, source: Option<Source>) -> Result<Meta> {
+        crate::jobs::progress("Saving the project", 0);
         let ms = SystemTime::now().duration_since(UNIX_EPOCH).map_err(err)?.as_millis();
         let mut id = ms.to_string();
         let mut k = 1;
@@ -166,6 +167,7 @@ impl Store {
     }
 
     pub fn save(&self, meta: &Meta, history: &History) -> Result<()> {
+        crate::jobs::progress("Saving the project", 0);
         let dir = self.dir(&meta.id)?;
         if let Some(original) = &history.original {
             let path = dir.join("original.openrefine.tar.gz");
@@ -175,7 +177,9 @@ impl Store {
             }
         }
         write_atomic(&dir.join("history.json"), |w| serde_json::to_writer(w, history).map_err(std::io::Error::other))?;
-        write_atomic(&dir.join("meta.json"), |w| serde_json::to_writer_pretty(w, meta).map_err(std::io::Error::other))
+        let result = write_atomic(&dir.join("meta.json"), |w| serde_json::to_writer_pretty(w, meta).map_err(std::io::Error::other));
+        crate::jobs::finish_stage(&result);
+        result
     }
 
     pub fn load(&self, id: &str) -> Result<(Meta, Table, History)> {

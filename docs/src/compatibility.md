@@ -25,6 +25,12 @@ Each suite in the repository's `tests/<suite>/` folder has three files:
 
 `cargo test` runs every case through OxRefine and compares the results. A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks.
 
+## Reusable recipes
+
+The additional `tests/recipes/` corpus uses small CC0 excerpts from the Portal Project Teaching Database. The data's source revision, license and selections are recorded in `sources.json`; the cleanup recipes were authored for these tests. `gen.mjs` records typed tables, history and per-step errors from OpenRefine 3.10.1.
+
+The CLI and HTTP integration tests reuse these fixtures on the original and modified input: renamed or missing columns, blanks, invalid values, numeric types, records mode and extension dependencies. They check the state after failure or cancellation, restart the server, reopen the saved project and exercise undo/redo. Jython and Wikibase operations run in the reference but are explicitly rejected by OxRefine; this corpus does not change the compatibility totals above. See [recipe reuse and partial application](moving-over.md#reusing-a-recipe-on-another-file).
+
 ## Both directions
 
 For project archives, the check runs both ways:
@@ -44,3 +50,5 @@ A fuzz test takes the suites' own GREL expressions and sample files of every for
 ## Speed
 
 A separate benchmark runs the same workflow through both tools; see the [README](https://github.com/ilyaux/OxRefine#benchmark). A regression check runs on every change: it builds the previous version and the new one on the same machine, and fails if a step got clearly slower or uses clearly more memory.
+
+The optional cardinality profile extends that same regression harness with low, mixed and high uniqueness, row-dependent transforms, merging edits and long histories. It checks every row after undo and saved-project reopening and records per-phase times and cumulative process memory. These are local measurements, separate from the people workload in CI and from the OpenRefine timing comparison. Commands and measurement limits are in [benchmarks/README.md](https://github.com/ilyaux/OxRefine/blob/main/benchmarks/README.md).

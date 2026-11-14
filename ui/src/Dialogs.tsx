@@ -781,14 +781,14 @@ export function AskDialog({
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className={multiline ? "sm:max-w-2xl" : undefined}>
-        <form onSubmit={submit} className="flex flex-col gap-4">
+        <form onSubmit={submit} className="flex min-w-0 flex-col gap-4">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
           <Field>
             <FieldLabel htmlFor="ask">{label}</FieldLabel>
             {multiline ? (
-              <Textarea id="ask" className="h-64 font-mono" value={v} onChange={(e) => setV(e.target.value)} autoFocus />
+              <Textarea id="ask" className="field-sizing-fixed h-64 min-w-0 font-mono" value={v} onChange={(e) => setV(e.target.value)} autoFocus />
             ) : (
               <Input id="ask" value={v} onChange={(e) => setV(e.target.value)} autoFocus />
             )}

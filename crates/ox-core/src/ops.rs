@@ -19,6 +19,19 @@ pub struct Op {
     pub description: String,
 }
 
+/// Validate the complete recipe before applying any steps, with a useful location on failure.
+pub fn parse_recipe(value: serde_json::Value) -> Result<Vec<Op>> {
+    let operations = value.as_array().ok_or("recipe must be a JSON array of operations")?;
+    operations.iter().enumerate().map(|(i, value)| {
+        serde_json::from_value(value.clone()).map_err(|e| {
+            let kind = value["op"].as_str().unwrap_or("missing op");
+            let message = e.to_string();
+            let detail = message.split_once(", expected one of").map_or(message.as_str(), |(first, _)| first);
+            format!("recipe step {} ({kind}): {detail}; no steps were applied", i + 1)
+        })
+    }).collect()
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "op")]
 pub enum OpKind {

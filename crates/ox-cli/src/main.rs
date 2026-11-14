@@ -1,4 +1,4 @@
-use ox_core::{dispatch, dispatch_free, ops::Op, store::Store, Project, Session};
+use ox_core::{dispatch, dispatch_free, ops::parse_recipe, store::Store, Project, Session};
 use serde_json::{json, Value};
 use std::{
     sync::{Arc, Mutex},
@@ -29,8 +29,9 @@ fn run() -> Result<(), String> {
 }
 
 fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
-    let ops: Vec<Op> = serde_json::from_str(&std::fs::read_to_string(recipe).map_err(|e| format!("{recipe}: {e}"))?)
+    let value = serde_json::from_str(&std::fs::read_to_string(recipe).map_err(|e| format!("{recipe}: {e}"))?)
         .map_err(|e| format!("{recipe}: {e}"))?;
+    let ops = parse_recipe(value).map_err(|e| format!("{recipe}: {e}"))?;
     let t = Instant::now();
     let mut p = Project::open(input.as_ref())?;
     if let Some(warning) = p.archive_warning() {
@@ -40,7 +41,7 @@ fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
     eprintln!("import  {:>9.1} ms   {rows} rows x {cols} columns", ms(t));
     let t = Instant::now();
     for (i, op) in ops.into_iter().enumerate() {
-        p.apply(op).map_err(|e| format!("step {}: {e}", i + 1))?;
+        p.apply(op).map_err(|e| format!("step {}: {e}; output was not written", i + 1))?;
     }
     eprintln!("apply   {:>9.1} ms   {} operations", ms(t), p.recipe().len());
     let t = Instant::now();

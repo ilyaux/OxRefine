@@ -13,7 +13,11 @@ OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [H
 | `detectLanguage()` | OxRefine doesn't identify languages yet (2 cases) | Needs a language-identification model |
 | Beider-Morse keys | Names with more than 20 phonetic alternatives can get a different key (7 cases) | Apache Commons Codec truncates its list while building it, and keeps a different 20 |
 
-Everything else checked matches exactly. That covers GREL results and errors, operations, facet counts, import options, exports, clustering, reconciliation, and project archives with their full history.
+The other cases in that fixture total match. They cover GREL results and errors, operations, facet counts, import options, exports, clustering, reconciliation, and project archives with their full history.
+
+### Recipe validation and partial failures
+
+The additional recipe-reuse tests expose a separate difference: OpenRefine 3.10.1 validates missing column references and unknown expression functions before running the batch. OxRefine validates the JSON operation list first, then resolves columns and expressions as each operation runs. In the tested two-step recipes, OpenRefine applies no steps, while OxRefine keeps and saves the successful first step before reporting the second step's error. The error reports how many steps remain applied; undo them to revert the partial result. These scenarios are outside the 2,136-check total above.
 
 ## Not in OxRefine yet
 

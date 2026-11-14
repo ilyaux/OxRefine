@@ -1,0 +1,5 @@
+# Whole-batch validation differs; individual successful operation outputs are checked separately.
+portal renamed required column: OpenRefine rejects the batch before any steps; OxRefine keeps the first step and fails at step 2.
+portal missing required column: OpenRefine rejects the batch before any steps; OxRefine keeps the first step and fails at step 2.
+portal unknown extension function: OpenRefine rejects the batch before any steps; OxRefine keeps the first step and fails at step 2.
+# Jython and Wikibase dependencies are explicitly unsupported, not matching recipe implementations.

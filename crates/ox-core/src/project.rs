@@ -13,8 +13,8 @@ use serde_json::{json, Value};
 use std::{path::Path, sync::Arc, time::Instant};
 
 /// A loaded table plus its full history. `states[i]` is the table after `ops[..i]`.
-// ponytail: one snapshot per step; each step only re-allocates the columns it touched,
-// so memory grows ~4 bytes/row per step. Store code diffs instead if long histories on huge files matter.
+// shortcut: shared snapshots retain changed dictionaries and, when row codes change, full column
+// code vectors; use code diffs if long histories on huge files need less memory.
 pub struct Project {
     pub name: String,
     states: Vec<Table>,
@@ -275,6 +275,7 @@ struct Args {
     n: usize,
     index: usize,
     op: Option<Op>,
+    #[serde(deserialize_with = "deserialize_recipe")]
     ops: Vec<Op>,
     params: Value,
     steps: Vec<usize>,
@@ -290,6 +291,10 @@ struct Args {
     value: Value,
 }
 
+fn deserialize_recipe<'de, D: serde::Deserializer<'de>>(deserializer: D) -> std::result::Result<Vec<Op>, D::Error> {
+    crate::ops::parse_recipe(Value::deserialize(deserializer)?).map_err(serde::de::Error::custom)
+}
+
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
 /// Each command runs as a job, so `processes` can report its progress and `cancel_process` stop it.
 pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
@@ -299,7 +304,7 @@ pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
     let t0 = Instant::now();
     let a = serde_json::from_value(args).map_err(err)?;
     let find = projects_by_name(s);
-    let data = crate::jobs::run("Working", || crate::cross::scope(find, || run(s, cmd, a)))?;
+    let data = crate::jobs::run_result("Working", || crate::cross::scope(find, || run(s, cmd, a)))?;
     Ok(json!({ "data": data, "ms": t0.elapsed().as_secs_f64() * 1000.0 }))
 }
 
@@ -496,15 +501,18 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         "apply_recipe" => {
             let n = a.ops.len();
-            crate::jobs::progress(&format!("Applying {n} steps"), n as u64);
+            let before = p.cursor;
+            crate::jobs::progress_units(&format!("Applying {n} steps"), n as u64, "steps");
             let result = a.ops.into_iter().enumerate().try_for_each(|(i, op)| {
-                crate::jobs::tick(0)?;
+                crate::jobs::tick(0).map_err(|e| format!("step {}: {e}", i + 1))?;
                 p.apply(op).map_err(|e| format!("step {}: {e}", i + 1))?;
-                crate::jobs::tick(1)
+                crate::jobs::tick(1).map_err(|e| format!("step {}: {e}", i + 1))
             });
+            crate::jobs::finish_stage(&result);
             // keep the steps that did apply, even when a later one failed
             p.save(store)?;
-            result?;
+            crate::jobs::finish_stage(&Ok(()));
+            result.map_err(|e| format!("{e}; {} of {n} recipe step(s) remain applied. Undo to revert them", p.cursor - before))?;
             p.summary()
         }
         "goto" => {

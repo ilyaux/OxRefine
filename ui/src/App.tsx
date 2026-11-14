@@ -68,8 +68,8 @@ function cleared(f: Facet): Facet {
 
 const fail = (e: unknown) => {
   const message = String((e as Error).message ?? e)
-  // a job the user cancelled stopped as asked: nothing went wrong and nothing changed
-  if (message === "Cancelled") return void toast.add({ title: "Cancelled", description: "Nothing was changed." })
+  const cause = message.split(";", 1)[0]
+  if (cause === "Cancelled" || /^step \d+: Cancelled$/.test(cause)) return void toast.add({ title: "Cancelled", description: message === "Cancelled" ? "The command was stopped." : message })
   toast.add({ title: "Something went wrong", description: message, type: "error" })
 }
 
@@ -229,7 +229,12 @@ export function App() {
         } catch {
           return fail(new Error("That is not valid JSON."))
         }
-        await run("recipe", "apply_recipe", { ops }).catch(fail)
+        setModal(null)
+        void run("recipe", "apply_recipe", { ops }).catch(async (e) => {
+          // Earlier steps can remain applied after a later step fails or is cancelled.
+          await run("refresh", "summary").catch(() => {})
+          fail(e)
+        })
       },
     })
 

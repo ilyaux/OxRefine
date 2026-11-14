@@ -149,6 +149,7 @@ const pendingListeners = new Set<(n: number) => void>()
 /** Follow the number of commands in flight; returns an unsubscribe function. */
 export function onPending(f: (n: number) => void) {
   pendingListeners.add(f)
+  f(pending)
   return () => void pendingListeners.delete(f)
 }
 
@@ -156,11 +157,13 @@ export function onPending(f: (n: number) => void) {
  * polling) don't count as work in flight. */
 export async function call<T = unknown>(cmd: string, args: object = {}, { quiet = false } = {}): Promise<{ data: T; ms: number }> {
   if (quiet) return send<T>(cmd, args)
-  pendingListeners.forEach((f) => f(++pending))
+  pending++
+  pendingListeners.forEach((f) => f(pending))
   try {
     return await send<T>(cmd, args)
   } finally {
-    pendingListeners.forEach((f) => f(--pending))
+    pending--
+    pendingListeners.forEach((f) => f(pending))
   }
 }
 

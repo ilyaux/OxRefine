@@ -1,0 +1,324 @@
+{
+  "when": "2026-11-14T11:26:56.503Z",
+  "profile": "cardinality",
+  "history": 40,
+  "runs": 1,
+  "localMeasurement": true,
+  "memoryMetric": "cumulative process resident high-water mark MB",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMB": 31866,
+    "freeMemoryMBAfter": 10932
+  },
+  "binaries": {
+    "new": {
+      "file": "ox.exe",
+      "sha256": "5d81c2ab5d8300053c817e2aacea375322f0a1c0e7005ef49526a61e1fa5305b"
+    }
+  },
+  "results": [
+    {
+      "mode": "low",
+      "rows": 10000,
+      "distinct": 16,
+      "input": {
+        "sha256": "19566c980d9c8346cf64f789f9a31047414f8ef2ec9ab3a5021842141a702542",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 8,
+              "value": 8,
+              "merge": 8,
+              "history": 8,
+              "row": 13,
+              "structure": 16,
+              "undo": 16,
+              "redo": 18,
+              "save": 18,
+              "reopen": 18,
+              "export": 18
+            },
+            "import": 11.125799999999913,
+            "value": 3.1502000000000407,
+            "merge": 18.173999999999978,
+            "history": 4.443299999999908,
+            "row": 16.158699999999953,
+            "structure": 35.77089999999953,
+            "undo": 3.109599999999773,
+            "redo": 6.326799999999821,
+            "save": 6.201100000000224,
+            "savedBytes": 223505,
+            "reopen": 50.297599999999875,
+            "export": 9.069300000001022,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 18
+          }
+        ]
+      }
+    },
+    {
+      "mode": "mixed",
+      "rows": 10000,
+      "distinct": 1000,
+      "input": {
+        "sha256": "66c9e673014286a787ad664d03ce0bd8e732378db354a2c40feac9f009e4bc63",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 15,
+              "row": 19,
+              "structure": 22,
+              "undo": 22,
+              "redo": 24,
+              "save": 24,
+              "reopen": 24,
+              "export": 24
+            },
+            "import": 17.38169999999991,
+            "value": 16.439300000000003,
+            "merge": 19.26209999999992,
+            "history": 25.582699999999022,
+            "row": 18.69260000000031,
+            "structure": 38.39090000000033,
+            "undo": 3.5315000000009604,
+            "redo": 4.755000000001019,
+            "save": 13.45390000000043,
+            "savedBytes": 244173,
+            "reopen": 79.06760000000213,
+            "export": 10.934900000000198,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 24
+          }
+        ]
+      }
+    },
+    {
+      "mode": "high",
+      "rows": 10000,
+      "distinct": 10000,
+      "input": {
+        "sha256": "afe1368805e89fa83f6fdb21f45f53792f0099b38bd8d54f1a2bc7f185c1eeb0",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 10,
+              "merge": 10,
+              "history": 69,
+              "row": 70,
+              "structure": 71,
+              "undo": 71,
+              "redo": 72,
+              "save": 72,
+              "reopen": 72,
+              "export": 72
+            },
+            "import": 14.099699999998847,
+            "value": 13.154699999999139,
+            "merge": 2.9430000000029395,
+            "history": 175.04869999999937,
+            "row": 27.80500000000029,
+            "structure": 33.8640000000014,
+            "undo": 18.147000000000844,
+            "redo": 17.938599999997678,
+            "save": 4.0695999999989,
+            "savedBytes": 433171,
+            "reopen": 197.46580000000176,
+            "export": 10.587800000001153,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 72
+          }
+        ]
+      }
+    },
+    {
+      "mode": "low",
+      "rows": 100000,
+      "distinct": 16,
+      "input": {
+        "sha256": "96bb4a949c95d8bd6f9929156cefe0188725fdc05253c9ca4ead64dd38b876ee",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 14,
+              "value": 14,
+              "merge": 14,
+              "history": 15,
+              "row": 53,
+              "structure": 92,
+              "undo": 92,
+              "redo": 93,
+              "save": 93,
+              "reopen": 96,
+              "export": 97
+            },
+            "import": 29.01980000000185,
+            "value": 4.791799999999057,
+            "merge": 15.550499999997555,
+            "history": 28.433499999999185,
+            "row": 135.0633999999991,
+            "structure": 289.6649000000034,
+            "undo": 7.561099999998987,
+            "redo": 15.495800000004238,
+            "save": 7.676399999996647,
+            "savedBytes": 2203509,
+            "reopen": 1222.4328999999998,
+            "export": 114.86409999999887,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 97
+          }
+        ]
+      }
+    },
+    {
+      "mode": "mixed",
+      "rows": 100000,
+      "distinct": 10000,
+      "input": {
+        "sha256": "eb6d111bef3004c063547d503f8612e7c70394c21f0198eb5496cdbdef3a5af6",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 16,
+              "merge": 16,
+              "history": 75,
+              "row": 108,
+              "structure": 148,
+              "undo": 148,
+              "redo": 148,
+              "save": 148,
+              "reopen": 153,
+              "export": 153
+            },
+            "import": 36.592499999998836,
+            "value": 13.5454000000027,
+            "merge": 5.651499999999942,
+            "history": 395.42980000000534,
+            "row": 274.3329999999987,
+            "structure": 608.9833999999973,
+            "undo": 15.300400000000081,
+            "redo": 8.334000000002561,
+            "save": 7.002500000002328,
+            "savedBytes": 2413177,
+            "reopen": 1068.547900000005,
+            "export": 60.66860000000452,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 153
+          }
+        ]
+      }
+    },
+    {
+      "mode": "high",
+      "rows": 100000,
+      "distinct": 100000,
+      "input": {
+        "sha256": "c3129cfa85ae9414e77e184c099b32be49a43c5e03405c23d53a35bc6c07565c",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [],
+        "new": [
+          {
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 6,
+            "phasePeakMB": {
+              "import": 24,
+              "value": 33,
+              "merge": 33,
+              "history": 589,
+              "row": 612,
+              "structure": 614,
+              "undo": 614,
+              "redo": 615,
+              "save": 615,
+              "reopen": 623,
+              "export": 623
+            },
+            "import": 44.282500000001164,
+            "value": 39.77740000000631,
+            "merge": 16.071100000001024,
+            "history": 3971.1502000000037,
+            "row": 202.39740000000165,
+            "structure": 498.3483000000124,
+            "undo": 16.597000000008848,
+            "redo": 12.512000000002445,
+            "save": 12.440500000011525,
+            "savedBytes": 4303175,
+            "reopen": 4500.128399999987,
+            "export": 46.60120000000461,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -13,7 +13,9 @@ This replays an OpenRefine or OxRefine recipe on a file without opening a window
 - **The input** can be any format OxRefine imports. It is read with the import defaults, as OpenRefine's wizard reads it.
 - **The output format** follows the file extension: `.csv`, `.tsv`, `.html`, `.xlsx`, `.xls`, `.ods` or `.sql`.
 - **Either side can be an OpenRefine project** (`.openrefine.tar.gz`). The output project then carries the recipe's steps as its history.
-- **Timings:** each step's time is printed to the console.
+- **Timings:** import, recipe application and export times are printed to the console.
+
+If a recipe fails, `ox apply` exits with a nonzero status and identifies the step. It does not write the output file; an existing output remains untouched. Check the input's column names, types and any extension dependencies when [reusing a recipe](moving-over.md#reusing-a-recipe-on-another-file).
 
 ## `ox serve`: OxRefine in a browser
 
@@ -24,6 +26,8 @@ ox serve --port 8080 --data ~/oxrefine
 ```
 
 The full app runs in your browser, as OpenRefine does. Projects are saved in the folder given with `--data`, or in your user profile by default.
+
+For a command that takes more than a moment, **Jobs** shows the work stages, their elapsed times and the result: completed, failed or cancelled. Streaming CSV reads, parsing and optional type detection happen together and are shown as a combined stage. Cancel takes effect at the next cancellation check; it cannot interrupt every library call immediately. Completed jobs seen by the panel remain visible until dismissed or another long-running job is observed. The server retains at most 20 recent finished jobs for up to 60 seconds; these timings are not saved in the project.
 
 ### On a server
 

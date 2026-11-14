@@ -1,0 +1,6169 @@
+{
+  "openrefine": "3.10.1",
+  "sources": "sources.json",
+  "cases": [
+    {
+      "name": "portal scientific names",
+      "csv": "species_id,genus,species,taxa\nAB,Amphispiza,bilineata,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "grel:value.toLowercase()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "genus",
+          "newColumnName": "scientificName",
+          "columnInsertIndex": 4,
+          "expression": "grel:value + ' ' + cells['species'].value",
+          "onError": "store-error"
+        }
+      ],
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa",
+            "scientificName"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Amphispiza bilineata"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                },
+                {
+                  "v": "Ammospermophilus harrisi"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Ammodramus savannarum"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "taylori"
+                },
+                {
+                  "v": "Rodent"
+                },
+                {
+                  "v": "Baiomys taylori"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Campylorhynchus brunneicapillus"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Calamospiza melanocorys"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Callipepla squamata"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                },
+                {
+                  "v": "Crotalus scutalatus"
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 0 cells in column genus: grel:value.trim()",
+          "Text transform on 0 cells in column species: grel:value.toLowercase()",
+          "Create new column scientificName based on column genus by filling 8 rows with grel:value + ' ' + cells['species'].value"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()",
+            "Text transform on 0 cells in column species: grel:value.toLowercase()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa",
+              "scientificName"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Amphispiza bilineata"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  },
+                  {
+                    "v": "Ammospermophilus harrisi"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Ammodramus savannarum"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  },
+                  {
+                    "v": "Baiomys taylori"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Campylorhynchus brunneicapillus"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Calamospiza melanocorys"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Callipepla squamata"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  },
+                  {
+                    "v": "Crotalus scutalatus"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()",
+            "Text transform on 0 cells in column species: grel:value.toLowercase()",
+            "Create new column scientificName based on column genus by filling 8 rows with grel:value + ' ' + cells['species'].value"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal changed names and blanks",
+      "csv": "species_id,genus,species,taxa\nAB, Amphispiza ,BILINEATA,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,,,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "grel:value.toLowercase()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "genus",
+          "newColumnName": "scientificName",
+          "columnInsertIndex": 4,
+          "expression": "grel:value + ' ' + cells['species'].value",
+          "onError": "store-error"
+        }
+      ],
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa",
+            "scientificName"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Amphispiza bilineata"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                },
+                {
+                  "v": "Ammospermophilus harrisi"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Ammodramus savannarum"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                null,
+                null,
+                {
+                  "v": "Rodent"
+                },
+                null
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Campylorhynchus brunneicapillus"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Calamospiza melanocorys"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                },
+                {
+                  "v": "Callipepla squamata"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                },
+                {
+                  "v": "Crotalus scutalatus"
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 1 cells in column genus: grel:value.trim()",
+          "Text transform on 1 cells in column species: grel:value.toLowercase()",
+          "Create new column scientificName based on column genus by filling 7 rows with grel:value + ' ' + cells['species'].value"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "BILINEATA"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  null,
+                  null,
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 1 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  null,
+                  null,
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 1 cells in column genus: grel:value.trim()",
+            "Text transform on 1 cells in column species: grel:value.toLowercase()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa",
+              "scientificName"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Amphispiza bilineata"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  },
+                  {
+                    "v": "Ammospermophilus harrisi"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Ammodramus savannarum"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  null,
+                  null,
+                  {
+                    "v": "Rodent"
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Campylorhynchus brunneicapillus"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Calamospiza melanocorys"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  },
+                  {
+                    "v": "Callipepla squamata"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  },
+                  {
+                    "v": "Crotalus scutalatus"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 1 cells in column genus: grel:value.trim()",
+            "Text transform on 1 cells in column species: grel:value.toLowercase()",
+            "Create new column scientificName based on column genus by filling 7 rows with grel:value + ' ' + cells['species'].value"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal renamed required column",
+      "csv": "species_id,genus,epithet,taxa\nAB,Amphispiza,bilineata,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "grel:value.toLowercase()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "genus",
+          "newColumnName": "scientificName",
+          "columnInsertIndex": 4,
+          "expression": "grel:value + ' ' + cells['species'].value",
+          "onError": "store-error"
+        }
+      ],
+      "failureStep": 2,
+      "batch": {
+        "result": {
+          "code": "error",
+          "message": "java.lang.IllegalArgumentException: Column 'species' is referenced in the list of operations but is absent from the project"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "epithet",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "taylori"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": []
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "epithet",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "error",
+            "message": "java.lang.IllegalArgumentException: Column 'species' is referenced in the list of operations but is absent from the project"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "epithet",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal missing required column",
+      "csv": "species_id,genus,taxa\nAB,Amphispiza,Bird\nAH,Ammospermophilus,Rodent\nAS,Ammodramus,Bird\nBA,Baiomys,Rodent\nCB,Campylorhynchus,Bird\nCM,Calamospiza,Bird\nCQ,Callipepla,Bird\nCS,Crotalus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "grel:value.toLowercase()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "genus",
+          "newColumnName": "scientificName",
+          "columnInsertIndex": 4,
+          "expression": "grel:value + ' ' + cells['species'].value",
+          "onError": "store-error"
+        }
+      ],
+      "failureStep": 2,
+      "batch": {
+        "result": {
+          "code": "error",
+          "message": "java.lang.IllegalArgumentException: Column 'species' is referenced in the list of operations but is absent from the project"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": []
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "error",
+            "message": "java.lang.IllegalArgumentException: Column 'species' is referenced in the list of operations but is absent from the project"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal numeric measurements",
+      "csv": "record_id,month,day,year,plot,species_id,sex,hfl,wgt\n1,7,16,1977,2,NL,M,32,\n2,7,16,1977,3,NL,M,33,\n3,7,16,1977,2,DM,F,37,\n4,7,16,1977,7,DM,M,36,\n5,7,16,1977,3,DM,M,35,\n6,7,16,1977,1,PF,M,14,\n7,7,16,1977,2,PE,F,,\n8,7,16,1977,1,DM,M,37,\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "hfl",
+          "expression": "grel:value.toNumber()",
+          "onError": "store-error",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "hfl",
+          "newColumnName": "hfl_cm",
+          "columnInsertIndex": 9,
+          "expression": "grel:value / 10",
+          "onError": "store-error"
+        }
+      ],
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "record_id",
+            "month",
+            "day",
+            "year",
+            "plot",
+            "species_id",
+            "sex",
+            "hfl",
+            "wgt",
+            "hfl_cm"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "1"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "2"
+                },
+                {
+                  "v": "NL"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 32
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "2"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "3"
+                },
+                {
+                  "v": "NL"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 33
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "3"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "2"
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "F"
+                },
+                {
+                  "v": 37
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "4"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 36
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "5"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "3"
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 35
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "6"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "1"
+                },
+                {
+                  "v": "PF"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 14
+                },
+                null,
+                {
+                  "v": 1
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "2"
+                },
+                {
+                  "v": "PE"
+                },
+                {
+                  "v": "F"
+                },
+                {
+                  "e": "toNumber expects one non-null argument"
+                },
+                null,
+                {
+                  "e": "toNumber expects one non-null argument"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "8"
+                },
+                {
+                  "v": "7"
+                },
+                {
+                  "v": "16"
+                },
+                {
+                  "v": "1977"
+                },
+                {
+                  "v": "1"
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 37
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 8 cells in column hfl: grel:value.toNumber()",
+          "Create new column hfl_cm based on column hfl by filling 8 rows with grel:value / 10"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "record_id",
+              "month",
+              "day",
+              "year",
+              "plot",
+              "species_id",
+              "sex",
+              "hfl",
+              "wgt"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 32
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 33
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "4"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 36
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "5"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 35
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "6"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "PF"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 14
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "PE"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "8"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 8 cells in column hfl: grel:value.toNumber()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "record_id",
+              "month",
+              "day",
+              "year",
+              "plot",
+              "species_id",
+              "sex",
+              "hfl",
+              "wgt",
+              "hfl_cm"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 32
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 33
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "4"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 36
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "5"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "3"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 35
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "6"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "PF"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 14
+                  },
+                  null,
+                  {
+                    "v": 1
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "2"
+                  },
+                  {
+                    "v": "PE"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  },
+                  null,
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "8"
+                  },
+                  {
+                    "v": "7"
+                  },
+                  {
+                    "v": "16"
+                  },
+                  {
+                    "v": "1977"
+                  },
+                  {
+                    "v": "1"
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 8 cells in column hfl: grel:value.toNumber()",
+            "Create new column hfl_cm based on column hfl by filling 8 rows with grel:value / 10"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal changed measurement types",
+      "csv": "record_id,month,day,year,plot,species_id,sex,hfl,wgt\n1,7,16,1977,2,NL,M,unknown,\n2,7,16,1977,3,NL,M,33.5,\n3,7,16,1977,2,DM,F,37,\n4,7,16,1977,7,DM,M,36,\n5,7,16,1977,3,DM,M,35,\n6,7,16,1977,1,PF,M,14,\n7,7,16,1977,2,PE,F,,\n8,7,16,1977,1,DM,M,37,\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "hfl",
+          "expression": "grel:value.toNumber()",
+          "onError": "store-error",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/column-addition",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "baseColumnName": "hfl",
+          "newColumnName": "hfl_cm",
+          "columnInsertIndex": 9,
+          "expression": "grel:value / 10",
+          "onError": "store-error"
+        }
+      ],
+      "guessTypes": true,
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "record_id",
+            "month",
+            "day",
+            "year",
+            "plot",
+            "species_id",
+            "sex",
+            "hfl",
+            "wgt",
+            "hfl_cm"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 1
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 2
+                },
+                {
+                  "v": "NL"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "e": "Unable to parse as number"
+                },
+                null,
+                {
+                  "e": "Unable to parse as number"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 2
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 3
+                },
+                {
+                  "v": "NL"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 33.5
+                },
+                null,
+                {
+                  "v": 3.35
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 3
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 2
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "F"
+                },
+                {
+                  "v": 37
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 4
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 36
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 5
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 3
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 35
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 6
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 1
+                },
+                {
+                  "v": "PF"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 14
+                },
+                null,
+                {
+                  "v": 1
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 7
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 2
+                },
+                {
+                  "v": "PE"
+                },
+                {
+                  "v": "F"
+                },
+                {
+                  "e": "toNumber expects one non-null argument"
+                },
+                null,
+                {
+                  "e": "toNumber expects one non-null argument"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": 8
+                },
+                {
+                  "v": 7
+                },
+                {
+                  "v": 16
+                },
+                {
+                  "v": 1977
+                },
+                {
+                  "v": 1
+                },
+                {
+                  "v": "DM"
+                },
+                {
+                  "v": "M"
+                },
+                {
+                  "v": 37
+                },
+                null,
+                {
+                  "v": 3
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 2 cells in column hfl: grel:value.toNumber()",
+          "Create new column hfl_cm based on column hfl by filling 8 rows with grel:value / 10"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "record_id",
+              "month",
+              "day",
+              "year",
+              "plot",
+              "species_id",
+              "sex",
+              "hfl",
+              "wgt"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "e": "Unable to parse as number"
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 33.5
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 4
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 36
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 5
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 35
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 6
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": "PF"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 14
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "PE"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  },
+                  null
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 8
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 2 cells in column hfl: grel:value.toNumber()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "record_id",
+              "month",
+              "day",
+              "year",
+              "plot",
+              "species_id",
+              "sex",
+              "hfl",
+              "wgt",
+              "hfl_cm"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "e": "Unable to parse as number"
+                  },
+                  null,
+                  {
+                    "e": "Unable to parse as number"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": "NL"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 33.5
+                  },
+                  null,
+                  {
+                    "v": 3.35
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 4
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 36
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 5
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 3
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 35
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 6
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": "PF"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 14
+                  },
+                  null,
+                  {
+                    "v": 1
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 2
+                  },
+                  {
+                    "v": "PE"
+                  },
+                  {
+                    "v": "F"
+                  },
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  },
+                  null,
+                  {
+                    "e": "toNumber expects one non-null argument"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": 8
+                  },
+                  {
+                    "v": 7
+                  },
+                  {
+                    "v": 16
+                  },
+                  {
+                    "v": 1977
+                  },
+                  {
+                    "v": 1
+                  },
+                  {
+                    "v": "DM"
+                  },
+                  {
+                    "v": "M"
+                  },
+                  {
+                    "v": 37
+                  },
+                  null,
+                  {
+                    "v": 3
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 2 cells in column hfl: grel:value.toNumber()",
+            "Create new column hfl_cm based on column hfl by filling 8 rows with grel:value / 10"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal record selection",
+      "csv": "species_id,genus,species,taxa\nAB,Amphispiza,bilineata,Bird\n,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/row-star",
+          "starred": true,
+          "engineConfig": {
+            "mode": "record-based",
+            "facets": [
+              {
+                "type": "text",
+                "name": "taxa",
+                "columnName": "taxa",
+                "query": "Bird",
+                "mode": "text",
+                "caseSensitive": false,
+                "invert": false
+              }
+            ]
+          }
+        }
+      ],
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                null,
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "taylori"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": true,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Star 6 rows"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  null,
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": true,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Star 6 rows"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal unknown extension function",
+      "csv": "species_id,genus,species,taxa\nAB,Amphispiza,bilineata,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "grel:value.portalExtension()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        }
+      ],
+      "failureStep": 2,
+      "batch": {
+        "result": {
+          "code": "error",
+          "message": "Operation #1: Invalid expression 'grel:value.portalExtension()': Parsing error at offset 22: Unknown function portalExtension"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "taylori"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": []
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "error",
+            "message": "Operation #1: Invalid expression 'grel:value.portalExtension()': Parsing error at offset 22: Unknown function portalExtension"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal Jython dependency",
+      "csv": "species_id,genus,species,taxa\nAB,Amphispiza,bilineata,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "species",
+          "expression": "jython:return value.upper()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        }
+      ],
+      "oxFailureStep": 2,
+      "oxError": "expressions are not supported",
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "BILINEATA"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "HARRISI"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "SAVANNARUM"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "TAYLORI"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "BRUNNEICAPILLUS"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "MELANOCORYS"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "SQUAMATA"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "SCUTALATUS"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 0 cells in column genus: grel:value.trim()",
+          "Text transform on 8 cells in column species: jython:return value.upper()"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "BILINEATA"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "HARRISI"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "SAVANNARUM"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "TAYLORI"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "BRUNNEICAPILLUS"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "MELANOCORYS"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "SQUAMATA"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "SCUTALATUS"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()",
+            "Text transform on 8 cells in column species: jython:return value.upper()"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "portal Wikibase dependency",
+      "csv": "species_id,genus,species,taxa\nAB,Amphispiza,bilineata,Bird\nAH,Ammospermophilus,harrisi,Rodent\nAS,Ammodramus,savannarum,Bird\nBA,Baiomys,taylori,Rodent\nCB,Campylorhynchus,brunneicapillus,Bird\nCM,Calamospiza,melanocorys,Bird\nCQ,Callipepla,squamata,Bird\nCS,Crotalus,scutalatus,Reptile\n",
+      "ops": [
+        {
+          "op": "core/text-transform",
+          "engineConfig": {
+            "facets": [],
+            "mode": "row-based"
+          },
+          "columnName": "genus",
+          "expression": "grel:value.trim()",
+          "onError": "keep-original",
+          "repeat": false,
+          "repeatCount": 10
+        },
+        {
+          "op": "wikidata/save-wikibase-schema",
+          "schema": {
+            "entityEdits": [],
+            "siteIri": "http://www.wikidata.org/entity/",
+            "entityTypeSiteIRI": {
+              "item": "http://www.wikidata.org/entity/"
+            },
+            "mediaWikiApiEndpoint": "https://www.wikidata.org/w/api.php"
+          }
+        }
+      ],
+      "oxPreflightError": "wikidata/save-wikibase-schema",
+      "batch": {
+        "result": {
+          "code": "ok"
+        },
+        "table": {
+          "columns": [
+            "species_id",
+            "genus",
+            "species",
+            "taxa"
+          ],
+          "rows": [
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AB"
+                },
+                {
+                  "v": "Amphispiza"
+                },
+                {
+                  "v": "bilineata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AH"
+                },
+                {
+                  "v": "Ammospermophilus"
+                },
+                {
+                  "v": "harrisi"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "AS"
+                },
+                {
+                  "v": "Ammodramus"
+                },
+                {
+                  "v": "savannarum"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "BA"
+                },
+                {
+                  "v": "Baiomys"
+                },
+                {
+                  "v": "taylori"
+                },
+                {
+                  "v": "Rodent"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CB"
+                },
+                {
+                  "v": "Campylorhynchus"
+                },
+                {
+                  "v": "brunneicapillus"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CM"
+                },
+                {
+                  "v": "Calamospiza"
+                },
+                {
+                  "v": "melanocorys"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CQ"
+                },
+                {
+                  "v": "Callipepla"
+                },
+                {
+                  "v": "squamata"
+                },
+                {
+                  "v": "Bird"
+                }
+              ]
+            },
+            {
+              "starred": false,
+              "flagged": false,
+              "cells": [
+                {
+                  "v": "CS"
+                },
+                {
+                  "v": "Crotalus"
+                },
+                {
+                  "v": "scutalatus"
+                },
+                {
+                  "v": "Reptile"
+                }
+              ]
+            }
+          ]
+        },
+        "history": [
+          "Text transform on 0 cells in column genus: grel:value.trim()",
+          "Save Wikibase schema"
+        ]
+      },
+      "steps": [
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()"
+          ]
+        },
+        {
+          "result": {
+            "code": "ok"
+          },
+          "table": {
+            "columns": [
+              "species_id",
+              "genus",
+              "species",
+              "taxa"
+            ],
+            "rows": [
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AB"
+                  },
+                  {
+                    "v": "Amphispiza"
+                  },
+                  {
+                    "v": "bilineata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AH"
+                  },
+                  {
+                    "v": "Ammospermophilus"
+                  },
+                  {
+                    "v": "harrisi"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "AS"
+                  },
+                  {
+                    "v": "Ammodramus"
+                  },
+                  {
+                    "v": "savannarum"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "BA"
+                  },
+                  {
+                    "v": "Baiomys"
+                  },
+                  {
+                    "v": "taylori"
+                  },
+                  {
+                    "v": "Rodent"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CB"
+                  },
+                  {
+                    "v": "Campylorhynchus"
+                  },
+                  {
+                    "v": "brunneicapillus"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CM"
+                  },
+                  {
+                    "v": "Calamospiza"
+                  },
+                  {
+                    "v": "melanocorys"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CQ"
+                  },
+                  {
+                    "v": "Callipepla"
+                  },
+                  {
+                    "v": "squamata"
+                  },
+                  {
+                    "v": "Bird"
+                  }
+                ]
+              },
+              {
+                "starred": false,
+                "flagged": false,
+                "cells": [
+                  {
+                    "v": "CS"
+                  },
+                  {
+                    "v": "Crotalus"
+                  },
+                  {
+                    "v": "scutalatus"
+                  },
+                  {
+                    "v": "Reptile"
+                  }
+                ]
+              }
+            ]
+          },
+          "history": [
+            "Text transform on 0 cells in column genus: grel:value.trim()",
+            "Save Wikibase schema"
+          ]
+        }
+      ]
+    }
+  ]
+}
