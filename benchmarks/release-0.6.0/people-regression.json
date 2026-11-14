@@ -1,0 +1,365 @@
+{
+  "when": "2026-11-14T19:27:23.355Z",
+  "profile": "people",
+  "history": 40,
+  "runs": 3,
+  "localMeasurement": true,
+  "httpConnection": "close",
+  "memoryMetric": "cumulative process resident high-water mark MB",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMB": 31866,
+    "freeMemoryMBAfter": 11195
+  },
+  "binaries": {
+    "base": {
+      "file": "ox.exe",
+      "sha256": "1b6aa6e1ddd0e241801e53e577303a502cff92fd4b62f0ed5bf22d32b97f6ab2"
+    },
+    "new": {
+      "file": "ox.exe",
+      "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9"
+    }
+  },
+  "results": [
+    {
+      "mode": "people",
+      "rows": 100000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 68.8863,
+            "rows": 100000,
+            "facet": 2.841099999999983,
+            "facetChoices": 8,
+            "cluster": 3.865700000000004,
+            "clusters": 8,
+            "recipe": 9.254400000000032,
+            "export": 34.434900000000084,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 56.81849999999986,
+            "rows": 100000,
+            "facet": 2.251600000000053,
+            "facetChoices": 8,
+            "cluster": 3.085399999999936,
+            "clusters": 8,
+            "recipe": 8.404999999999745,
+            "export": 32.878600000000006,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 81.14139999999952,
+            "rows": 100000,
+            "facet": 3.6377000000002226,
+            "facetChoices": 8,
+            "cluster": 4.43080000000009,
+            "clusters": 8,
+            "recipe": 11.782099999999446,
+            "export": 37.86079999999947,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 87.54899999999998,
+            "rows": 100000,
+            "facet": 3.5138999999999214,
+            "facetChoices": 8,
+            "cluster": 5.981499999999869,
+            "clusters": 8,
+            "recipe": 11.29600000000005,
+            "export": 43.52359999999999,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 69.5005000000001,
+            "rows": 100000,
+            "facet": 3.0793000000003303,
+            "facetChoices": 8,
+            "cluster": 5.4167999999999665,
+            "clusters": 8,
+            "recipe": 11.143799999999828,
+            "export": 41.09520000000066,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 84.96469999999954,
+            "rows": 100000,
+            "facet": 3.672500000000582,
+            "facetChoices": 8,
+            "cluster": 6.149800000000141,
+            "clusters": 8,
+            "recipe": 12.94880000000012,
+            "export": 36.80039999999917,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mode": "people",
+      "rows": 1000000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 452.4405999999999,
+            "rows": 1000000,
+            "facet": 5.017799999999625,
+            "facetChoices": 8,
+            "cluster": 6.800200000001496,
+            "clusters": 8,
+            "recipe": 21.00380000000041,
+            "export": 248.9441999999999,
+            "peak": 117,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 421.69890000000123,
+            "rows": 1000000,
+            "facet": 4.864600000000792,
+            "facetChoices": 8,
+            "cluster": 5.835300000000643,
+            "clusters": 8,
+            "recipe": 20.45889999999963,
+            "export": 263.84629999999925,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 452.27939999999944,
+            "rows": 1000000,
+            "facet": 5.568700000003446,
+            "facetChoices": 8,
+            "cluster": 5.770799999998417,
+            "clusters": 8,
+            "recipe": 22.357299999999668,
+            "export": 302.5614000000023,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 478.72040000000015,
+            "rows": 1000000,
+            "facet": 7.454299999999421,
+            "facetChoices": 8,
+            "cluster": 9.447699999998804,
+            "clusters": 8,
+            "recipe": 36.85789999999906,
+            "export": 342.39090000000033,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 524.0213999999978,
+            "rows": 1000000,
+            "facet": 7.889100000000326,
+            "facetChoices": 8,
+            "cluster": 9.747799999997369,
+            "clusters": 8,
+            "recipe": 43.81299999999828,
+            "export": 312.5561999999991,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 408.14110000000073,
+            "rows": 1000000,
+            "facet": 7.734200000002602,
+            "facetChoices": 8,
+            "cluster": 9.545799999999872,
+            "clusters": 8,
+            "recipe": 52.61079999999856,
+            "export": 363.47070000000167,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mode": "people",
+      "rows": 2000000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 920.6035999999986,
+            "rows": 2000000,
+            "facet": 7.890500000001339,
+            "facetChoices": 8,
+            "cluster": 9.96339999999691,
+            "clusters": 8,
+            "recipe": 31.000299999999697,
+            "export": 871.7921000000024,
+            "peak": 219,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 872.7553999999946,
+            "rows": 2000000,
+            "facet": 9.20959999999468,
+            "facetChoices": 8,
+            "cluster": 9.415899999999965,
+            "clusters": 8,
+            "recipe": 33.23819999999978,
+            "export": 541.9715999999971,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 896.2739999999976,
+            "rows": 2000000,
+            "facet": 7.181599999996251,
+            "facetChoices": 8,
+            "cluster": 8.51079999999638,
+            "clusters": 8,
+            "recipe": 37.07250000000204,
+            "export": 607.8891999999978,
+            "peak": 219,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 1053.171699999999,
+            "rows": 2000000,
+            "facet": 12.285100000000966,
+            "facetChoices": 8,
+            "cluster": 14.599900000001071,
+            "clusters": 8,
+            "recipe": 64.35159999999814,
+            "export": 660.4457000000002,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 823.4565000000002,
+            "rows": 2000000,
+            "facet": 10.655500000000757,
+            "facetChoices": 8,
+            "cluster": 12.19709999999759,
+            "clusters": 8,
+            "recipe": 59.3894999999975,
+            "export": 473.70870000000286,
+            "peak": 219,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "httpConnection": "close",
+            "import": 874.1417000000001,
+            "rows": 2000000,
+            "facet": 11.371099999996659,
+            "facetChoices": 8,
+            "cluster": 12.91080000000511,
+            "clusters": 8,
+            "recipe": 58.28650000000198,
+            "export": 524.0332999999955,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

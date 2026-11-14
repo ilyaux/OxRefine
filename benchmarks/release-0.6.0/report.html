@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бенчмарк OxRefine</title>
+<style>
+:root { --bg: #fbfaf8; --fg: #1f1e1c; --muted: #6b6862; --line: #e4e1db; --panel: #ffffff; --accent: #2f6f5e; --bad: #a33a2b; }
+@media (prefers-color-scheme: dark) { :root { --bg: #171614; --fg: #ece9e3; --muted: #a29e96; --line: #33312d; --panel: #1f1e1b; --accent: #7cc4ad; --bad: #e08a7c; } }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; }
+main { max-width: 980px; margin: 0 auto; padding: 32px 16px 48px; display: flex; flex-direction: column; gap: 28px; }
+h1 { font-size: 1.7rem; margin: 0; font-weight: 600; } h2 { font-size: 1.15rem; margin: 0 0 8px; }
+p { margin: 0; max-width: 72ch; } .muted { color: var(--muted); font-size: .9rem; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.big { font-size: 2rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--accent); }
+.scroll { overflow-x: auto; } table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; } th { color: var(--muted); font-weight: 500; font-size: .85rem; }
+.good { color: var(--accent); font-weight: 600; } .bad { color: var(--bad); }
+</style></head><body><main>
+<header><h1>OxRefine против OpenRefine 3.10.1</h1>
+<p class="muted">Прогон 2026-11-14 19:35 UTC · одинаковые данные и сценарий через HTTP API каждого: импорт CSV, текстовый фасет, кластеризация fingerprint, рецепт OpenRefine из 5 шагов, экспорт CSV · куча OpenRefine 1400M · прогонов на размер: 3, медианы</p></header>
+<section class="tiles">
+<div class="tile"><div class="big">23×</div>быстрее весь сценарий на 1 000 000 строк (658 мс против 15,0 с)</div>
+<div class="tile"><div class="big">12×</div>меньше пик памяти (116 против 1 420 МБ)</div>
+<div class="tile"><div class="big">8 000 008</div>из 8 000 008 выходных ячеек совпадают с OpenRefine</div>
+<div class="tile"><div class="big">2 000 000</div>строк: OpenRefine — нет памяти, OxRefine — 1,4 с, 220 МБ</div>
+</section>
+<section><h2>Весь сценарий</h2><div class="scroll"><table>
+<tr><th>Строк</th><th>OxRefine</th><th>OpenRefine</th><th>Быстрее</th><th>Пик RAM Ox</th><th>Пик RAM OR</th><th>Меньше RAM</th><th>Совпадает ячеек</th></tr>
+<tr><td>100 000</td><td>90 мс</td><td>1,8 с</td><td class="good">19×</td><td>24 МБ</td><td>460 МБ</td><td class="good">19×</td><td>800 008 / 800 008</td></tr>
+<tr><td>250 000</td><td>147 мс</td><td>3,4 с</td><td class="good">23×</td><td>38 МБ</td><td>820 МБ</td><td class="good">22×</td><td>2 000 008 / 2 000 008</td></tr>
+<tr><td>500 000</td><td>283 мс</td><td>5,9 с</td><td class="good">21×</td><td>64 МБ</td><td>986 МБ</td><td class="good">15×</td><td>4 000 008 / 4 000 008</td></tr>
+<tr><td>1 000 000</td><td>658 мс</td><td>15,0 с</td><td class="good">23×</td><td>116 МБ</td><td>1 420 МБ</td><td class="good">12×</td><td>8 000 008 / 8 000 008</td></tr>
+<tr><td>2 000 000</td><td>1,4 с</td><td><span class="bad">нет памяти</span></td><td class="good">—</td><td>220 МБ</td><td>—</td><td class="good">—</td><td>—</td></tr>
+</table></div></section>
+<section><h2>По шагам, 1 000 000 строк</h2><div class="scroll"><table>
+<tr><th>Шаг</th><th>OxRefine</th><th>OpenRefine</th><th>Быстрее</th></tr>
+<tr><td>Импорт</td><td>374 мс</td><td>1,5 с</td><td class="good">3,9×</td></tr>
+<tr><td>Фасет</td><td>7 мс</td><td>646 мс</td><td class="good">95×</td></tr>
+<tr><td>Кластеризация</td><td>8 мс</td><td>1,7 с</td><td class="good">207×</td></tr>
+<tr><td>Рецепт (5 шагов)</td><td>33 мс</td><td>9,7 с</td><td class="good">292×</td></tr>
+<tr><td>Экспорт CSV</td><td>236 мс</td><td>1,4 с</td><td class="good">6,1×</td></tr>
+</table></div>
+<p class="muted">Шаги короче ~20 мс шумные. Число прогонов на размер: 3.</p></section>
+</main></body></html>

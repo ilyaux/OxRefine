@@ -36,49 +36,49 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
 
 OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and data wrangling: deduplicate and fix messy CSV, Excel and JSON files, cluster near-duplicate spellings, transform columns with GREL, and reconcile values against Wikidata.
 
-[OpenRefine](https://openrefine.org) provides the workflow this project follows. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and transforms, facets and clustering run once per distinct value instead of once per row.
+[OpenRefine](https://openrefine.org) provides the workflow this project follows. OxRefine uses a Rust engine with **dictionary-encoded** columns, storing each distinct value once per column. Value-only transforms and many facet and clustering steps can reuse work across repeated values. Row-dependent expressions and unique-value histories have different costs.
 
 |  |  |
 |---|---|
-| **Measured people workflow** | At one million rows, this development sample takes 0.64 s versus 12.24 s (19.2×), with 116 versus 1433 MiB peak working set. See the workload and candidate scope below. |
+| **Measured people workflow** | At one million rows, the measured 0.6.0 candidate takes 0.66 s versus 15.02 s (22.8×), with 116 versus 1420 MiB peak working set. See the workload and candidate scope below. |
 | **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,124 of 2,136 checks match, and each known difference is written down with its reason. |
 | **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
 | **Desktop, browser, server or command line** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, or headless with `ox apply`. |
 
 ## Benchmark
 
-**Measured 0.6.0 development snapshot.** The tables and SVGs below use the validated candidate with executable SHA beginning `af937201`. It predates the final performance and benchmark-transport fixes; the final candidate is being measured separately. The [raw three-run report](benchmarks/release-0.6.0/pre-fix-af937201/openrefine-1400M.json) and [full verdict](benchmarks/release-0.6.0/pre-fix-af937201/verdict.json) retain the inputs, hashes and outcomes.
+**Measured 0.6.0 release candidate.** The tables and SVGs below use the frozen Windows executable with SHA beginning `31e9e0d1`. The [raw three-run report](benchmarks/release-0.6.0/openrefine-1400M.json) and [measurement verdict](benchmarks/release-0.6.0/verdict.json) retain the inputs, binary hashes and outcomes. Earlier development measurements remain in the archived reports.
 
-Both tools ran the same people workflow through their HTTP APIs: CSV import, a text facet, fingerprint clustering, a five-operation recipe and CSV export. These are local Windows measurements with OpenRefine 3.10.1 at a fixed 1400M JVM heap. Every completed comparison from 100k through 1M rows matched all output cells, row counts, facet choices and clusters in all three repetitions. OpenRefine did not complete the 2M workflow at that heap, so no output equality or speed ratio is claimed there.
+Both tools ran the same people workflow through their HTTP APIs: CSV import, a text facet, fingerprint clustering, a five-operation recipe and CSV export. These are local Windows measurements with OpenRefine 3.10.1 at a fixed 1400M JVM heap. Every request used `Connection: close` in both tools; timings include connection setup and response delivery. Every completed comparison from 100k through 1M rows matched all output cells, row counts, facet choices and clusters in all three repetitions. OpenRefine exhausted that heap in all three 2M attempts, so no OpenRefine output equality or speed ratio is established there.
 
-<img src="docs/readme/bench-time.svg?v=7a93331d" width="100%" alt="Whole workflow at 1M rows: OxRefine 0.64 s, OpenRefine 12.24 s; median of three runs.">
+<img src="docs/readme/bench-time.svg?v=4e857a9e" width="100%" alt="Whole workflow at 1M rows: OxRefine 0.66 s, OpenRefine 15.02 s; median of three runs.">
 
-<img src="docs/readme/bench-steps.svg?v=7a93331d" width="100%" alt="Measured import, facet, clustering, recipe and export times at one million rows, using three-run phase medians.">
+<img src="docs/readme/bench-steps.svg?v=4e857a9e" width="100%" alt="Measured import, facet, clustering, recipe and export times at one million rows, using three-run phase medians.">
 
-<img src="docs/readme/bench-memory.svg?v=7a93331d" width="100%" alt="Process peak working set at one million rows: OxRefine 116 MiB, OpenRefine 1433 MiB.">
+<img src="docs/readme/bench-memory.svg?v=4e857a9e" width="100%" alt="Process peak working set at one million rows: OxRefine 116 MiB, OpenRefine 1420 MiB.">
 
 <details>
 <summary>The measured numbers</summary>
 
 | Rows | OxRefine | OpenRefine | Ratio | Peak working set (OxRefine / OpenRefine) |
 |---|---|---|---|---|
-| 100,000 | 0.15 s | 2.02 s | 13.3× | 24 / 431 MiB |
-| 250,000 | 0.19 s | 3.88 s | 20.4× | 39 / 852 MiB |
-| 500,000 | 0.34 s | 8.38 s | 24.6× | 64 / 1003 MiB |
-| 1,000,000 | 0.64 s | 12.24 s | 19.2× | 116 / 1433 MiB |
-| 2,000,000 | 1.21 s | OOM at 1400M heap | — | 220 / OOM MiB |
+| 100,000 | 0.09 s | 1.75 s | 19.4× | 24 / 460 MiB |
+| 250,000 | 0.15 s | 3.40 s | 23.1× | 38 / 820 MiB |
+| 500,000 | 0.28 s | 5.91 s | 20.9× | 64 / 986 MiB |
+| 1,000,000 | 0.66 s | 15.02 s | 22.8× | 116 / 1420 MiB |
+| 2,000,000 | 1.38 s | OOM at 1400M heap | — | 220 / — MiB |
 
 At one million rows:
 
 | Step | OxRefine | OpenRefine |
 |---|---|---|
-| Import | 340 ms | 1.92 s |
-| Text facet | 14 ms | 532 ms |
-| Clustering | 20 ms | 1.51 s |
-| Recipe (5 operations) | 64 ms | 7.44 s |
-| Export | 196 ms | 1.19 s |
+| Import | 374 ms | 1.48 s |
+| Text facet | 7 ms | 646 ms |
+| Clustering | 8 ms | 1.75 s |
+| Recipe (5 operations) | 33 ms | 9.72 s |
+| Export | 236 ms | 1.43 s |
 
-Totals are medians of complete per-run totals; adding the phase medians can give a different number. RAM is the backend process's Windows `PeakWorkingSet64`, in MiB, excluding the parent benchmark driver and database services. A JVM heap setting is not a process-RAM limit. These repeated-value workloads do not establish the same ratios for arbitrary data.
+Totals are medians of complete per-run totals; adding the phase medians can give a different number. RAM is the backend process's Windows `PeakWorkingSet64`, in MiB, excluding the parent benchmark driver, browser and database services. A JVM heap setting is not a process-RAM limit. These repeated-value workloads do not establish the same ratios for arbitrary data. Host background load was recorded rather than treated as a controlled laboratory condition.
 </details>
 
 ### New: database import workload
@@ -87,12 +87,12 @@ Each backend supplied the same 100,000 SQL rows and three columns, including 1,0
 
 | Backend | Median import | OxRefine import peak |
 |---|---|---|
-| PostgreSQL | 227 ms | 22 MiB |
-| MySQL | 131 ms | 21 MiB |
-| MariaDB | 167 ms | 21 MiB |
-| SQLite | 120 ms | 23 MiB |
+| PostgreSQL | 216 ms | 23 MiB |
+| MySQL | 144 ms | 22 MiB |
+| MariaDB | 148 ms | 21 MiB |
+| SQLite | 115 ms | 23 MiB |
 
-The [database development-snapshot report](benchmarks/release-0.6.0/pre-fix-af937201/database.json) retains all repetitions. Its old same-process reopen measurement includes a server cache and is excluded from this table. The final protocol restarts the backend before timing project reopening.
+The [database report](benchmarks/release-0.6.0/database.json) retains all twelve repetitions. Every saved project reopened in a fresh backend process, with startup recorded separately and no repeated SQL query. Whole-workflow peak working set was 29 MiB for each backend; the table shows the earlier import peak. Database-server memory is excluded. OS caches remained warm.
 
 <details>
 <summary>Record a new sample</summary>
@@ -105,9 +105,9 @@ node benchmarks/compare.mjs --runs 3 --out benchmarks/results.json 100000 250000
 node tools/readme-assets.mjs --input benchmarks/results.json
 ```
 
-The current benchmark client uses `Connection: close` equally for both engines to avoid a measured keepalive response-delivery stall. This differs from the archived development sample above. See the [0.6.0 protocol](benchmarks/release-0.6.0/PLAN.md) for environment, dataset and interpretation details.
+The benchmark client uses `Connection: close` equally for both engines to avoid a measured keepalive response-delivery stall. Earlier keepalive measurements are preserved separately. See the [0.6.0 protocol](benchmarks/release-0.6.0/PLAN.md) for environment, dataset and interpretation details.
 
-The [cardinality and history workloads](benchmarks/README.md) cover low, mixed and unique transformed values, row-dependent GREL, merges, forty-step histories, undo/redo and saved-project reopening. The development regressions remain visible in the archived verdicts; they are not presented as passing gates.
+The [cardinality and history workloads](benchmarks/README.md) cover low, mixed and unique transformed values, row-dependent GREL, merges, forty-step histories, undo/redo and process-restarted reopening. All their local regression gates passed. Against the official 0.5.3 binary, the people checks at the CI sizes of 250k and 1M rows also passed. The expanded 2M check still exits 1 for its recipe phase: 58 ms versus 31 ms exceeds the unchanged phase threshold. Its output checks passed; the [raw regression report](benchmarks/release-0.6.0/people-regression.json) preserves this remaining follow-up.
 </details>
 
 ## What it does

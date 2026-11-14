@@ -1,0 +1,2783 @@
+{
+  "when": "2026-11-14T19:32:28.165Z",
+  "profile": "cardinality",
+  "history": 40,
+  "runs": 3,
+  "localMeasurement": true,
+  "httpConnection": "close",
+  "memoryMetric": "cumulative process resident high-water mark MB",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMB": 31866,
+    "freeMemoryMBAfter": 13424
+  },
+  "binaries": {
+    "base": {
+      "file": "ox.exe",
+      "sha256": "1b6aa6e1ddd0e241801e53e577303a502cff92fd4b62f0ed5bf22d32b97f6ab2"
+    },
+    "new": {
+      "file": "ox.exe",
+      "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9"
+    }
+  },
+  "results": [
+    {
+      "mode": "low",
+      "rows": 10000,
+      "distinct": 16,
+      "input": {
+        "sha256": "19566c980d9c8346cf64f789f9a31047414f8ef2ec9ab3a5021842141a702542",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 18,
+              "save": 18,
+              "reopen": 17,
+              "export": 17
+            },
+            "phasePid": {
+              "import": 30456,
+              "value": 30456,
+              "merge": 30456,
+              "history": 30456,
+              "row": 30456,
+              "structure": 30456,
+              "undo": 30456,
+              "redo": 30456,
+              "save": 30456,
+              "reopen": 16164,
+              "export": 16164
+            },
+            "processLifetimes": [
+              {
+                "pid": 30456,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 18
+              },
+              {
+                "pid": 16164,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 17
+              }
+            ],
+            "import": 11.900800000000004,
+            "value": 5.2187999999999874,
+            "merge": 5.8922000000000025,
+            "history": 5.682000000000016,
+            "row": 18.8904,
+            "structure": 72.8465000000001,
+            "undo": 5.557900000000245,
+            "redo": 3.6539999999999964,
+            "save": 4.551899999999932,
+            "savedBytes": 223505,
+            "restart": {
+              "previousPid": 30456,
+              "previousPeakMB": 18,
+              "pid": 16164,
+              "idlePeakMB": 7,
+              "stopMs": 382.6587000000004,
+              "startupMs": 218.9036000000001
+            },
+            "reopen": 44.02760000000035,
+            "export": 8.589500000000044,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 18
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 18,
+              "save": 18,
+              "reopen": 17,
+              "export": 17
+            },
+            "phasePid": {
+              "import": 45604,
+              "value": 45604,
+              "merge": 45604,
+              "history": 45604,
+              "row": 45604,
+              "structure": 45604,
+              "undo": 45604,
+              "redo": 45604,
+              "save": 45604,
+              "reopen": 28284,
+              "export": 28284
+            },
+            "processLifetimes": [
+              {
+                "pid": 45604,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 18
+              },
+              {
+                "pid": 28284,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 17
+              }
+            ],
+            "import": 7.581399999999121,
+            "value": 4.430299999999988,
+            "merge": 4.780099999999948,
+            "history": 4.8607000000010885,
+            "row": 14.318599999998696,
+            "structure": 30.040600000000268,
+            "undo": 3.588400000000547,
+            "redo": 2.894399999999223,
+            "save": 4.409900000000562,
+            "savedBytes": 223505,
+            "restart": {
+              "previousPid": 45604,
+              "previousPeakMB": 18,
+              "pid": 28284,
+              "idlePeakMB": 7,
+              "stopMs": 262.3775000000005,
+              "startupMs": 217.01310000000012
+            },
+            "reopen": 41.77429999999913,
+            "export": 7.753399999999601,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 18
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 18,
+              "save": 18,
+              "reopen": 17,
+              "export": 17
+            },
+            "phasePid": {
+              "import": 27300,
+              "value": 27300,
+              "merge": 27300,
+              "history": 27300,
+              "row": 27300,
+              "structure": 27300,
+              "undo": 27300,
+              "redo": 27300,
+              "save": 27300,
+              "reopen": 35736,
+              "export": 35736
+            },
+            "processLifetimes": [
+              {
+                "pid": 27300,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 18
+              },
+              {
+                "pid": 35736,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 17
+              }
+            ],
+            "import": 7.039300000000367,
+            "value": 4.091899999999441,
+            "merge": 4.191100000000006,
+            "history": 4.869099999999889,
+            "row": 15.015999999999622,
+            "structure": 31.339799999997922,
+            "undo": 4.221400000002177,
+            "redo": 3.164600000000064,
+            "save": 3.671299999998155,
+            "savedBytes": 223505,
+            "restart": {
+              "previousPid": 27300,
+              "previousPeakMB": 18,
+              "pid": 35736,
+              "idlePeakMB": 7,
+              "stopMs": 310.4451999999983,
+              "startupMs": 218.68119999999908
+            },
+            "reopen": 46.8234999999986,
+            "export": 8.278299999998126,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 18
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 19,
+              "save": 19,
+              "reopen": 18,
+              "export": 18
+            },
+            "phasePid": {
+              "import": 37620,
+              "value": 37620,
+              "merge": 37620,
+              "history": 37620,
+              "row": 37620,
+              "structure": 37620,
+              "undo": 37620,
+              "redo": 37620,
+              "save": 37620,
+              "reopen": 41108,
+              "export": 41108
+            },
+            "processLifetimes": [
+              {
+                "pid": 37620,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 19
+              },
+              {
+                "pid": 41108,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 18
+              }
+            ],
+            "import": 8.250500000000102,
+            "value": 4.726400000000467,
+            "merge": 4.429399999999987,
+            "history": 6.120499999999993,
+            "row": 14.888500000000022,
+            "structure": 72.6260999999995,
+            "undo": 4.030099999999948,
+            "redo": 2.866899999999987,
+            "save": 4.084700000000339,
+            "savedBytes": 223746,
+            "restart": {
+              "previousPid": 37620,
+              "previousPeakMB": 19,
+              "pid": 41108,
+              "idlePeakMB": 7,
+              "stopMs": 256.71689999999944,
+              "startupMs": 215.4915000000001
+            },
+            "reopen": 45.687299999999595,
+            "export": 7.4416999999994005,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 19
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 19,
+              "save": 19,
+              "reopen": 17,
+              "export": 17
+            },
+            "phasePid": {
+              "import": 18416,
+              "value": 18416,
+              "merge": 18416,
+              "history": 18416,
+              "row": 18416,
+              "structure": 18416,
+              "undo": 18416,
+              "redo": 18416,
+              "save": 18416,
+              "reopen": 45624,
+              "export": 45624
+            },
+            "processLifetimes": [
+              {
+                "pid": 18416,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 19
+              },
+              {
+                "pid": 45624,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 17
+              }
+            ],
+            "import": 7.913099999999758,
+            "value": 3.7268999999996595,
+            "merge": 6.442699999999604,
+            "history": 5.914999999999054,
+            "row": 14.83980000000156,
+            "structure": 32.78050000000076,
+            "undo": 4.367399999999179,
+            "redo": 3.2921000000023923,
+            "save": 4.685900000000402,
+            "savedBytes": 223746,
+            "restart": {
+              "previousPid": 18416,
+              "previousPeakMB": 19,
+              "pid": 45624,
+              "idlePeakMB": 7,
+              "stopMs": 268.78099999999904,
+              "startupMs": 210.1330999999991
+            },
+            "reopen": 46.36669999999867,
+            "export": 8.025300000001153,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 19
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 9,
+              "row": 13,
+              "structure": 17,
+              "undo": 17,
+              "redo": 19,
+              "save": 19,
+              "reopen": 17,
+              "export": 17
+            },
+            "phasePid": {
+              "import": 31328,
+              "value": 31328,
+              "merge": 31328,
+              "history": 31328,
+              "row": 31328,
+              "structure": 31328,
+              "undo": 31328,
+              "redo": 31328,
+              "save": 31328,
+              "reopen": 35156,
+              "export": 35156
+            },
+            "processLifetimes": [
+              {
+                "pid": 31328,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 19
+              },
+              {
+                "pid": 35156,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 17
+              }
+            ],
+            "import": 9.31840000000011,
+            "value": 4.368100000003324,
+            "merge": 4.211199999997916,
+            "history": 5.8091999999996915,
+            "row": 15.711199999997916,
+            "structure": 40.19259999999849,
+            "undo": 3.78519999999844,
+            "redo": 2.877100000001519,
+            "save": 3.51759999999922,
+            "savedBytes": 223746,
+            "restart": {
+              "previousPid": 31328,
+              "previousPeakMB": 19,
+              "pid": 35156,
+              "idlePeakMB": 7,
+              "stopMs": 309.1822000000029,
+              "startupMs": 215.72090000000026
+            },
+            "reopen": 44.58629999999903,
+            "export": 7.286499999998341,
+            "output": {
+              "sha256": "072529b3fe40b502a13dbe5caaec51c47358996a370762776252dcbe41ec90a8",
+              "lines": 10001
+            },
+            "peak": 19
+          }
+        ]
+      }
+    },
+    {
+      "mode": "mixed",
+      "rows": 10000,
+      "distinct": 1000,
+      "input": {
+        "sha256": "66c9e673014286a787ad664d03ce0bd8e732378db354a2c40feac9f009e4bc63",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 15,
+              "row": 19,
+              "structure": 23,
+              "undo": 23,
+              "redo": 24,
+              "save": 24,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 3300,
+              "value": 3300,
+              "merge": 3300,
+              "history": 3300,
+              "row": 3300,
+              "structure": 3300,
+              "undo": 3300,
+              "redo": 3300,
+              "save": 3300,
+              "reopen": 27308,
+              "export": 27308
+            },
+            "processLifetimes": [
+              {
+                "pid": 3300,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 24
+              },
+              {
+                "pid": 27308,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 7.932300000000396,
+            "value": 5.28349999999773,
+            "merge": 4.604400000000169,
+            "history": 19.541400000001886,
+            "row": 15.594099999998434,
+            "structure": 33.70079999999871,
+            "undo": 3.851300000002084,
+            "redo": 3.5958000000027823,
+            "save": 4.19800000000032,
+            "savedBytes": 244173,
+            "restart": {
+              "previousPid": 3300,
+              "previousPeakMB": 24,
+              "pid": 27308,
+              "idlePeakMB": 7,
+              "stopMs": 296.8683000000019,
+              "startupMs": 224.55799999999726
+            },
+            "reopen": 55.34559999999328,
+            "export": 8.312200000000303,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 24
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 15,
+              "row": 19,
+              "structure": 23,
+              "undo": 23,
+              "redo": 24,
+              "save": 24,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 44608,
+              "value": 44608,
+              "merge": 44608,
+              "history": 44608,
+              "row": 44608,
+              "structure": 44608,
+              "undo": 44608,
+              "redo": 44608,
+              "save": 44608,
+              "reopen": 22912,
+              "export": 22912
+            },
+            "processLifetimes": [
+              {
+                "pid": 44608,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 24
+              },
+              {
+                "pid": 22912,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 6.901799999999639,
+            "value": 5.608000000000175,
+            "merge": 4.087699999996403,
+            "history": 18.17109999999957,
+            "row": 15.571900000002643,
+            "structure": 30.522799999998824,
+            "undo": 4.983399999997346,
+            "redo": 3.255199999999604,
+            "save": 3.486300000004121,
+            "savedBytes": 244173,
+            "restart": {
+              "previousPid": 44608,
+              "previousPeakMB": 24,
+              "pid": 22912,
+              "idlePeakMB": 7,
+              "stopMs": 309.4125000000058,
+              "startupMs": 224.27840000000288
+            },
+            "reopen": 54.77399999999761,
+            "export": 7.469699999994191,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 24
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 15,
+              "row": 19,
+              "structure": 23,
+              "undo": 23,
+              "redo": 24,
+              "save": 24,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 21808,
+              "value": 21808,
+              "merge": 21808,
+              "history": 21808,
+              "row": 21808,
+              "structure": 21808,
+              "undo": 21808,
+              "redo": 21808,
+              "save": 21808,
+              "reopen": 33484,
+              "export": 33484
+            },
+            "processLifetimes": [
+              {
+                "pid": 21808,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 24
+              },
+              {
+                "pid": 33484,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 8.00460000000021,
+            "value": 4.09599999999773,
+            "merge": 8.08459999999468,
+            "history": 18.651899999997113,
+            "row": 15.431100000001607,
+            "structure": 33.2129999999961,
+            "undo": 3.818200000001525,
+            "redo": 3.8726999999998952,
+            "save": 4.2379000000000815,
+            "savedBytes": 244173,
+            "restart": {
+              "previousPid": 21808,
+              "previousPeakMB": 24,
+              "pid": 33484,
+              "idlePeakMB": 7,
+              "stopMs": 278.41049999999814,
+              "startupMs": 212.0272000000041
+            },
+            "reopen": 54.79030000000057,
+            "export": 7.997299999995448,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 24
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 16,
+              "row": 20,
+              "structure": 23,
+              "undo": 23,
+              "redo": 25,
+              "save": 25,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 41992,
+              "value": 41992,
+              "merge": 41992,
+              "history": 41992,
+              "row": 41992,
+              "structure": 41992,
+              "undo": 41992,
+              "redo": 41992,
+              "save": 41992,
+              "reopen": 33732,
+              "export": 33732
+            },
+            "processLifetimes": [
+              {
+                "pid": 41992,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 25
+              },
+              {
+                "pid": 33732,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 8.568500000001222,
+            "value": 6.071299999995972,
+            "merge": 4.267299999999523,
+            "history": 18.868099999999686,
+            "row": 16.069799999997485,
+            "structure": 32.42740000000049,
+            "undo": 4.066299999998591,
+            "redo": 3.395699999993667,
+            "save": 3.7652000000016415,
+            "savedBytes": 244414,
+            "restart": {
+              "previousPid": 41992,
+              "previousPeakMB": 25,
+              "pid": 33732,
+              "idlePeakMB": 7,
+              "stopMs": 295.7615000000005,
+              "startupMs": 213.58400000000256
+            },
+            "reopen": 56.97920000000158,
+            "export": 7.457699999999022,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 25
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 16,
+              "row": 19,
+              "structure": 23,
+              "undo": 23,
+              "redo": 25,
+              "save": 25,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 9192,
+              "value": 9192,
+              "merge": 9192,
+              "history": 9192,
+              "row": 9192,
+              "structure": 9192,
+              "undo": 9192,
+              "redo": 9192,
+              "save": 9192,
+              "reopen": 29692,
+              "export": 29692
+            },
+            "processLifetimes": [
+              {
+                "pid": 9192,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 25
+              },
+              {
+                "pid": 29692,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 7.9504999999990105,
+            "value": 4.811000000001513,
+            "merge": 4.710400000003574,
+            "history": 17.712699999996403,
+            "row": 14.380199999999604,
+            "structure": 30.812700000002224,
+            "undo": 3.883300000001327,
+            "redo": 2.666400000001886,
+            "save": 4.286400000004505,
+            "savedBytes": 244414,
+            "restart": {
+              "previousPid": 9192,
+              "previousPeakMB": 25,
+              "pid": 29692,
+              "idlePeakMB": 7,
+              "stopMs": 320.67230000000563,
+              "startupMs": 213.02820000000065
+            },
+            "reopen": 60.92139999999927,
+            "export": 9.934800000002724,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 25
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 1000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 9,
+              "value": 9,
+              "merge": 9,
+              "history": 16,
+              "row": 19,
+              "structure": 23,
+              "undo": 23,
+              "redo": 25,
+              "save": 25,
+              "reopen": 23,
+              "export": 23
+            },
+            "phasePid": {
+              "import": 43080,
+              "value": 43080,
+              "merge": 43080,
+              "history": 43080,
+              "row": 43080,
+              "structure": 43080,
+              "undo": 43080,
+              "redo": 43080,
+              "save": 43080,
+              "reopen": 37308,
+              "export": 37308
+            },
+            "processLifetimes": [
+              {
+                "pid": 43080,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 25
+              },
+              {
+                "pid": 37308,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 23
+              }
+            ],
+            "import": 8.938600000001315,
+            "value": 4.737200000003213,
+            "merge": 4.4288999999989755,
+            "history": 21.097700000005716,
+            "row": 19.203600000000733,
+            "structure": 36.30750000000262,
+            "undo": 4.979299999999057,
+            "redo": 5.73410000000149,
+            "save": 7.025500000003376,
+            "savedBytes": 244414,
+            "restart": {
+              "previousPid": 43080,
+              "previousPeakMB": 25,
+              "pid": 37308,
+              "idlePeakMB": 7,
+              "stopMs": 299.81900000000314,
+              "startupMs": 213.75220000000263
+            },
+            "reopen": 63.79849999999715,
+            "export": 7.975200000000768,
+            "output": {
+              "sha256": "03ecae15fb65c35331fa2d42c352d197c336d606977dd68573f699bcff65f099",
+              "lines": 10001
+            },
+            "peak": 25
+          }
+        ]
+      }
+    },
+    {
+      "mode": "high",
+      "rows": 10000,
+      "distinct": 10000,
+      "input": {
+        "sha256": "afe1368805e89fa83f6fdb21f45f53792f0099b38bd8d54f1a2bc7f185c1eeb0",
+        "lines": 10001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 10,
+              "merge": 10,
+              "history": 70,
+              "row": 70,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 72,
+              "export": 73
+            },
+            "phasePid": {
+              "import": 20688,
+              "value": 20688,
+              "merge": 20688,
+              "history": 20688,
+              "row": 20688,
+              "structure": 20688,
+              "undo": 20688,
+              "redo": 20688,
+              "save": 20688,
+              "reopen": 27684,
+              "export": 27684
+            },
+            "processLifetimes": [
+              {
+                "pid": 20688,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 27684,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 73
+              }
+            ],
+            "import": 7.427400000000489,
+            "value": 7.30619999999908,
+            "merge": 4.087200000001758,
+            "history": 178.40340000000288,
+            "row": 16.955199999996694,
+            "structure": 30.51929999999993,
+            "undo": 3.391199999998207,
+            "redo": 2.9307000000044354,
+            "save": 3.770300000003772,
+            "savedBytes": 433171,
+            "restart": {
+              "previousPid": 20688,
+              "previousPeakMB": 73,
+              "pid": 27684,
+              "idlePeakMB": 7,
+              "stopMs": 260.2248000000036,
+              "startupMs": 220.81040000000212
+            },
+            "reopen": 265.53139999999985,
+            "export": 8.622400000000198,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 11,
+              "merge": 11,
+              "history": 69,
+              "row": 71,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 73,
+              "export": 73
+            },
+            "phasePid": {
+              "import": 46004,
+              "value": 46004,
+              "merge": 46004,
+              "history": 46004,
+              "row": 46004,
+              "structure": 46004,
+              "undo": 46004,
+              "redo": 46004,
+              "save": 46004,
+              "reopen": 1308,
+              "export": 1308
+            },
+            "processLifetimes": [
+              {
+                "pid": 46004,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 1308,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 73
+              }
+            ],
+            "import": 9.589000000007218,
+            "value": 7.254000000000815,
+            "merge": 4.924599999998463,
+            "history": 157.32200000000012,
+            "row": 17.892299999992247,
+            "structure": 31.004300000000512,
+            "undo": 4.438299999994342,
+            "redo": 4.447000000000116,
+            "save": 4.161500000001979,
+            "savedBytes": 433171,
+            "restart": {
+              "previousPid": 46004,
+              "previousPeakMB": 73,
+              "pid": 1308,
+              "idlePeakMB": 7,
+              "stopMs": 272.1457999999984,
+              "startupMs": 216.03859999999986
+            },
+            "reopen": 204.22870000000694,
+            "export": 7.370200000004843,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 11,
+              "merge": 11,
+              "history": 69,
+              "row": 70,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 73,
+              "export": 73
+            },
+            "phasePid": {
+              "import": 31672,
+              "value": 31672,
+              "merge": 31672,
+              "history": 31672,
+              "row": 31672,
+              "structure": 31672,
+              "undo": 31672,
+              "redo": 31672,
+              "save": 31672,
+              "reopen": 36984,
+              "export": 36984
+            },
+            "processLifetimes": [
+              {
+                "pid": 31672,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 36984,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 73
+              }
+            ],
+            "import": 8.09210000000894,
+            "value": 7.138500000000931,
+            "merge": 3.827099999994971,
+            "history": 159.574099999998,
+            "row": 18.781100000007427,
+            "structure": 34.85529999999562,
+            "undo": 3.548900000008871,
+            "redo": 3.098100000002887,
+            "save": 3.9940999999962514,
+            "savedBytes": 433171,
+            "restart": {
+              "previousPid": 31672,
+              "previousPeakMB": 73,
+              "pid": 36984,
+              "idlePeakMB": 7,
+              "stopMs": 290.81819999999425,
+              "startupMs": 216.18339999999444
+            },
+            "reopen": 197.54720000000088,
+            "export": 8.525099999998929,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 11,
+              "merge": 11,
+              "history": 70,
+              "row": 71,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 72,
+              "export": 72
+            },
+            "phasePid": {
+              "import": 45604,
+              "value": 45604,
+              "merge": 45604,
+              "history": 45604,
+              "row": 45604,
+              "structure": 45604,
+              "undo": 45604,
+              "redo": 45604,
+              "save": 45604,
+              "reopen": 22640,
+              "export": 22640
+            },
+            "processLifetimes": [
+              {
+                "pid": 45604,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 22640,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 72
+              }
+            ],
+            "import": 9.938899999993737,
+            "value": 7.7678000000014435,
+            "merge": 4.655299999998533,
+            "history": 168.06089999999676,
+            "row": 17.833599999998114,
+            "structure": 33.400599999993574,
+            "undo": 4.956599999990431,
+            "redo": 4.127399999997579,
+            "save": 4.94090000000142,
+            "savedBytes": 433412,
+            "restart": {
+              "previousPid": 45604,
+              "previousPeakMB": 73,
+              "pid": 22640,
+              "idlePeakMB": 7,
+              "stopMs": 309.75990000000456,
+              "startupMs": 219.62630000000354
+            },
+            "reopen": 241.52330000000075,
+            "export": 9.0055999999895,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 11,
+              "merge": 11,
+              "history": 70,
+              "row": 71,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 72,
+              "export": 72
+            },
+            "phasePid": {
+              "import": 2504,
+              "value": 2504,
+              "merge": 2504,
+              "history": 2504,
+              "row": 2504,
+              "structure": 2504,
+              "undo": 2504,
+              "redo": 2504,
+              "save": 2504,
+              "reopen": 40884,
+              "export": 40884
+            },
+            "processLifetimes": [
+              {
+                "pid": 2504,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 40884,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 72
+              }
+            ],
+            "import": 10.641400000007707,
+            "value": 7.691300000005867,
+            "merge": 4.483399999997346,
+            "history": 167.75289999999222,
+            "row": 18.690400000006775,
+            "structure": 31.45820000000822,
+            "undo": 4.681700000001001,
+            "redo": 4.216399999990244,
+            "save": 4.277699999991455,
+            "savedBytes": 433412,
+            "restart": {
+              "previousPid": 2504,
+              "previousPeakMB": 73,
+              "pid": 40884,
+              "idlePeakMB": 7,
+              "stopMs": 293.3229999999894,
+              "startupMs": 214.71970000000147
+            },
+            "reopen": 274.9484999999986,
+            "export": 8.47839999999269,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 10000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 10,
+              "value": 11,
+              "merge": 11,
+              "history": 70,
+              "row": 71,
+              "structure": 71,
+              "undo": 71,
+              "redo": 73,
+              "save": 73,
+              "reopen": 73,
+              "export": 73
+            },
+            "phasePid": {
+              "import": 40076,
+              "value": 40076,
+              "merge": 40076,
+              "history": 40076,
+              "row": 40076,
+              "structure": 40076,
+              "undo": 40076,
+              "redo": 40076,
+              "save": 40076,
+              "reopen": 41532,
+              "export": 41532
+            },
+            "processLifetimes": [
+              {
+                "pid": 40076,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 73
+              },
+              {
+                "pid": 41532,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 73
+              }
+            ],
+            "import": 8.269700000004377,
+            "value": 6.644000000000233,
+            "merge": 3.9777000000030966,
+            "history": 164.6826000000001,
+            "row": 16.717599999989034,
+            "structure": 31.26350000000093,
+            "undo": 3.666800000006333,
+            "redo": 2.5581999999994878,
+            "save": 3.5833000000129687,
+            "savedBytes": 433412,
+            "restart": {
+              "previousPid": 40076,
+              "previousPeakMB": 73,
+              "pid": 41532,
+              "idlePeakMB": 7,
+              "stopMs": 250.14569999999367,
+              "startupMs": 216.19120000000112
+            },
+            "reopen": 201.5054999999993,
+            "export": 6.695900000006077,
+            "output": {
+              "sha256": "906d5e27cd5ae55446af6a2833ef7facc6abf1c69032b8d00b9a9e9b27981a7d",
+              "lines": 10001
+            },
+            "peak": 73
+          }
+        ]
+      }
+    },
+    {
+      "mode": "low",
+      "rows": 100000,
+      "distinct": 16,
+      "input": {
+        "sha256": "96bb4a949c95d8bd6f9929156cefe0188725fdc05253c9ca4ead64dd38b876ee",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 15,
+              "row": 53,
+              "structure": 93,
+              "undo": 93,
+              "redo": 94,
+              "save": 94,
+              "reopen": 96,
+              "export": 96
+            },
+            "phasePid": {
+              "import": 37124,
+              "value": 37124,
+              "merge": 37124,
+              "history": 37124,
+              "row": 37124,
+              "structure": 37124,
+              "undo": 37124,
+              "redo": 37124,
+              "save": 37124,
+              "reopen": 27732,
+              "export": 27732
+            },
+            "processLifetimes": [
+              {
+                "pid": 37124,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 94
+              },
+              {
+                "pid": 27732,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 96
+              }
+            ],
+            "import": 25.067699999999604,
+            "value": 5.082999999998719,
+            "merge": 5.627600000007078,
+            "history": 13.320800000001327,
+            "row": 118.57330000000366,
+            "structure": 280.0532999999996,
+            "undo": 3.426500000001397,
+            "redo": 3.4720999999990454,
+            "save": 3.497000000003027,
+            "savedBytes": 2203509,
+            "restart": {
+              "previousPid": 37124,
+              "previousPeakMB": 94,
+              "pid": 27732,
+              "idlePeakMB": 7,
+              "stopMs": 319.1252999999997,
+              "startupMs": 219.23229999998875
+            },
+            "reopen": 409.5271999999968,
+            "export": 48.54790000000503,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 96
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 15,
+              "row": 53,
+              "structure": 93,
+              "undo": 93,
+              "redo": 94,
+              "save": 94,
+              "reopen": 96,
+              "export": 96
+            },
+            "phasePid": {
+              "import": 3976,
+              "value": 3976,
+              "merge": 3976,
+              "history": 3976,
+              "row": 3976,
+              "structure": 3976,
+              "undo": 3976,
+              "redo": 3976,
+              "save": 3976,
+              "reopen": 38768,
+              "export": 38768
+            },
+            "processLifetimes": [
+              {
+                "pid": 3976,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 94
+              },
+              {
+                "pid": 38768,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 96
+              }
+            ],
+            "import": 25.035100000008242,
+            "value": 4.316800000000512,
+            "merge": 4.338199999998324,
+            "history": 14.57949999999255,
+            "row": 113.94409999999334,
+            "structure": 279.0859000000055,
+            "undo": 3.643899999995483,
+            "redo": 5.49220000000787,
+            "save": 4.747900000002119,
+            "savedBytes": 2203509,
+            "restart": {
+              "previousPid": 3976,
+              "previousPeakMB": 94,
+              "pid": 38768,
+              "idlePeakMB": 7,
+              "stopMs": 262.08499999999185,
+              "startupMs": 220.1466000000073
+            },
+            "reopen": 414.57630000000063,
+            "export": 47.81900000000314,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 96
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 15,
+              "row": 53,
+              "structure": 93,
+              "undo": 93,
+              "redo": 93,
+              "save": 93,
+              "reopen": 96,
+              "export": 96
+            },
+            "phasePid": {
+              "import": 7880,
+              "value": 7880,
+              "merge": 7880,
+              "history": 7880,
+              "row": 7880,
+              "structure": 7880,
+              "undo": 7880,
+              "redo": 7880,
+              "save": 7880,
+              "reopen": 29864,
+              "export": 29864
+            },
+            "processLifetimes": [
+              {
+                "pid": 7880,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 93
+              },
+              {
+                "pid": 29864,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 96
+              }
+            ],
+            "import": 24.50680000000284,
+            "value": 3.624900000009802,
+            "merge": 3.934900000007474,
+            "history": 12.533300000010058,
+            "row": 117.66259999999602,
+            "structure": 279.1591000000044,
+            "undo": 3.6732999999949243,
+            "redo": 3.8827999999921303,
+            "save": 3.584400000007008,
+            "savedBytes": 2203509,
+            "restart": {
+              "previousPid": 7880,
+              "previousPeakMB": 93,
+              "pid": 29864,
+              "idlePeakMB": 7,
+              "stopMs": 288.4945000000007,
+              "startupMs": 208.5841000000073
+            },
+            "reopen": 412.5277999999962,
+            "export": 46.44419999999809,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 96
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 16,
+              "row": 54,
+              "structure": 93,
+              "undo": 93,
+              "redo": 94,
+              "save": 94,
+              "reopen": 97,
+              "export": 97
+            },
+            "phasePid": {
+              "import": 32248,
+              "value": 32248,
+              "merge": 32248,
+              "history": 32248,
+              "row": 32248,
+              "structure": 32248,
+              "undo": 32248,
+              "redo": 32248,
+              "save": 32248,
+              "reopen": 37524,
+              "export": 37524
+            },
+            "processLifetimes": [
+              {
+                "pid": 32248,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 94
+              },
+              {
+                "pid": 37524,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 97
+              }
+            ],
+            "import": 24.70230000000447,
+            "value": 5.221900000004098,
+            "merge": 3.9340999999985797,
+            "history": 25.334600000001956,
+            "row": 116.96249999999418,
+            "structure": 286.50010000000475,
+            "undo": 4.512700000006589,
+            "redo": 3.1071999999985565,
+            "save": 3.3246999999973923,
+            "savedBytes": 2203750,
+            "restart": {
+              "previousPid": 32248,
+              "previousPeakMB": 94,
+              "pid": 37524,
+              "idlePeakMB": 7,
+              "stopMs": 264.7381000000023,
+              "startupMs": 217.67209999999614
+            },
+            "reopen": 433.18279999999504,
+            "export": 45.602900000012596,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 97
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 16,
+              "row": 54,
+              "structure": 94,
+              "undo": 94,
+              "redo": 94,
+              "save": 94,
+              "reopen": 97,
+              "export": 97
+            },
+            "phasePid": {
+              "import": 27292,
+              "value": 27292,
+              "merge": 27292,
+              "history": 27292,
+              "row": 27292,
+              "structure": 27292,
+              "undo": 27292,
+              "redo": 27292,
+              "save": 27292,
+              "reopen": 13880,
+              "export": 13880
+            },
+            "processLifetimes": [
+              {
+                "pid": 27292,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 94
+              },
+              {
+                "pid": 13880,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 97
+              }
+            ],
+            "import": 25.292400000005728,
+            "value": 4.131299999993644,
+            "merge": 3.9961999999941327,
+            "history": 25.52379999999539,
+            "row": 120.54940000000352,
+            "structure": 287.12690000000293,
+            "undo": 3.2859000000025844,
+            "redo": 2.829200000007404,
+            "save": 6.551899999991292,
+            "savedBytes": 2203750,
+            "restart": {
+              "previousPid": 27292,
+              "previousPeakMB": 94,
+              "pid": 13880,
+              "idlePeakMB": 7,
+              "stopMs": 292.12889999999607,
+              "startupMs": 218.95219999999972
+            },
+            "reopen": 442.30710000000545,
+            "export": 46.09769999999844,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 97
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 16,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 15,
+              "merge": 15,
+              "history": 16,
+              "row": 54,
+              "structure": 94,
+              "undo": 94,
+              "redo": 94,
+              "save": 94,
+              "reopen": 97,
+              "export": 97
+            },
+            "phasePid": {
+              "import": 15784,
+              "value": 15784,
+              "merge": 15784,
+              "history": 15784,
+              "row": 15784,
+              "structure": 15784,
+              "undo": 15784,
+              "redo": 15784,
+              "save": 15784,
+              "reopen": 14616,
+              "export": 14616
+            },
+            "processLifetimes": [
+              {
+                "pid": 15784,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 94
+              },
+              {
+                "pid": 14616,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 97
+              }
+            ],
+            "import": 25.211800000004587,
+            "value": 4.280899999997928,
+            "merge": 4.35109999999986,
+            "history": 25.791700000001583,
+            "row": 122.4308999999921,
+            "structure": 288.33899999999267,
+            "undo": 5.111299999989569,
+            "redo": 3.6631000000052154,
+            "save": 5.61260000000766,
+            "savedBytes": 2203750,
+            "restart": {
+              "previousPid": 15784,
+              "previousPeakMB": 94,
+              "pid": 14616,
+              "idlePeakMB": 7,
+              "stopMs": 300.2019999999902,
+              "startupMs": 222.46680000000924
+            },
+            "reopen": 441.47359999999753,
+            "export": 48.15999999998894,
+            "output": {
+              "sha256": "271191db03e9a3e8c0adc5667b33e653fd8addd8dc5a61340549920e57ff731b",
+              "lines": 100001
+            },
+            "peak": 97
+          }
+        ]
+      }
+    },
+    {
+      "mode": "mixed",
+      "rows": 100000,
+      "distinct": 10000,
+      "input": {
+        "sha256": "eb6d111bef3004c063547d503f8612e7c70394c21f0198eb5496cdbdef3a5af6",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 16,
+              "merge": 16,
+              "history": 75,
+              "row": 108,
+              "structure": 148,
+              "undo": 148,
+              "redo": 149,
+              "save": 149,
+              "reopen": 153,
+              "export": 153
+            },
+            "phasePid": {
+              "import": 34272,
+              "value": 34272,
+              "merge": 34272,
+              "history": 34272,
+              "row": 34272,
+              "structure": 34272,
+              "undo": 34272,
+              "redo": 34272,
+              "save": 34272,
+              "reopen": 44104,
+              "export": 44104
+            },
+            "processLifetimes": [
+              {
+                "pid": 34272,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 149
+              },
+              {
+                "pid": 44104,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 153
+              }
+            ],
+            "import": 32.008600000001024,
+            "value": 7.560299999997369,
+            "merge": 4.709400000007008,
+            "history": 172.84640000000945,
+            "row": 125.80320000002393,
+            "structure": 289.5488999999943,
+            "undo": 3.515499999979511,
+            "redo": 2.889599999994971,
+            "save": 4.178199999994831,
+            "savedBytes": 2413177,
+            "restart": {
+              "previousPid": 34272,
+              "previousPeakMB": 149,
+              "pid": 44104,
+              "idlePeakMB": 7,
+              "stopMs": 278.97849999999744,
+              "startupMs": 209.12750000000233
+            },
+            "reopen": 609.7674000000115,
+            "export": 47.20089999999618,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 153
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 17,
+              "merge": 17,
+              "history": 76,
+              "row": 108,
+              "structure": 148,
+              "undo": 148,
+              "redo": 149,
+              "save": 149,
+              "reopen": 153,
+              "export": 153
+            },
+            "phasePid": {
+              "import": 21280,
+              "value": 21280,
+              "merge": 21280,
+              "history": 21280,
+              "row": 21280,
+              "structure": 21280,
+              "undo": 21280,
+              "redo": 21280,
+              "save": 21280,
+              "reopen": 14296,
+              "export": 14296
+            },
+            "processLifetimes": [
+              {
+                "pid": 21280,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 149
+              },
+              {
+                "pid": 14296,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 153
+              }
+            ],
+            "import": 30.724600000015926,
+            "value": 35.54110000000219,
+            "merge": 4.312899999989895,
+            "history": 181.3176000000094,
+            "row": 141.40180000002147,
+            "structure": 316.0766000000003,
+            "undo": 4.945799999986775,
+            "redo": 3.6290999999910127,
+            "save": 4.471300000004703,
+            "savedBytes": 2413177,
+            "restart": {
+              "previousPid": 21280,
+              "previousPeakMB": 149,
+              "pid": 14296,
+              "idlePeakMB": 7,
+              "stopMs": 282.8618000000133,
+              "startupMs": 222.1125999999931
+            },
+            "reopen": 582.313599999994,
+            "export": 43.70019999999204,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 153
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 15,
+              "value": 16,
+              "merge": 17,
+              "history": 76,
+              "row": 109,
+              "structure": 148,
+              "undo": 148,
+              "redo": 149,
+              "save": 149,
+              "reopen": 153,
+              "export": 153
+            },
+            "phasePid": {
+              "import": 45720,
+              "value": 45720,
+              "merge": 45720,
+              "history": 45720,
+              "row": 45720,
+              "structure": 45720,
+              "undo": 45720,
+              "redo": 45720,
+              "save": 45720,
+              "reopen": 2336,
+              "export": 2336
+            },
+            "processLifetimes": [
+              {
+                "pid": 45720,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 149
+              },
+              {
+                "pid": 2336,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 153
+              }
+            ],
+            "import": 29.9778000000224,
+            "value": 7.291700000001583,
+            "merge": 4.165600000007544,
+            "history": 168.5173000000068,
+            "row": 126.67799999998533,
+            "structure": 288.30689999999595,
+            "undo": 3.411900000006426,
+            "redo": 2.38389999998617,
+            "save": 3.8526999999885447,
+            "savedBytes": 2413177,
+            "restart": {
+              "previousPid": 45720,
+              "previousPeakMB": 149,
+              "pid": 2336,
+              "idlePeakMB": 7,
+              "stopMs": 240.47320000000764,
+              "startupMs": 211.49689999999828
+            },
+            "reopen": 580.2884999999951,
+            "export": 47.0287000000244,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 153
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 16,
+              "value": 17,
+              "merge": 17,
+              "history": 76,
+              "row": 110,
+              "structure": 149,
+              "undo": 149,
+              "redo": 150,
+              "save": 150,
+              "reopen": 154,
+              "export": 154
+            },
+            "phasePid": {
+              "import": 23424,
+              "value": 23424,
+              "merge": 23424,
+              "history": 23424,
+              "row": 23424,
+              "structure": 23424,
+              "undo": 23424,
+              "redo": 23424,
+              "save": 23424,
+              "reopen": 33116,
+              "export": 33116
+            },
+            "processLifetimes": [
+              {
+                "pid": 23424,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 150
+              },
+              {
+                "pid": 33116,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 154
+              }
+            ],
+            "import": 40.00430000000051,
+            "value": 11.261799999978393,
+            "merge": 5.535399999993388,
+            "history": 203.46330000000307,
+            "row": 144.203199999989,
+            "structure": 291.78859999999986,
+            "undo": 3.360599999985425,
+            "redo": 3.1635999999998603,
+            "save": 3.853899999987334,
+            "savedBytes": 2413418,
+            "restart": {
+              "previousPid": 23424,
+              "previousPeakMB": 150,
+              "pid": 33116,
+              "idlePeakMB": 7,
+              "stopMs": 304.3888999999908,
+              "startupMs": 209.91379999998026
+            },
+            "reopen": 603.7027999999991,
+            "export": 62.05670000001555,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 154
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 16,
+              "value": 17,
+              "merge": 17,
+              "history": 76,
+              "row": 110,
+              "structure": 149,
+              "undo": 149,
+              "redo": 150,
+              "save": 150,
+              "reopen": 154,
+              "export": 154
+            },
+            "phasePid": {
+              "import": 40776,
+              "value": 40776,
+              "merge": 40776,
+              "history": 40776,
+              "row": 40776,
+              "structure": 40776,
+              "undo": 40776,
+              "redo": 40776,
+              "save": 40776,
+              "reopen": 44880,
+              "export": 44880
+            },
+            "processLifetimes": [
+              {
+                "pid": 40776,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 150
+              },
+              {
+                "pid": 44880,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 154
+              }
+            ],
+            "import": 26.486700000008568,
+            "value": 6.865899999975227,
+            "merge": 3.903099999995902,
+            "history": 204.82440000001225,
+            "row": 138.64360000001034,
+            "structure": 303.38180000000284,
+            "undo": 4.415500000002794,
+            "redo": 3.048399999999674,
+            "save": 3.3531000000075437,
+            "savedBytes": 2413418,
+            "restart": {
+              "previousPid": 40776,
+              "previousPeakMB": 150,
+              "pid": 44880,
+              "idlePeakMB": 7,
+              "stopMs": 254.81560000000172,
+              "startupMs": 214.02489999998943
+            },
+            "reopen": 779.2559000000183,
+            "export": 49.34220000001369,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 154
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 10000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 16,
+              "value": 17,
+              "merge": 17,
+              "history": 76,
+              "row": 109,
+              "structure": 149,
+              "undo": 149,
+              "redo": 150,
+              "save": 150,
+              "reopen": 154,
+              "export": 154
+            },
+            "phasePid": {
+              "import": 40076,
+              "value": 40076,
+              "merge": 40076,
+              "history": 40076,
+              "row": 40076,
+              "structure": 40076,
+              "undo": 40076,
+              "redo": 40076,
+              "save": 40076,
+              "reopen": 28284,
+              "export": 28284
+            },
+            "processLifetimes": [
+              {
+                "pid": 40076,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 150
+              },
+              {
+                "pid": 28284,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 154
+              }
+            ],
+            "import": 28.73530000000028,
+            "value": 6.916200000006938,
+            "merge": 4.2264999999897555,
+            "history": 193.54780000000028,
+            "row": 162.9089999999851,
+            "structure": 315.5164999999979,
+            "undo": 4.331799999985378,
+            "redo": 3.5094000000099186,
+            "save": 3.643000000010943,
+            "savedBytes": 2413418,
+            "restart": {
+              "previousPid": 40076,
+              "previousPeakMB": 150,
+              "pid": 28284,
+              "idlePeakMB": 7,
+              "stopMs": 368.9459999999963,
+              "startupMs": 217.80809999999474
+            },
+            "reopen": 723.880600000004,
+            "export": 50.68989999999758,
+            "output": {
+              "sha256": "9bfd569a4fed065b9155ec5ad3f158aa4897842cf41557792e0bf2e9e9c26cd8",
+              "lines": 100001
+            },
+            "peak": 154
+          }
+        ]
+      }
+    },
+    {
+      "mode": "high",
+      "rows": 100000,
+      "distinct": 100000,
+      "input": {
+        "sha256": "c3129cfa85ae9414e77e184c099b32be49a43c5e03405c23d53a35bc6c07565c",
+        "lines": 100001
+      },
+      "runs": {
+        "base": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 23,
+              "value": 33,
+              "merge": 33,
+              "history": 588,
+              "row": 612,
+              "structure": 615,
+              "undo": 615,
+              "redo": 615,
+              "save": 615,
+              "reopen": 623,
+              "export": 623
+            },
+            "phasePid": {
+              "import": 8956,
+              "value": 8956,
+              "merge": 8956,
+              "history": 8956,
+              "row": 8956,
+              "structure": 8956,
+              "undo": 8956,
+              "redo": 8956,
+              "save": 8956,
+              "reopen": 39480,
+              "export": 39480
+            },
+            "processLifetimes": [
+              {
+                "pid": 8956,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 615
+              },
+              {
+                "pid": 39480,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 623
+              }
+            ],
+            "import": 49.25459999998566,
+            "value": 40.368399999977555,
+            "merge": 3.989399999991292,
+            "history": 3057.2871999999916,
+            "row": 143.87200000000303,
+            "structure": 269.3143000000273,
+            "undo": 3.4328000000095926,
+            "redo": 2.6309000000183005,
+            "save": 3.0909000000101514,
+            "savedBytes": 4303175,
+            "restart": {
+              "previousPid": 8956,
+              "previousPeakMB": 615,
+              "pid": 39480,
+              "idlePeakMB": 7,
+              "stopMs": 298.62899999998626,
+              "startupMs": 211.80400000000373
+            },
+            "reopen": 3312.4285999999847,
+            "export": 53.83040000000619,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 24,
+              "value": 34,
+              "merge": 34,
+              "history": 589,
+              "row": 612,
+              "structure": 615,
+              "undo": 615,
+              "redo": 615,
+              "save": 615,
+              "reopen": 622,
+              "export": 622
+            },
+            "phasePid": {
+              "import": 28428,
+              "value": 28428,
+              "merge": 28428,
+              "history": 28428,
+              "row": 28428,
+              "structure": 28428,
+              "undo": 28428,
+              "redo": 28428,
+              "save": 28428,
+              "reopen": 29716,
+              "export": 29716
+            },
+            "processLifetimes": [
+              {
+                "pid": 28428,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 615
+              },
+              {
+                "pid": 29716,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 622
+              }
+            ],
+            "import": 44.13500000000931,
+            "value": 42.126799999998184,
+            "merge": 4.0054999999993015,
+            "history": 2671.0023999999976,
+            "row": 141.43510000000242,
+            "structure": 281.0141000000003,
+            "undo": 3.3184000000183005,
+            "redo": 2.496000000013737,
+            "save": 3.8910000000032596,
+            "savedBytes": 4303175,
+            "restart": {
+              "previousPid": 28428,
+              "previousPeakMB": 615,
+              "pid": 29716,
+              "idlePeakMB": 7,
+              "stopMs": 281.17989999998827,
+              "startupMs": 216.71179999999003
+            },
+            "reopen": 3161.5597000000125,
+            "export": 44.26039999999921,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 622
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 23,
+              "value": 33,
+              "merge": 33,
+              "history": 589,
+              "row": 612,
+              "structure": 615,
+              "undo": 615,
+              "redo": 615,
+              "save": 615,
+              "reopen": 623,
+              "export": 623
+            },
+            "phasePid": {
+              "import": 31592,
+              "value": 31592,
+              "merge": 31592,
+              "history": 31592,
+              "row": 31592,
+              "structure": 31592,
+              "undo": 31592,
+              "redo": 31592,
+              "save": 31592,
+              "reopen": 42772,
+              "export": 42772
+            },
+            "processLifetimes": [
+              {
+                "pid": 31592,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 615
+              },
+              {
+                "pid": 42772,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 623
+              }
+            ],
+            "import": 36.482400000008056,
+            "value": 36.3923000000068,
+            "merge": 3.630300000018906,
+            "history": 2587.9274999999907,
+            "row": 146.5610999999917,
+            "structure": 275.59660000001895,
+            "undo": 3.393000000010943,
+            "redo": 6.0627000000094995,
+            "save": 4.1032000000122935,
+            "savedBytes": 4303175,
+            "restart": {
+              "previousPid": 31592,
+              "previousPeakMB": 615,
+              "pid": 42772,
+              "idlePeakMB": 7,
+              "stopMs": 358.28329999998095,
+              "startupMs": 219.02210000000196
+            },
+            "reopen": 2757.181899999996,
+            "export": 43.311900000000605,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          }
+        ],
+        "new": [
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 25,
+              "value": 34,
+              "merge": 34,
+              "history": 590,
+              "row": 613,
+              "structure": 616,
+              "undo": 616,
+              "redo": 616,
+              "save": 616,
+              "reopen": 623,
+              "export": 623
+            },
+            "phasePid": {
+              "import": 40076,
+              "value": 40076,
+              "merge": 40076,
+              "history": 40076,
+              "row": 40076,
+              "structure": 40076,
+              "undo": 40076,
+              "redo": 40076,
+              "save": 40076,
+              "reopen": 33788,
+              "export": 33788
+            },
+            "processLifetimes": [
+              {
+                "pid": 40076,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 616
+              },
+              {
+                "pid": 33788,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 623
+              }
+            ],
+            "import": 49.62959999998566,
+            "value": 47.46349999998347,
+            "merge": 5.206300000019837,
+            "history": 3253.005600000004,
+            "row": 161.70139999999083,
+            "structure": 363.34150000000955,
+            "undo": 4.136300000012852,
+            "redo": 2.779399999999441,
+            "save": 3.8337000000174157,
+            "savedBytes": 4303416,
+            "restart": {
+              "previousPid": 40076,
+              "previousPeakMB": 616,
+              "pid": 33788,
+              "idlePeakMB": 7,
+              "stopMs": 318.4371000000101,
+              "startupMs": 217.82220000002417
+            },
+            "reopen": 3128.9869999999937,
+            "export": 46.09320000000298,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 25,
+              "value": 34,
+              "merge": 34,
+              "history": 591,
+              "row": 614,
+              "structure": 617,
+              "undo": 617,
+              "redo": 617,
+              "save": 617,
+              "reopen": 623,
+              "export": 623
+            },
+            "phasePid": {
+              "import": 29236,
+              "value": 29236,
+              "merge": 29236,
+              "history": 29236,
+              "row": 29236,
+              "structure": 29236,
+              "undo": 29236,
+              "redo": 29236,
+              "save": 29236,
+              "reopen": 40492,
+              "export": 40492
+            },
+            "processLifetimes": [
+              {
+                "pid": 29236,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 617
+              },
+              {
+                "pid": 40492,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 623
+              }
+            ],
+            "import": 39.765400000003865,
+            "value": 39.576600000000326,
+            "merge": 4.143799999990733,
+            "history": 2730.7318000000087,
+            "row": 139.49619999999413,
+            "structure": 273.953600000008,
+            "undo": 3.4544000000169035,
+            "redo": 2.51490000000922,
+            "save": 5.50010000000475,
+            "savedBytes": 4303416,
+            "restart": {
+              "previousPid": 29236,
+              "previousPeakMB": 617,
+              "pid": 40492,
+              "idlePeakMB": 7,
+              "stopMs": 267.89319999999134,
+              "startupMs": 221.7259999999951
+            },
+            "reopen": 2693.923299999995,
+            "export": 44.97060000000056,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          },
+          {
+            "protocol": "cardinality-history-v2",
+            "httpConnection": "close",
+            "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+            "rows": 100000,
+            "distinct": 100000,
+            "historySteps": 40,
+            "idle": 7,
+            "phasePeakMB": {
+              "import": 25,
+              "value": 34,
+              "merge": 34,
+              "history": 590,
+              "row": 613,
+              "structure": 616,
+              "undo": 616,
+              "redo": 616,
+              "save": 616,
+              "reopen": 623,
+              "export": 623
+            },
+            "phasePid": {
+              "import": 35844,
+              "value": 35844,
+              "merge": 35844,
+              "history": 35844,
+              "row": 35844,
+              "structure": 35844,
+              "undo": 35844,
+              "redo": 35844,
+              "save": 35844,
+              "reopen": 45640,
+              "export": 45640
+            },
+            "processLifetimes": [
+              {
+                "pid": 35844,
+                "role": "editing",
+                "idleMiB": 7,
+                "peakMiB": 616
+              },
+              {
+                "pid": 45640,
+                "role": "reopened",
+                "idleMiB": 7,
+                "peakMiB": 623
+              }
+            ],
+            "import": 42.25830000001588,
+            "value": 35.09929999997257,
+            "merge": 3.943599999998696,
+            "history": 2473.2704000000085,
+            "row": 139.44500000000698,
+            "structure": 276.66460000001825,
+            "undo": 3.525400000013178,
+            "redo": 2.6614000000117812,
+            "save": 3.6821000000054482,
+            "savedBytes": 4303416,
+            "restart": {
+              "previousPid": 35844,
+              "previousPeakMB": 616,
+              "pid": 45640,
+              "idlePeakMB": 7,
+              "stopMs": 278.3723999999929,
+              "startupMs": 213.69800000000396
+            },
+            "reopen": 2718.938699999999,
+            "export": 45.702900000003865,
+            "output": {
+              "sha256": "bf224ebd4178763abdc327581aac1600e19e610d928dcf3a326358dfd88797dd",
+              "lines": 100001
+            },
+            "peak": 623
+          }
+        ]
+      }
+    }
+  ]
+}

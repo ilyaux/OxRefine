@@ -111,6 +111,8 @@ test("output is self-contained, reduced-motion aware, and leaves qualitative dia
       assert(svg.includes("prefers-reduced-motion:reduce"))
       assert(svg.includes("prefers-color-scheme:dark"))
       assert(svg.includes("@media(max-width:650px)"))
+      assert(svg.includes("from{fill-opacity:.45}"), "animation changes paint, preserving measured bar lengths in every frame")
+      assert(!svg.includes("scaleX") && !svg.includes("transform:"))
       assert(!/<(?:animate|script|image|foreignObject)\b|repeatCount=|indefinite|NaN|Infinity/.test(svg))
       for (const match of svg.matchAll(/\bwidth="([\d.-]+)"/g)) assert(Number.isFinite(+match[1]) && +match[1] >= 0)
     }

@@ -66,6 +66,33 @@ The whole-workflow peak includes the row-dependent transform, structural edits a
 node benchmarks/check.mjs --profile cardinality --record --runs 1 --history 40 --out benchmarks/cardinality-baseline.json 10000 100000
 ```
 
+## Release 0.6.0 repeated measurements
+
+The frozen Windows candidate has SHA-256 `31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9`. [The release verdict](release-0.6.0/verdict.json) links every raw report and its SHA, including the rejected development measurements. The [protocol](release-0.6.0/PLAN.md) records the official 0.5.3 baseline, inputs and commands. These are three-repeat local observations; host background activity was recorded, and no owned build or second benchmark ran concurrently.
+
+Every HTTP request used `Connection: close`, identically for both OxRefine builds and OpenRefine. This avoids a separately measured keepalive response-delivery stall. Connection setup and response delivery remain inside phase timings. The OpenRefine report uses medians of per-run totals; the existing regression gate uses fastest phase timings and median peak memory, with its original thresholds.
+
+| check | observed outcome |
+|---|---|
+| [OpenRefine comparison](release-0.6.0/openrefine-1400M.json) | Twelve completed pairs at 100k–1M rows matched every output cell, row count, facet count and cluster count. All three 2M OpenRefine attempts exhausted the fixed 1400M Java heap; no 2M reference-output comparison is established. |
+| [Required CI-size people workload](release-0.6.0/people-ci-250k.json) | The 250k check passed; the 1M check also passed inside the expanded report. Each size has three runs per binary and complete exported-row equality checks. |
+| [Expanded people workload](release-0.6.0/people-regression.json) | Exit **1**, retained: the 2M recipe phase took 58.29 ms versus 31.00 ms in 0.5.3, above its unchanged 55.30 ms threshold. All other measured gates and every output check passed. This remains a performance follow-up. |
+| [Cardinality/history](release-0.6.0/cardinality-regression.json) | All six datasets passed the gate across 36 base/new runs, including real backend restart, undo/redo and full output checks. |
+| [Database import](release-0.6.0/database.json) | All twelve 100k-row runs passed complete CSV, type/null and fresh-process reopen checks across SQLite, PostgreSQL, MySQL and MariaDB. |
+
+Current cardinality/history **medians for 0.6.0** follow. Reopen excludes process startup, loads the native project in a different backend PID, and leaves OS filesystem caches warm. Peak is the maximum resident HWM across the two process lifetimes, including validation.
+
+| rows | transformed value cardinality | distinct values | 40 history steps | process-restarted reopen | whole-workflow peak |
+|---|---|---|---|---|---|
+| 10,000 | low | 16 | 6 ms | 46 ms | 19 MiB |
+| 10,000 | mixed | 1,000 | 19 ms | 61 ms | 25 MiB |
+| 10,000 | high | 10,000 | 168 ms | 242 ms | 73 MiB |
+| 100,000 | low | 16 | 26 ms | 441 ms | 97 MiB |
+| 100,000 | mixed | 10,000 | 203 ms | 724 ms | 154 MiB |
+| 100,000 | high | 100,000 | 2731 ms | 2719 ms | 623 MiB |
+
+The database workload uses 100,000 deterministic SQL rows with integer IDs, text labels and 1,031 NULL quantities. Import includes query/fetch, the typed snapshot and native project creation/save. Median import was 216 ms for PostgreSQL 17.9, 144 ms for MySQL 8.4.13, 148 ms for MariaDB 11.4.13 and 115 ms for SQLite 3.46.0. Import peaks were 23, 22, 21 and 23 MiB respectively; whole-workflow peaks were 29 MiB each. These exclude the database servers and parent driver. Backend services remained warm, every saved project reopened without another SQL query, and all 100,000 rows were checked after reopening. This fixture does not establish remote-network throughput or general database rankings.
+
 ## Experimental row-code spilling
 
 `out-of-core-data.mjs` physically writes every CSV row and records a SHA-256 manifest. The low-cardinality dataset has 20 columns: 16 fixed-width labels in `value`, 1,000 numeric strings plus a deliberate `BAD` every 997th row, eight groups, periodic/end checkpoints, and 16 additional columns with two to eight values each. There is no unique ID column that would silently make the low-cardinality dictionary grow with every row. The high variant makes every `value` distinct. The validation runners explicitly refuse large high-cardinality workloads; backend dictionaries remain resident.

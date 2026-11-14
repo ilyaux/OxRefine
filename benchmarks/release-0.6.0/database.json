@@ -1,0 +1,783 @@
+{
+  "when": "2026-11-14T19:42:21.906Z",
+  "workload": "database-100k-v2",
+  "rows": 100000,
+  "query": "SELECT id,label,quantity FROM db_bench_fixture ORDER BY id",
+  "runs": 3,
+  "httpConnection": "close",
+  "fixture": "id=0..99999; label=item-id; quantity=NULL when id%97=0, otherwise id%1000",
+  "expected": {
+    "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+    "lines": 100001
+  },
+  "statistic": "median of raw repetitions; import=SQL prepare plus native project creation/save",
+  "memory": "Per-phase backend process OS high-water mark in MiB; workflow peak=max of both backend lifetimes, including full validation; database servers, parent Node and external filesystem cache excluded",
+  "cache": "fresh native library per run and a true backend process restart before timed open_project; stop/start/readiness excluded from reopenMs; database services and OS filesystem caches remain warm",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMiB": 31866
+  },
+  "binary": {
+    "file": "ox.exe",
+    "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9"
+  },
+  "complete": true,
+  "results": [
+    {
+      "driver": "postgres",
+      "runs": [
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 21,
+            "create": 23,
+            "import": 23,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 25832,
+            "create": 25832,
+            "import": 25832,
+            "reopen": 20064,
+            "export": 20064,
+            "validation": 20064
+          },
+          "processLifetimes": [
+            {
+              "pid": 25832,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 23
+            },
+            {
+              "pid": 20064,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 213.93039999999996,
+          "createMs": 23.279700000000048,
+          "importMs": 237.2101,
+          "importPeakMiB": 23,
+          "restart": {
+            "previousPid": 25832,
+            "previousPeakMB": 23,
+            "pid": 20064,
+            "idlePeakMB": 7,
+            "stopMs": 298.39599999999996,
+            "startupMs": 217.93759999999975
+          },
+          "reopenMs": 26.820600000000013,
+          "exportMs": 26.827700000000277,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 21,
+            "create": 22,
+            "import": 22,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 13172,
+            "create": 13172,
+            "import": 13172,
+            "reopen": 40876,
+            "export": 40876,
+            "validation": 40876
+          },
+          "processLifetimes": [
+            {
+              "pid": 13172,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 22
+            },
+            {
+              "pid": 40876,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 163.7998000000007,
+          "createMs": 14.315500000000611,
+          "importMs": 178.1153000000013,
+          "importPeakMiB": 22,
+          "restart": {
+            "previousPid": 13172,
+            "previousPeakMB": 22,
+            "pid": 40876,
+            "idlePeakMB": 7,
+            "stopMs": 282.0567999999985,
+            "startupMs": 215.00660000000062
+          },
+          "reopenMs": 29.063899999997375,
+          "exportMs": 28.965000000000146,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 21,
+            "create": 23,
+            "import": 23,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 45576,
+            "create": 45576,
+            "import": 45576,
+            "reopen": 14200,
+            "export": 14200,
+            "validation": 14200
+          },
+          "processLifetimes": [
+            {
+              "pid": 45576,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 23
+            },
+            {
+              "pid": 14200,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 201.96340000000055,
+          "createMs": 14.53240000000369,
+          "importMs": 216.49580000000424,
+          "importPeakMiB": 23,
+          "restart": {
+            "previousPid": 45576,
+            "previousPeakMB": 23,
+            "pid": 14200,
+            "idlePeakMB": 7,
+            "stopMs": 274.7983999999997,
+            "startupMs": 213.76780000000144
+          },
+          "reopenMs": 25.712900000005902,
+          "exportMs": 25.66359999999986,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 201.96340000000055,
+        "createMs": 14.53240000000369,
+        "importMs": 216.49580000000424,
+        "reopenMs": 26.820600000000013,
+        "exportMs": 26.827700000000277,
+        "importPeakMiB": 23,
+        "workflowPeakMiB": 29
+      }
+    },
+    {
+      "driver": "mysql",
+      "runs": [
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 20,
+            "create": 21,
+            "import": 21,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 30776,
+            "create": 30776,
+            "import": 30776,
+            "reopen": 18788,
+            "export": 18788,
+            "validation": 18788
+          },
+          "processLifetimes": [
+            {
+              "pid": 30776,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 21
+            },
+            {
+              "pid": 18788,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 145.1952000000001,
+          "createMs": 16.651200000000244,
+          "importMs": 161.84640000000036,
+          "importPeakMiB": 21,
+          "restart": {
+            "previousPid": 30776,
+            "previousPeakMB": 21,
+            "pid": 18788,
+            "idlePeakMB": 7,
+            "stopMs": 244.23439999999937,
+            "startupMs": 215.73000000000047
+          },
+          "reopenMs": 26.38259999999991,
+          "exportMs": 26.846999999999753,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 21,
+            "create": 22,
+            "import": 22,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 38212,
+            "create": 38212,
+            "import": 38212,
+            "reopen": 2924,
+            "export": 2924,
+            "validation": 2924
+          },
+          "processLifetimes": [
+            {
+              "pid": 38212,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 22
+            },
+            {
+              "pid": 2924,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 130.28480000000127,
+          "createMs": 14.094900000000052,
+          "importMs": 144.37970000000132,
+          "importPeakMiB": 22,
+          "restart": {
+            "previousPid": 38212,
+            "previousPeakMB": 22,
+            "pid": 2924,
+            "idlePeakMB": 7,
+            "stopMs": 281.77969999999914,
+            "startupMs": 223.87890000000334
+          },
+          "reopenMs": 27.417600000000675,
+          "exportMs": 26.831600000001345,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 20,
+            "create": 22,
+            "import": 22,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 21692,
+            "create": 21692,
+            "import": 21692,
+            "reopen": 26196,
+            "export": 26196,
+            "validation": 26196
+          },
+          "processLifetimes": [
+            {
+              "pid": 21692,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 22
+            },
+            {
+              "pid": 26196,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 91.86850000000413,
+          "createMs": 14.175400000000081,
+          "importMs": 106.04390000000421,
+          "importPeakMiB": 22,
+          "restart": {
+            "previousPid": 21692,
+            "previousPeakMB": 22,
+            "pid": 26196,
+            "idlePeakMB": 7,
+            "stopMs": 217.42719999999827,
+            "startupMs": 219.348699999995
+          },
+          "reopenMs": 25.06430000000546,
+          "exportMs": 25.077299999997194,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 130.28480000000127,
+        "createMs": 14.175400000000081,
+        "importMs": 144.37970000000132,
+        "reopenMs": 26.38259999999991,
+        "exportMs": 26.831600000001345,
+        "importPeakMiB": 22,
+        "workflowPeakMiB": 29
+      }
+    },
+    {
+      "driver": "mariadb",
+      "runs": [
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 20,
+            "create": 22,
+            "import": 22,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 16188,
+            "create": 16188,
+            "import": 16188,
+            "reopen": 43508,
+            "export": 43508,
+            "validation": 43508
+          },
+          "processLifetimes": [
+            {
+              "pid": 16188,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 22
+            },
+            {
+              "pid": 43508,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 112.83400000000074,
+          "createMs": 14.741900000000896,
+          "importMs": 127.57590000000164,
+          "importPeakMiB": 22,
+          "restart": {
+            "previousPid": 16188,
+            "previousPeakMB": 22,
+            "pid": 43508,
+            "idlePeakMB": 7,
+            "stopMs": 244.1869000000006,
+            "startupMs": 223.16389999999956
+          },
+          "reopenMs": 26.117200000000594,
+          "exportMs": 27.65190000000075,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 20,
+            "create": 21,
+            "import": 21,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 38788,
+            "create": 38788,
+            "import": 38788,
+            "reopen": 40152,
+            "export": 40152,
+            "validation": 40152
+          },
+          "processLifetimes": [
+            {
+              "pid": 38788,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 21
+            },
+            {
+              "pid": 40152,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 133.7342000000026,
+          "createMs": 14.379300000000512,
+          "importMs": 148.1135000000031,
+          "importPeakMiB": 21,
+          "restart": {
+            "previousPid": 38788,
+            "previousPeakMB": 21,
+            "pid": 40152,
+            "idlePeakMB": 7,
+            "stopMs": 270.998599999999,
+            "startupMs": 212.63690000000133
+          },
+          "reopenMs": 46.897000000000844,
+          "exportMs": 31.950000000000728,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 20,
+            "create": 21,
+            "import": 21,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 24344,
+            "create": 24344,
+            "import": 24344,
+            "reopen": 424,
+            "export": 424,
+            "validation": 424
+          },
+          "processLifetimes": [
+            {
+              "pid": 24344,
+              "role": "importing",
+              "idleMiB": 8,
+              "peakMiB": 21
+            },
+            {
+              "pid": 424,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 208.64909999999873,
+          "createMs": 14.253900000003341,
+          "importMs": 222.90300000000207,
+          "importPeakMiB": 21,
+          "restart": {
+            "previousPid": 24344,
+            "previousPeakMB": 21,
+            "pid": 424,
+            "idlePeakMB": 7,
+            "stopMs": 231.4791000000041,
+            "startupMs": 213.46860000000015
+          },
+          "reopenMs": 25.512299999994866,
+          "exportMs": 26.367700000002515,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 133.7342000000026,
+        "createMs": 14.379300000000512,
+        "importMs": 148.1135000000031,
+        "reopenMs": 26.117200000000594,
+        "exportMs": 27.65190000000075,
+        "importPeakMiB": 21,
+        "workflowPeakMiB": 29
+      }
+    },
+    {
+      "driver": "sqlite",
+      "runs": [
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 23,
+            "create": 23,
+            "import": 23,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 41332,
+            "create": 41332,
+            "import": 41332,
+            "reopen": 11192,
+            "export": 11192,
+            "validation": 11192
+          },
+          "processLifetimes": [
+            {
+              "pid": 41332,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 23
+            },
+            {
+              "pid": 11192,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 100.82440000000133,
+          "createMs": 13.91990000000078,
+          "importMs": 114.74430000000211,
+          "importPeakMiB": 23,
+          "restart": {
+            "previousPid": 41332,
+            "previousPeakMB": 23,
+            "pid": 11192,
+            "idlePeakMB": 7,
+            "stopMs": 235.30040000000008,
+            "startupMs": 225.35399999999936
+          },
+          "reopenMs": 26.140400000000227,
+          "exportMs": 27.005300000000716,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 23,
+            "create": 23,
+            "import": 23,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 38124,
+            "create": 38124,
+            "import": 38124,
+            "reopen": 12976,
+            "export": 12976,
+            "validation": 12976
+          },
+          "processLifetimes": [
+            {
+              "pid": 38124,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 23
+            },
+            {
+              "pid": 12976,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 121.81650000000081,
+          "createMs": 14.76510000000053,
+          "importMs": 136.58160000000134,
+          "importPeakMiB": 23,
+          "restart": {
+            "previousPid": 38124,
+            "previousPeakMB": 23,
+            "pid": 12976,
+            "idlePeakMB": 7,
+            "stopMs": 332.32990000000063,
+            "startupMs": 223.15910000000076
+          },
+          "reopenMs": 28.392500000001746,
+          "exportMs": 35.396099999998114,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "httpConnection": "close",
+          "reopenProtocol": "fresh-backend-process; startup excluded; filesystem cache not flushed",
+          "phasePeakMiB": {
+            "prepare": 23,
+            "create": 23,
+            "import": 23,
+            "reopen": 26,
+            "export": 27,
+            "validation": 29
+          },
+          "phasePid": {
+            "prepare": 42108,
+            "create": 42108,
+            "import": 42108,
+            "reopen": 30712,
+            "export": 30712,
+            "validation": 30712
+          },
+          "processLifetimes": [
+            {
+              "pid": 42108,
+              "role": "importing",
+              "idleMiB": 9,
+              "peakMiB": 23
+            },
+            {
+              "pid": 30712,
+              "role": "reopened",
+              "idleMiB": 7,
+              "peakMiB": 29
+            }
+          ],
+          "prepareMs": 98.25070000000414,
+          "createMs": 13.175499999997555,
+          "importMs": 111.4262000000017,
+          "importPeakMiB": 23,
+          "restart": {
+            "previousPid": 42108,
+            "previousPeakMB": 23,
+            "pid": 30712,
+            "idlePeakMB": 7,
+            "stopMs": 241.6345999999976,
+            "startupMs": 216.59560000000056
+          },
+          "reopenMs": 26.147499999999127,
+          "exportMs": 27.526499999999942,
+          "workflowPeakMiB": 29,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 100.82440000000133,
+        "createMs": 13.91990000000078,
+        "importMs": 114.74430000000211,
+        "reopenMs": 26.147499999999127,
+        "exportMs": 27.526499999999942,
+        "importPeakMiB": 23,
+        "workflowPeakMiB": 29
+      }
+    }
+  ],
+  "valid": true
+}

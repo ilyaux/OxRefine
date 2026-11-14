@@ -1,0 +1,10 @@
+{
+  "utc": "2026-11-14T19:26:35.2341949Z",
+  "candidateSha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9",
+  "runtimeSourceCommit": "be54731a85ce116521af306e045c8e4159f5931b",
+  "harnessSourceCommit": "e62356b",
+  "httpConnection": "close",
+  "cpuPercent": 35,
+  "freeMemoryMiB": 10810.0,
+  "note": "Prior 60-second settling samples retained in keepalive-31e9e0d1; unchanged runtime, harness-only fix, no local builds or test servers."
+}

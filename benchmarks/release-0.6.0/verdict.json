@@ -1,0 +1,108 @@
+{
+  "schema": "oxrefine-release-benchmark-verdict-v1",
+  "completedAt": "2026-11-14T19:47:30.148Z",
+  "complete": true,
+  "dataIntegrityValid": true,
+  "candidate": {
+    "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9",
+    "file": "target/benchmark-candidate-v0.6.0/bulk/ox.exe",
+    "runtimeSourceCommit": "be54731a85ce116521af306e045c8e4159f5931b"
+  },
+  "harnessSourceCommit": "e62356bc927b6be5ff44a55ced7b230af5a21421",
+  "httpConnection": "close",
+  "baseline": "baseline.json",
+  "reports": [
+    {
+      "file": "people-regression.json",
+      "sha256": "96c79f3aa54c1d0529ef1a5f72bc2b800f4c2400d958b311c529030e0a47d803",
+      "actualExitCode": 1,
+      "dataChecks": "passed",
+      "gateFailures": [
+        {
+          "mode": "people",
+          "rows": 2000000,
+          "phase": "recipe",
+          "base": 31.000299999999697,
+          "new": 58.28650000000198,
+          "threshold": 55.30038999999961,
+          "unit": "ms"
+        }
+      ]
+    },
+    {
+      "file": "people-ci-250k.json",
+      "sha256": "af9e53ec009205edee27fddd2ec1ae3ee187cf8b2a347f0987c4805ea11f2d8b",
+      "actualExitCode": 0,
+      "dataChecks": "passed",
+      "gateFailures": []
+    },
+    {
+      "file": "cardinality-regression.json",
+      "sha256": "3501e8303847f32b759c7a33375ea8c6bc84ebc234bc91e159d9b9816a116c60",
+      "actualExitCode": 0,
+      "dataChecks": "passed",
+      "gateFailures": []
+    },
+    {
+      "file": "openrefine-1400M.json",
+      "sha256": "4e857a9e3ee950e07f7e692ca7810232d2f11d83b07480bd3d890fbb9e1beb04",
+      "actualExitCode": 0,
+      "complete": true,
+      "valid": true,
+      "dataChecks": "passed"
+    },
+    {
+      "file": "database.json",
+      "sha256": "1c389acc507842803e7364bd4af938f825b0fc1d952592ced8b2d2f971623cbf",
+      "actualExitCode": 0,
+      "complete": true,
+      "valid": true,
+      "dataChecks": "passed"
+    }
+  ],
+  "gateSummary": {
+    "requiredCiPeopleSizes": [
+      250000,
+      1000000
+    ],
+    "requiredCiPeoplePassed": true,
+    "cardinalityPassed": true,
+    "expandedPeoplePassed": false,
+    "disposition": "The expanded local 2M recipe-phase regression remains recorded for follow-up. Thresholds are unchanged and no all-gates-pass claim is made."
+  },
+  "scope": [
+    "Three repetitions per engine/dataset. All completed OpenRefine pairs at 100k through 1M match complete output cells, row counts, facets and clusters.",
+    "At 2M rows all three OpenRefine attempts reported a JVM allocation failure with a fixed 1400M heap; no OpenRefine output equality or speed ratio is established there.",
+    "People and cardinality exported outputs were checked completely. Cardinality ran six datasets, three repetitions per build, with true backend process restart.",
+    "Database import ran 100000 rows and three columns for four backends, three repetitions each; all exported values, numeric/text/null types and fresh-process reopening were checked.",
+    "Backend restart startup/stop are recorded separately from open_project timing; filesystem caches remain warm. Workflow memory is maximum HWM across backend lifetimes, not a sum.",
+    "Windows memory uses PeakWorkingSet64 in MiB; parent Node, browser and database-service memory are excluded. Host background activity was recorded; this is not a controlled-laboratory or universal-input claim."
+  ],
+  "hostContext": {
+    "file": "host-settling.json",
+    "sha256": "2db753689057cda1f2b6c5a3d57454cbbe15cda56e5689be320974e0f1efd6a8"
+  },
+  "archives": [
+    "pre-fix-af937201/verdict.json",
+    "keepalive-31e9e0d1/verdict.json"
+  ],
+  "derivedArtifacts": [
+    {
+      "file": "report.html",
+      "sha256": "64e08a3e030179bd0e4625792e17e41641383b20482d0158de692c4ded52b04b"
+    },
+    {
+      "file": "../../docs/readme/bench-time.svg",
+      "sha256": "398d7aa303baaded76a78814bb51b3e37aebadecaa5a15381c1b5b5e6580e6cb"
+    },
+    {
+      "file": "../../docs/readme/bench-steps.svg",
+      "sha256": "a6d3e620207968512bbc3de17dddc13c8e84884581b3f3be8aceac3e7ac633de"
+    },
+    {
+      "file": "../../docs/readme/bench-memory.svg",
+      "sha256": "2aeff77a5cbcfa1d1fc54d2fa4e6af694b6fdded30e51e2e01db1a0b40fe73cd"
+    }
+  ],
+  "cleanup": "Every measurement-owned OxRefine/OpenRefine backend exited. Native PostgreSQL/MySQL/MariaDB fixture services remain owned by the project coordinator for its cleanup."
+}
