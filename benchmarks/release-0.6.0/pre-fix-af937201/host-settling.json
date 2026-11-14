@@ -1,0 +1,36 @@
+{
+  "candidateSha256": "af93720129ee5c9098ad3eb1d6e013b5af3088f4ea973f3469a27bceed01bc6c",
+  "settlingSeconds": 30,
+  "samples": [
+    {
+      "utc": "2026-11-14T18:32:23.9067356Z",
+      "cpuPercent": 9,
+      "freeMemoryMiB": 11815.0
+    },
+    {
+      "utc": "2026-11-14T18:32:29.5149449Z",
+      "cpuPercent": 7,
+      "freeMemoryMiB": 11840.0
+    },
+    {
+      "utc": "2026-11-14T18:32:35.0790794Z",
+      "cpuPercent": 6,
+      "freeMemoryMiB": 11765.0
+    },
+    {
+      "utc": "2026-11-14T18:32:40.6513655Z",
+      "cpuPercent": 0,
+      "freeMemoryMiB": 11800.0
+    },
+    {
+      "utc": "2026-11-14T18:32:46.2588583Z",
+      "cpuPercent": 16,
+      "freeMemoryMiB": 11768.0
+    },
+    {
+      "utc": "2026-11-14T18:32:51.8235403Z",
+      "cpuPercent": 1,
+      "freeMemoryMiB": 11770.0
+    }
+  ]
+}

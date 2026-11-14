@@ -1,0 +1,1 @@
+CHARSET="ANSI";AXIS-VERSION="2000";TITLE="A statistical table";CONTENTS="People";UNITS="persons";STUB="Country";HEADING="Year";VALUES("Year")="2022","2023","2024";VALUES("Country")="Sweden","Finland";CODES("Country")="SE","FI";DATA=1 2 ... "..." -6;

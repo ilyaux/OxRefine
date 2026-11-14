@@ -56,3 +56,16 @@ running unmodified mapping classes from OpenRefine/CommonsExtension v0.1.5
 the exact source revision and hashes. The extension sources are fetched only
 for regeneration and are not bundled with OxRefine. These synthetic cases check
 cell/reconciliation mapping, not live Wikimedia Commons responses.
+
+Wikitext parsing uses parse_wiki_text 0.1.5 by Fredrik Portström (copyright 2019),
+under the permissive license in that crate's LICENSE file:
+https://docs.rs/crate/parse_wiki_text/0.1.5/source/LICENSE
+The package checksum is recorded in Cargo.lock. Its parser is independent of
+OpenRefine's Java runtime; importer behavior is checked against OpenRefine fixtures.
+
+crates/ox-core/assets/marc8/ contains compact MARC-8 character mapping facts.
+The Library of Congress publishes the source mapping tables at
+https://www.loc.gov/marc/specifications/codetables.xml . The provenance records
+the source hash, reference artifact and the three supplementary Unicode
+corrections. No Marc4j implementation code is copied or adapted into OxRefine;
+the Java reference library is used only to generate compatibility fixtures.

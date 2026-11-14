@@ -1,0 +1,1000 @@
+{
+  "when": "2026-11-14T18:33:24.930Z",
+  "openrefine": "3.10.1",
+  "orMemory": "1400M",
+  "runs": 3,
+  "statistic": "median of each phase, median of per-run totals and median peak RSS",
+  "sizes": [
+    100000,
+    250000,
+    500000,
+    1000000,
+    2000000
+  ],
+  "complete": true,
+  "localMeasurement": true,
+  "memoryMetric": "PeakWorkingSet64",
+  "memoryUnit": "MiB",
+  "memoryScope": "process resident high-water mark; excludes parent Node and OS overhead",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMiB": 31866,
+    "node": "v24.19.0"
+  },
+  "oxBinary": {
+    "file": "ox.exe",
+    "sha256": "af93720129ee5c9098ad3eb1d6e013b5af3088f4ea973f3469a27bceed01bc6c"
+  },
+  "openrefineMainSha256": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+  "recipeSha256": "3a557b291666648df3141a5758b2be6b08448fb31e812f63e80fdeebb8456ddc",
+  "generatorSha256": "16239556509056f599f2c7cfa967b541140f176f6b13dddded7463d69030eb6b",
+  "jvm": {
+    "initialHeap": "256M",
+    "maxHeap": "1400M"
+  },
+  "results": [
+    {
+      "rows": 100000,
+      "mb": 8,
+      "inputSha256": "f66d5f5ee281f8bddece579431a9cfd7456959bd8c96053fa1ae9982aa353873",
+      "runs": [
+        {
+          "ox": {
+            "idle": 7,
+            "import": 65.01640000000003,
+            "rows": 100000,
+            "facet": 16.432800000000043,
+            "facetChoices": 8,
+            "cluster": 18.818399999999997,
+            "clusters": 8,
+            "recipe": 22.193700000000035,
+            "export": 37.67930000000001,
+            "peak": 24,
+            "total": 160.14060000000012,
+            "status": "completed",
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          "or": {
+            "idle": 286,
+            "import": 532.8642999999993,
+            "rows": 100000,
+            "facet": 187.52049999999963,
+            "facetChoices": 8,
+            "cluster": 419.1772999999994,
+            "clusters": 8,
+            "recipe": 1291.5999000000002,
+            "export": 264.9548999999988,
+            "peak": 447,
+            "total": 2696.1168999999973,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 100001,
+            "linesOR": 100001,
+            "cells": 800008,
+            "same": 800008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "or": {
+            "idle": 269,
+            "import": 337.95840000000135,
+            "rows": 100000,
+            "facet": 121.64040000000023,
+            "facetChoices": 8,
+            "cluster": 291.8613000000005,
+            "clusters": 8,
+            "recipe": 1063.6724999999988,
+            "export": 204.06870000000163,
+            "peak": 431,
+            "total": 2019.2013000000024,
+            "status": "completed"
+          },
+          "ox": {
+            "idle": 7,
+            "import": 59.99039999999877,
+            "rows": 100000,
+            "facet": 14.352600000001985,
+            "facetChoices": 8,
+            "cluster": 19.470699999998033,
+            "clusters": 8,
+            "recipe": 20.44499999999971,
+            "export": 29.371800000000803,
+            "peak": 24,
+            "total": 143.6304999999993,
+            "status": "completed",
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          "diff": {
+            "linesOx": 100001,
+            "linesOR": 100001,
+            "cells": 800008,
+            "same": 800008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "ox": {
+            "idle": 7,
+            "import": 71.43539999999848,
+            "rows": 100000,
+            "facet": 7.495999999999185,
+            "facetChoices": 8,
+            "cluster": 5.762700000002951,
+            "clusters": 8,
+            "recipe": 27.16690000000017,
+            "export": 39.88290000000052,
+            "peak": 24,
+            "total": 151.7439000000013,
+            "status": "completed",
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          "or": {
+            "idle": 267,
+            "import": 484.3493000000017,
+            "rows": 100000,
+            "facet": 108.84950000000026,
+            "facetChoices": 8,
+            "cluster": 288.23449999999866,
+            "clusters": 8,
+            "recipe": 887.1881999999969,
+            "export": 183.5635000000002,
+            "peak": 431,
+            "total": 1952.1849999999977,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 100001,
+            "linesOR": 100001,
+            "cells": 800008,
+            "same": 800008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        }
+      ],
+      "ox": {
+        "status": "completed",
+        "idle": 7,
+        "rows": 100000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 65.01640000000003,
+        "facet": 14.352600000001985,
+        "cluster": 18.818399999999997,
+        "recipe": 22.193700000000035,
+        "export": 37.67930000000001,
+        "total": 151.7439000000013,
+        "peak": 24
+      },
+      "or": {
+        "status": "completed",
+        "idle": 269,
+        "rows": 100000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 484.3493000000017,
+        "facet": 121.64040000000023,
+        "cluster": 291.8613000000005,
+        "recipe": 1063.6724999999988,
+        "export": 204.06870000000163,
+        "total": 2019.2013000000024,
+        "peak": 431
+      },
+      "diff": {
+        "linesOx": 100001,
+        "linesOR": 100001,
+        "cells": 800008,
+        "same": 800008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": [],
+        "equal": true
+      }
+    },
+    {
+      "rows": 250000,
+      "mb": 19,
+      "inputSha256": "9d0992ab9ed52891e45d837d312256061faa9f8dc5ad96842594532c86db30b6",
+      "runs": [
+        {
+          "ox": {
+            "idle": 7,
+            "import": 75.85940000000119,
+            "rows": 250000,
+            "facet": 3.421300000001793,
+            "facetChoices": 8,
+            "cluster": 18.936600000000908,
+            "clusters": 8,
+            "recipe": 19.815300000002026,
+            "export": 53.89429999999993,
+            "peak": 39,
+            "total": 171.92690000000584,
+            "status": "completed",
+            "output": {
+              "sha256": "211d7cb951ccf335ed561decd0ca5ef6ca089db18facb4ea6222baf176ee78f7",
+              "lines": 250001
+            }
+          },
+          "or": {
+            "idle": 264,
+            "import": 663.8929000000026,
+            "rows": 250000,
+            "facet": 203.33390000000145,
+            "facetChoices": 8,
+            "cluster": 627.4422999999988,
+            "clusters": 8,
+            "recipe": 2074.0615999999973,
+            "export": 310.0662000000011,
+            "peak": 743,
+            "total": 3878.796900000001,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 250001,
+            "linesOR": 250001,
+            "cells": 2000008,
+            "same": 2000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "or": {
+            "idle": 282,
+            "import": 679.6204999999973,
+            "rows": 250000,
+            "facet": 237.20509999999922,
+            "facetChoices": 8,
+            "cluster": 636.0573000000004,
+            "clusters": 8,
+            "recipe": 2067.5642000000007,
+            "export": 312.4172000000035,
+            "peak": 852,
+            "total": 3932.864300000001,
+            "status": "completed"
+          },
+          "ox": {
+            "idle": 7,
+            "import": 122.58250000000407,
+            "rows": 250000,
+            "facet": 2.9484000000011292,
+            "facetChoices": 8,
+            "cluster": 8.915399999998044,
+            "clusters": 8,
+            "recipe": 23.62630000000354,
+            "export": 64.8202999999994,
+            "peak": 40,
+            "total": 222.8929000000062,
+            "status": "completed",
+            "output": {
+              "sha256": "211d7cb951ccf335ed561decd0ca5ef6ca089db18facb4ea6222baf176ee78f7",
+              "lines": 250001
+            }
+          },
+          "diff": {
+            "linesOx": 250001,
+            "linesOR": 250001,
+            "cells": 2000008,
+            "same": 2000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "ox": {
+            "idle": 7,
+            "import": 70.30870000000141,
+            "rows": 250000,
+            "facet": 17.151300000004994,
+            "facetChoices": 8,
+            "cluster": 11.765999999995984,
+            "clusters": 8,
+            "recipe": 29.013599999998405,
+            "export": 61.93260000000009,
+            "peak": 39,
+            "total": 190.17220000000088,
+            "status": "completed",
+            "output": {
+              "sha256": "211d7cb951ccf335ed561decd0ca5ef6ca089db18facb4ea6222baf176ee78f7",
+              "lines": 250001
+            }
+          },
+          "or": {
+            "idle": 269,
+            "import": 551.652399999999,
+            "rows": 250000,
+            "facet": 203.9873000000007,
+            "facetChoices": 8,
+            "cluster": 551.858699999997,
+            "clusters": 8,
+            "recipe": 1980.2449000000051,
+            "export": 279.8660999999993,
+            "peak": 883,
+            "total": 3567.609400000001,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 250001,
+            "linesOR": 250001,
+            "cells": 2000008,
+            "same": 2000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        }
+      ],
+      "ox": {
+        "status": "completed",
+        "idle": 7,
+        "rows": 250000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 75.85940000000119,
+        "facet": 3.421300000001793,
+        "cluster": 11.765999999995984,
+        "recipe": 23.62630000000354,
+        "export": 61.93260000000009,
+        "total": 190.17220000000088,
+        "peak": 39
+      },
+      "or": {
+        "status": "completed",
+        "idle": 269,
+        "rows": 250000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 663.8929000000026,
+        "facet": 203.9873000000007,
+        "cluster": 627.4422999999988,
+        "recipe": 2067.5642000000007,
+        "export": 310.0662000000011,
+        "total": 3878.796900000001,
+        "peak": 852
+      },
+      "diff": {
+        "linesOx": 250001,
+        "linesOR": 250001,
+        "cells": 2000008,
+        "same": 2000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": [],
+        "equal": true
+      }
+    },
+    {
+      "rows": 500000,
+      "mb": 38,
+      "inputSha256": "4cd490546cfdd55ef1c1b59a853c20a9f5f480ad7317cb11b7bbc5bfa03197b3",
+      "runs": [
+        {
+          "ox": {
+            "idle": 7,
+            "import": 166.738400000002,
+            "rows": 500000,
+            "facet": 19.946300000003248,
+            "facetChoices": 8,
+            "cluster": 10.328200000003562,
+            "clusters": 8,
+            "recipe": 37.816899999997986,
+            "export": 121.07400000000052,
+            "peak": 64,
+            "total": 355.9038000000073,
+            "status": "completed",
+            "output": {
+              "sha256": "acbb7948b4d4292b70a945b22ac7fbb0a3f3460cf74e2b29582b22b9492576d0",
+              "lines": 500001
+            }
+          },
+          "or": {
+            "idle": 271,
+            "import": 905.3934000000008,
+            "rows": 500000,
+            "facet": 339.52790000000095,
+            "facetChoices": 8,
+            "cluster": 1245.0871000000043,
+            "clusters": 8,
+            "recipe": 4995.8802,
+            "export": 819.5537999999942,
+            "peak": 1003,
+            "total": 8305.4424,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 500001,
+            "linesOR": 500001,
+            "cells": 4000008,
+            "same": 4000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "or": {
+            "idle": 271,
+            "import": 1410.2461999999941,
+            "rows": 500000,
+            "facet": 348.5477000000101,
+            "facetChoices": 8,
+            "cluster": 1136.9213000000018,
+            "clusters": 8,
+            "recipe": 4701.604699999996,
+            "export": 779.460500000001,
+            "peak": 963,
+            "total": 8376.780400000003,
+            "status": "completed"
+          },
+          "ox": {
+            "idle": 7,
+            "import": 180.4377000000095,
+            "rows": 500000,
+            "facet": 6.292799999995623,
+            "facetChoices": 8,
+            "cluster": 8.81480000000738,
+            "clusters": 8,
+            "recipe": 37.5625,
+            "export": 107.48090000000957,
+            "peak": 65,
+            "total": 340.5887000000221,
+            "status": "completed",
+            "output": {
+              "sha256": "acbb7948b4d4292b70a945b22ac7fbb0a3f3460cf74e2b29582b22b9492576d0",
+              "lines": 500001
+            }
+          },
+          "diff": {
+            "linesOx": 500001,
+            "linesOR": 500001,
+            "cells": 4000008,
+            "same": 4000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "ox": {
+            "idle": 7,
+            "import": 167.05299999999988,
+            "rows": 500000,
+            "facet": 6.209800000011455,
+            "facetChoices": 8,
+            "cluster": 6.124200000005658,
+            "clusters": 8,
+            "recipe": 40.873400000011316,
+            "export": 105.54910000000382,
+            "peak": 64,
+            "total": 325.80950000003213,
+            "status": "completed",
+            "output": {
+              "sha256": "acbb7948b4d4292b70a945b22ac7fbb0a3f3460cf74e2b29582b22b9492576d0",
+              "lines": 500001
+            }
+          },
+          "or": {
+            "idle": 255,
+            "import": 1354.5025000000023,
+            "rows": 500000,
+            "facet": 389.0994000000064,
+            "facetChoices": 8,
+            "cluster": 1116.7578000000067,
+            "clusters": 8,
+            "recipe": 4750.595199999996,
+            "export": 765.6909000000014,
+            "peak": 1241,
+            "total": 8376.645800000013,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 500001,
+            "linesOR": 500001,
+            "cells": 4000008,
+            "same": 4000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        }
+      ],
+      "ox": {
+        "status": "completed",
+        "idle": 7,
+        "rows": 500000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 167.05299999999988,
+        "facet": 6.292799999995623,
+        "cluster": 8.81480000000738,
+        "recipe": 37.816899999997986,
+        "export": 107.48090000000957,
+        "total": 340.5887000000221,
+        "peak": 64
+      },
+      "or": {
+        "status": "completed",
+        "idle": 271,
+        "rows": 500000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 1354.5025000000023,
+        "facet": 348.5477000000101,
+        "cluster": 1136.9213000000018,
+        "recipe": 4750.595199999996,
+        "export": 779.460500000001,
+        "total": 8376.645800000013,
+        "peak": 1003
+      },
+      "diff": {
+        "linesOx": 500001,
+        "linesOR": 500001,
+        "cells": 4000008,
+        "same": 4000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": [],
+        "equal": true
+      }
+    },
+    {
+      "rows": 1000000,
+      "mb": 76,
+      "inputSha256": "b47a15434abb4c6e8b9964d76eefd2f34d107e81d62bf33678db2a6e617409b7",
+      "runs": [
+        {
+          "ox": {
+            "idle": 7,
+            "import": 340.3509000000049,
+            "rows": 1000000,
+            "facet": 14.442999999999302,
+            "facetChoices": 8,
+            "cluster": 25.270099999994272,
+            "clusters": 8,
+            "recipe": 67.44700000000012,
+            "export": 190.86170000000857,
+            "peak": 116,
+            "total": 638.3727000000072,
+            "status": "completed",
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          "or": {
+            "idle": 270,
+            "import": 2163.0804999999964,
+            "rows": 1000000,
+            "facet": 626.7111000000004,
+            "facetChoices": 8,
+            "cluster": 2088.5014999999985,
+            "clusters": 8,
+            "recipe": 8511.889800000004,
+            "export": 1632.4158999999927,
+            "peak": 1411,
+            "total": 15022.598799999992,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 1000001,
+            "linesOR": 1000001,
+            "cells": 8000008,
+            "same": 8000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "or": {
+            "idle": 269,
+            "import": 1597.113000000012,
+            "rows": 1000000,
+            "facet": 532.4245999999985,
+            "facetChoices": 8,
+            "cluster": 1487.3783000000112,
+            "clusters": 8,
+            "recipe": 7435.250500000024,
+            "export": 1192.7656000000134,
+            "peak": 1433,
+            "total": 12244.932000000059,
+            "status": "completed"
+          },
+          "ox": {
+            "idle": 7,
+            "import": 399.49830000000657,
+            "rows": 1000000,
+            "facet": 15.548500000004424,
+            "facetChoices": 8,
+            "cluster": 20.166700000001583,
+            "clusters": 8,
+            "recipe": 64.2323000000033,
+            "export": 222.77370000001974,
+            "peak": 116,
+            "total": 722.2195000000356,
+            "status": "completed",
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          "diff": {
+            "linesOx": 1000001,
+            "linesOR": 1000001,
+            "cells": 8000008,
+            "same": 8000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        },
+        {
+          "ox": {
+            "idle": 7,
+            "import": 307.15730000002077,
+            "rows": 1000000,
+            "facet": 5.784000000014203,
+            "facetChoices": 8,
+            "cluster": 7.831500000000233,
+            "clusters": 8,
+            "recipe": 58.085599999991246,
+            "export": 195.51190000001225,
+            "peak": 116,
+            "total": 574.3703000000387,
+            "status": "completed",
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          "or": {
+            "idle": 262,
+            "import": 1921.357799999998,
+            "rows": 1000000,
+            "facet": 499.21199999999953,
+            "facetChoices": 8,
+            "cluster": 1505.2080000000133,
+            "clusters": 8,
+            "recipe": 7234.681500000006,
+            "export": 1053.3445000000065,
+            "peak": 1466,
+            "total": 12213.803800000023,
+            "status": "completed"
+          },
+          "diff": {
+            "linesOx": 1000001,
+            "linesOR": 1000001,
+            "cells": 8000008,
+            "same": 8000008,
+            "perCol": {
+              "id": 0,
+              "name": 0,
+              "city": 0,
+              "city_key": 0,
+              "country": 0,
+              "email": 0,
+              "amount": 0,
+              "signup": 0
+            },
+            "samples": [],
+            "equal": true
+          }
+        }
+      ],
+      "ox": {
+        "status": "completed",
+        "idle": 7,
+        "rows": 1000000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 340.3509000000049,
+        "facet": 14.442999999999302,
+        "cluster": 20.166700000001583,
+        "recipe": 64.2323000000033,
+        "export": 195.51190000001225,
+        "total": 638.3727000000072,
+        "peak": 116
+      },
+      "or": {
+        "status": "completed",
+        "idle": 269,
+        "rows": 1000000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 1921.357799999998,
+        "facet": 532.4245999999985,
+        "cluster": 1505.2080000000133,
+        "recipe": 7435.250500000024,
+        "export": 1192.7656000000134,
+        "total": 12244.932000000059,
+        "peak": 1433
+      },
+      "diff": {
+        "linesOx": 1000001,
+        "linesOR": 1000001,
+        "cells": 8000008,
+        "same": 8000008,
+        "perCol": {
+          "id": 0,
+          "name": 0,
+          "city": 0,
+          "city_key": 0,
+          "country": 0,
+          "email": 0,
+          "amount": 0,
+          "signup": 0
+        },
+        "samples": [],
+        "equal": true
+      }
+    },
+    {
+      "rows": 2000000,
+      "mb": 154,
+      "inputSha256": "ca6a93a41e5c4ee8e194b84accb88d672bde67eae5720a5b2289560913f818a7",
+      "runs": [
+        {
+          "ox": {
+            "idle": 7,
+            "import": 692.0074999999779,
+            "rows": 2000000,
+            "facet": 11.283699999999953,
+            "facetChoices": 8,
+            "cluster": 10.57070000001113,
+            "clusters": 8,
+            "recipe": 93.07600000000093,
+            "export": 406.9033000000054,
+            "peak": 220,
+            "total": 1213.8411999999953,
+            "status": "completed",
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          "or": {
+            "idle": 268,
+            "import": 3353.8754999999946,
+            "rows": 2000000,
+            "facet": 1802.0031000000017,
+            "facetChoices": 8,
+            "cluster": 8176.996499999979,
+            "clusters": 8,
+            "peak": 1662,
+            "status": "out-of-memory",
+            "error": "OpenRefine reported a Java heap allocation failure"
+          }
+        },
+        {
+          "or": {
+            "idle": 265,
+            "import": 3786.5792000000074,
+            "rows": 2000000,
+            "facet": 2593.2967000000062,
+            "facetChoices": 8,
+            "cluster": 8052.453000000009,
+            "clusters": 8,
+            "peak": 1662,
+            "status": "out-of-memory",
+            "error": "OpenRefine reported a Java heap allocation failure"
+          },
+          "ox": {
+            "idle": 7,
+            "import": 683.2508999999845,
+            "rows": 2000000,
+            "facet": 13.99710000003688,
+            "facetChoices": 8,
+            "cluster": 16.981299999984913,
+            "clusters": 8,
+            "recipe": 99.34360000002198,
+            "export": 406.44759999995586,
+            "peak": 220,
+            "total": 1220.0204999999842,
+            "status": "completed",
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          }
+        },
+        {
+          "ox": {
+            "idle": 7,
+            "import": 683.5175999999628,
+            "rows": 2000000,
+            "facet": 24.557499999995343,
+            "facetChoices": 8,
+            "cluster": 16.29979999997886,
+            "clusters": 8,
+            "recipe": 93.41629999998258,
+            "export": 384.0901999999769,
+            "peak": 220,
+            "total": 1201.8813999998965,
+            "status": "completed",
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          "or": {
+            "idle": 273,
+            "import": 3999.3387999999686,
+            "rows": 2000000,
+            "facet": 2833.1543999999994,
+            "facetChoices": 8,
+            "cluster": 7890.122499999998,
+            "clusters": 8,
+            "peak": 1675,
+            "status": "out-of-memory",
+            "error": "OpenRefine reported a Java heap allocation failure"
+          }
+        }
+      ],
+      "ox": {
+        "status": "completed",
+        "idle": 7,
+        "rows": 2000000,
+        "facetChoices": 8,
+        "clusters": 8,
+        "import": 683.5175999999628,
+        "facet": 13.99710000003688,
+        "cluster": 16.29979999997886,
+        "recipe": 93.41629999998258,
+        "export": 406.44759999995586,
+        "total": 1213.8411999999953,
+        "peak": 220
+      },
+      "or": {
+        "status": "out-of-memory",
+        "error": "OpenRefine reported a Java heap allocation failure"
+      }
+    }
+  ],
+  "verifiedComparisons": 12,
+  "integrityValid": true,
+  "valid": true
+}

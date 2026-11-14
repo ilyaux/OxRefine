@@ -1,0 +1,40 @@
+{
+  "reference": "OpenRefine 3.10.1 bundled database extension",
+  "generated": "2026-11-14",
+  "generator": "node tests/database/reference-gen.mjs",
+  "configuration": "OXREFINE_DATABASE_TEST_CONFIG names an ignored local JSON file containing synthetic test connections; credentials are never fixture content",
+  "timeZone": "UTC",
+  "postgres": {
+    "engine": "PostgreSQL 17.9 x64 Windows",
+    "provisioning": "Existing installed binaries; isolated initdb cluster, loopback listener, no Windows service",
+    "source": "reference-postgres.sql",
+    "driver": "OpenRefine bundled postgresql-42.7.8.jar"
+  },
+  "mariadb": {
+    "engine": "MariaDB 11.4.13 x64 Windows",
+    "provisioning": "Portable ZIP, isolated data directory, loopback listener, no installer or service",
+    "archive": "https://archive.mariadb.org/mariadb-11.4.13/winx64-packages/mariadb-11.4.13-winx64.zip",
+    "sha256": "d62986d433eeebfde218560b276103831604a61e929e87f1a17f5aebd80257e2",
+    "verifiedAgainst": "https://archive.mariadb.org/mariadb-11.4.13/winx64-packages/sha256sums.txt",
+    "source": "reference-mysql-family.sql",
+    "driver": "OpenRefine bundled mariadb-java-client-3.5.6.jar"
+  },
+  "mysql": {
+    "engine": "MySQL 8.4.13 x64 Windows",
+    "provisioning": "Portable ZIP, isolated data directory, loopback listener, no installer or service",
+    "archive": "https://cdn.mysql.com/Downloads/MySQL-8.4/mysql-8.4.13-winx64.zip",
+    "sha256": "e9cd98b1d23f122987b1afca26ad942efec5891481103d48ae3cde237fa3ea54",
+    "publishedMd5": "7b94489d5524dea9b27097068bea25a8",
+    "verifiedAgainst": "https://dev.mysql.com/downloads/mysql/8.4.html?os=3",
+    "executableSignature": "Valid Authenticode signature: Oracle America, Inc.",
+    "source": "reference-mysql-family.sql",
+    "driver": "OpenRefine bundled mysql-connector-j-8.2.0.jar"
+  },
+  "notes": [
+    "All inputs are synthetic and redistributable; no user database was connected or changed.",
+    "Reference JSON retains signed 64-bit numeric literals exactly using JSON.rawJSON; consumers must avoid parsing them through IEEE-754 Number.",
+    "OpenRefine converts SQL NULL and empty text to null with its default storeBlankCellsAsNulls=true, and to empty strings with the option false.",
+    "Duplicate SELECT labels are disambiguated by the PostgreSQL extension but rejected by the wrapped MySQL/MariaDB query used by OpenRefine.",
+    "The MySQL/MariaDB extension decodes BLOB data to text and can replace invalid UTF-8; this is observed reference behavior, not a data-preservation recommendation."
+  ]
+}

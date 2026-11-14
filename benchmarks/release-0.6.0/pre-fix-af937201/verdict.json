@@ -1,0 +1,118 @@
+{
+  "schema": "oxrefine-release-benchmark-verdict-v1",
+  "archivedAt": "2026-11-14T18:52:08.492Z",
+  "status": "pre-fix candidate rejected by performance gate",
+  "candidate": {
+    "sha256": "af93720129ee5c9098ad3eb1d6e013b5af3088f4ea973f3469a27bceed01bc6c",
+    "preservedBinary": "target/benchmark-candidate-v0.6.0/pre-fix-af937201/ox.exe"
+  },
+  "baseline": "../baseline.json",
+  "measurements": [
+    {
+      "file": "openrefine-1400M.json",
+      "sha256": "7a93331da1700a78209d2a2807afc5ee2a31681230630e7c75fb6015d3ec61e3",
+      "actualExitCode": 0,
+      "verdict": "completed and validated"
+    },
+    {
+      "file": "people-regression.json",
+      "sha256": "20560987ceb2285dc0e58b70a518dc56bcfba6845da98314b86973c2d09631ff",
+      "actualExitCode": 1,
+      "verdict": "performance gate failed; correctness assertions passed",
+      "gateFailures": [
+        {
+          "mode": "people",
+          "rows": 1000000,
+          "phase": "recipe",
+          "base": 20.328199999999924,
+          "new": 56.23239999999896,
+          "threshold": 41.4266599999999,
+          "unit": "ms"
+        },
+        {
+          "mode": "people",
+          "rows": 2000000,
+          "phase": "recipe",
+          "base": 32.573099999997794,
+          "new": 96.33499999999913,
+          "threshold": 57.34502999999713,
+          "unit": "ms"
+        }
+      ]
+    },
+    {
+      "file": "cardinality-regression.json",
+      "sha256": "3d68081f4b2d5d230ba025715417a417e45310b798a2dda50aa30eb21931edde",
+      "actualExitCode": 1,
+      "verdict": "performance gate failed; correctness assertions passed",
+      "gateFailures": [
+        {
+          "mode": "low",
+          "rows": 100000,
+          "phase": "history",
+          "base": 17.533699999999953,
+          "new": 44.11389999999665,
+          "threshold": 37.79380999999994,
+          "unit": "ms"
+        }
+      ]
+    },
+    {
+      "file": "database.json",
+      "sha256": "74cf55c297e610969650286ddcb16de5565855a2fa294e1b1fbe8e556fc2a921",
+      "actualExitCode": 0,
+      "verdict": "completed and validated"
+    }
+  ],
+  "hostSettling": {
+    "file": "host-settling.json",
+    "sha256": "97e9664fc533e5348e44d594e1d1fea61cfb8200a456a8879f94024f26dd48c2"
+  },
+  "derivedHtml": {
+    "file": "report.html",
+    "sha256": "9247187f485fa632ece614157f89a28f51df6667248744392f37fc268d0cac8e"
+  },
+  "harnessSnapshots": [
+    {
+      "file": "harness/cardinality.mjs",
+      "sha256": "01dd6bce6b350187e502c3e3ed547b8f7cb0179eb00a883a5ed961cd451f123b"
+    },
+    {
+      "file": "harness/check.mjs",
+      "sha256": "9a2549ad734a0c4d13d579b022af847ae58b1d01e4773c00ba095c2d46aff019"
+    },
+    {
+      "file": "harness/compare.mjs",
+      "sha256": "4085f73d2e64c4fa52f140d9a0536632f12e2dbf85e877c1091d1d5ab6b365b5"
+    },
+    {
+      "file": "harness/database-fixture.py",
+      "sha256": "dd2716a5d89b9c9a7ca20a677c2e0a1548d3133f7d26ae24f009d849796f2a0e"
+    },
+    {
+      "file": "harness/database.mjs",
+      "sha256": "81c8312d8c5ac5d83fed8d6840f11ff9aefa950648738f9cc2185b0b992d698f"
+    },
+    {
+      "file": "harness/gen.mjs",
+      "sha256": "16239556509056f599f2c7cfa967b541140f176f6b13dddded7463d69030eb6b"
+    },
+    {
+      "file": "harness/ox.mjs",
+      "sha256": "4b41183366183c9b2ee2ecffb5ffff010d6cc0a4d9a450d97bf564a1cadba283"
+    },
+    {
+      "file": "harness/recipe.json",
+      "sha256": "3a557b291666648df3141a5758b2be6b08448fb31e812f63e80fdeebb8456ddc"
+    }
+  ],
+  "caveats": [
+    "Raw JSON and host-settling files were moved unchanged; all recorded numbers and repetitions are retained.",
+    "People and cardinality check.mjs JSON uses correctness assertions and actual process exit codes rather than complete/valid fields.",
+    "Cardinality reopen and database reopen measured close/open in one live server. Candidate WebSession cache retained the loaded project; these are warm-cache selection timings, not process restart, disk read or history replay.",
+    "Completed OpenRefine comparisons cover 100k through 1M rows. All three 2M OpenRefine attempts report explicit JVM allocation failure at fixed 1400M heap; no 2M OpenRefine output equivalence or speed ratio is established.",
+    "Default row-code storage was used for these timing runs. The separate 50M row-code-spill proof is another workload.",
+    "Harness snapshots record source provenance; restore their original benchmarks/ paths when reproducing relative imports and installation paths.",
+    "Fresh candidate and true process-restart protocol must be measured again before final README/SVG publication."
+  ]
+}

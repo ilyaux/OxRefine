@@ -6,6 +6,7 @@ use crate::{
     err, jobs,
     grel::{funcs::parse_number, value::from_json, Value},
     table::{Column, Interner, Table},
+    spill::{CodeBudget, CodeBuilder},
     Result,
 };
 use serde::{Deserialize, Serialize};
@@ -13,6 +14,12 @@ use std::{collections::HashSet, fs::File, io::Read, path::Path, sync::Arc};
 #[path = "json_paths.rs"]
 mod json_paths;
 pub use json_paths::json_paths;
+#[path = "import_pcaxis.rs"]
+mod pcaxis;
+#[path = "import_marc.rs"]
+mod marc;
+#[path = "import_wikitext.rs"]
+mod wikitext;
 
 /// OpenRefine's importer options (same JSON names), with its defaults.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -28,6 +35,7 @@ pub struct ImportOptions {
     pub limit: i64,
     pub store_blank_rows: bool,
     pub store_blank_cells_as_nulls: bool,
+    pub store_blank_columns: bool,
     pub guess_cell_value_types: bool,
     pub process_quotes: bool,
     pub quote_character: String,
@@ -49,6 +57,15 @@ pub struct ImportOptions {
     pub include_archive_file_name: bool,
     /// Archives and folders: the files to import, by name; empty picks them as OpenRefine does.
     pub files: Vec<String>,
+    /// Wikitext: blank the additional cells covered by a row/column span.
+    pub blank_spanning_cells: bool,
+    pub include_raw_templates: bool,
+    pub parse_references: bool,
+    /// Empty/absent leaves wiki links as text; a selected wiki can resolve them to Wikidata.
+    pub wiki_url: Option<String>,
+    pub recon_service: Option<String>,
+    /// OxRefine table selection; empty imports every wikitext table, as OpenRefine does.
+    pub table_indexes: Vec<usize>,
 }
 
 impl Default for ImportOptions {
@@ -62,6 +79,7 @@ impl Default for ImportOptions {
             limit: -1,
             store_blank_rows: true,
             store_blank_cells_as_nulls: true,
+            store_blank_columns: true,
             guess_cell_value_types: false,
             process_quotes: true,
             quote_character: "\"".into(),
@@ -75,6 +93,12 @@ impl Default for ImportOptions {
             include_file_sources: false,
             include_archive_file_name: false,
             files: vec![],
+            blank_spanning_cells: true,
+            include_raw_templates: false,
+            parse_references: true,
+            wiki_url: None,
+            recon_service: None,
+            table_indexes: vec![],
         }
     }
 }
@@ -104,6 +128,9 @@ pub enum Format {
     Json,
     JsonLines,
     Xml,
+    PcAxis,
+    Wikitext,
+    Marc,
     #[serde(rename = "fixed-width")]
     FixedWidth,
 }
@@ -118,6 +145,9 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "text/json" | "json" => return Format::Json,
         "jsonl" | "jsonlines" => return Format::JsonLines,
         "text/xml" | "xml" => return Format::Xml,
+        "text/line-based/pc-axis" | "pcaxis" | "pc-axis" => return Format::PcAxis,
+        "text/wiki" | "wikitext" | "wiki" => return Format::Wikitext,
+        "text/marc" | "marc" | "mrc" => return Format::Marc,
         "text/line-based/fixed-width" | "fixed-width" => return Format::FixedWidth,
         _ => {}
     }
@@ -128,6 +158,9 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "json" => Format::Json,
         "jsonl" | "ndjson" => Format::JsonLines,
         "xml" | "rss" | "atom" | "kml" | "gpx" => Format::Xml,
+        "px" => Format::PcAxis,
+        "wiki" | "wikitext" => Format::Wikitext,
+        "mrc" | "marc" => Format::Marc,
         _ => Format::Csv,
     }
 }
@@ -149,9 +182,9 @@ pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Ta
     let f = format.map(|_| format_for(path, format));
     let tables = picked
         .into_iter()
-        .map(|(name, p)| Ok(with_sources(import_file(p, f.unwrap_or(if u.several() { best } else { format_for(p, None) }), o)?, name, u.archive.as_deref(), o)))
+        .map(|(name, p)| with_sources(import_file(p, f.unwrap_or(if u.several() { best } else { format_for(p, None) }), o)?, name, u.archive.as_deref(), o))
         .collect::<Result<Vec<_>>>()?;
-    Ok(concat_by_name(tables))
+    concat_by_name(tables)
 }
 
 fn import_file(path: &Path, f: Format, o: &ImportOptions) -> Result<Table> {
@@ -162,6 +195,17 @@ fn import_file(path: &Path, f: Format, o: &ImportOptions) -> Result<Table> {
         Format::Excel | Format::Ods => import_sheets(path, o),
         Format::Json | Format::JsonLines => import_json(path, f == Format::JsonLines, o),
         Format::Xml => import_xml(path, o),
+        Format::PcAxis => pcaxis::read(path, o),
+        Format::Wikitext => wikitext::read(path, o),
+        Format::Marc => {
+            let xml = marc::xml(path, o)?;
+            let mut options = o.clone();
+            if options.limit == 0 { options.limit = -1; }
+            if options.record_path == ImportOptions::default().record_path {
+                options.record_path = vec!["marc:collection".into(), "marc:record".into()];
+            }
+            import_xml_text(&xml, &options)
+        },
     }
 }
 
@@ -196,24 +240,29 @@ fn pick<'u>(u: &'u crate::unpack::Unpacked, o: &ImportOptions) -> Result<(Vec<(&
 }
 
 /// OpenRefine's "Archive" and "File" columns, in front.
-fn with_sources(t: Table, file: &str, archive: Option<&str>, o: &ImportOptions) -> Table {
+fn with_sources(t: Table, file: &str, archive: Option<&str>, o: &ImportOptions) -> Result<Table> {
     let mut names = vec![];
     let mut cols = vec![];
-    let constant = |v: &str| Column { dict: vec![Value::Str(v.into())], codes: vec![0; t.rows].into(), recon: None };
+    let budget = crate::storage::current_budget();
+    let constant = |v: &str| -> Result<Column> {
+        let mut codes = CodeBuilder::new(budget.clone());
+        codes.extend_repeated(0, t.rows)?;
+        Ok(Column { dict: vec![Value::Str(v.into())], codes: codes.finish()?, recon: None })
+    };
     if let (true, Some(a)) = (o.include_archive_file_name, archive) {
         names.push("Archive".to_string());
-        cols.push(constant(a));
+        cols.push(constant(a)?);
     }
     if o.include_file_sources {
         names.push("File".to_string());
-        cols.push(constant(file));
+        cols.push(constant(file)?);
     }
     if names.is_empty() {
-        return t;
+        return Ok(t);
     }
     names.extend(t.names.iter().cloned());
-    cols.extend(t.columns.iter().map(|c| Column { dict: c.dict.clone(), codes: c.codes.clone(), recon: None }));
-    Table::new(names, cols, t.rows)
+    cols.extend(t.columns.iter().map(|c| Column { dict: c.dict.clone(), codes: c.codes.clone(), recon: c.recon.clone() }));
+    Ok(Table::new(names, cols, t.rows))
 }
 
 /// What the import wizard needs before options are chosen: the guessed format and OpenRefine's
@@ -290,16 +339,34 @@ fn inspect_file(path: &Path) -> Result<serde_json::Value> {
             options
         },
         // OpenRefine leaves the record element to the user; OxRefine suggests the first repeated one
-        Format::Xml => {
-            let paths = xml_paths(&parse_xml(&decode(path, encoding)?)?);
-            let guess = paths.iter().find(|(_, n)| *n > 1).or(paths.first()).map(|(p, _)| p.clone()).unwrap_or_default();
+        Format::Xml | Format::Marc => {
+            let text = if f == Format::Marc { marc::xml(path, &ImportOptions::default())? } else { decode(path, encoding)? };
+            let paths = xml_paths(&parse_xml(&text)?);
+            let guess = if f == Format::Marc { vec!["marc:collection".into(), "marc:record".into()] }
+                else { paths.iter().find(|(_, n)| *n > 1).or(paths.first()).map(|(p, _)| p.clone()).unwrap_or_default() };
             out["elements"] = json!(paths.iter().take(500).map(|(p, n)| json!({ "path": p, "count": n })).collect::<Vec<_>>());
-            json!({ "recordPath": guess, "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true })
+            json!({ "recordPath": guess, "limit": -1, "encoding": if f == Format::Marc { "" } else { encoding }, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true })
         }
         Format::FixedWidth => merge(json!({ "headerLines": 0, "columnWidths": [], "encoding": encoding, "guessCellValueTypes": false })),
+        Format::PcAxis => json!({ "encoding": encoding, "skipDataLines": 0, "limit": -1 }),
+        Format::Wikitext => {
+            let meta = wikitext::inspect(path, &ImportOptions { encoding: encoding.into(), ..Default::default() })?;
+            out["tables"] = meta["tables"].clone();
+            out["wikiBaseUrl"] = meta["wikiBaseUrl"].clone();
+            let mut options = merge(json!({ "encoding": encoding, "storeBlankColumns": true, "tableIndexes": [] }));
+            options.as_object_mut().unwrap().extend(meta["options"].as_object().unwrap().clone());
+            options
+        },
     };
     out["format"] = json!(f);
     Ok(out)
+}
+
+/// Table choices for the first selected source, without resolving links or creating a project.
+pub fn wikitext_tables(path: &Path, o: &ImportOptions) -> Result<serde_json::Value> {
+    let unpacked = crate::unpack::unpack(path)?;
+    let (picked, _) = pick(&unpacked, o)?;
+    wikitext::inspect(picked.first().ok_or("no files to inspect")?.1, o)
 }
 
 /// Where pasted text and downloads wait for the import wizard: next to the store's `projects`
@@ -363,6 +430,7 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
         "application/vnd.ms-excel" => ".xls",
         "application/vnd.oasis.opendocument.spreadsheet" => ".ods",
         "text/xml" | "application/xml" | "application/rss+xml" | "application/atom+xml" => ".xml",
+        "application/marc" => ".mrc",
         "application/zip" | "application/x-zip-compressed" => ".zip",
         "application/gzip" | "application/x-gzip" => ".gz",
         "application/x-bzip2" | "application/x-bzip" => ".bz2",
@@ -387,8 +455,10 @@ struct Builder<'o> {
     o: &'o ImportOptions,
     line: usize,
     header: Vec<Vec<String>>,
-    cols: Vec<(Interner, Vec<u32>)>,
+    cols: Vec<(Interner, CodeBuilder)>,
     rows: usize,
+    budget: CodeBudget,
+    error: Option<String>,
 }
 
 enum Field<'a> {
@@ -398,11 +468,19 @@ enum Field<'a> {
 
 impl<'o> Builder<'o> {
     fn new(o: &'o ImportOptions) -> Self {
-        Builder { o, line: 0, header: vec![], cols: vec![], rows: 0 }
+        Builder { o, line: 0, header: vec![], cols: vec![], rows: 0, budget: crate::storage::current_budget(), error: None }
     }
 
     /// Returns false once the row limit is reached.
     fn push<'a>(&mut self, fields: impl Iterator<Item = Field<'a>>) -> bool {
+        if self.error.is_some() { return false; }
+        match self.try_push(fields) {
+            Ok(go) => go,
+            Err(error) => { self.error = Some(error); false }
+        }
+    }
+
+    fn try_push<'a>(&mut self, fields: impl Iterator<Item = Field<'a>>) -> Result<bool> {
         let mut fields: Vec<Field> = fields.collect();
         if self.line == 0 {
             if let Some(Field::Text(s)) = fields.first_mut() {
@@ -419,77 +497,91 @@ impl<'o> Builder<'o> {
                     Field::Val(v) => v.display(),
                 }).collect());
             }
-            return true;
+            return Ok(true);
         }
         if self.o.limit >= 0 && self.rows as i64 >= self.o.limit {
-            return false;
+            return Ok(false);
         }
         if !self.o.store_blank_rows && fields.iter().all(|f| match f {
             Field::Text(s) => s.trim().is_empty(),
             Field::Val(v) => v.is_blank(),
         }) {
-            return true;
+            return Ok(true);
         }
         let n = fields.len();
         for (c, f) in fields.into_iter().enumerate() {
             if c == self.cols.len() {
-                let mut b = Interner::default();
-                let null = b.intern(Value::Null);
-                self.cols.push((b, vec![null; self.rows]));
+                self.add_column()?;
             }
             let (b, codes) = &mut self.cols[c];
-            codes.push(code(self.o, b, f));
+            codes.push(code(self.o, b, f))?;
         }
-        self.pad(n);
-        true
+        self.pad(n)?;
+        Ok(true)
     }
 
     /// Fast path for a parsed CSV record in the data phase: no per-row allocation.
     fn push_bytes(&mut self, rec: &csv::ByteRecord) -> bool {
+        if self.error.is_some() { return false; }
+        match self.try_push_bytes(rec) {
+            Ok(go) => go,
+            Err(error) => { self.error = Some(error); false }
+        }
+    }
+
+    fn try_push_bytes(&mut self, rec: &csv::ByteRecord) -> Result<bool> {
         let first_data = (self.o.ignore_lines.max(0) + self.o.header_lines.max(0) + self.o.skip_data_lines.max(0)) as usize;
         if self.line < first_data || self.line == 0 || !self.o.store_blank_rows {
             let fields: Vec<std::borrow::Cow<str>> = rec.iter().map(String::from_utf8_lossy).collect();
-            return self.push(fields.iter().map(|s| Field::Text(s)));
+            return self.try_push(fields.iter().map(|s| Field::Text(s)));
         }
         if self.o.limit >= 0 && self.rows as i64 >= self.o.limit {
-            return false;
+            return Ok(false);
         }
         self.line += 1;
         for (c, f) in rec.iter().enumerate() {
             if c == self.cols.len() {
-                let mut b = Interner::default();
-                let null = b.intern(Value::Null);
-                self.cols.push((b, vec![null; self.rows]));
+                self.add_column()?;
             }
             let (b, codes) = &mut self.cols[c];
-            codes.push(code(self.o, b, Field::Text(&String::from_utf8_lossy(f))));
+            codes.push(code(self.o, b, Field::Text(&String::from_utf8_lossy(f))))?;
         }
-        self.pad(rec.len());
-        true
+        self.pad(rec.len())?;
+        Ok(true)
+    }
+
+    fn add_column(&mut self) -> Result<()> {
+        let mut dict = Interner::default();
+        let null = dict.intern(Value::Null);
+        let mut codes = CodeBuilder::new(self.budget.clone());
+        codes.extend_repeated(null, self.rows)?;
+        self.cols.push((dict, codes));
+        Ok(())
     }
 
     /// Fill the columns a short row didn't reach, then count the row.
-    fn pad(&mut self, n: usize) {
+    fn pad(&mut self, n: usize) -> Result<()> {
         let from = n.min(self.cols.len());
         for (b, codes) in &mut self.cols[from..] {
-            codes.push(b.intern(Value::Null));
+            codes.push(b.intern(Value::Null))?;
         }
         self.rows += 1;
+        Ok(())
     }
 
-    fn finish(mut self) -> Table {
+    fn finish(mut self) -> Result<Table> {
+        if let Some(error) = self.error.take() { return Err(error); }
         let width = self.cols.len().max(self.header.iter().map(Vec::len).max().unwrap_or(0));
         while self.cols.len() < width {
-            let mut b = Interner::default();
-            let null = b.intern(Value::Null);
-            self.cols.push((b, vec![null; self.rows]));
+            self.add_column()?;
         }
         let names: Vec<String> = (0..width)
             .map(|c| self.header.iter().filter_map(|h| h.get(c)).filter(|s| !s.is_empty()).cloned().collect::<Vec<_>>().join(" "))
             .collect();
         let named = self.header.iter().map(Vec::len).max().unwrap_or(0);
         let rows = self.rows;
-        Table::new(column_names(names, named), self.cols.into_iter().map(|(b, codes)| Column { dict: b.finish(), codes: codes.into(), recon: None }).collect(), rows)
+        let columns = self.cols.into_iter().map(|(b, codes)| Ok(Column { dict: b.finish(), codes: codes.finish()?, recon: None })).collect::<Result<_>>()?;
+        Ok(Table::new(column_names(names, named), columns, rows))
     }
 }
 
@@ -590,7 +682,7 @@ fn import_lines(path: &Path, o: &ImportOptions) -> Result<Table> {
             break;
         }
     }
-    Ok(b.finish())
+    b.finish()
 }
 
 /// OpenRefine's fixed-width importer: each line cut at the column widths (in characters, cells kept
@@ -616,7 +708,7 @@ fn import_fixed(path: &Path, o: &ImportOptions) -> Result<Table> {
             break;
         }
     }
-    Ok(b.finish())
+    b.finish()
 }
 
 /// A bounded, decoded source sample for the fixed-width ruler. Widths use the importer's Unicode
@@ -811,19 +903,20 @@ impl Batch {
 /// `rec` already holds the first data record.
 fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut csv::ByteRecord) -> Result<()> {
     let workers = std::thread::available_parallelism().map_or(4, |n| n.get()).clamp(1, 16);
-    let mut owned: Vec<Vec<(usize, Interner, Vec<u32>)>> = (0..workers).map(|_| vec![]).collect();
+    let mut owned: Vec<Vec<(usize, Interner, CodeBuilder)>> = (0..workers).map(|_| vec![]).collect();
     for (c, (i, codes)) in std::mem::take(&mut b.cols).into_iter().enumerate() {
         owned[c % workers].push((c, i, codes));
     }
     let (o, start) = (b.o, b.rows);
     let mut sent = 0usize;
-    let result = std::thread::scope(|s| -> Result<Vec<Vec<(usize, Interner, Vec<u32>)>>> {
+    let result = std::thread::scope(|s| -> Result<Vec<Vec<(usize, Interner, CodeBuilder)>>> {
         let mut txs = vec![];
         let mut handles = vec![];
         for (w, mut cols) in owned.into_iter().enumerate() {
             let (tx, rx) = std::sync::mpsc::sync_channel::<Arc<Batch>>(4);
             txs.push(tx);
-            handles.push(s.spawn(move || {
+            let budget = b.budget.clone();
+            handles.push(s.spawn(move || -> Result<Vec<(usize, Interner, CodeBuilder)>> {
                 let mut rows = start;
                 for batch in rx {
                     for r in 0..batch.rows.len() {
@@ -834,7 +927,9 @@ fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut c
                         while c < n {
                             let mut i = Interner::default();
                             let null = i.intern(Value::Null);
-                            cols.push((c, i, vec![null; rows]));
+                            let mut codes = CodeBuilder::new(budget.clone());
+                            codes.extend_repeated(null, rows)?;
+                            cols.push((c, i, codes));
                             c += workers;
                         }
                         for (c, i, codes) in cols.iter_mut() {
@@ -842,12 +937,12 @@ fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut c
                                 code(o, i, Field::Text(&String::from_utf8_lossy(batch.field(fields.start + *c))))
                             } else {
                                 i.intern(Value::Null)
-                            });
+                            })?;
                         }
                         rows += 1;
                     }
                 }
-                cols
+                Ok(cols)
             }));
         }
         let mut batch = Batch::default();
@@ -869,7 +964,10 @@ fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut c
                 sent += 1;
                 if batch.rows.len() == BATCH_ROWS {
                     let full = Arc::new(std::mem::take(&mut batch));
-                    txs.iter().for_each(|tx| drop(tx.send(full.clone())));
+                    if !txs.iter().all(|tx| tx.send(full.clone()).is_ok()) {
+                        parsed = Err("an import worker stopped".into());
+                        break;
+                    }
                 }
             }
             match rdr.read_byte_record(rec) {
@@ -884,10 +982,10 @@ fn feed_parallel<R: Read>(b: &mut Builder, rdr: &mut csv::Reader<R>, rec: &mut c
         let last = Arc::new(batch);
         txs.iter().for_each(|tx| drop(tx.send(last.clone())));
         drop(txs);
-        let cols = handles.into_iter().map(|h| h.join().map_err(|_| "an import worker failed".to_string())).collect::<Result<Vec<_>>>()?;
+        let cols = handles.into_iter().map(|h| h.join().map_err(|_| "an import worker failed".to_string()).and_then(|r| r)).collect::<Result<Vec<_>>>()?;
         parsed.map(|_| cols)
     })?;
-    let mut cols: Vec<(usize, Interner, Vec<u32>)> = result.into_iter().flatten().collect();
+    let mut cols: Vec<(usize, Interner, CodeBuilder)> = result.into_iter().flatten().collect();
     cols.sort_by_key(|c| c.0);
     b.cols = cols.into_iter().map(|(_, i, codes)| (i, codes)).collect();
     b.rows = start + sent;
@@ -910,12 +1008,15 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     };
     let quote = o.quote_character.chars().next().unwrap_or('"');
     let mut b = Builder::new(o);
+    // shortcut: a finite code budget uses the serial streaming parser; parallel dictionaries and
+    // queued batches need their own memory policy before enabling them in the bounded mode.
+    let allow_parallel = b.budget.heap_limit() == usize::MAX;
     if !o.process_quotes {
         let text = decode(path, &o.encoding)?;
         parsing(o);
         loose_records(&plain_breaks(&text), sep, quote, |rec| crate::jobs::tick(1).is_ok() && b.push(rec.iter().map(|s| Field::Text(s))));
         crate::jobs::tick(0)?;
-        return Ok(b.finish());
+        return b.finish();
     }
     if !sep.is_ascii() || !quote.is_ascii() {
         return Err("separator and quote character must be ASCII".into());
@@ -945,7 +1046,7 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     };
     if is_utf8(&o.encoding) {
         let f = File::open(path).map_err(err)?;
-        let parallel = f.metadata().is_ok_and(|m| m.len() >= parallel_from);
+        let parallel = allow_parallel && f.metadata().is_ok_and(|m| m.len() >= parallel_from);
         // This path streams bytes into the parser and interns/types cells in the same pass.
         let label = if o.guess_cell_value_types { "Reading, parsing and detecting types" } else { "Reading and parsing" };
         crate::jobs::progress_units(label, f.metadata().map_or(0, |m| m.len()), "bytes");
@@ -961,11 +1062,11 @@ fn import_text(path: &Path, o: &ImportOptions, parallel_from: u64) -> Result<Tab
     } else {
         let text = decode(path, &o.encoding)?;
         parsing(o);
-        let parallel = text.len() as u64 >= parallel_from;
+        let parallel = allow_parallel && text.len() as u64 >= parallel_from;
         let bytes: Box<dyn Read> = Box::new(std::io::Cursor::new(plain_breaks(&text).into_owned().into_bytes()));
         feed(&mut builder().from_reader(bytes), parallel)?;
     }
-    Ok(b.finish())
+    b.finish()
 }
 
 fn decode(path: &Path, label: &str) -> Result<String> {
@@ -1106,15 +1207,15 @@ fn import_sheets(path: &Path, o: &ImportOptions) -> Result<Table> {
             }
             go = b.push(vals.into_iter().map(Field::Val));
         }
-        tables.push(b.finish());
+        tables.push(b.finish()?);
     }
-    Ok(concat_by_name(tables))
+    concat_by_name(tables)
 }
 
 /// Rows of several tables, one after another, with columns matched by name.
-fn concat_by_name(tables: Vec<Table>) -> Table {
+fn concat_by_name(tables: Vec<Table>) -> Result<Table> {
     if tables.len() == 1 {
-        return tables.into_iter().next().unwrap();
+        return Ok(tables.into_iter().next().unwrap());
     }
     let mut names: Vec<String> = vec![];
     for t in &tables {
@@ -1125,16 +1226,25 @@ fn concat_by_name(tables: Vec<Table>) -> Table {
         }
     }
     let rows: usize = tables.iter().map(|t| t.rows).sum();
+    let budget = crate::storage::current_budget();
     let cols = names
         .iter()
         .map(|n| {
-            Column::from_values(tables.iter().flat_map(|t| {
+            let mut col = Column::try_from_values(tables.iter().flat_map(|t| {
                 let ci = t.names.iter().position(|x| x == n);
                 (0..t.rows).map(move |r| ci.map_or(Value::Null, |c| t.columns[c].get(r).clone()))
-            }))
+            }), &budget)?;
+            if let Some(rc) = tables.iter().find_map(|t| t.names.iter().position(|x| x == n).and_then(|c| t.columns[c].recon.as_ref())) {
+                let cells = tables.iter().flat_map(|t| {
+                    let ci = t.names.iter().position(|x| x == n);
+                    (0..t.rows).map(move |r| ci.and_then(|c| t.columns[c].recon(r)).cloned())
+                }).collect();
+                col.recon = Some(Arc::new(crate::recon::ReconCol { cells, config: rc.config.clone(), stats: None }));
+            }
+            Ok(col)
         })
-        .collect();
-    Table::new(names, cols, rows)
+        .collect::<Result<_>>()?;
+    Ok(Table::new(names, cols, rows))
 }
 
 // ---------------------------------------------------------------- JSON
@@ -1321,35 +1431,45 @@ fn json_nodes<'a>(root: &'a serde_json::Value, path: &[String]) -> Vec<&'a serde
     nodes
 }
 
-#[derive(Default)]
 struct JsonColumns {
-    columns: std::collections::HashMap<Vec<String>, (Interner, Vec<u32>)>,
+    columns: std::collections::HashMap<Vec<String>, (Interner, CodeBuilder)>,
     rows: usize,
+    budget: CodeBudget,
+}
+impl Default for JsonColumns {
+    fn default() -> Self {
+        Self { columns: Default::default(), rows: 0, budget: crate::storage::current_budget() }
+    }
 }
 impl JsonColumns {
-    fn append(&mut self, record: JsonRecord) {
-        if record.rows.iter().all(Vec::is_empty) { return; }
+    fn append(&mut self, record: JsonRecord) -> Result<()> {
+        if record.rows.iter().all(Vec::is_empty) { return Ok(()); }
         for row in record.rows {
-            for (_, key, value) in row {
+            // The former indexed write kept the last value if a record repeats a key on one row.
+            let mut seen = HashSet::new();
+            for (_, key, value) in row.into_iter().rev() {
+                if !seen.insert(key.clone()) { continue; }
+                let budget = self.budget.clone();
                 let (dict, codes) = self.columns.entry(key).or_insert_with(|| {
                     let mut dict = Interner::default(); dict.intern(Value::Null);
-                    (dict, vec![])
+                    (dict, CodeBuilder::new(budget))
                 });
-                codes.resize(self.rows + 1, 0);
-                codes[self.rows] = dict.intern(value);
+                codes.extend_repeated(0, self.rows - codes.len())?;
+                codes.push(dict.intern(value))?;
             }
             self.rows += 1;
         }
+        Ok(())
     }
-    fn finish(mut self, group: &Group) -> Table {
+    fn finish(mut self, group: &Group) -> Result<Table> {
         let mut names = vec![];
         group.order(&mut names);
         let columns = names.iter().map(|(_, key)| {
-            let (dict, mut codes) = self.columns.remove(key).unwrap();
-            codes.resize(self.rows, 0);
-            Column { dict: dict.finish(), codes: codes.into(), recon: None }
-        }).collect();
-        Table::new(names.into_iter().map(|(name, _)| name).collect(), columns, self.rows)
+            let (dict, mut codes) = self.columns.remove(key).ok_or("a JSON column has no stored values")?;
+            codes.extend_repeated(0, self.rows - codes.len())?;
+            Ok(Column { dict: dict.finish(), codes: codes.finish()?, recon: None })
+        }).collect::<Result<_>>()?;
+        Ok(Table::new(names.into_iter().map(|(name, _)| name).collect(), columns, self.rows))
     }
 }
 
@@ -1360,7 +1480,7 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
     let streaming = lines && (o.json_lines_root || o.record_path.len() > 1);
     let mut group = Group::default();
     let mut columns = JsonColumns::default();
-    if max == 0 { return Ok(columns.finish(&group)); }
+    if max == 0 { return columns.finish(&group); }
     let mut count = 0;
     let mut add = |node: &serde_json::Value| -> Result<bool> {
         if count == max { return Ok(false); }
@@ -1370,7 +1490,7 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
             group.reset();
             let mut record = JsonRecord { rows: vec![vec![]] };
             walk_json(node, record_name, &mut group, &mut record, o, !lines || o.json_lines_root);
-            columns.append(record);
+            columns.append(record)?;
         }
         Ok(count < max)
     };
@@ -1399,19 +1519,20 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
         } else { serde_json::from_str(text.trim_start_matches('\u{feff}')).map_err(|e| format!("{}: {e}", path.display()))? };
         for node in json_nodes(&root, o.record_path.get(1..).unwrap_or_default()) { if !add(node)? { break; } }
     }
-    Ok(columns.finish(&group))
+    columns.finish(&group)
 }
 
 /// Rows of tree records, columns in OpenRefine's order.
-fn tree_table(group: &Group, records: &[JsonRecord]) -> Table {
+fn tree_table(group: &Group, records: &[JsonRecord]) -> Result<Table> {
     let mut names = vec![];
     group.order(&mut names);
     let rows: Vec<_> = records.iter().flat_map(|r| r.rows.iter()).collect();
+    let budget = crate::storage::current_budget();
     let cols = names
         .iter()
-        .map(|(n, _)| Column::from_values(rows.iter().map(|r| r.iter().find(|(c, _, _)| c == n).map_or(Value::Null, |(_, _, v)| v.clone()))))
-        .collect();
-    Table::new(names.into_iter().map(|(name, _)| name).collect(), cols, rows.len())
+        .map(|(n, _)| Column::try_from_values(rows.iter().map(|r| r.iter().find(|(c, _, _)| c == n).map_or(Value::Null, |(_, _, v)| v.clone())), &budget))
+        .collect::<Result<_>>()?;
+    Ok(Table::new(names.into_iter().map(|(name, _)| name).collect(), cols, rows.len()))
 }
 
 // ---------------------------------------------------------------- XML
@@ -1536,9 +1657,13 @@ fn walk_xml(e: &XEl, prefix: &str, group: &mut Group, rec: &mut JsonRecord, o: &
 
 fn import_xml(path: &Path, o: &ImportOptions) -> Result<Table> {
     let text = decode(path, &o.encoding)?;
+    import_xml_text(&text, o)
+}
+
+fn import_xml_text(text: &str, o: &ImportOptions) -> Result<Table> {
     parsing(o);
     crate::jobs::tick(0)?;
-    let root = parse_xml(&text)?;
+    let root = parse_xml(text)?;
     let want = if o.record_path.is_empty() { vec![root.name.clone()] } else { o.record_path.clone() };
     // the elements at the record path, from the root down
     let mut nodes: Vec<&XEl> = if want[0] == root.name { vec![&root] } else { vec![] };
@@ -1561,7 +1686,7 @@ fn import_xml(path: &Path, o: &ImportOptions) -> Result<Table> {
         walk_xml(node, &name, &mut group, &mut rec, o);
         records.push(rec);
     }
-    Ok(tree_table(&group, &records))
+    tree_table(&group, &records)
 }
 
 impl Table {
@@ -1581,6 +1706,34 @@ impl Table {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn source_columns_and_file_concatenation_keep_cell_reconciliation() {
+        use crate::recon::{Recon, ReconCol};
+        let mut first = Column::from_values([Value::Str("First".into())]);
+        let matched = Arc::new(Recon::from_json(&serde_json::json!({
+            "id": 123, "j": "matched", "m": { "id": "Q42", "name": "First", "score": 100 },
+            "service": "https://wikidata.reconci.link/en/api"
+        })));
+        first.recon = Some(Arc::new(ReconCol {
+            cells: vec![Some(matched)], config: Some(serde_json::json!({ "mode": "standard-service" })),
+            stats: Some(serde_json::json!({ "matchedTopics": 1 })),
+        }));
+        let first = Table::new(vec!["Name".into()], vec![first], 1);
+        let options = ImportOptions { include_file_sources: true, include_archive_file_name: true, ..Default::default() };
+        let first = with_sources(first, "first.wiki", Some("input.zip"), &options).unwrap();
+        assert_eq!(first.names, ["Archive", "File", "Name"]);
+        assert_eq!(first.columns[2].recon(0).unwrap().matched.as_ref().unwrap().id, "Q42");
+        let second = Table::new(vec!["Other".into()], vec![Column::from_values([Value::Str("Second".into())])], 1);
+        let merged = concat_by_name(vec![first, second]).unwrap();
+        assert_eq!(merged.rows, 2);
+        assert!(merged.columns[2].get(1).is_null());
+        assert_eq!(merged.columns[2].recon(0).unwrap().matched.as_ref().unwrap().id, "Q42");
+        assert!(merged.columns[2].recon(1).is_none());
+        let rc = merged.columns[2].recon.as_ref().unwrap();
+        assert_eq!(rc.config, Some(serde_json::json!({ "mode": "standard-service" })));
+        assert!(rc.stats.is_none(), "recount stats for the merged rows");
+    }
 
     #[test]
     fn fixed_width_guesses_match_real_wizard_with_declared_unicode_units() {
@@ -1644,6 +1797,7 @@ mod tests {
         }
         let path = std::env::temp_dir().join("oxrefine-parallel-import.csv");
         std::fs::write(&path, &text).unwrap();
+        let spill_dir = tempfile::tempdir().unwrap();
         let base = ImportOptions::default();
         let variants = [
             ImportOptions { ..base.clone() },
@@ -1657,11 +1811,75 @@ mod tests {
         for (k, o) in variants.iter().enumerate() {
             let serial = import_text(&path, o, u64::MAX).unwrap();
             let parallel = import_text(&path, o, 0).unwrap();
+            let budget = CodeBudget::new(0, spill_dir.path().into());
+            let mapped = crate::storage::with_budget(budget.clone(), || import_text(&path, o, 0)).unwrap();
             assert_eq!(serial.names, parallel.names, "variant {k}: names");
             assert_eq!(serial.rows, parallel.rows, "variant {k}: rows");
+            assert_eq!(serial.names, mapped.names, "variant {k}: mapped names");
+            assert_eq!(serial.rows, mapped.rows, "variant {k}: mapped rows");
             for (c, (s, p)) in serial.columns.iter().zip(&parallel.columns).enumerate() {
                 assert!(s.dict == p.dict && s.codes == p.codes, "variant {k}: column {c} differs");
+                assert!(s.dict == mapped.columns[c].dict && s.codes == mapped.columns[c].codes, "variant {k}: mapped column {c} differs");
+                assert!(mapped.columns[c].codes.is_mapped());
             }
+            assert_eq!(budget.stats().heap_peak_bytes, 0);
         }
+    }
+
+    fn same_cells(a: &Table, b: &Table) {
+        assert_eq!(a.names, b.names);
+        assert_eq!(a.rows, b.rows);
+        for (left, right) in a.columns.iter().zip(&b.columns) {
+            for row in 0..a.rows { assert_eq!(left.get(row), right.get(row)); }
+        }
+    }
+
+    #[test]
+    fn streaming_spill_keeps_sparse_jsonl_and_source_column_values() {
+        let dir = tempfile::tempdir().unwrap();
+        let sources = dir.path().join("sources");
+        std::fs::create_dir(&sources).unwrap();
+        std::fs::write(sources.join("one.csv"), "name,n\na,1\nb,2\n").unwrap();
+        std::fs::write(sources.join("two.csv"), "name,extra\nc,x\n").unwrap();
+        let options = ImportOptions { include_file_sources: true, include_archive_file_name: true, ..Default::default() };
+        let heap = import(&sources, None, &options).unwrap();
+        let budget = CodeBudget::new(0, dir.path().into());
+        let mapped = crate::storage::with_budget(budget.clone(), || import(&sources, None, &options)).unwrap();
+        same_cells(&heap, &mapped);
+        assert!(mapped.columns.iter().all(|c| c.codes.is_mapped()));
+        let jsonl = dir.path().join("sparse.jsonl");
+        std::fs::write(&jsonl, "{\"name\":\"a\",\"x\":1}\n{\"name\":\"b\"}\n{\"late\":[2,3]}\n{\"x\":4}\n").unwrap();
+        let options = ImportOptions { json_lines_root: true, record_path: vec!["_".into()], ..Default::default() };
+        let heap = import(&jsonl, None, &options).unwrap();
+        let mapped = crate::storage::with_budget(budget.clone(), || import(&jsonl, None, &options)).unwrap();
+        same_cells(&heap, &mapped);
+        assert!(mapped.columns.iter().all(|c| c.codes.is_mapped()));
+        assert_eq!(budget.stats().heap_peak_bytes, 0);
+    }
+
+    #[test]
+    fn sticky_streaming_spill_errors_never_return_a_partial_table() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("not-a-directory");
+        std::fs::write(&path, b"preserve this file").unwrap();
+        let budget = CodeBudget::new(0, path.clone());
+        let options = ImportOptions::default();
+        crate::storage::with_budget(budget.clone(), || {
+            let mut builder = Builder::new(&options);
+            assert!(builder.push([Field::Text("name")].into_iter()));
+            assert!(!builder.push([Field::Text("value")].into_iter()));
+            assert!(!builder.push([Field::Text("later")].into_iter()));
+            assert!(builder.finish().is_err());
+            let csv = dir.path().join("input.csv");
+            std::fs::write(&csv, "name,n\na,1\nb,2\n").unwrap();
+            assert!(import(&csv, None, &options).is_err());
+            let json = dir.path().join("input.jsonl");
+            std::fs::write(&json, "{\"name\":\"a\"}\n").unwrap();
+            assert!(import(&json, None, &ImportOptions { json_lines_root: true, record_path: vec!["_".into()], ..options.clone() }).is_err());
+        });
+        assert_eq!(std::fs::read(path).unwrap(), b"preserve this file");
+        assert_eq!(budget.stats().heap_bytes, 0);
+        assert_eq!(budget.stats().mapped_bytes, 0);
+        assert_eq!(budget.stats().spill_files, 0);
     }
 }

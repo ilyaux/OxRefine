@@ -94,6 +94,7 @@ export function Home({
   onPaste,
   onUrl,
   onCommons,
+  onDatabase,
   onOpenRefine,
   onOpen,
   onRename,
@@ -105,6 +106,7 @@ export function Home({
   onPaste: () => void
   onUrl: () => void
   onCommons: () => void
+  onDatabase: () => void
   onOpenRefine: () => void
   onOpen: (id: string) => void
   onRename: (p: ProjectMeta, done: () => void) => void
@@ -146,6 +148,7 @@ export function Home({
         <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={interact(onPaste)} />
         <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={interact(onUrl)} />
         <Source title="Wikimedia Commons" hint="Category files matched to Commons M-ids" onClick={interact(onCommons)} />
+        <Source title="From a database" hint="Saved connections, schema and SQL query results" onClick={interact(onDatabase)} />
         <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={interact(onOpenRefine)} />
         <div className="border-t" />
         <div role="status" aria-live="polite" className={cn("border-b px-5 py-4", drop.dragging && "bg-foreground text-background")}>
@@ -154,6 +157,8 @@ export function Home({
         </div>
         <p className="px-5 py-4 font-mono text-[11px] leading-relaxed text-muted-foreground">
           csv tsv xlsx xls ods json xml txt
+          <br />
+          marc mrc wiki wikitext px
           <br />
           zip tar gz bz2 · openrefine.tar.gz
         </p>

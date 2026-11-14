@@ -210,26 +210,55 @@ fn fuzz_finds() {
     }
 }
 
-#[test]
-fn fuzz_import() {
+const IMPORT_FORMATS: [Option<&str>; 12] = [None, Some("csv"), Some("tsv"), Some("json"), Some("xml"), Some("xlsx"), Some("ods"), Some("lines"), Some("fixed-width"), Some("marc"), Some("wikitext"), Some("pcaxis")];
+
+fn import_corpus() -> (Vec<String>, Vec<Vec<u8>>) {
     let mut files: Vec<PathBuf> = vec![];
-    for dir in ["tests/import", "tests/corpus/files"] {
+    for dir in ["tests/import", "tests/corpus/files", "tests/marc", "tests/pcaxis/inputs"] {
         for e in std::fs::read_dir(root().join(dir)).unwrap().flatten() {
             let p = e.path();
             let name = p.file_name().unwrap().to_string_lossy();
+            let sample = match dir {
+                "tests/marc" => p.extension().is_some_and(|ext| ext == "mrc" || ext == "marc"),
+                "tests/pcaxis/inputs" => p.extension().is_some_and(|ext| ext == "px"),
+                _ => !name.ends_with(".mjs") && name != "fixtures.json" && name != "known_failures.txt",
+            };
             // every sample file, not the suite's own scripts and fixtures
-            if p.is_file() && !name.ends_with(".mjs") && name != "fixtures.json" && name != "known_failures.txt" {
+            if p.is_file() && sample {
                 files.push(p);
             }
         }
     }
     files.sort();
-    let exts: Vec<String> = files.iter().map(|p| p.file_name().unwrap().to_string_lossy().split_once('.').map(|(_, e)| e.to_string()).unwrap_or_default()).collect();
-    let seeds: Vec<Vec<u8>> = files.iter().map(|p| std::fs::read(p).unwrap()).collect();
+    let mut exts: Vec<String> = files.iter().map(|p| p.file_name().unwrap().to_string_lossy().split_once('.').map(|(_, e)| e.to_string()).unwrap_or_default()).collect();
+    let mut seeds: Vec<Vec<u8>> = files.iter().map(|p| std::fs::read(p).unwrap()).collect();
+    // Wikitext inputs live inline in the actual-reference fixture. Default options never resolve links.
+    let wiki: serde_json::Value = serde_json::from_slice(&std::fs::read(root().join("tests/wikitext/fixtures.json")).unwrap()).unwrap();
+    for case in wiki["cases"].as_array().unwrap() {
+        if let Some(text) = case["text"].as_str() {
+            exts.push("wiki".into());
+            seeds.push(text.as_bytes().to_vec());
+        }
+    }
+    (exts, seeds)
+}
+
+#[test]
+fn fuzz_import_includes_additional_format_seeds() {
+    let (exts, seeds) = import_corpus();
+    assert_eq!(exts.len(), seeds.len());
+    for (extension, format) in [("mrc", "marc"), ("wiki", "wikitext"), ("px", "pcaxis")] {
+        assert!(exts.iter().zip(&seeds).any(|(ext, data)| ext == extension && !data.is_empty()), "no {format} seed");
+        assert!(IMPORT_FORMATS.contains(&Some(format)), "no explicit {format} fuzz target");
+    }
+}
+
+#[test]
+fn fuzz_import() {
+    let (exts, seeds) = import_corpus();
     let alphabet = b",;\t\"'\n\r {}[]<>/=:0123456789abcxyz\x00\xff\xc3\xa9PK\x03\x04".to_vec();
     let dir = std::env::temp_dir().join("oxrefine-fuzz-import");
     std::fs::create_dir_all(&dir).unwrap();
-    let formats = [None, Some("csv"), Some("tsv"), Some("json"), Some("xml"), Some("xlsx"), Some("ods"), Some("lines"), Some("fixed-width")];
     let mut rng = Rng(seed() | 1);
     fuzz("import", seeds, &alphabet, |data| {
         // the file keeps the extension of some seed, so format guessing is exercised too
@@ -237,7 +266,7 @@ fn fuzz_import() {
         let path = dir.join(format!("input.{ext}"));
         std::fs::write(&path, data).unwrap();
         let _ = import::inspect(&path);
-        let format = *rng.pick(&formats);
+        let format = *rng.pick(&IMPORT_FORMATS);
         let _ = import::import(&path, format, &import::ImportOptions::default());
     });
 }

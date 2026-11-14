@@ -38,9 +38,29 @@ The same corpus records OpenRefine's ODS exporter dropping the time of day from 
 
 The separate CommonsExtension v0.1.5 can emit duplicate file rows from overlapping categories and repeats category traversal. OxRefine preserves direct-files-first depth-first ordering, deduplicates by file page ID and tracks visited categories with the remaining depth. It follows empty batches that still have continuation and fails the entire preparation on an API error or a limit, keeping partial data out of the project library. Loading file-page wikitext during preparation is an OxRefine addition. These behaviors and the extension mapping references are outside the 2,136-check total.
 
+### MARC validation and Unicode
+
+MARC import accepts standard ISO 2709 framing and UTF-8/MARC-8 character data, with the converted records handled by the XML importer. It rejects malformed record lengths, directory ranges, separators, unsupported escape sequences and invalid declared UTF-8 before creating a project. OpenRefine's permissive Marc4j reader can repair some of these inputs and guess other legacy encodings. OxRefine does not implement that entire recovery engine; an error is preferable to silently guessing damaged data.
+
+The reference Marc4j mapping truncates three supplementary EACC Unicode values to 16 bits. OxRefine retains the full values published in the Library of Congress mapping: U+212C4, U+2251B and U+22C4D. The reference outputs and the explicitly corrected values are kept in the additional MARC fixtures. This intentional difference is outside the original fixture totals.
+
+### Wikitext import options and metadata
+
+OpenRefine imports every wikitext table in the source. OxRefine also offers table selection; an empty `tableIndexes` list preserves the all-table behavior. Link reconciliation starts disabled in OxRefine and requires an explicit choice, while OpenRefine's wizard initializes a Wikipedia URL. Table inspection does not resolve links.
+
+When reference columns precede a reconciled column, OpenRefine can attach the column's reconciliation configuration at its old index. OxRefine keeps it with the cell reconciliation on the correct final column. The additional wikitext fixtures retain the original result and identify this deliberate metadata correction. Invalid service replies stop the import rather than fabricating matches.
+
+### Database query results
+
+The native database importer is checked against actual OpenRefine 3.10.1 database-extension outputs on synthetic SQLite, PostgreSQL, MySQL and MariaDB data. It is not a loader for JDBC drivers or old Java extensions.
+
+OxRefine preserves empty text separately from SQL NULL and encodes binary values as `base64:` text; the reference can collapse empty strings and decode binary as text. Exact decimals use plain decimal notation. Date/time text is canonicalized, including UTC offsets and fractional seconds. SQLite fractional NUMERIC values can remain native floating-point numbers where JDBC reports text. These differences are recorded in the additional database fixtures, outside the original compatibility totals. Unsupported native types report an error and can be selected with an explicit SQL cast to text.
+
+Passwords are not stored with saved connection settings. Queries run in read-only transactions with bounded result sizes and timeouts. The SELECT guard is conservative, not a general sandbox for privileged or custom database functions; use a read-only database account.
+
 ## Not in OxRefine yet
 
-- **Import:** databases (PostgreSQL, MySQL, MariaDB, SQLite), RDF (N-Triples, Turtle, RDF/XML, JSON-LD), MARC, wikitext tables, PC-Axis, Google Sheets
+- **Import:** RDF (N-Triples, Turtle, RDF/XML, JSON-LD), Google Sheets
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
 - **Expressions:** Python (Jython) and Clojure; `wikibaseIssues()`

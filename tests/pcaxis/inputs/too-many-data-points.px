@@ -1,0 +1,3 @@
+STUB="Kind";
+VALUES("Kind")="A";
+DATA=1 2;

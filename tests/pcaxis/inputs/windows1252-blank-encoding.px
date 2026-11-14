@@ -1,0 +1,4 @@
+CHARSET="UTF-8";
+STUB="Région";
+VALUES("Région")="Åland","Café €";
+DATA=1 2;

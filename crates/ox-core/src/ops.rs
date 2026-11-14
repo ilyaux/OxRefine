@@ -533,35 +533,36 @@ fn run(p: &grel::Program, v: &Value, fallback: &Value, row: &dyn grel::Row, on_e
 /// Apply `p` to a column: once per distinct value when it only reads `value`, else row by row.
 /// A transform keeps the cells' Recons; a new column gets those of the cells the expression
 /// returned whole (`cell`), as OpenRefine copies a Cell result.
-fn eval_column(t: &Table, ci: usize, sel: Option<&[bool]>, new_column: bool, p: &grel::Program, on_error: &str, times: u32) -> Column {
+fn eval_column(t: &Table, ci: usize, sel: Option<&[bool]>, new_column: bool, p: &grel::Program, on_error: &str, times: u32) -> Result<Column> {
     let col = &t.columns[ci];
+    let budget = crate::storage::current_budget();
     let fallback = |v: &Value| if new_column && on_error != "keep-original" { Value::Null } else { v.clone() };
     if !new_column {
         let ctx = crate::engine::Ctx::default();
         let out = if p.uses_row_of(col) {
-            col.map_rows(sel, false, |r, v| run(p, v, v, &t.row_at(r, &ctx, ci), on_error, times))
+            col.try_map_rows(sel, false, &budget, |r, v| run(p, v, v, &t.row_at(r, &ctx, ci), on_error, times))?
         } else {
-            col.map(sel, false, |v| run(p, v, v, &grel::NoRow, on_error, times))
+            col.try_map(sel, false, &budget, |v| run(p, v, v, &grel::NoRow, on_error, times))?
         };
-        return out.keep_recon(col);
+        return Ok(out.keep_recon(col));
     }
     if p.uses_row_of(col) {
         let ctx = crate::engine::Ctx::default();
         let mut recons = vec![None; t.rows];
-        let mut out = col.map_rows(sel, new_column, |r, v| {
+        let mut out = col.try_map_rows(sel, new_column, &budget, |r, v| {
             let row = t.row_at(r, &ctx, ci);
             if let Some((v, recon)) = grel::eval::as_cell(&p.eval(v.clone(), &row)) {
                 recons[r] = recon;
                 return v;
             }
             run(p, v, &fallback(v), &row, on_error, times)
-        });
+        })?;
         if recons.iter().any(Option::is_some) {
             out.recon = Some(Arc::new(crate::recon::ReconCol::new(recons)));
         }
-        out
+        Ok(out)
     } else {
-        col.map(sel, new_column, |v| run(p, v, &fallback(v), &grel::NoRow, on_error, times))
+        col.try_map(sel, new_column, &budget, |v| run(p, v, &fallback(v), &grel::NoRow, on_error, times))
     }
 }
 
@@ -695,10 +696,10 @@ fn move_column(t: &mut Table, from: usize, to: usize) {
     t.columns.insert(to, col);
 }
 
-fn set_column(t: &Table, ci: usize, values: Vec<Value>) -> Table {
+fn set_column(t: &Table, ci: usize, values: Vec<Value>) -> Result<Table> {
     let mut out = t.clone();
-    out.columns[ci] = Arc::new(Column::from_values(values));
-    out
+    out.columns[ci] = Arc::new(Column::try_from_values(values, &crate::storage::current_budget())?);
+    Ok(out)
 }
 
 fn column_values(t: &Table, ci: usize) -> Vec<Value> {
@@ -968,7 +969,7 @@ impl Op {
         };
         let at = (*column_insert_index).min(t.names.len());
         let mut out = t.clone();
-        out.columns.insert(at, Arc::new(Column::from_values(values)));
+        out.columns.insert(at, Arc::new(Column::try_from_values(values, &crate::storage::current_budget())?));
         out.names.insert(at, new_column_name.clone());
         Ok(out)
     }
@@ -1133,7 +1134,7 @@ impl Op {
                 let sel = engine::mask(t, engine_config)?;
                 let times = if *repeat { (*repeat_count).max(1) } else { 1 };
                 let mut out = t.clone();
-                out.columns[ci] = Arc::new(eval_column(t, ci, sel.as_deref(), false, &p, on_error, times));
+                out.columns[ci] = Arc::new(eval_column(t, ci, sel.as_deref(), false, &p, on_error, times)?);
                 out
             }
             MassEdit { engine_config, column_name, expression, edits } => {
@@ -1145,10 +1146,10 @@ impl Op {
                 let map: HashMap<&str, &str> = edits.iter().flat_map(|e| e.from.iter().map(move |f| (f.as_str(), e.to.as_str()))).collect();
                 let blank_to = edits.iter().find(|e| e.from_blank).map(|e| e.to.as_str());
                 let mut out = t.clone();
-                out.columns[ci] = Arc::new(t.columns[ci].map(sel.as_deref(), false, |v| {
+                out.columns[ci] = Arc::new(t.columns[ci].try_map(sel.as_deref(), false, &crate::storage::current_budget(), |v| {
                     let to = if v.is_blank() { blank_to.or_else(|| map.get("").copied()) } else { map.get(v.display().as_str()).copied() };
                     to.map_or_else(|| v.clone(), |s| Value::Str(s.to_string()))
-                }).keep_recon(&t.columns[ci]));
+                })?.keep_recon(&t.columns[ci]));
                 out
             }
             FillDown { engine_config, column_name } | BlankDown { engine_config, column_name } => {
@@ -1182,7 +1183,7 @@ impl Op {
                         last = Some((v, r));
                     }
                 }
-                let mut out = set_column(t, ci, vals);
+                let mut out = set_column(t, ci, vals)?;
                 if t.columns[ci].recon.is_some() {
                     let col = Column { dict: out.columns[ci].dict.clone(), codes: out.columns[ci].codes.clone(), recon: t.columns[ci].recon.clone() };
                     out.columns[ci] = Arc::new(crate::recon::apply_edits(&col, &recons, None, crate::recon::Stats::Keep));
@@ -1221,8 +1222,9 @@ impl Op {
                     r = k;
                 }
                 let (rows, vals): (Vec<_>, Vec<_>) = plan.into_iter().unzip();
-                let mut out = t.pick_rows(&rows);
-                out.columns[ci] = Arc::new(Column::from_values(vals));
+                let budget = crate::storage::current_budget();
+                let mut out = t.try_pick_rows(&rows, &budget)?;
+                out.columns[ci] = Arc::new(Column::try_from_values(vals, &budget)?);
                 out
             }
             MultiValuedCellJoin { column_name, key_column_name, separator } => {
@@ -1239,10 +1241,10 @@ impl Op {
                     vals[r + 1..end].iter_mut().for_each(|v| *v = Value::Null);
                     r = end;
                 }
-                let joined = set_column(t, ci, vals);
+                let joined = set_column(t, ci, vals)?;
                 // rows left with nothing in them disappear
                 let keep: Vec<Option<u32>> = (0..t.rows).filter(|&r| joined.columns.iter().any(|c| !c.get(r).is_blank())).map(|r| Some(r as u32)).collect();
-                joined.pick_rows(&keep)
+                joined.try_pick_rows(&keep, &crate::storage::current_budget())?
             }
             ColumnAddition { engine_config, base_column_name, new_column_name, column_insert_index, expression, on_error } => {
                 if t.col(new_column_name).is_ok() {
@@ -1253,7 +1255,7 @@ impl Op {
                 let sel = engine::mask(t, engine_config)?;
                 let at = (*column_insert_index).min(t.names.len());
                 let mut out = t.clone();
-                out.columns.insert(at, Arc::new(eval_column(t, base, sel.as_deref(), true, &p, on_error, 1)));
+                out.columns.insert(at, Arc::new(eval_column(t, base, sel.as_deref(), true, &p, on_error, 1)?));
                 out.names.insert(at, new_column_name.clone());
                 out
             }
@@ -1275,7 +1277,7 @@ impl Op {
                 for k in 0..n {
                     let name = unique_name(&out, format!("{column_name} {}", k + 1));
                     out.names.insert(ci + 1 + k, name);
-                    out.columns.insert(ci + 1 + k, Arc::new(Column::from_values(pieces.iter().map(|p| p.get(k).cloned().unwrap_or(Value::Null)))));
+                    out.columns.insert(ci + 1 + k, Arc::new(Column::try_from_values(pieces.iter().map(|p| p.get(k).cloned().unwrap_or(Value::Null)), &crate::storage::current_budget())?));
                 }
                 if *remove_original_column {
                     out.names.remove(ci);
@@ -1341,7 +1343,7 @@ impl Op {
                 let keep_matched = matches!(self.kind, RowKeepMatched { .. });
                 let hit: HashSet<u32> = engine::filter(t, engine_config, None)?.into_iter().collect();
                 let rows: Vec<Option<u32>> = (0..t.rows as u32).filter(|r| hit.contains(r) == keep_matched).map(Some).collect();
-                t.pick_rows(&rows)
+                t.try_pick_rows(&rows, &crate::storage::current_budget())?
             }
             RowStar { engine_config, starred } => set_flags(t, &engine::filter(t, engine_config, None)?, Some(*starred), None),
             RowFlag { engine_config, flagged } => set_flags(t, &engine::filter(t, engine_config, None)?, None, Some(*flagged)),
@@ -1353,7 +1355,7 @@ impl Op {
                     .filter(|&r| !seen.insert(cols.iter().map(|&c| t.columns[c].get(r as usize).clone()).collect()))
                     .collect();
                 let rows: Vec<Option<u32>> = (0..t.rows as u32).filter(|r| !dup.contains(r)).map(Some).collect();
-                t.pick_rows(&rows)
+                t.try_pick_rows(&rows, &crate::storage::current_budget())?
             }
             CellEdit { row, column_name, value, kind } => {
                 let ci = t.col(column_name)?;
@@ -1367,7 +1369,7 @@ impl Op {
                     col.dict.push(v);
                     col.dict.len() - 1
                 });
-                Arc::make_mut(&mut col.codes)[*row] = code as u32;
+                col.codes = col.codes.with_edits(&[(*row, code as u32)], crate::storage::current_budget())?;
                 let mut out = t.clone();
                 out.columns[ci] = Arc::new(col);
                 out
@@ -1397,7 +1399,7 @@ impl Op {
                 let mut order: Vec<usize> = (0..groups.len()).collect();
                 order.sort_by(|&a, &b| cmp(groups[a].0, groups[b].0));
                 let rows: Vec<Option<u32>> = order.iter().flat_map(|&g| (groups[g].0..groups[g].1).map(|r| Some(r as u32))).collect();
-                t.pick_rows(&rows)
+                t.try_pick_rows(&rows, &crate::storage::current_budget())?
             }
         })
     }

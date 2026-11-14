@@ -553,7 +553,7 @@ impl StandardConfig {
 
     /// createReconServiceResults: candidates by score (stable), the first auto-matched when the
     /// service says it is a match, then the features of the best candidate.
-    fn results(&self, text: &str, results: &[J], history_entry: i64) -> Recon {
+    pub(crate) fn results(&self, text: &str, results: &[J], history_entry: i64) -> Recon {
         let mut recon = Recon::new(history_entry, &self.identifier_space, &self.schema_space);
         let mut found: Vec<(Candidate, bool)> = results
             .iter()
@@ -1243,7 +1243,7 @@ pub fn extend_apply(t: &Table, base: &str, ext: &J, at: usize, names: Option<&[S
         }
         r += 1;
     }
-    let mut out = t.pick_rows(&plan.iter().map(|p| p.0).collect::<Vec<_>>());
+    let mut out = t.try_pick_rows(&plan.iter().map(|p| p.0).collect::<Vec<_>>(), &crate::storage::current_budget())?;
     let h = history_entry();
     let mut recons: std::collections::HashMap<String, Arc<Recon>> = Default::default();
     for (c, meta) in columns.iter().enumerate() {
@@ -1289,7 +1289,7 @@ pub fn extend_apply(t: &Table, base: &str, ext: &J, at: usize, names: Option<&[S
             values.push(value);
             cells.push(recon);
         }
-        let mut col = Column::from_values(values);
+        let mut col = Column::try_from_values(values, &crate::storage::current_budget())?;
         let ty = meta.get("type").filter(|t| t.is_object());
         let mut config = serde_json::Map::new();
         config.insert("mode".into(), json!("standard-service"));

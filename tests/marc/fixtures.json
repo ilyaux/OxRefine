@@ -1,0 +1,1561 @@
+{
+ "openrefine": "3.10.1",
+ "reportedVersion": {
+  "version": "3.10-SNAPSHOT",
+  "revision": "TRUNK",
+  "full_version": "3.10-SNAPSHOT [TRUNK]",
+  "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+  "java_vm_name": "OpenJDK 64-Bit Server VM",
+  "java_vm_version": "11.0.30+7",
+  "java_runtime_name": "OpenJDK Runtime Environment",
+  "java_runtime_version": "11.0.30+7",
+  "display_new_version_notice": "true",
+  "module_names": [
+   "core",
+   "database",
+   "jython",
+   "pc-axis",
+   "wikidata"
+  ]
+ },
+ "release": {
+  "url": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+  "sha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+  "artifacts": {
+   "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+   "webapp/WEB-INF/lib/marc4j-2.9.6.jar": "7a770fd4f35adc77ef09c1dbafd12de73895d80627aa056742bc74d7cc5d6995"
+  }
+ },
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/src/com/google/refine/importers/MarcImporter.java",
+ "cases": [
+  {
+   "name": "ascii",
+   "file": "ascii.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "ascii"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2200097   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "100"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Doe, Jane"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "test-1"
+     },
+     {
+      "v": "00249nam a2200097   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "d"
+     },
+     {
+      "v": "1970-"
+     },
+     {
+      "v": "008"
+     },
+     {
+      "v": "241114s2024    xx            000 0 eng d"
+     },
+     null
+    ],
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Data & catalogues <test>."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "A sample."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Libraries"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "x"
+     },
+     {
+      "v": "Data processing"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Names"
+     },
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "utf8",
+   "file": "utf8.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "utf8"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00142nam a2200049   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">unicode</marc:controlfield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Русский Ελληνικά العربية עברית 中文 日本語 &#128512;</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00142nam a2200049   4500"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "unicode"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Русский Ελληνικά العربية עברית 中文 日本語 😀"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "utf8-decomposed",
+   "file": "utf8-decomposed.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "utf8-decomposed"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00053nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Café ë</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00053nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Café ë"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "utf8-blank-flag",
+   "file": "utf8-blank-flag.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "utf8-blank-flag"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00103nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Русский текст и названия городов</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00103nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Русский текст и названия городов"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "marc8-ansel",
+   "file": "marc8-ansel.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-ansel"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00062nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Café / Müller / Ł</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00062nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Café / Müller / Ł"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "marc8-combining",
+   "file": "marc8-combining.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-combining"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00051nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">é̈</marc:subfield>\r\n      <marc:subfield code=\"b\">aé</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "é̈"
+     },
+     {
+      "v": "00051nam a2200037   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "aé"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "marc8-scripts",
+   "file": "marc8-scripts.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-scripts"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00067nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Тест</marc:subfield>\r\n      <marc:subfield code=\"b\">كتاب</marc:subfield>\r\n      <marc:subfield code=\"c\">ספר</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Тест"
+     },
+     {
+      "v": "00067nam a2200037   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "كتاب"
+     },
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "c"
+     },
+     {
+      "v": "ספר"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "marc8-greek",
+   "file": "marc8-greek.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-greek"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00059nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Αλφα ASCII</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00059nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Αλφα ASCII"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "marc8-eacc",
+   "file": "marc8-eacc.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-eacc"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00061nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">中文 / end</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00061nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "中文 / end"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "marc8-supplementary-eacc",
+   "file": "marc8-supplementary-eacc.mrc",
+   "knownDifference": "MARC4J truncates three supplementary EACC Unicode scalars to 16 bits; OxRefine uses their exact Library of Congress scalar mappings.",
+   "locUnicode": "𡋄𢔛𢱍",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-supplementary-eacc"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00058nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">ዄ┛ⱍ</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00058nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "ዄ┛ⱍ"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "marc8-ncr",
+   "file": "marc8-ncr.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "marc8-ncr"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00067nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">é and 中</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00067nam a2200037   4500"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "é and 中"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "escaped-entities",
+   "file": "escaped-entities.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "escaped-entities"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00101nam a2200049   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">A &amp; B</marc:controlfield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">&lt;title&gt; &amp;lt; ' \"</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:leader",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "00101nam a2200049   4500"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "A & B"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "<title> &lt; ' \""
+     }
+    ]
+   ]
+  },
+  {
+   "name": "empty-uppercase-subfields",
+   "file": "empty-uppercase-subfields.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "empty-uppercase-subfields"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00060nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Title</marc:subfield>\r\n      <marc:subfield code=\"c\">Author</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Title"
+     },
+     {
+      "v": "00060nam a2200037   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "c"
+     },
+     {
+      "v": "Author"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "interleaved-fields",
+   "file": "interleaved-fields.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "interleaved-fields"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00114nam a2200073   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">after-title</marc:controlfield>\r\n    <marc:controlfield tag=\"003\">local</marc:controlfield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Title</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Subject</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "001"
+     },
+     {
+      "v": "after-title"
+     },
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Title"
+     },
+     {
+      "v": "00114nam a2200073   4500"
+     }
+    ],
+    [
+     {
+      "v": "003"
+     },
+     {
+      "v": "local"
+     },
+     {
+      "v": "650"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Subject"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "multiple-records",
+   "file": "multiple-records.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "multiple-records"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2200097   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n  <marc:record>\r\n    <marc:leader>00087nam a2200049   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">second</marc:controlfield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Вторая запись</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "100"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Doe, Jane"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "test-1"
+     },
+     {
+      "v": "00249nam a2200097   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "d"
+     },
+     {
+      "v": "1970-"
+     },
+     {
+      "v": "008"
+     },
+     {
+      "v": "241114s2024    xx            000 0 eng d"
+     },
+     null
+    ],
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Data & catalogues <test>."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "A sample."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Libraries"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "x"
+     },
+     {
+      "v": "Data processing"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Names"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Вторая запись"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "second"
+     },
+     {
+      "v": "00087nam a2200049   4500"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "limit-one",
+   "file": "limit-one.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": 1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "limit-one"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2200097   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n  <marc:record>\r\n    <marc:leader>00045nam a2200037   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">second</marc:controlfield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "100"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Doe, Jane"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "test-1"
+     },
+     {
+      "v": "00249nam a2200097   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "d"
+     },
+     {
+      "v": "1970-"
+     },
+     {
+      "v": "008"
+     },
+     {
+      "v": "241114s2024    xx            000 0 eng d"
+     },
+     null
+    ],
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Data & catalogues <test>."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "A sample."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Libraries"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "x"
+     },
+     {
+      "v": "Data processing"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Names"
+     },
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "limit-zero",
+   "file": "limit-zero.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": 0,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record"
+    ],
+    "projectName": "limit-zero"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2200097   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:record - marc:datafield - tag",
+    "marc:record - marc:datafield - ind1",
+    "marc:record - marc:datafield - ind2",
+    "marc:record - marc:datafield - marc:subfield - code",
+    "marc:record - marc:datafield - marc:subfield",
+    "marc:record - marc:controlfield - tag",
+    "marc:record - marc:controlfield",
+    "marc:record - marc:leader"
+   ],
+   "rows": [
+    [
+     {
+      "v": "100"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Doe, Jane"
+     },
+     {
+      "v": "001"
+     },
+     {
+      "v": "test-1"
+     },
+     {
+      "v": "00249nam a2200097   4500"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "d"
+     },
+     {
+      "v": "1970-"
+     },
+     {
+      "v": "008"
+     },
+     {
+      "v": "241114s2024    xx            000 0 eng d"
+     },
+     null
+    ],
+    [
+     {
+      "v": "245"
+     },
+     {
+      "v": "1"
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Data & catalogues <test>."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "b"
+     },
+     {
+      "v": "A sample."
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Libraries"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "x"
+     },
+     {
+      "v": "Data processing"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "650"
+     },
+     {
+      "v": " "
+     },
+     {
+      "v": "0"
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Names"
+     },
+     null,
+     null,
+     null
+    ]
+   ]
+  },
+  {
+   "name": "subfield-record-path",
+   "file": "subfield-record-path.mrc",
+   "options": {
+    "trimStrings": false,
+    "guessCellValueTypes": false,
+    "storeEmptyStrings": true,
+    "limit": -1,
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "recordPath": [
+     "marc:collection",
+     "marc:record",
+     "marc:datafield",
+     "marc:subfield"
+    ],
+    "projectName": "subfield-record-path"
+   },
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2200097   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "columns": [
+    "marc:subfield - code",
+    "marc:subfield"
+   ],
+   "rows": [
+    [
+     {
+      "v": "a"
+     },
+     {
+      "v": "Doe, Jane"
+     }
+    ],
+    [
+     {
+      "v": "d"
+     },
+     {
+      "v": "1970-"
+     }
+    ],
+    [
+     {
+      "v": "a"
+     },
+     {
+      "v": "Data & catalogues <test>."
+     }
+    ],
+    [
+     {
+      "v": "b"
+     },
+     {
+      "v": "A sample."
+     }
+    ],
+    [
+     {
+      "v": "a"
+     },
+     {
+      "v": "Libraries"
+     }
+    ],
+    [
+     {
+      "v": "x"
+     },
+     {
+      "v": "Data processing"
+     }
+    ],
+    [
+     {
+      "v": "a"
+     },
+     {
+      "v": "Names"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "truncated-leader",
+   "file": "truncated-leader.mrc",
+   "reject": true,
+   "referenceError": "Exception in thread \"main\" org.marc4j.MarcException: Premature end of file encountered"
+  },
+  {
+   "name": "truncated-record",
+   "file": "truncated-record.mrc",
+   "reject": true,
+   "referenceError": "Exception in thread \"main\" org.marc4j.MarcException: Premature end of file encountered"
+  },
+  {
+   "name": "missing-record-terminator",
+   "file": "missing-record-terminator.mrc",
+   "reject": true,
+   "referenceError": "Exception in thread \"main\" org.marc4j.MarcException: Premature end of file encountered"
+  },
+  {
+   "name": "invalid-base",
+   "file": "invalid-base.mrc",
+   "reject": true,
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00249nam a2299999   4500</marc:leader>\r\n    <marc:controlfield tag=\"001\">test-1</marc:controlfield>\r\n    <marc:controlfield tag=\"008\">241114s2024    xx            000 0 eng d</marc:controlfield>\r\n    <marc:datafield tag=\"100\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Doe, Jane</marc:subfield>\r\n      <marc:subfield code=\"d\">1970-</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Data &amp; catalogues &lt;test&gt;.</marc:subfield>\r\n      <marc:subfield code=\"b\">A sample.</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Libraries</marc:subfield>\r\n      <marc:subfield code=\"x\">Data processing</marc:subfield>\r\n    </marc:datafield>\r\n    <marc:datafield tag=\"650\" ind1=\" \" ind2=\"0\">\r\n      <marc:subfield code=\"a\">Names</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n",
+   "knownDifference": "OxRefine rejects malformed ISO2709 structure; the permissive reference repairs this input."
+  },
+  {
+   "name": "invalid-field-length",
+   "file": "invalid-field-length.mrc",
+   "reject": true,
+   "referenceError": "Exception in thread \"main\" org.marc4j.MarcException: an error occured reading input"
+  },
+  {
+   "name": "nonnumeric-directory",
+   "file": "nonnumeric-directory.mrc",
+   "reject": true,
+   "referenceError": "Exception in thread \"main\" java.lang.NumberFormatException: For input string: \"abcd\""
+  },
+  {
+   "name": "invalid-utf8",
+   "file": "invalid-utf8.mrc",
+   "reject": true,
+   "knownDifference": "OxRefine rejects malformed UTF-8 explicitly; Marc4j attempts other encodings and repairs.",
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00048nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">badÃ(</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n"
+  },
+  {
+   "name": "unknown-marc8-escape",
+   "file": "unknown-marc8-escape.mrc",
+   "reject": true,
+   "knownDifference": "OxRefine rejects unknown MARC-8 escape designations; Marc4j's permissive reader repairs some malformed sequences.",
+   "referenceXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><marc:collection xmlns:marc=\"http://www.loc.gov/MARC21/slim\">\r\n  <marc:record>\r\n    <marc:leader>00052nam a2200037   4500</marc:leader>\r\n    <marc:datafield tag=\"245\" ind1=\"1\" ind2=\"0\">\r\n      <marc:subfield code=\"a\">&#27;%Zbad</marc:subfield>\r\n    </marc:datafield>\r\n  </marc:record>\r\n</marc:collection>\n"
+  }
+ ]
+}

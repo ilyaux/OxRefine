@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { FixedWidthRuler } from "@/FixedWidthRuler"
 import { JsonPathPicker, type JsonPaths } from "@/JsonPathPicker"
 
-type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml"
+type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml" | "marc" | "wikitext" | "pcaxis"
 /** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
  * for XML, the element paths a record can be. */
 type Info = {
@@ -19,18 +19,24 @@ type Info = {
   archive?: string | null
   elements?: { path: string[]; count: number }[]
   json?: JsonPaths
+  tables?: WikiTables["tables"]
+  wikiBaseUrl?: string
 }
 type Options = Record<string, unknown>
 type Preview = { columns: string[]; rows: [number, (string | null)[], boolean, boolean][] }
 type FixedSample = { columnWidths: number[]; lines: string[]; sampledLines: number; truncated: boolean; characterUnit: "unicode-scalar" }
+type WikiTables = { tables: { index: number; caption: string | null; rows: number; columns: number }[] }
 
 const ENCODINGS = ["UTF-8", "windows-1252", "ISO-8859-1", "UTF-16LE", "UTF-16BE", "windows-1251", "KOI8-R", "Shift_JIS", "GBK"]
 const SEPARATORS: [string, string, string][] = [[",", ",", "Comma"], ["\t", "\\t", "Tab"], [";", ";", "Semicolon"], ["|", "|", "Pipe"]]
 
 const baseName = (p: string) => p.split(/[\\/]/).pop() ?? p
-const TEXT: [Format, string, string][] = [["csv", "CSV / TSV", "csv tsv"], ["fixed-width", "Fixed-width", "txt"], ["lines", "Lines", "txt"]]
-const NAMES: Record<Format, string> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML" }
+const TEXT: [Format, string, string][] = [["csv", "CSV / TSV", "csv tsv"], ["fixed-width", "Fixed-width", "txt"], ["lines", "Lines", "txt"], ["wikitext", "Wikitext tables", "wiki"], ["pcaxis", "PC-Axis", "px"]]
+const NAMES: Record<Format, string> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML", marc: "MARC", wikitext: "Wikitext tables", pcaxis: "PC-Axis" }
 const size = (n: number) => (n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : n >= 1e3 ? `${(n / 1e3).toFixed(0)} KB` : `${n} B`)
+const webAddress = (value: unknown) => {
+  try { const u = new URL(String(value)); return ["http:", "https:"].includes(u.protocol) && !u.username && !u.password } catch { return false }
+}
 
 export function ImportDialog({
   path,
@@ -66,7 +72,16 @@ export function ImportDialog({
   const [busy, setBusy] = useState(false)
   const isJson = format === "json" || format === "jsonlines"
   const jsonKey = JSON.stringify({ path, format, options: { encoding: options.encoding, files: options.files } })
-  const error = failure && [previewKey, `inspect:${path}`, ...(format === "fixed-width" ? [sampleKey] : []), ...(isJson ? [jsonKey] : [])].includes(failure.key) ? failure.message : ""
+  const wikiKey = JSON.stringify({ path, format, options: { encoding: options.encoding, files: options.files } })
+  const [wikiReply, setWikiReply] = useState<{ key: string; data: WikiTables } | null>(null)
+  const wiki = wikiReply?.key === wikiKey ? wikiReply.data : null
+  const wikiIndexes = (options.tableIndexes as number[] | undefined) ?? []
+  const wikiTableError = format === "wikitext" && wiki && wikiIndexes.some((i) => !wiki.tables.some((t) => t.index === i)) ? "The selected table is not in this source. Choose a table again." : ""
+  const resolveWiki = format === "wikitext" && options.wikiUrl != null
+  const wikiLinkError = resolveWiki && (!webAddress(options.wikiUrl) || (options.reconService != null && !webAddress(options.reconService))) ? "Use http or https addresses without embedded credentials for the wiki prefix and service." : ""
+  const wikiError = wikiTableError || wikiLinkError
+  const emptyWiki = format === "wikitext" && (!wiki || !wiki.tables.length || (preview && (!preview.rows.length || !preview.columns.length)))
+  const error = failure && [previewKey, `inspect:${path}`, ...(format === "fixed-width" ? [sampleKey] : []), ...(isJson ? [jsonKey] : []), ...(format === "wikitext" ? [wikiKey] : [])].includes(failure.key) ? failure.message : ""
   const [jsonReply, setJsonReply] = useState<{ key: string; data: JsonPaths } | null>(null)
   const json = jsonReply?.key === jsonKey ? jsonReply.data : null
   const chosenPath = useRef<string | null>(null)
@@ -88,21 +103,22 @@ export function ImportDialog({
         if (data.format === "fixed-width" && !(next.columnWidths as number[] | undefined)?.length) delete next.columnWidths
         setOptions(next)
         if (data.json) setJsonReply({ key: JSON.stringify({ path, format: data.format, options: { encoding: next.encoding, files: next.files } }), data: data.json })
+        if (data.tables) setWikiReply({ key: JSON.stringify({ path, format: data.format, options: { encoding: next.encoding, files: next.files } }), data: { tables: data.tables } })
       })
       .catch((e) => live && setFailure({ key: `inspect:${path}`, message: e.message }))
     return () => { live = false }
   }, [path])
 
   useEffect(() => {
-    if (!info) return
+    if (!info || wikiLinkError) return
     let live = true
     const t = setTimeout(() => {
       call<Preview>("preview_import", { path, format, options, limit: 50 })
-        .then(({ data, ms }) => { if (live) { setPreviewReply({ key: previewKey, data, ms }); setFailure(null) } })
+        .then(({ data, ms }) => { if (live) { setPreviewReply({ key: previewKey, data, ms }); setFailure((current) => current?.key === previewKey ? null : current) } })
         .catch((e) => live && setFailure({ key: previewKey, message: e.message }))
     }, 300)
     return () => { live = false; clearTimeout(t) }
-  }, [path, info, format, options, previewKey])
+  }, [path, info, format, options, previewKey, wikiLinkError])
 
   useEffect(() => {
     if (!info || format !== "fixed-width") return
@@ -130,7 +146,20 @@ export function ImportDialog({
     return () => { live = false }
   }, [info, isJson, jsonKey, jsonReply?.key, path, format])
 
+  useEffect(() => {
+    if (!info || format !== "wikitext" || wikiReply?.key === wikiKey) return
+    let live = true
+    call<WikiTables>("wikitext_tables", JSON.parse(wikiKey), { quiet: true })
+      .then(({ data }) => { if (live) { setWikiReply({ key: wikiKey, data }); setFailure((current) => current?.key === wikiKey ? null : current) } })
+      .catch((e) => live && setFailure({ key: wikiKey, message: e.message }))
+    return () => { live = false }
+  }, [info, format, wikiKey, wikiReply?.key])
+
   const set = (patch: Options) => setOptions((o) => ({ ...o, ...patch }))
+  const pickTextFormat = (next: Format) => {
+    setFormat(next)
+    if (next === "wikitext") set({ blankSpanningCells: options.blankSpanningCells ?? true, includeRawTemplates: options.includeRawTemplates ?? false, parseReferences: options.parseReferences ?? true, storeBlankColumns: options.storeBlankColumns ?? true, wikiUrl: options.wikiUrl ?? null, tableIndexes: options.tableIndexes ?? [] })
+  }
   const setWidths = (columnWidths: number[]) => {
     widthEdited.current = path
     setWidthDraft(null)
@@ -169,12 +198,13 @@ export function ImportDialog({
     </label>
   )
   const sep = String(options.separator ?? ",")
-  // JSON and XML: records from a tree, not lines
-  const tree = format === "json" || format === "jsonlines" || format === "xml"
+  // JSON, XML and converted MARC: records from a tree, not lines.
+  const tree = format === "json" || format === "jsonlines" || format === "xml" || format === "marc"
+  const encoded = TEXT.some(([f]) => f === format) || isJson
   const sheets = (options.sheets as { fileNameAndSheetIndex: string; selected: boolean; name: string }[]) ?? []
 
   const create = async () => {
-    if (!preview || widthError || pathError || emptyJson || busy) return
+    if (!preview || widthError || pathError || emptyJson || wikiError || emptyWiki || busy) return
     setBusy(true)
     try {
       await onCreate({ path, name: name.trim() || label, format, options })
@@ -189,9 +219,9 @@ export function ImportDialog({
   const detected = info
     ? [
         NAMES[format] ?? format,
-        ...(format === "csv" || format === "lines" || format === "fixed-width" || isJson ? [String(options.encoding ?? "UTF-8")] : []),
+        ...(encoded ? [String(options.encoding ?? "UTF-8")] : []),
         ...(format === "csv" ? [`“${sep === "\t" ? "\\t" : sep}”`] : []),
-        ...(!tree && Number(options.headerLines) > 0 ? ["header"] : []),
+        ...(!tree && format !== "pcaxis" && Number(options.headerLines) > 0 ? ["header"] : []),
       ].join(" · ")
     : "…"
   return (
@@ -199,7 +229,7 @@ export function ImportDialog({
       <div
         className="flex min-h-0 flex-1 flex-col"
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !widthError && !pathError && !emptyJson && !busy) {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !widthError && !pathError && !emptyJson && !wikiError && !emptyWiki && !busy) {
             e.preventDefault()
             create()
           }
@@ -218,7 +248,7 @@ export function ImportDialog({
             {detected}
           </Metric>
           <Spacer />
-          <StripAction ink keys="Ctrl ↵" disabled={!preview || !!widthError || !!pathError || !!emptyJson || busy} onClick={create}>
+          <StripAction ink keys="Ctrl ↵" disabled={!preview || !!widthError || !!pathError || !!emptyJson || !!wikiError || !!emptyWiki || busy} onClick={create}>
             {busy && <Spinner />}
             Create project
           </StripAction>
@@ -252,7 +282,7 @@ export function ImportDialog({
               <>
                 <RailLabel>Read the text as</RailLabel>
                 <div role="radiogroup" aria-label="Read the text as">
-                  {TEXT.map(([v, l, h]) => radio(v, format === v, l, h, () => setFormat(v)))}
+                  {TEXT.map(([v, l, h]) => radio(v, format === v, l, h, () => pickTextFormat(v)))}
                 </div>
               </>
             ) : info && (info.format === "json" || info.format === "jsonlines") ? (
@@ -323,7 +353,7 @@ export function ImportDialog({
                 {widthError && <span id="widths-error" role="alert" className="text-xs text-destructive">{widthError}</span>}
               </label>
             )}
-            {format === "xml" && info?.elements && (
+            {(format === "xml" || format === "marc") && info?.elements && (
               <label className="flex flex-col gap-1 px-4 pt-2" title="Its attributes and the elements inside it become columns.">
                 <span>Each record is an element</span>
                 <select
@@ -338,6 +368,48 @@ export function ImportDialog({
                   ))}
                 </select>
               </label>
+            )}
+            {format === "wikitext" && (
+              <>
+                <RailLabel>Wikitext tables</RailLabel>
+                <label className="flex flex-col gap-1 px-4 pb-2">
+                  <span>Tables to import</span>
+                  <select
+                    aria-label="Tables to import"
+                    value={wikiIndexes.length ? String(wikiIndexes[0]) : "all"}
+                    disabled={!wiki?.tables.length}
+                    onChange={(e) => set({ tableIndexes: e.target.value === "all" ? [] : [Number(e.target.value)] })}
+                    className="h-7.5 min-w-0 rounded-[3px] border border-input bg-background px-2 text-[12px]"
+                  >
+                    <option value="all">All tables{wiki && ` (${wiki.tables.length})`}</option>
+                    {wiki?.tables.map((t) => <option key={t.index} value={t.index}>Table {t.index + 1}{t.caption ? `: ${t.caption}` : ""} · {t.rows} rows × {t.columns} columns</option>)}
+                  </select>
+                  {wikiTableError && <span role="alert" className="text-xs text-destructive">{wikiTableError}</span>}
+                </label>
+                {info?.files && <p className="px-4 pb-2 text-xs text-muted-foreground">The table list is from the first selected file. This choice applies to every selected file.</p>}
+                {check("blankSpanningCells", "Blank cells covered by a span")}
+                {check("includeRawTemplates", "Keep raw template syntax")}
+                {check("parseReferences", "Parse references")}
+                <p className="px-4 py-1.5 text-xs text-muted-foreground">Templates are not expanded. Table selection is an OxRefine option.</p>
+                <label className="flex cursor-pointer items-center gap-2.5 px-4 py-1.5 hover:bg-accent">
+                  <input type="checkbox" checked={resolveWiki} onChange={(e) => set({ wikiUrl: e.target.checked ? info?.wikiBaseUrl ?? "https://en.wikipedia.org/wiki/" : null })} className="accent-foreground" />
+                  Resolve wiki links to Wikidata
+                </label>
+                {resolveWiki ? (
+                  <>
+                    <label className="flex flex-col gap-1 px-4 py-1.5">
+                      <span>Wiki page prefix</span>
+                      <Input type="url" value={String(options.wikiUrl)} onChange={(e) => set({ wikiUrl: e.target.value })} placeholder="https://en.wikipedia.org/wiki/" className="h-7.5 text-xs" aria-invalid={!!wikiLinkError} />
+                    </label>
+                    <label className="flex flex-col gap-1 px-4 py-1.5">
+                      <span>Reconciliation service</span>
+                      <Input type="url" value={String(options.reconService ?? "https://wikidata.reconci.link/en/api")} onChange={(e) => set({ reconService: e.target.value })} className="h-7.5 text-xs" aria-invalid={!!wikiLinkError} />
+                    </label>
+                    {wikiLinkError && <p role="alert" className="px-4 py-1.5 text-xs text-destructive">{wikiLinkError}</p>}
+                    <p className="px-4 py-1.5 text-xs text-muted-foreground">Resolving links contacts the reconciliation service during preview and import.</p>
+                  </>
+                ) : null}
+              </>
             )}
             {isJson && (
               <>
@@ -389,7 +461,7 @@ export function ImportDialog({
               </>
             )}
             <div className="pt-2" />
-            {(format === "csv" || format === "lines" || format === "fixed-width" || isJson) && (
+            {encoded && (
               <label className="flex items-center gap-2 px-4 py-1.5">
                 <span className="min-w-0 flex-1">Character encoding</span>
                 <select
@@ -406,15 +478,16 @@ export function ImportDialog({
               </label>
             )}
             {format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
-            {info && !tree && (
+            {info && !tree && format !== "pcaxis" && (
               <>
                 {num("headerLines", "Header lines", "0 names the columns Column 1, Column 2…")}
                 {num("ignoreLines", "Skip first lines")}
                 {num("skipDataLines", "Skip data lines")}
               </>
             )}
-            {info && num("limit", "Load at most rows")}
-            {info && (
+            {info && format === "pcaxis" && num("skipDataLines", "Skip data rows")}
+            {info && num("limit", format === "marc" ? "Load at most records" : "Load at most rows", format === "marc" ? "One record can expand into several rows." : undefined)}
+            {info && format !== "pcaxis" && (
               <>
                 <div className="mt-2 border-t" />
                 <div className="pt-2" />
@@ -422,7 +495,8 @@ export function ImportDialog({
                 {(format === "csv" || tree) && check("trimStrings", "Trim whitespace")}
                 {(format === "csv" || format === "fixed-width" || tree) && check("guessCellValueTypes", "Parse numbers and dates")}
                 {!tree && check("storeBlankRows", "Store blank rows")}
-                {!tree && check("storeBlankCellsAsNulls", "Blank cells as empty (null)")}
+                {!tree && format !== "wikitext" && check("storeBlankCellsAsNulls", "Blank cells as empty (null)")}
+                {format === "wikitext" && check("storeBlankColumns", "Store blank columns")}
                 {tree && check("storeEmptyStrings", "Keep empty text")}
               </>
             )}
@@ -444,6 +518,8 @@ export function ImportDialog({
               )}
             </div>
             {emptyJson && <p role="status" className="border-b px-5 py-3 text-sm text-muted-foreground">No rows or columns at this record path. The source may be empty or null, or the path may not match. Pick an object or array of records above; use another “_” for each array level.</p>}
+            {format === "wikitext" && wiki && !wiki.tables.length && <p role="status" className="border-b px-5 py-3 text-sm text-muted-foreground">No Wikitext tables found. Tables start with {"{|"} and end with {"|}"}. Check the file and encoding, or choose another text format.</p>}
+            {format === "wikitext" && wiki?.tables.length && preview && (!preview.rows.length || !preview.columns.length) ? <p role="status" className="border-b px-5 py-3 text-sm text-muted-foreground">No data rows in this selection. Choose another table or reduce the header and skipped rows.</p> : null}
             {format === "fixed-width" && (
               <>
                 <div className="flex flex-wrap items-center gap-3 border-b px-5 py-2 text-xs">

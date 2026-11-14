@@ -1,0 +1,5 @@
+STUB="Kind";
+VALUES("Kind")="A","B";
+VALUES[en]("Kind")="English A","English B";
+NOTE("Kind")="A note";
+DATA=1 2;

@@ -126,6 +126,13 @@ fn commons_previews_need_no_project_context_and_failed_creation_keeps_the_select
     a.call(&server, "apply", json!({ "op": rename("name", "person") }));
     assert_eq!(b.request(&server, "rows", json!({})).0, 409);
 
+    let wiki = root.join("tables.wiki");
+    std::fs::write(&wiki, "{|\n! Name !! Value\n|-\n| Alpha || 42\n|}\n").unwrap();
+    let metadata = b.call(&server, "wikitext_tables", json!({ "path": wiki }));
+    assert_eq!(metadata["tables"][0]["index"], 0);
+    assert_eq!(server.request(Some("fresh-wiki-page"), None, "wikitext_tables", json!({ "path": wiki })).0, 200);
+    assert_eq!(b.request(&server, "rows", json!({})).0, 409, "import inspection does not bless stale editor context");
+
     // Invalid options are rejected locally: this regression makes no Commons requests.
     let (status, error) = b.request(&server, "commons_prepare", json!({ "params": { "categories": [], "requestId": "routing-test" } }));
     assert_eq!(status, 400); assert!(error.as_str().unwrap().contains("categories"));
@@ -135,6 +142,29 @@ fn commons_previews_need_no_project_context_and_failed_creation_keeps_the_select
     assert_eq!(b.request(&server, "rows", json!({})).0, 409, "failed creation does not bless an old editor revision");
     assert_eq!(b.call(&server, "summary", json!({}))["id"], id);
     assert_eq!(b.call(&server, "rows", json!({ "limit": 1 }))["rows"][0][1][0], "original");
+    assert_eq!(a.call(&server, "projects", json!({})).as_array().unwrap().len(), 1);
+}
+
+#[test]
+fn database_profiles_and_previews_are_global_without_changing_project_revisions() {
+    let root = work("database-routing"); let server = Server::start(&root.join("store"), None);
+    let mut a = Client::new("database-a"); let mut b = Client::new("database-b");
+    let id = a.call(&server, "open", json!({ "path": csv(&root, "original") }))["id"].as_str().unwrap().to_owned();
+    b.call(&server, "open_project", json!({ "id": id }));
+    a.call(&server, "apply", json!({ "op": rename("name", "person") }));
+    assert_eq!(b.request(&server, "rows", json!({})).0, 409);
+    let saved = b.call(&server, "database_save_profile", json!({ "params": { "profile": {
+        "name": "Synthetic SQLite", "driver": "sqlite", "sqlitePath": root.join("fixture.sqlite")
+    } } }))["profile"].clone();
+    assert_eq!(b.call(&server, "database_profiles", json!({}))["profiles"].as_array().unwrap().len(), 1);
+    assert_eq!(server.request(Some("fresh-page"), None, "storage_stats", json!({})).0, 200);
+    assert_eq!(server.request(Some("fresh-page"), None, "database_preview", json!({ "id": "expired" })).0, 400);
+    let conflict = b.request(&server, "database_delete_profile", json!({ "id": saved["id"], "revision": "stale" }));
+    assert_eq!(conflict.0, 409); assert_eq!(conflict.1["code"], "database_profile_conflict");
+    assert_eq!(b.request(&server, "database_create", json!({ "id": "expired" })).0, 400);
+    assert_eq!(b.request(&server, "rows", json!({})).0, 409, "profile edits and failed imports cannot refresh stale editor context");
+    assert_eq!(b.call(&server, "summary", json!({}))["id"], id);
+    b.call(&server, "database_delete_profile", json!({ "id": saved["id"], "revision": saved["revision"] }));
     assert_eq!(a.call(&server, "projects", json!({})).as_array().unwrap().len(), 1);
 }
 

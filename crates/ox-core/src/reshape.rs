@@ -1,7 +1,7 @@
 //! OpenRefine's transpose operations, which change the shape of the table: columns into rows, rows
 //! into columns, and key/value pairs into columns. They work row by row on plain cell vectors.
-// ponytail: the table is copied into row vectors and back (a few times its size in memory);
-// work on the dictionary columns directly if these become slow on very large projects.
+// shortcut: transpose still materializes Value row vectors; spilling the output codes alone does
+// not bound its memory. Work directly on dictionary columns if large transposes need less RAM.
 use crate::{grel::Value, table::{Column, Table}, Result};
 use std::collections::HashMap;
 
@@ -11,14 +11,15 @@ fn rows(t: &Table) -> Vec<Vec<Value>> {
 
 /// A table from rows (short ones padded with blanks); new rows are neither starred nor flagged,
 /// as in OpenRefine. The records key stays on its column when that column survives.
-fn table(old: &Table, names: Vec<String>, rows: Vec<Vec<Value>>) -> Table {
+fn table(old: &Table, names: Vec<String>, rows: Vec<Vec<Value>>) -> Result<Table> {
     let n = rows.len();
-    let columns = (0..names.len()).map(|c| Column::from_values(rows.iter().map(|r| r.get(c).cloned().unwrap_or(Value::Null)))).collect();
+    let budget = crate::storage::current_budget();
+    let columns = (0..names.len()).map(|c| Column::try_from_values(rows.iter().map(|r| r.get(c).cloned().unwrap_or(Value::Null)), &budget)).collect::<Result<Vec<_>>>()?;
     let mut t = Table::new(names, columns, n);
     if let Some(k) = old.key.as_ref().filter(|k| t.names.contains(k)) {
         t.key = Some(k.clone());
     }
-    t
+    Ok(t)
 }
 
 fn set(row: &mut Vec<Value>, i: usize, v: Value) {
@@ -105,7 +106,7 @@ pub fn columns_into_rows(
             }
         }
     }
-    Ok(table(t, names, out))
+    table(t, names, out)
 }
 
 /// OpenRefine's TransposeRowsIntoColumnsOperation: every `k` cells down `column` go side by side
@@ -139,7 +140,7 @@ pub fn rows_into_columns(t: &Table, column: &str, k: usize) -> Result<Table> {
             }
         }
     }
-    Ok(table(t, names, out))
+    table(t, names, out)
 }
 
 /// A column name not taken yet: the name itself, else with 2, 3… appended.
@@ -233,5 +234,5 @@ pub fn key_value_columnize(t: &Table, key: &str, value: &str, note: Option<&str>
     if degenerate {
         out.retain(|r| r.iter().any(|v| !v.is_null()));
     }
-    Ok(table(t, names, out))
+    table(t, names, out)
 }

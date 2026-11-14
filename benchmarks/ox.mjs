@@ -63,39 +63,65 @@ export function dataset(n) {
 
 /** A fresh benchmark server with a private project library, removed after the callback. */
 export async function withOx(run, { bin = OX, port = 3030 } = {}) {
-  // Fail before spawning if another server owns the port; never benchmark its data by mistake.
-  await new Promise((ok, fail) => {
-    const probe = createServer()
-    probe.once("error", fail)
-    probe.listen({ host: "127.0.0.1", port, exclusive: true }, () => probe.close(ok))
-  })
   const store = mkdtempSync(join(tmpdir(), "ox-bench-"))
   const token = randomUUID()
   const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
-  const p = spawn(bin, ["serve", "--port", String(port), "--data", store, "--token", token], { stdio: "ignore" })
-  let spawnError
-  p.on("error", (e) => { spawnError = e })
-  const check = () => {
-    if (spawnError) throw spawnError
-    if (p.exitCode !== null) throw new Error(`benchmark server exited with ${p.exitCode}`)
-  }
   const url = `http://127.0.0.1:${port}/api`
+  let current
   const ox = async (cmd, args = {}) => {
     const r = await fetch(`${url}/${cmd}`, { method: "POST", headers, body: JSON.stringify(args) })
     const j = await r.json()
     if (!r.ok) throw new Error(`ox ${cmd}: ${j}`)
     return j.data
   }
-  try {
+  const start = async () => {
+    // Fail before spawning if another server owns the port; never benchmark its data by mistake.
+    await new Promise((ok, fail) => {
+      const probe = createServer()
+      probe.once("error", fail)
+      probe.listen({ host: "127.0.0.1", port, exclusive: true }, () => probe.close(ok))
+    })
+    const p = spawn(bin, ["serve", "--port", String(port), "--data", store, "--token", token], { stdio: "ignore" })
+    const state = current = { p, closed: false, error: null }
+    p.on("error", (e) => { state.error = e })
+    p.once("close", () => { state.closed = true })
+    const check = () => {
+      if (state.error) throw state.error
+      if (state.closed || p.exitCode !== null || p.signalCode !== null) throw new Error(`benchmark server exited with ${p.exitCode ?? p.signalCode}`)
+    }
     await waitFor(`${url}/summary`, { method: "POST", headers, body: "{}" }, 120_000, check)
     check()
     const denied = await fetch(`${url}/projects`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
     if (denied.status !== 403) throw new Error("benchmark endpoint does not enforce its private token")
+    // Readiness must not pre-load a saved project before the timed open_project request.
+    const ready = await fetch(`${url}/summary`, { method: "POST", headers, body: "{}" })
+    if (![200, 400].includes(ready.status)) throw new Error("benchmark endpoint did not accept its private token")
+    check()
+  }
+  const stop = async () => {
+    const state = current
+    if (!state || state.closed) return
+    await new Promise((ok, fail) => {
+      const done = () => { clearTimeout(timer); ok() }
+      const timer = setTimeout(() => { state.p.removeListener("close", done); fail(new Error("benchmark backend did not stop")) }, 5000)
+      state.p.once("close", done)
+      kill(state.p)
+    })
+  }
+  const peak = () => peakMB(current.p.pid)
+  const pid = () => current.p.pid
+  const restart = async () => {
+    const previousPid = pid(), previousPeakMB = peak()
+    let t = now(); await stop(); const stopMs = now() - t
+    t = now(); await start(); const startupMs = now() - t
+    return { previousPid, previousPeakMB, pid: pid(), idlePeakMB: peak(), stopMs, startupMs }
+  }
+  try {
+    await start()
     if ((await ox("projects")).length) throw new Error("benchmark library is not empty")
-    return await run({ ox, peak: () => peakMB(p.pid), store })
+    return await run({ ox, peak, pid, restart, store })
   } finally {
-    kill(p)
-    await sleep(200)
+    await stop()
     rmSync(store, { recursive: true, force: true })
   }
 }

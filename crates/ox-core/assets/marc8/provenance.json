@@ -1,0 +1,39 @@
+{
+ "mappingSource": "Library of Congress MARC-8 character mappings",
+ "sourceUrl": "https://www.loc.gov/marc/specifications/codetables.xml",
+ "sourceSha256": "3e54ea62d494671cb07b3c931eda76c7f5052b204722bf576038ecbb8fb958c5",
+ "referenceLibrary": "org.marc4j:marc4j:2.9.6",
+ "referenceJarSha256": "7a770fd4f35adc77ef09c1dbafd12de73895d80627aa056742bc74d7cc5d6995",
+ "referenceRelease": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+ "referenceReleaseSha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+ "mappingEntries": 17073,
+ "referenceMappingSha256": "595dc389b37f742cf4bb3405503a749d4475f1145dbb3957df2c6db1a06b24fd",
+ "uncompressedSha256": "11fe18ab491f89aa029302276cee3c9a930d562bf9363352fbb5762a7fb72782",
+ "locEntriesChecked": 16396,
+ "differencesFromCurrentLoC": [
+  {
+   "set": "31",
+   "marc": "217559",
+   "loc": "212C4",
+   "reference": "12C4",
+   "decision": "Use the LoC Unicode scalar; the reference char API truncates it to 16 bits."
+  },
+  {
+   "set": "31",
+   "marc": "222A34",
+   "loc": "2251B",
+   "reference": "251B",
+   "decision": "Use the LoC Unicode scalar; the reference char API truncates it to 16 bits."
+  },
+  {
+   "set": "31",
+   "marc": "223339",
+   "loc": "22C4D",
+   "reference": "2C4D",
+   "decision": "Use the LoC Unicode scalar; the reference char API truncates it to 16 bits."
+  }
+ ],
+ "format": "Repeated big-endian u32 (ISO set <<24 | MARC code), u32 Unicode scalar, u8 combining flag.",
+ "scope": "11 single-byte graphic sets, all EACC triples with bytes 20..7E, as mapped by the reference release.",
+ "licensing": "Code-point correspondences are standardized mapping facts. LoC publishes XML tables for use in software (specchartables.html). No MARC4J Java implementation is copied or adapted; that implementation is LGPL-2.1-or-later. No separate copyright notice appears in the LoC mapping XML."
+}

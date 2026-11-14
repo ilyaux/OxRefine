@@ -1,0 +1,215 @@
+{
+  "reference": "OpenRefine 3.10.1 bundled database extension",
+  "engine": "MariaDB",
+  "serverVersion": "11.4.13-MariaDB",
+  "timeZone": "UTC",
+  "provenance": {
+    "release": "3.10.1",
+    "reportedVersion": {
+      "version": "3.10-SNAPSHOT",
+      "revision": "TRUNK",
+      "full_version": "3.10-SNAPSHOT [TRUNK]",
+      "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+      "java_vm_name": "OpenJDK 64-Bit Server VM",
+      "java_vm_version": "11.0.30+7",
+      "java_runtime_name": "OpenJDK Runtime Environment",
+      "java_runtime_version": "11.0.30+7",
+      "display_new_version_notice": "true",
+      "module_names": [
+        "core",
+        "database",
+        "jython",
+        "pc-axis",
+        "wikidata"
+      ]
+    },
+    "artifacts": {
+      "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+      "webapp/extensions/database/module/MOD-INF/lib/openrefine-database.jar": "ff9b36b43e14d5fb842003866d042286298b621a9fc7a01444e1ae5997a80c67",
+      "webapp/extensions/database/module/MOD-INF/lib/postgresql-42.7.8.jar": "2a32a9dcbc42d67a50ad3a0de5efd102c8d2be46720045f2cbd6689f160ab7c7",
+      "webapp/extensions/database/module/MOD-INF/lib/mariadb-java-client-3.5.6.jar": "a129703efd7b0f334564d46753de999f09b3a361489a2eb647e6020390981cc9",
+      "webapp/extensions/database/module/MOD-INF/lib/mysql-connector-j-8.2.0.jar": "06f14fbd664d0e382347489e66495ca27ab7e6c2e1d9969a496931736197465f"
+    },
+    "generator": "tests/database/reference-gen.mjs",
+    "bootstrap": "Unchanged bundled database extension and its dynamic JDBC drivers; UTC JVM"
+  },
+  "source": "Locally generated synthetic values; no personal data",
+  "query": "SELECT * FROM typed_fixture ORDER BY id",
+  "options": {
+    "storeBlankRows": true,
+    "storeBlankCellsAsNulls": true
+  },
+  "columns": [
+    "id",
+    "intv",
+    "bigv",
+    "floatv",
+    "exactv",
+    "boolv",
+    "datev",
+    "timev",
+    "stampv",
+    "zstampv",
+    "textv",
+    "emptyv",
+    "nullable",
+    "bytesv"
+  ],
+  "rows": [
+    {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+        {
+          "v": 1
+        },
+        {
+          "v": 42
+        },
+        {
+          "v": 9223372036854775807
+        },
+        {
+          "v": 1.25
+        },
+        {
+          "v": "123456789012345678901234567890.12345678"
+        },
+        {
+          "v": "1"
+        },
+        {
+          "v": "2024-01-02"
+        },
+        {
+          "v": "12:34:56.123456"
+        },
+        {
+          "v": "2024-01-02 12:34:56.123456"
+        },
+        {
+          "v": "2024-01-02 10:34:56.123456"
+        },
+        {
+          "v": "Zażółć Привет 東京"
+        },
+        null,
+        null,
+        {
+          "v": "\u0000\u0001�"
+        }
+      ]
+    },
+    {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+        {
+          "v": 2
+        },
+        {
+          "v": -7
+        },
+        {
+          "v": -9223372036854775808
+        },
+        {
+          "v": -0.5
+        },
+        {
+          "v": "-0.00000001"
+        },
+        {
+          "v": "0"
+        },
+        {
+          "v": "1969-12-31"
+        },
+        {
+          "v": "00:00:00.000000"
+        },
+        {
+          "v": "1969-12-31 23:59:59.000000"
+        },
+        {
+          "v": "2024-01-03 00:00:00.000000"
+        },
+        {
+          "v": "synthetic only"
+        },
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+        {
+          "v": 3
+        },
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    }
+  ],
+  "duplicateHeaders": {
+    "error": "Duplicate column name 'label'"
+  },
+  "emptyStrings": {
+    "columns": [
+      "emptyv",
+      "nullable"
+    ],
+    "rows": [
+      {
+        "starred": false,
+        "flagged": false,
+        "cells": [
+          {
+            "v": ""
+          },
+          {
+            "v": ""
+          }
+        ]
+      },
+      {
+        "starred": false,
+        "flagged": false,
+        "cells": [
+          {
+            "v": ""
+          },
+          {
+            "v": ""
+          }
+        ]
+      },
+      {
+        "starred": false,
+        "flagged": false,
+        "cells": [
+          {
+            "v": ""
+          },
+          {
+            "v": ""
+          }
+        ]
+      }
+    ]
+  }
+}

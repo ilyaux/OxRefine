@@ -26,6 +26,11 @@ fn main() {
 }
 
 fn run() -> Result<(), String> {
+    let budget = ox_core::storage::from_env(&std::env::temp_dir().join(format!("oxrefine-spill-{}", std::process::id())))?;
+    ox_core::storage::with_budget(budget, run_scoped)
+}
+
+fn run_scoped() -> Result<(), String> {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
         ["apply", recipe, input, "-o", out] => apply(recipe, input, out),
@@ -139,10 +144,11 @@ fn serve(args: &[&str]) -> Result<(), String> {
         token = Some(new_token()?);
     }
     let store = Store::open(&data)?;
+    let storage_budget = store.code_budget();
     let staging = ox_core::import::staging_dir(Some(store.root()));
     let mut session = Session::with_store(store);
     // a file named on the command line opens without being added to the project library
-    session.project = file.map(|f| Project::open(f.as_ref())).transpose()?;
+    session.project = ox_core::storage::with_budget(storage_budget.clone(), || file.map(|f| Project::open(f.as_ref())).transpose())?;
     let slot = Arc::new(Mutex::new(web::Projects::new(session, new_token()?)));
     eprintln!("projects are saved in {}", data.display());
     let server = tiny_http::Server::http((host.as_str(), port)).map_err(|e| format!("{host}:{port}: {e}"))?;
@@ -159,6 +165,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
     // a thread per request: `processes` and `cancel_process` answer while a long command holds the session
     for mut req in server.incoming_requests() {
         let (slot, host_ok, token, staging) = (slot.clone(), host_ok.clone(), token.clone(), staging.clone());
+        let storage_budget = storage_budget.clone();
         std::thread::spawn(move || {
             let header = |name: &str| req.headers().iter().find(|h| h.field.as_str().as_str().eq_ignore_ascii_case(name)).map(|h| h.value.as_str().to_owned());
             let url = req.url().to_owned();
@@ -232,7 +239,8 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 let args = serde_json::from_str(&body).unwrap_or_else(|_| json!({}));
                 match scope {
                     Ok(scope) => {
-                        let web::Reply(code, value) = web::free(&cmd, &args, &scope).unwrap_or_else(|| slot.lock().unwrap_or_else(|e| e.into_inner()).call(&cmd, args, &scope));
+                        let diagnostic = (cmd == "storage_stats").then(|| web::Reply(200, ox_core::storage::with_budget(storage_budget.clone(), || json!({ "data": ox_core::storage::snapshot(), "ms": 0 }))));
+                        let web::Reply(code, value) = ox_core::storage::with_budget(storage_budget.clone(), || diagnostic.or_else(|| web::free(&cmd, &args, &scope)).unwrap_or_else(|| slot.lock().unwrap_or_else(|e| e.into_inner()).call(&cmd, args, &scope)));
                         json(code, value)
                     }
                     Err(error) => json(400, Value::String(error)),

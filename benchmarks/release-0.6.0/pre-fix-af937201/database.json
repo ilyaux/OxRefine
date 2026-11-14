@@ -1,0 +1,302 @@
+{
+  "when": "2026-11-14T18:46:35.364Z",
+  "workload": "database-100k-v1",
+  "rows": 100000,
+  "query": "SELECT id,label,quantity FROM db_bench_fixture ORDER BY id",
+  "runs": 3,
+  "fixture": "id=0..99999; label=item-id; quantity=NULL when id%97=0, otherwise id%1000",
+  "expected": {
+    "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+    "lines": 100001
+  },
+  "statistic": "median of raw repetitions; import=SQL prepare plus native project creation/save",
+  "memory": "OxRefine process OS high-water mark in MiB; database servers, parent Node and filesystem cache excluded; workflow peak includes full result validation",
+  "cache": "fresh OxRefine process and native library each run; existing database services and OS filesystem caches remain warm",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMiB": 31866
+  },
+  "binary": {
+    "file": "ox.exe",
+    "sha256": "af93720129ee5c9098ad3eb1d6e013b5af3088f4ea973f3469a27bceed01bc6c"
+  },
+  "complete": true,
+  "results": [
+    {
+      "driver": "postgres",
+      "runs": [
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 300.52419999999995,
+          "createMs": 27.13620000000003,
+          "importMs": 327.6604,
+          "importPeakMiB": 23,
+          "reopenMs": 15.882299999999987,
+          "exportMs": 43.17290000000014,
+          "workflowPeakMiB": 23,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 197.87129999999888,
+          "createMs": 29.22060000000056,
+          "importMs": 227.09189999999944,
+          "importPeakMiB": 22,
+          "reopenMs": 30.523000000001048,
+          "exportMs": 42.41330000000016,
+          "workflowPeakMiB": 23,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "postgres",
+          "backendVersion": "PostgreSQL 17.9 on x86_64-windows, compiled by msvc-19.44.35223, 64-bit",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 175.47780000000057,
+          "createMs": 15.958899999997811,
+          "importMs": 191.43669999999838,
+          "importPeakMiB": 22,
+          "reopenMs": 19.018400000000838,
+          "exportMs": 40.32690000000002,
+          "workflowPeakMiB": 23,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 197.87129999999888,
+        "createMs": 27.13620000000003,
+        "importMs": 227.09189999999944,
+        "reopenMs": 19.018400000000838,
+        "exportMs": 42.41330000000016,
+        "importPeakMiB": 22,
+        "workflowPeakMiB": 23
+      }
+    },
+    {
+      "driver": "mysql",
+      "runs": [
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 98.84569999999985,
+          "createMs": 24.782500000000255,
+          "importMs": 123.6282000000001,
+          "importPeakMiB": 21,
+          "reopenMs": 29.769500000000335,
+          "exportMs": 28.827800000000025,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 112.84289999999964,
+          "createMs": 18.21509999999944,
+          "importMs": 131.05799999999908,
+          "importPeakMiB": 22,
+          "reopenMs": 30.070999999999913,
+          "exportMs": 48.22229999999945,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mysql",
+          "backendVersion": "8.4.13",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 161.7416000000012,
+          "createMs": 21.779099999999744,
+          "importMs": 183.52070000000094,
+          "importPeakMiB": 21,
+          "reopenMs": 24.08879999999772,
+          "exportMs": 32.40269999999873,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 112.84289999999964,
+        "createMs": 21.779099999999744,
+        "importMs": 131.05799999999908,
+        "reopenMs": 29.769500000000335,
+        "exportMs": 32.40269999999873,
+        "importPeakMiB": 21,
+        "workflowPeakMiB": 22
+      }
+    },
+    {
+      "driver": "mariadb",
+      "runs": [
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 140.27139999999963,
+          "createMs": 26.90350000000035,
+          "importMs": 167.17489999999998,
+          "importPeakMiB": 21,
+          "reopenMs": 32.18289999999979,
+          "exportMs": 42.84430000000066,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 133.0080999999991,
+          "createMs": 23.073700000000827,
+          "importMs": 156.08179999999993,
+          "importPeakMiB": 21,
+          "reopenMs": 29.15730000000258,
+          "exportMs": 44.9304000000011,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "mariadb",
+          "backendVersion": "11.4.13-MariaDB",
+          "rows": 100000,
+          "idleMiB": 8,
+          "prepareMs": 216.64429999999993,
+          "createMs": 31.844199999999546,
+          "importMs": 248.48849999999948,
+          "importPeakMiB": 22,
+          "reopenMs": 22.63879999999699,
+          "exportMs": 41.59179999999833,
+          "workflowPeakMiB": 22,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 140.27139999999963,
+        "createMs": 26.90350000000035,
+        "importMs": 167.17489999999998,
+        "reopenMs": 29.15730000000258,
+        "exportMs": 42.84430000000066,
+        "importPeakMiB": 21,
+        "workflowPeakMiB": 22
+      }
+    },
+    {
+      "driver": "sqlite",
+      "runs": [
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 106.08399999999892,
+          "createMs": 14.274300000000949,
+          "importMs": 120.35829999999987,
+          "importPeakMiB": 24,
+          "reopenMs": 29.199800000000323,
+          "exportMs": 43.16489999999976,
+          "workflowPeakMiB": 24,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 103.5034999999989,
+          "createMs": 16.875199999998586,
+          "importMs": 120.37869999999748,
+          "importPeakMiB": 23,
+          "reopenMs": 31.73110000000088,
+          "exportMs": 44.47320000000036,
+          "workflowPeakMiB": 23,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        },
+        {
+          "driver": "sqlite",
+          "backendVersion": "3.46.0",
+          "rows": 100000,
+          "idleMiB": 9,
+          "prepareMs": 105.87380000000121,
+          "createMs": 15.703400000002148,
+          "importMs": 121.57720000000336,
+          "importPeakMiB": 23,
+          "reopenMs": 18.013200000001234,
+          "exportMs": 43.09440000000177,
+          "workflowPeakMiB": 23,
+          "output": {
+            "sha256": "c3fbd93c6e45bebb00a88a680b6f304fdf4c4eeeede0efb40613f77e5ff3b36e",
+            "lines": 100001
+          },
+          "typedRowsVerified": 100000
+        }
+      ],
+      "median": {
+        "prepareMs": 105.87380000000121,
+        "createMs": 15.703400000002148,
+        "importMs": 120.37869999999748,
+        "reopenMs": 29.199800000000323,
+        "exportMs": 43.16489999999976,
+        "importPeakMiB": 23,
+        "workflowPeakMiB": 23
+      }
+    }
+  ],
+  "valid": true
+}

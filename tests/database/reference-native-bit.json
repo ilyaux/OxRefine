@@ -1,0 +1,105 @@
+{
+  "cases": [
+    {
+      "driver": "mariadb",
+      "variant": "numericJSON",
+      "rows": [
+        [
+          "30",
+          "48"
+        ],
+        [
+          "31",
+          "49"
+        ],
+        [
+          "FFFFFFFFFFFFFFFF",
+          "18446744073709551615"
+        ],
+        [
+          "NULL",
+          "NULL"
+        ]
+      ]
+    },
+    {
+      "driver": "mariadb",
+      "variant": "characterJSON",
+      "rows": [
+        [
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "1"
+        ],
+        [
+          "FFFFFFFFFFFFFFFF",
+          "18446744073709551615"
+        ],
+        [
+          "NULL",
+          "NULL"
+        ]
+      ]
+    },
+    {
+      "driver": "mysql",
+      "variant": "numericJSON",
+      "rows": [
+        [
+          "0",
+          "0"
+        ],
+        [
+          "1",
+          "1"
+        ],
+        [
+          "FFFFFFFFFFFFFFFF",
+          "18446744073709551615"
+        ],
+        [
+          "NULL",
+          "NULL"
+        ]
+      ]
+    },
+    {
+      "driver": "mysql",
+      "variant": "characterJSON",
+      "rows": [
+        [
+          "NULL",
+          "NULL"
+        ],
+        [
+          "NULL",
+          "NULL"
+        ],
+        [
+          "FFFFFFFFFFFFFFFF",
+          "18446744073709551615"
+        ],
+        [
+          "NULL",
+          "NULL"
+        ]
+      ]
+    }
+  ],
+  "provenance": {
+    "recorded": "2026-11-14",
+    "method": "Native vendor client; SELECT HEX(bitv), CAST(bitv AS UNSIGNED), with no raw binary stdout",
+    "engines": {
+      "mysql": "8.4.13",
+      "mariadb": "11.4.13"
+    },
+    "scope": "Actual native SQL results used to calibrate SQLx BIT decoding tests; not OpenRefine output"
+  },
+  "queries": {
+    "numericJSON": "SELECT HEX(bitv), CAST(bitv AS UNSIGNED) FROM JSON_TABLE('[0,1,18446744073709551615,null]', '$[*]' COLUMNS (bitv BIT(64) PATH '$')) AS jt",
+    "characterJSON": "SELECT HEX(bitv), CAST(bitv AS UNSIGNED) FROM JSON_TABLE(JSON_ARRAY(CHAR(0 USING utf8mb4), CHAR(1 USING utf8mb4), 18446744073709551615, NULL), '$[*]' COLUMNS (bitv BIT(64) PATH '$')) AS jt"
+  }
+}

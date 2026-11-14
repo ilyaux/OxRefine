@@ -200,6 +200,9 @@ function app() {
     chip: exports.__chip,
     get enabled() { return dropOptions.enabled },
     get staged() { return nodes(view).find((node) => node.type === "ImportDialog") },
+    get database() { return nodes(view).find((node) => node.type === "DatabaseImportDialog") },
+    get projectName() { return nodes(view).find((node) => node.type === "Provider").props.value },
+    fromDatabase() { nodes(view).find((node) => node.type === "Palette").props.commands.find((command) => command.label === "Import from a database…").run(); render() },
     startDrop(value) { const current = ticket; return dropOptions.onDrop(value, () => current === ticket && dropOptions.enabled) },
     open(id) { nodes(view).find((node) => node.type === "Home").props.onOpen(id); render() },
   }
@@ -236,4 +239,27 @@ test("numeric facet chips show the exclusive upper bound while timeline chips st
   const a = app()
   assert.equal(a.chip({ type: "range", columnName: "n", from: 20, to: 80, selectNumeric: true, selectNonNumeric: true, selectBlank: true, selectError: true }), "n ∈ [20, 80)")
   assert.equal(a.chip({ type: "timerange", columnName: "when", from: 0, to: 86400000, selectTime: true, selectNonTime: true, selectBlank: true, selectError: true }), "when ∈ [1970-01-01, 1970-01-02]")
+})
+
+test("database import preserves the open project until snapshot creation succeeds", async () => {
+  const a = app()
+  a.fromDatabase()
+  assert.equal(a.database, undefined, "session restore protects all import source flows")
+  const old = { id: "old", name: "Old project", rows: 1, columns: ["n"], cursor: 0, history: [] }
+  a.commands[0].resolve({ data: old }); await tick(); a.render()
+  a.fromDatabase()
+  assert.ok(a.database)
+  assert.equal(a.projectName, "Old project")
+  const attempted = a.database.props.onCreate({ id: "snapshot", name: "Database data" })
+  const failed = assert.rejects(attempted, /Could not save/)
+  a.commands.find((command) => command.cmd === "database_create").reject(new Error("Could not save snapshot"))
+  await failed; a.render()
+  assert.equal(a.projectName, "Old project")
+  assert.ok(a.database, "a failed save leaves the prepared-result view available")
+  const created = a.database.props.onCreate({ id: "snapshot", name: "Database data" })
+  const request = a.commands.filter((command) => command.cmd === "database_create").at(-1)
+  assert.deepEqual(JSON.parse(JSON.stringify(request.args)), { id: "snapshot", name: "Database data" })
+  request.resolve({ data: { ...old, id: "new", name: "Database data" } }); await created; a.render()
+  assert.equal(a.projectName, "Database data")
+  assert.equal(a.database, undefined)
 })

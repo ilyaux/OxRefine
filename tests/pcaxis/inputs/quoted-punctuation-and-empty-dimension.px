@@ -1,0 +1,3 @@
+STUB="value";
+VALUES("value")="a,b;=c",""," spaced ";
+DATA=1 2 3;

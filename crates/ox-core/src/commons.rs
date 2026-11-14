@@ -236,7 +236,7 @@ fn fetch(client:&Client,options:&Options)->Result<Snapshot> {
     Ok(Snapshot{prepared:Prepared{table,source_url:url.to_string(),name,categories:options.categories.clone()},request_id:options.request_id.clone(),counts:fetch.counts,bytes:fetch.bytes,created:Instant::now(),id:String::new()})
 }
 fn table(files:&[File],wikitext:bool)->Result<Table> {
-    let mut column=Column::from_values(files.iter().map(|f|Value::Str(f.title.clone())));
+    let mut column=Column::try_from_values(files.iter().map(|f|Value::Str(f.title.clone())), &crate::storage::current_budget())?;
     let cells=files.iter().map(|file| {
         let candidate=Candidate{id:format!("M{}",file.id),name:file.title.clone(),types:vec![],score:100.0};
         let mut recon=Recon::new(0,SPACE,SCHEMA);recon.service=SERVICE.into();recon.candidates=Some(vec![candidate.clone()]);recon.matched=Some(candidate);recon.judgment=Judgment::Matched;recon.judgment_action="mass".into();recon.batch_size=1;
@@ -244,7 +244,7 @@ fn table(files:&[File],wikitext:bool)->Result<Table> {
     }).collect();
     column.recon=Some(Arc::new(ReconCol{cells,config:Some(json!({"mode":"standard-service","service":SERVICE,"identifierSpace":SPACE,"schemaSpace":SCHEMA,"type":{"id":"","name":"entity"},"autoMatch":true,"columnDetails":[],"limit":1})),stats:None}));
     let mut names=vec!["File".into()];let mut columns=vec![column];
-    if wikitext{names.push("Wikitext".into());columns.push(Column::from_values(files.iter().map(|f|f.wikitext.as_ref().map_or(Value::Null,|s|Value::Str(s.clone())))));}
+    if wikitext{names.push("Wikitext".into());columns.push(Column::try_from_values(files.iter().map(|f|f.wikitext.as_ref().map_or(Value::Null,|s|Value::Str(s.clone()))), &crate::storage::current_budget())?);}
     Ok(Table::new(names,columns,files.len()))
 }
 

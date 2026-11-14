@@ -33,6 +33,8 @@ The additional custom-export corpus in `tests/export/custom-fixtures.json` compa
 
 `tests/commons/reference.json` is a narrower reference: the unmodified file-to-cell mapping from the separate CommonsExtension v0.1.5 runs against the verified OpenRefine libraries on synthetic input. Its source hashes and exact scope are recorded in the fixture. It verifies file titles and reconciliation metadata, while local HTTP tests cover category traversal, continuation, failures, cancellation and snapshot creation. It does not claim that CommonsExtension is bundled with OpenRefine 3.10.1 or that the fixture covers live Commons responses.
 
+The additional import corpora under `tests/marc`, `tests/wikitext` and `tests/pcaxis` execute the verified 3.10.1 importer libraries and record their outputs and failure cases. MARC conversion also retains the actual Marc4j XML; the tests identify strict-validation and supplementary-Unicode differences. Wikitext fixtures include local reconciliation-service requests and column metadata, with explicit differences for corrected column placement. These suites are separate from the original ten-suite total. Generators, input data and artifact provenance are kept alongside the fixtures.
+
 ## Reusable recipes
 
 The additional `tests/recipes/` corpus uses small CC0 excerpts from the Portal Project Teaching Database. The data's source revision, license and selections are recorded in `sources.json`; the cleanup recipes were authored for these tests. `gen.mjs` records typed tables, history and per-step errors from OpenRefine 3.10.1.

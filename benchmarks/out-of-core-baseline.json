@@ -1,0 +1,1391 @@
+{
+  "purpose": "Single development-candidate validation of a bounded low-cardinality CSV/native-project workflow; not an OpenRefine speed comparison or whole-allocator heap measurement.",
+  "when": "2026-11-14T17:39:07.581Z",
+  "machine": {
+    "platform": "linux",
+    "release": "6.6.87.2-microsoft-standard-WSL2",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M",
+    "cpus": 16,
+    "totalMemoryBytes": 16301359104,
+    "freeMemoryBytes": 15712546816,
+    "node": "v22.23.1"
+  },
+  "dataset": {
+    "format": "oxrefine-ooc-v1",
+    "rows": 50000001,
+    "cardinality": "low",
+    "valueBytes": 32,
+    "columns": 20
+  },
+  "expectedCounts": {
+    "rows": 50000001,
+    "columns": 20,
+    "valueDistinct": 16,
+    "qtyErrors": 50151,
+    "groupA": 25000001,
+    "groupB": 25000000
+  },
+  "input": {
+    "sha256": "c06a37ec287bd824168ca429bd2b6df4c83cc5a922911ac979a4678579a23d53",
+    "bytes": 3644506112,
+    "rows": 50000001
+  },
+  "minimumCodeBytes": 4000000080,
+  "binary": {
+    "file": "ox",
+    "sha256": "26b42aac12edfdb73ececcd66156d599bf3b2adb4b639c1735cc4c452e3c3ddd"
+  },
+  "phases": [
+    {
+      "name": "import",
+      "elapsedMs": 28255.967015000017,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 635236352,
+        "peakResidentBytes": 764354560,
+        "residentAnonymousBytes": 2551808,
+        "residentFileBytes": 632684544,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 115290112,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073713152,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 20156416,
+          "file": 1010642944,
+          "pagetables": 8785920,
+          "file_mapped": 624128000,
+          "file_dirty": 25079808,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 148510,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 635367424,
+        "peakBytes": 764354560,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4000000080,
+          "mapped_peak_bytes": 4000000080,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 20
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4000000080,
+        "allocatedBytes": 4000153600,
+        "files": 20,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100009259,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 4100009259,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4000000080,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "uppercase",
+      "elapsedMs": 636.8509110000159,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 243933184,
+        "peakResidentBytes": 764354560,
+        "residentAnonymousBytes": 34684928,
+        "residentFileBytes": 209248256,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 147259392,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 868032512,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 76025856,
+          "file": 759955456,
+          "pagetables": 8925184,
+          "file_mapped": 200273920,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 181627,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 243933184,
+        "peakBytes": 764354560,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4000000080,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 20
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4000000080,
+        "allocatedBytes": 4000153600,
+        "files": 20,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100009550,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 4100014061,
+        "allocatedBytes": 4100030464,
+        "files": 4,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "stored-errors",
+      "elapsedMs": 580.0057610000076,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 444162048,
+        "peakResidentBytes": 764354560,
+        "residentAnonymousBytes": 34783232,
+        "residentFileBytes": 409378816,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 147324928,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 868225024,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 76247040,
+          "file": 759164928,
+          "pagetables": 8925184,
+          "file_mapped": 400277504,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 183159,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 444162048,
+        "peakBytes": 764354560,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4000000080,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 20
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4000000080,
+        "allocatedBytes": 4000153600,
+        "files": 20,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100009832,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 4100017539,
+        "allocatedBytes": 4100030464,
+        "files": 4,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "merge",
+      "elapsedMs": 513.9053320000239,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 644345856,
+        "peakResidentBytes": 764354560,
+        "residentAnonymousBytes": 34820096,
+        "residentFileBytes": 609525760,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 147324928,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073639424,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 76259328,
+          "file": 959680512,
+          "pagetables": 8929280,
+          "file_mapped": 600342528,
+          "file_dirty": 99340288,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 184681,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 644345856,
+        "peakBytes": 764354560,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200157184,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 4100020972,
+        "allocatedBytes": 4100034560,
+        "files": 4,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "typed-error-count",
+      "elapsedMs": 1175.807639000006,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 644399104,
+        "peakResidentBytes": 844361728,
+        "residentAnonymousBytes": 34873344,
+        "residentFileBytes": 609525760,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 147324928,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 873299968,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 76283904,
+          "file": 760860672,
+          "pagetables": 8929280,
+          "file_mapped": 600342528,
+          "file_dirty": 99340288,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 186181,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 644399104,
+        "peakBytes": 844361728,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200157184,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 4100024081,
+        "allocatedBytes": 4100038656,
+        "files": 4,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "export",
+      "elapsedMs": 10174.000282999972,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 820953088,
+        "peakResidentBytes": 920436736,
+        "residentAnonymousBytes": 234889216,
+        "residentFileBytes": 586063872,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 415764480,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073643520,
+        "peakBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 276291584,
+          "file": 759582720,
+          "pagetables": 9719808,
+          "file_mapped": 576872448,
+          "file_dirty": 26251264,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 239308,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 820953088,
+        "peakBytes": 920436736,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200161280,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7745636636,
+        "allocatedBytes": 7745658880,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "undo",
+      "elapsedMs": 4.899578000011388,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 448053248,
+        "peakResidentBytes": 920436736,
+        "residentAnonymousBytes": 234889216,
+        "residentFileBytes": 213164032,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 415764480,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073733632,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 293347328,
+          "file": 747454464,
+          "pagetables": 10223616,
+          "file_mapped": 203513856,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 267070,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 448053248,
+        "peakBytes": 920436736,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200161280,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7745639817,
+        "allocatedBytes": 7745658880,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "export-undo",
+      "elapsedMs": 11212.997422999993,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 808574976,
+        "peakResidentBytes": 920436736,
+        "residentAnonymousBytes": 234831872,
+        "residentFileBytes": 573743104,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 415764480,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073676288,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 293351424,
+          "file": 742600704,
+          "pagetables": 10223616,
+          "file_mapped": 564355072,
+          "file_dirty": 0,
+          "file_writeback": 11911168
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 316705,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 808574976,
+        "peakBytes": 920436736,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200161280,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7794539947,
+        "allocatedBytes": 7794561024,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "redo",
+      "elapsedMs": 3.8707590000121854,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 447864832,
+        "peakResidentBytes": 920436736,
+        "residentAnonymousBytes": 234831872,
+        "residentFileBytes": 213032960,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 415764480,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073664000,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 294313984,
+          "file": 746754048,
+          "pagetables": 10235904,
+          "file_mapped": 203571200,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 344563,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 447864832,
+        "peakBytes": 920436736,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200161280,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7794543066,
+        "allocatedBytes": 7794565120,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "cancel-import",
+      "elapsedMs": 93.45134699996561,
+      "os": {
+        "pid": 572,
+        "currentResidentBytes": 447995904,
+        "peakResidentBytes": 920436736,
+        "residentAnonymousBytes": 234962944,
+        "residentFileBytes": 213032960,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 417996800,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073643520,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 294379520,
+          "file": 746475520,
+          "pagetables": 10240000,
+          "file_mapped": 203653120,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 344637,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 572,
+        "currentBytes": 447995904,
+        "peakBytes": 920436736,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 67108864,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 1310720,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200161280,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7794546499,
+        "allocatedBytes": 7794569216,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 67108864,
+        "bufferPeakBytes": 1310720,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "restart-reopen",
+      "elapsedMs": 10316.664219000028,
+      "os": {
+        "pid": 619,
+        "currentResidentBytes": 742961152,
+        "peakResidentBytes": 743100416,
+        "residentAnonymousBytes": 134615040,
+        "residentFileBytes": 608346112,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 181567488,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073569792,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 194445312,
+          "file": 847663104,
+          "pagetables": 2760704,
+          "file_mapped": 600223744,
+          "file_dirty": 70701056,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 410215,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 619,
+        "currentBytes": 742961152,
+        "peakBytes": 743100416,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 50331648,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 65536,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200079360,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7794549612,
+        "allocatedBytes": 7794573312,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 50331648,
+        "bufferPeakBytes": 65536,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "reopened-typed-error-count",
+      "elapsedMs": 1407.0797970000422,
+      "os": {
+        "pid": 619,
+        "currentResidentBytes": 742985728,
+        "peakResidentBytes": 942977024,
+        "residentAnonymousBytes": 134639616,
+        "residentFileBytes": 608346112,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 181567488,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 873525248,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 194449408,
+          "file": 651878400,
+          "pagetables": 2760704,
+          "file_mapped": 600223744,
+          "file_dirty": 0,
+          "file_writeback": 0
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 411465,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 619,
+        "currentBytes": 742985728,
+        "peakBytes": 942977024,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 50331648,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 65536,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200079360,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7794552895,
+        "allocatedBytes": 7794573312,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 50331648,
+        "bufferPeakBytes": 65536,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    },
+    {
+      "name": "export-reopened",
+      "elapsedMs": 12522.369637999975,
+      "os": {
+        "pid": 619,
+        "currentResidentBytes": 840765440,
+        "peakResidentBytes": 968953856,
+        "residentAnonymousBytes": 334655488,
+        "residentFileBytes": 506109952,
+        "residentSharedBytes": 0,
+        "virtualDataBytes": 450007040,
+        "privateCommittedBytes": null,
+        "heapBytes": null,
+        "source": "proc-status",
+        "caveat": "RSS includes file mappings; RssAnon is resident anonymous memory, VmData is virtual data, neither measures total heap allocations."
+      },
+      "isolation": {
+        "verified": true,
+        "kind": "cgroup-v2",
+        "limitBytes": 1073741824,
+        "currentBytes": 1073688576,
+        "peakBytes": 1073745920,
+        "swapLimitBytes": 0,
+        "stat": {
+          "anon": 394452992,
+          "file": 642367488,
+          "pagetables": 10244096,
+          "file_mapped": 497876992,
+          "file_dirty": 0,
+          "file_writeback": 63676416
+        },
+        "events": {
+          "low": 0,
+          "high": 0,
+          "max": 445041,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "scope": "whole cgroup anonymous memory and charged file cache, not allocator heap; shared pages can stay charged to their creating cgroup"
+      },
+      "backend": {
+        "pid": 619,
+        "currentBytes": 840765440,
+        "peakBytes": 968953856,
+        "metric": "rss",
+        "peakSource": "os",
+        "error": null
+      },
+      "storage": {
+        "codeHeapLimitBytes": 67108864,
+        "codes": {
+          "heap_bytes": 0,
+          "heap_peak_bytes": 50331648,
+          "mapped_bytes": 4200000084,
+          "mapped_peak_bytes": 4200000084,
+          "buffer_bytes": 0,
+          "buffer_peak_bytes": 65536,
+          "spill_files": 21
+        },
+        "scope": "row codes only; dictionaries, flags, row indexes and operation scratch remain resident",
+        "mappedPages": "OS-managed; mapped bytes are not a process RSS limit"
+      },
+      "anonymousSpillDisk": {
+        "available": true,
+        "logicalBytes": 4200000084,
+        "allocatedBytes": 4200079360,
+        "files": 21,
+        "scope": "open unlinked regular files in the private spill directory, deduplicated by device/inode"
+      },
+      "nativeDisk": {
+        "logicalBytes": 4100010156,
+        "allocatedBytes": 4100022272,
+        "files": 3,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "totalRunDisk": {
+        "logicalBytes": 7745659337,
+        "allocatedBytes": 7745679360,
+        "files": 5,
+        "allocatedMetric": "stat.blocks * 512"
+      },
+      "budget": {
+        "verified": true,
+        "scope": "tracked CodeBuilder arrays only; From<Vec>, dictionaries and scratch excluded",
+        "limitBytes": 67108864,
+        "heapPeakBytes": 50331648,
+        "bufferPeakBytes": 65536,
+        "logicalMappedPeakBytes": 4200000084,
+        "codeVolumeExceedsBudget": true,
+        "inputFileExceedsBudget": true,
+        "totalHeapBounded": false
+      }
+    }
+  ],
+  "status": "functional-passed",
+  "policy": {
+    "codeLimitBytes": 67108864,
+    "scope": "CodeBuilder allocations only; not a process or whole-heap limit"
+  },
+  "inputValidation": {
+    "lines": 50000002,
+    "rows": 50000001,
+    "sha256": "c06a37ec287bd824168ca429bd2b6df4c83cc5a922911ac979a4678579a23d53",
+    "bytes": 3644506112,
+    "qtyErrorTexts": 0,
+    "mergedA": 0,
+    "mergedB": 0,
+    "errorCaveat": "CSV text equality does not by itself prove backend error cell types"
+  },
+  "originalStoreHash": "76f64e59e3a59d352f4071d598debeee602b9fe4f8c56c66db8128f69522d145",
+  "errorTypes": {
+    "errors": 50151,
+    "numeric": 49949850
+  },
+  "finalValidation": {
+    "lines": 50000002,
+    "rows": 50000001,
+    "sha256": "21c29042ff66be70d61245c76ba3e240d91b4eaa2b0498b93c61e86d8012f04e",
+    "bytes": 3645609435,
+    "qtyErrorTexts": 50151,
+    "mergedA": 25000001,
+    "mergedB": 25000000,
+    "errorCaveat": "CSV text equality does not by itself prove backend error cell types"
+  },
+  "undoValidation": {
+    "lines": 50000002,
+    "rows": 50000001,
+    "sha256": "c06a37ec287bd824168ca429bd2b6df4c83cc5a922911ac979a4678579a23d53",
+    "bytes": 3694506114,
+    "qtyErrorTexts": 0,
+    "mergedA": 0,
+    "mergedB": 0,
+    "errorCaveat": "CSV text equality does not by itself prove backend error cell types"
+  },
+  "cancel": {
+    "id": 11,
+    "stage": "Reading and parsing",
+    "progress": 1048576,
+    "total": 3644506112,
+    "error": "Cancelled",
+    "priorRaces": []
+  },
+  "reopenedErrorTypes": {
+    "errors": 50151,
+    "numeric": 49949850
+  },
+  "reopenedValidation": {
+    "lines": 50000002,
+    "rows": 50000001,
+    "sha256": "21c29042ff66be70d61245c76ba3e240d91b4eaa2b0498b93c61e86d8012f04e",
+    "bytes": 3645609435,
+    "qtyErrorTexts": 50151,
+    "mergedA": 25000001,
+    "mergedB": 25000000,
+    "errorCaveat": "CSV text equality does not by itself prove backend error cell types"
+  },
+  "originalStoreHashAfter": "76f64e59e3a59d352f4071d598debeee602b9fe4f8c56c66db8128f69522d145",
+  "inputHashAfter": "c06a37ec287bd824168ca429bd2b6df4c83cc5a922911ac979a4678579a23d53",
+  "afterStopDisk": {
+    "logicalBytes": 7745662532,
+    "allocatedBytes": 7745683456,
+    "files": 5,
+    "allocatedMetric": "stat.blocks * 512"
+  },
+  "afterStopSpillDirectory": {
+    "logicalBytes": 0,
+    "allocatedBytes": 0,
+    "files": 0,
+    "allocatedMetric": "stat.blocks * 512"
+  },
+  "trackedCodeBudgetVerified": true,
+  "totalHeapBudgetVerified": false,
+  "totalHeapBudgetExplanation": "The code-vector builder budget excludes resident dictionaries, other code constructors and scratch. OS resident memory is not heap; this run does not itself install an OS memory constraint.",
+  "smallerThanDatasetCgroup": true,
+  "observedResidentBelowCgroupCap": true,
+  "observedPeakResidentBytes": 968953856,
+  "isolationSummary": {
+    "memoryMaxBytes": 1073741824,
+    "swapMaxBytes": 0,
+    "actualCgroupPeakBytes": 1073745920,
+    "events": {
+      "low": 0,
+      "high": 0,
+      "max": 493673,
+      "oom": 0,
+      "oom_kill": 0,
+      "oom_group_kill": 0
+    },
+    "remainingPids": "",
+    "coordinatorCleanup": "removed empty owned cgroup",
+    "producerVerifierBackendSameCgroup": true
+  },
+  "measurementContext": {
+    "note": "Root Windows desktop cargo check may briefly overlap; phase timings are validation observations, not quiet benchmark claims.",
+    "events": [
+      {
+        "whenUTC": "2026-11-14T17:46:53.895372+00:00",
+        "event": "Root started Windows cargo test --release with CARGO_BUILD_JOBS=4",
+        "overlap": "later undo/oracle/restart phases; after measured import and numeric facet",
+        "interpretation": "phase times are validation observations, not quiet performance comparisons",
+        "artifact": "Validated native binary hash remains the report identity; package version was bumped to 0.6.0 after this candidate binary build."
+      }
+    ],
+    "candidateIdentity": "The recorded binary SHA identifies the measured artifact, built before the package version bump to 0.6.0."
+  },
+  "priorFailureBeforeRangeHistogramFix": {
+    "status": "failed-oom",
+    "phase": "typed-error-count",
+    "binary": {
+      "file": "ox",
+      "sha256": "d99e823265d31452d11cf1d0708a5f61b5c8453fbf32484ac10845121d3ccc83"
+    },
+    "memoryMaxBytes": 1073741824,
+    "events": {
+      "low": 0,
+      "high": 0,
+      "max": 196232,
+      "oom": 1,
+      "oom_kill": 3,
+      "oom_group_kill": 1
+    },
+    "explanation": "The previous numeric range panel retained two per-row f64 arrays. They were replaced by count/min/max and histogram passes before the successful run."
+  }
+}

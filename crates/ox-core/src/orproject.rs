@@ -296,7 +296,7 @@ impl State {
         let mut out = self.clone();
         for (c, edits) in by {
             let old = self.data.get(&c).map_or_else(|| null_column(self.rows), |c| Column { dict: c.dict.clone(), codes: c.codes.clone(), recon: c.recon.clone() });
-            out.data.insert(c, Arc::new(patch(old, edits)));
+            out.data.insert(c, Arc::new(patch(old, edits)?));
         }
         Ok(out)
     }
@@ -321,16 +321,16 @@ impl State {
     }
 
     /// Rows picked in a new order; `None` makes an empty row.
-    fn pick(&self, order: &[Option<u32>]) -> State {
+    fn pick(&self, order: &[Option<u32>]) -> Result<State> {
         let flag = |f: &Vec<bool>| Arc::new(order.iter().map(|r| r.is_some_and(|r| f[r as usize])).collect::<Vec<_>>());
-        State {
+        Ok(State {
             cols: self.cols.clone(),
-            data: self.data.iter().map(|(&c, col)| (c, Arc::new(col.pick(order)))).collect(),
+            data: self.data.iter().map(|(&c, col)| Ok((c, Arc::new(col.try_pick(order, &crate::storage::current_budget())?)))).collect::<Result<_>>()?,
             rows: order.len(),
             starred: flag(&self.starred),
             flagged: flag(&self.flagged),
             key: self.key.clone(),
-        }
+        })
     }
 
     fn col_at(&self, at: usize) -> Result<usize> {
@@ -355,10 +355,11 @@ impl State {
     }
 }
 
-fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Column {
+fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Result<Column> {
     let mut index: HashMap<Value, u32> = col.dict.iter().enumerate().map(|(i, v)| (v.clone(), i as u32)).collect();
     let rows = col.codes.len();
     let mut recons = col.recon.as_ref().map(|rc| rc.cells.clone());
+    let mut codes = Vec::with_capacity(edits.len());
     for (r, (v, recon)) in edits {
         if recon.is_some() || recons.is_some() {
             recons.get_or_insert_with(|| vec![None; rows])[r] = recon;
@@ -372,10 +373,11 @@ fn patch(mut col: Column, edits: Vec<(usize, Cell)>) -> Column {
                 c
             }
         };
-        Arc::make_mut(&mut col.codes)[r] = code;
+        codes.push((r, code));
     }
     col.recon = recons.filter(|c| c.iter().any(Option::is_some)).map(|cells| Arc::new(ReconCol::new(cells)));
-    col
+    col.codes = col.codes.with_edits(&codes, crate::storage::current_budget())?;
+    Ok(col)
 }
 
 // ---------------------------------------------------------------- change files
@@ -698,25 +700,25 @@ impl Change {
             Change::RemoveRows { at, rows } => {
                 if forward {
                     let gone: std::collections::HashSet<usize> = at.iter().copied().collect();
-                    s.pick(&(0..s.rows).filter(|r| !gone.contains(r)).map(|r| Some(r as u32)).collect::<Vec<_>>())
+                    s.pick(&(0..s.rows).filter(|r| !gone.contains(r)).map(|r| Some(r as u32)).collect::<Vec<_>>())?
                 } else {
                     // OpenRefine re-inserts the rows at their indexes, lowest first
                     let mut order: Vec<Option<u32>> = (0..s.rows as u32).map(Some).collect();
                     for &i in at {
                         order.insert(i.min(order.len()), None);
                     }
-                    s.pick(&order).put_rows(&at.iter().copied().zip(rows.iter()).collect::<Vec<_>>())?
+                    s.pick(&order)?.put_rows(&at.iter().copied().zip(rows.iter()).collect::<Vec<_>>())?
                 }
             }
             Change::Order(ix) => {
                 if forward {
-                    s.pick(&ix.iter().map(|&r| Some(r as u32)).collect::<Vec<_>>())
+                    s.pick(&ix.iter().map(|&r| Some(r as u32)).collect::<Vec<_>>())?
                 } else {
                     let mut back = vec![None; ix.len()];
                     for (new, &old) in ix.iter().enumerate() {
                         *back.get_mut(old).ok_or("a row order names a row that isn't there")? = Some(new as u32);
                     }
-                    s.pick(&back)
+                    s.pick(&back)?
                 }
             }
         })

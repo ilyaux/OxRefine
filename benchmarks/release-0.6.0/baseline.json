@@ -1,0 +1,25 @@
+{
+  "release": "https://github.com/ilyaux/OxRefine/releases/tag/v0.5.3",
+  "tag": "v0.5.3",
+  "annotatedTag": "025661dc8fb5091381672c385dbc750fc7fac236",
+  "commit": "0912b4f9c4a7fe6f5c8346cd28425c06638366c7",
+  "verification": "Downloaded official CLI archives with gh release download; both archive SHA-256 values equal GitHub release asset digest metadata. Annotated tag dereferences to the release commit. Measurement outcomes are recorded separately in the release verdict manifests.",
+  "assets": [
+    {
+      "platform": "windows-x86_64",
+      "archive": "ox-v0.5.3-x86_64-pc-windows-msvc.zip",
+      "assetId": 740179484,
+      "archiveSha256": "5afdc08583553b61beacd066f763072cc3eeb1cd31d48e663b92450c161053c5",
+      "binarySha256": "1b6aa6e1ddd0e241801e53e577303a502cff92fd4b62f0ed5bf22d32b97f6ab2",
+      "localBinary": "target/release-baseline-v0.5.3/windows/ox-v0.5.3-x86_64-pc-windows-msvc/ox.exe"
+    },
+    {
+      "platform": "linux-x86_64",
+      "archive": "ox-v0.5.3-x86_64-unknown-linux-gnu.tar.gz",
+      "assetId": 740169814,
+      "archiveSha256": "f29cbb5fe9c0925693866d97facd024dbefd19e98baa9cd666a9c42eacbca06f",
+      "binarySha256": "5c20581b33b6491e6ab3ea0fdfe781ef607b29b150dc9ec28a0d05b453e2f426",
+      "localBinary": "target/release-baseline-v0.5.3/linux/ox-v0.5.3-x86_64-unknown-linux-gnu/ox"
+    }
+  ]
+}

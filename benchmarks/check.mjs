@@ -8,8 +8,9 @@ import { mkdirSync, writeFileSync, readFileSync } from "node:fs"
 import { join, basename } from "node:path"
 import { cpus, totalmem, freemem, platform, release } from "node:os"
 import { createHash } from "node:crypto"
+import assert from "node:assert/strict"
 import { DATA, OX, STEPS, dataset, runOx } from "./ox.mjs"
-import { MODES, CARDINALITY_STEPS, cardinalityDataset, runCardinality } from "./cardinality.mjs"
+import { MODES, CARDINALITY_STEPS, cardinalityDataset, runCardinality, csvDigest } from "./cardinality.mjs"
 
 const args = process.argv.slice(2)
 let invalidOption = false
@@ -45,14 +46,23 @@ for (const n of sizes) {
  for (const mode of profile === "cardinality" ? MODES : ["people"]) {
   const data = profile === "cardinality" ? await cardinalityDataset(n, mode) : dataset(n)
   const got = { base: [], new: [] }
+  let expectedOutput
   // alternate the builds so drift in the machine's load hits both alike
   for (let i = 0; i < runs; i++) {
     for (const [which, bin, port] of [["base", base, 3041], ["new", next, 3042]]) {
       if (!bin) continue
       const output = join(DATA, `check_${which}_${mode}_${n}.csv`)
-      got[which].push(profile === "cardinality"
+      const measurement = profile === "cardinality"
         ? await runCardinality(data, output, { bin, port, history })
-        : await runOx(data, output, { bin, port }))
+        : await runOx(data, output, { bin, port })
+      if (profile === "people") {
+        assert.equal(measurement.rows, n, "people import row count differs")
+        measurement.output = await csvDigest(output)
+        assert.equal(measurement.output.lines, n + 1, "people export row count differs")
+        if (expectedOutput) assert.deepEqual(measurement.output, expectedOutput, "people exports differ between builds or repetitions")
+        else expectedOutput = measurement.output
+      }
+      got[which].push(measurement)
     }
   }
   for (const step of [...(profile === "cardinality" ? CARDINALITY_STEPS : STEPS), "peak"]) {

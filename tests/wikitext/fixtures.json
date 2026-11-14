@@ -1,0 +1,2389 @@
+{
+ "openrefine": "3.10.1",
+ "referenceMainJarSha256": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/src/com/google/refine/importers/WikitextImporter.java",
+ "method": "create-project-from-upload text/wiki; get-models and get-rows; random recon IDs removed; local mock reconciliation only",
+ "cases": [
+  {
+   "name": "basic",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "no headers",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 0,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Column 1",
+    "Column 2"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Name"
+     },
+     {
+      "v": "Value"
+     }
+    ],
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "two headers",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 2,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name Alpha",
+    "Value 42"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "guess types on Cell values",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": true,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "trimmed cells",
+   "text": "{|\n!  A  !! B\n|-\n|  alpha  ||  12  \n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "alpha"
+     },
+     {
+      "v": "12"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "all tables concatenate",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n\n== Next ==\n{|\n! Other !! Data\n|-\n| third || value\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ],
+    [
+     {
+      "v": "Other"
+     },
+     {
+      "v": "Data"
+     }
+    ],
+    [
+     {
+      "v": "third"
+     },
+     {
+      "v": "value"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "span blanks",
+   "text": "{|\n! A !! B !! C\n|-\n| rowspan=\"2\" | [[Alpha|A]] || colspan=2 | Wide\n|-\n| X || Y\n|-\n| Z || W || V\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "Wide"
+     },
+     null
+    ],
+    [
+     null,
+     {
+      "v": "X"
+     },
+     {
+      "v": "Y"
+     }
+    ],
+    [
+     {
+      "v": "Z"
+     },
+     {
+      "v": "W"
+     },
+     {
+      "v": "V"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "span repeated",
+   "text": "{|\n! A !! B !! C\n|-\n| rowspan=\"2\" | [[Alpha|A]] || colspan=2 | Wide\n|-\n| X || Y\n|-\n| Z || W || V\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": false,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "Wide"
+     },
+     {
+      "v": "Wide"
+     }
+    ],
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "X"
+     },
+     {
+      "v": "Y"
+     }
+    ],
+    [
+     {
+      "v": "Z"
+     },
+     {
+      "v": "W"
+     },
+     {
+      "v": "V"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "combined span",
+   "text": "{|\n! A !! B !! C\n|-\n| rowspan=2 colspan=2 | Both || End\n|-\n| Last\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": false,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Both"
+     },
+     {
+      "v": "Both"
+     },
+     {
+      "v": "End"
+     }
+    ],
+    [
+     {
+      "v": "Both"
+     },
+     {
+      "v": "Both"
+     },
+     {
+      "v": "Last"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "invalid spans",
+   "text": "{|\n! A !! B\n|-\n| rowspan=oops colspan=-2 | Bad || Good\n|-\n| Zero || colspan=0 | Last\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Bad"
+     },
+     {
+      "v": "Good"
+     }
+    ],
+    [
+     {
+      "v": "Zero"
+     },
+     {
+      "v": "Last"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "internal links",
+   "text": "{|\n! A !! B !! C\n|-\n| [[Alpha]]s || [[Beta|Shown]] || [[One]] and [[Two]]\n|-\n| [[:Category:Test|Category label]] || [[Category:Hidden]] || [[Alpha#Section|Section]]\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "Shown"
+     },
+     {
+      "v": "One and Two"
+     }
+    ],
+    [
+     {
+      "v": "Category label"
+     },
+     {
+      "v": "Category:Hidden"
+     },
+     {
+      "v": "Section"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "external links",
+   "text": "{|\n! A !! B !! C\n|-\n| [https://example.test/path Label] || https://example.test/bare || [ftp://example.test/file]\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "https://example.test/path"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "[ftp://example.test/file]"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "templates removed",
+   "text": "{|\n! A !! B\n|-\n| pre {{T|x=one|two}} post || {{Outer|{{Inner|a}}|z=last}}\n|-\n| [[File:Picture.png|thumb|caption]] || {{{parameter|fallback}}}\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "pre  post"
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "raw templates",
+   "text": "{|\n! A !! B\n|-\n| pre {{T|x=one|two}} post || {{Outer|{{Inner|a}}|z=last}}\n|-\n| [[File:Picture.png|thumb|caption]] || {{{parameter|fallback}}}\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": true,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "pre {{T|one|two}} post"
+     },
+     {
+      "v": "{{Outer|{{Inner|a}}|last}}"
+     }
+    ],
+    [
+     {
+      "v": "[[File:Picture.png]]"
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "reference columns",
+   "text": "{|\n! Name !! Value\n|-\n| A<ref name=\"one\">https://example.test/first</ref>suffix || B<ref>https://example.test/old https://example.test/latest.</ref>tail\n|-\n| C<ref name=\"one\" />after || D\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Column",
+    "Value",
+    "Column2"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "https://example.test/first"
+     },
+     {
+      "v": "B"
+     },
+     {
+      "v": "https://example.test/latest"
+     }
+    ],
+    [
+     {
+      "v": "C"
+     },
+     {
+      "v": "https://example.test/first"
+     },
+     {
+      "v": "D"
+     },
+     null
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "references hidden",
+   "text": "{|\n! Name !! Value\n|-\n| A<ref name=\"one\">https://example.test/first</ref>suffix || B<ref>https://example.test/old https://example.test/latest.</ref>tail\n|-\n| C<ref name=\"one\" />after || D\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": false,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "B"
+     }
+    ],
+    [
+     {
+      "v": "C"
+     },
+     {
+      "v": "D"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "reference then links",
+   "text": "{|\n! A\n|-\n| Start<ref>https://example.test/ref</ref>[[Alpha|Label]] [https://example.test/after X] tail\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "Column"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Starthttps://example.test/after"
+     },
+     {
+      "v": "https://example.test/ref"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "URL-valued reference names",
+   "text": "{|\n! A\n|-\n| A<ref name=\"https://example.test/key\">plain citation</ref>tail\n|-\n| B<ref name=\"https://example.test/key\"/>tail\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     }
+    ],
+    [
+     {
+      "v": "B"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "URL after inline reference markup",
+   "text": "{|\n! A\n|-\n| A<ref><i>Citation</i> https://example.test/real</ref>tail\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "Column"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "https://example.test/real"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "no URL references",
+   "text": "{|\n! A\n|-\n| A<ref>plain citation</ref>tail\n|-\n| B<ref name=missing/>tail\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     }
+    ],
+    [
+     {
+      "v": "B"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "blank rows columns kept",
+   "text": "{|\n! A !! !! C\n|-\n| one || || three\n|-\n| || ||\n|-\n| two || ||\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "Column",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "three"
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": "two"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "blank columns dropped",
+   "text": "{|\n! A !! !! C\n|-\n| one || || three\n|-\n| || ||\n|-\n| two || ||\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": false,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one"
+     },
+     {
+      "v": "three"
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": "two"
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "blank rows dropped",
+   "text": "{|\n! A !! !! C\n|-\n| one || || three\n|-\n| || ||\n|-\n| two || ||\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": false,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "Column",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "three"
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": "two"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "empty strings",
+   "text": "{|\n! A !! !! C\n|-\n| one || || three\n|-\n| || ||\n|-\n| two || ||\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": false,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "Column",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "three"
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": "two"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "skip and limit",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 1,
+    "limit": 1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "ignore row",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 0,
+    "ignoreLines": 1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Column 1",
+    "Column 2"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "zero limit",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": 0,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "Name",
+    "Value"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Alpha"
+     },
+     {
+      "v": "42"
+     }
+    ],
+    [
+     {
+      "v": "Beta"
+     },
+     {
+      "v": "true"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "incomplete header",
+   "text": "{| class=\"wikitable\"\n! Name !! Value\n|-\n| Alpha || 42\n|-\n| Beta || true\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 10,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [],
+   "rows": [],
+   "columnRecon": [],
+   "queries": []
+  },
+  {
+   "name": "span blanks as strings",
+   "text": "{|\n! A !! B !! C\n|-\n| rowspan=\"2\" | [[Alpha|A]] || colspan=2 | Wide\n|-\n| X || Y\n|-\n| Z || W || V\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": false,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B",
+    "C"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A"
+     },
+     {
+      "v": "Wide"
+     },
+     {
+      "v": ""
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": "X"
+     },
+     {
+      "v": "Y"
+     }
+    ],
+    [
+     {
+      "v": "Z"
+     },
+     {
+      "v": "W"
+     },
+     {
+      "v": "V"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "HTML entities tags",
+   "text": "{|\n! A !! B\n|-\n| &amp; &#65; &nbsp; &#x1F600; || <span class=x>Text</span><br />line<br>end\n|-\n| <nowiki>[[literal]] {{template}}</nowiki> || '''Bold''' and ''italic''\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": "Text\nline\nend"
+     }
+    ],
+    [
+     {
+      "v": ""
+     },
+     {
+      "v": "Bold and italic"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "comments and pipes",
+   "text": "{|\n! A !! B\n|-\n| x<!-- hidden || pipe -->y || [[Target|Label with | pipe]]\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "xy"
+     },
+     {
+      "v": "Label with | pipe"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "multiline content",
+   "text": "{|\n! A !! B\n|-\n| first\nsecond\n|\n* one\n* two\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "first\nsecond"
+     },
+     {
+      "v": ""
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "linebreak tag case and blank line",
+   "text": "{|\n! A !! B\n|-\n| a<br>b<BR>c<br/>d</br>e || first\n\nsecond\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "a\nbc\nd\ne"
+     },
+     {
+      "v": "first\n\nsecond"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "captions",
+   "text": "{|\n|+ First ''caption''\n! A\n|-\n| row\n|}\n{|\n|+ Second\n! B\n|-\n| next\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A"
+   ],
+   "rows": [
+    [
+     {
+      "v": "row"
+     }
+    ],
+    [
+     {
+      "v": "B"
+     }
+    ],
+    [
+     {
+      "v": "next"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "empty table",
+   "text": "{|\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [],
+   "rows": [],
+   "columnRecon": [],
+   "queries": []
+  },
+  {
+   "name": "no table",
+   "text": "Plain text [[Link]] and {{Template}}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [],
+   "rows": [],
+   "columnRecon": [],
+   "queries": []
+  },
+  {
+   "name": "unclosed table",
+   "text": "{|\n! A !! B\n|-\n| one || two\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "one"
+     },
+     {
+      "v": "two"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": []
+  },
+  {
+   "name": "nested table",
+   "text": "{|\n! Outer !! End\n|-\n| before\n{|\n! Inner\n|-\n| inside\n|}\nafter\n| last\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": null,
+    "includeFileSources": false,
+    "includeArchiveFileName": false
+   },
+   "error": {
+    "status": 500
+   }
+  },
+  {
+   "name": "local reconciliation",
+   "text": "{|\n! A !! B\n|-\n| [[Alpha|Label]] || [[Beta]]\n|-\n| [[Alpha]] and [[Beta]] || [[Alpha]]\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": "https://en.wikipedia.org/wiki/",
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "reconService": "{SERVICE}"
+   },
+   "columns": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Label",
+      "r": {
+       "j": "matched",
+       "m": {
+        "id": "Q111",
+        "name": "Alpha entity",
+        "types": [],
+        "score": 100
+       },
+       "service": "{SERVICE}",
+       "identifierSpace": "http://www.wikidata.org/entity/",
+       "schemaSpace": "http://www.wikidata.org/prop/direct/"
+      }
+     },
+     {
+      "v": "Beta",
+      "r": {
+       "j": "matched",
+       "m": {
+        "id": "Q222",
+        "name": "Beta entity",
+        "types": [],
+        "score": 100
+       },
+       "service": "{SERVICE}",
+       "identifierSpace": "http://www.wikidata.org/entity/",
+       "schemaSpace": "http://www.wikidata.org/prop/direct/"
+      }
+     }
+    ],
+    [
+     {
+      "v": "Alpha and Beta"
+     },
+     {
+      "v": "Alpha",
+      "r": {
+       "j": "matched",
+       "m": {
+        "id": "Q111",
+        "name": "Alpha entity",
+        "types": [],
+        "score": 100
+       },
+       "service": "{SERVICE}",
+       "identifierSpace": "http://www.wikidata.org/entity/",
+       "schemaSpace": "http://www.wikidata.org/prop/direct/"
+      }
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": {
+      "mode": "standard-service",
+      "service": "{SERVICE}",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+       "id": "",
+       "name": "entity"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 1
+     },
+     "stats": {
+      "nonBlanks": 2,
+      "newTopics": 0,
+      "matchedTopics": 1,
+      "errorTopics": 0
+     }
+    },
+    {
+     "config": {
+      "mode": "standard-service",
+      "service": "{SERVICE}",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+       "id": "",
+       "name": "entity"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 1
+     },
+     "stats": {
+      "nonBlanks": 2,
+      "newTopics": 0,
+      "matchedTopics": 2,
+      "errorTopics": 0
+     }
+    }
+   ],
+   "queries": [
+    {
+     "query": "https://en.wikipedia.org/wiki/Alpha"
+    },
+    {
+     "query": "https://en.wikipedia.org/wiki/Beta"
+    },
+    {
+     "query": "https://en.wikipedia.org/wiki/Alpha"
+    }
+   ]
+  },
+  {
+   "name": "header-only reconciliation config",
+   "text": "{|\n! [[Alpha]]\n|-\n| Unlinked body\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": "https://en.wikipedia.org/wiki/",
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "reconService": "{SERVICE}"
+   },
+   "columns": [
+    "Alpha"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Unlinked body"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": {
+      "mode": "standard-service",
+      "service": "{SERVICE}",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+       "id": "",
+       "name": "entity"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 1
+     },
+     "stats": {
+      "nonBlanks": 1,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 0
+     }
+    }
+   ],
+   "queries": [
+    {
+     "query": "https://en.wikipedia.org/wiki/Alpha"
+    }
+   ]
+  },
+  {
+   "name": "skipped reconciliation config",
+   "text": "{|\n! A\n|-\n| [[Alpha]]\n|-\n| Unlinked body\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 1,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": "https://en.wikipedia.org/wiki/",
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "reconService": "{SERVICE}"
+   },
+   "columns": [
+    "A"
+   ],
+   "rows": [
+    [
+     {
+      "v": "Unlinked body"
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": {
+      "mode": "standard-service",
+      "service": "{SERVICE}",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+       "id": "",
+       "name": "entity"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 1
+     },
+     "stats": {
+      "nonBlanks": 1,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 0
+     }
+    }
+   ],
+   "queries": [
+    {
+     "query": "https://en.wikipedia.org/wiki/Alpha"
+    }
+   ]
+  },
+  {
+   "name": "local reconciliation with reference",
+   "text": "{|\n! A !! B\n|-\n| First<ref>https://example.test/ref</ref> || [[Alpha|Label]]\n|}\n",
+   "options": {
+    "encoding": "UTF-8",
+    "headerLines": 1,
+    "ignoreLines": -1,
+    "skipDataLines": 0,
+    "limit": -1,
+    "storeBlankRows": true,
+    "storeBlankColumns": true,
+    "storeBlankCellsAsNulls": true,
+    "guessCellValueTypes": false,
+    "blankSpanningCells": true,
+    "includeRawTemplates": false,
+    "parseReferences": true,
+    "wikiUrl": "https://en.wikipedia.org/wiki/",
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "reconService": "{SERVICE}"
+   },
+   "knownDifference": "OpenRefine assigns reconciliation configuration using column indexes before reference-column insertion; Ox keeps it with the actual reconciled output column.",
+   "columns": [
+    "A",
+    "Column",
+    "B"
+   ],
+   "rows": [
+    [
+     {
+      "v": "First"
+     },
+     {
+      "v": "https://example.test/ref"
+     },
+     {
+      "v": "Label",
+      "r": {
+       "j": "matched",
+       "m": {
+        "id": "Q111",
+        "name": "Alpha entity",
+        "types": [],
+        "score": 100
+       },
+       "service": "{SERVICE}",
+       "identifierSpace": "http://www.wikidata.org/entity/",
+       "schemaSpace": "http://www.wikidata.org/prop/direct/"
+      }
+     }
+    ]
+   ],
+   "columnRecon": [
+    {
+     "config": null,
+     "stats": null
+    },
+    {
+     "config": {
+      "mode": "standard-service",
+      "service": "{SERVICE}",
+      "identifierSpace": "http://www.wikidata.org/entity/",
+      "schemaSpace": "http://www.wikidata.org/prop/direct/",
+      "type": {
+       "id": "",
+       "name": "entity"
+      },
+      "autoMatch": true,
+      "columnDetails": [],
+      "limit": 1
+     },
+     "stats": {
+      "nonBlanks": 1,
+      "newTopics": 0,
+      "matchedTopics": 0,
+      "errorTopics": 0
+     }
+    },
+    {
+     "config": null,
+     "stats": null
+    }
+   ],
+   "queries": [
+    {
+     "query": "https://en.wikipedia.org/wiki/Alpha"
+    }
+   ]
+  }
+ ]
+}

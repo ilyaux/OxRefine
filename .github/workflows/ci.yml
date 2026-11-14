@@ -41,7 +41,7 @@ jobs:
           cache-dependency-path: ui/package-lock.json
       - run: npm ci
       - name: Node regression tests
-        run: node --test tests/*.test.mjs ../benchmarks/cardinality.test.mjs
+        run: node --test tests/*.test.mjs ../benchmarks/*.test.mjs ../tests/release/*.test.mjs ../tools/*.test.mjs
       - run: npm run build
 
   bench:

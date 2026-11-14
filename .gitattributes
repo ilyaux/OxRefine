@@ -1,11 +1,16 @@
 # Test data is compared byte for byte with what OpenRefine read: never convert its line endings
 # (tests/corpus has CRLF, CR-only and mixed files on purpose).
-tests/**/*.csv -text
-tests/**/*.tsv -text
-tests/**/*.txt -text
-tests/**/*.json -text
-tests/**/*.fods -text
-tests/**/*.xml -text
+tests/**/*.csv -text -whitespace
+tests/**/*.tsv -text -whitespace
+tests/**/*.txt -text -whitespace
+tests/**/*.json -text -whitespace
+tests/**/*.fods -text -whitespace
+tests/**/*.xml -text -whitespace
+tests/**/*.wiki -text -whitespace
+tests/**/*.px -text -whitespace
+tests/**/*.mrc binary
+tests/**/*.marc binary
+licenses/*.txt -text -whitespace
 tests/**/*.gz binary
 tests/**/*.bz2 binary
 tests/**/*.zip binary
@@ -13,4 +18,4 @@ tests/**/*.ods binary
 tests/**/*.xlsx binary
 
 # Bundled rule files are read byte for byte
-crates/ox-core/assets/** -text
+crates/ox-core/assets/** -text -whitespace

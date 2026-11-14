@@ -102,5 +102,6 @@ pub fn project(t: &Table, rows: &[u32], options: &TabularOptions) -> Result<Tabl
         for (out,value) in cols.iter_mut().zip(values) { out.push(value); }
     }
     let n=cols.first().map_or(0,Vec::len);
-    Ok(Table::new(indices.iter().map(|&ci|t.names[ci].clone()).collect(),cols.into_iter().map(Column::from_values).collect(),n))
+    let budget = crate::storage::current_budget();
+    Ok(Table::new(indices.iter().map(|&ci|t.names[ci].clone()).collect(),cols.into_iter().map(|values| Column::try_from_values(values, &budget)).collect::<Result<_>>()?,n))
 }

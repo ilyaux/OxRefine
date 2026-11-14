@@ -1,0 +1,132 @@
+[
+ {
+  "name": "ascii",
+  "file": "ascii.mrc"
+ },
+ {
+  "name": "utf8",
+  "file": "utf8.mrc"
+ },
+ {
+  "name": "utf8-decomposed",
+  "file": "utf8-decomposed.mrc"
+ },
+ {
+  "name": "utf8-blank-flag",
+  "file": "utf8-blank-flag.mrc"
+ },
+ {
+  "name": "marc8-ansel",
+  "file": "marc8-ansel.mrc"
+ },
+ {
+  "name": "marc8-combining",
+  "file": "marc8-combining.mrc"
+ },
+ {
+  "name": "marc8-scripts",
+  "file": "marc8-scripts.mrc"
+ },
+ {
+  "name": "marc8-greek",
+  "file": "marc8-greek.mrc"
+ },
+ {
+  "name": "marc8-eacc",
+  "file": "marc8-eacc.mrc"
+ },
+ {
+  "name": "marc8-supplementary-eacc",
+  "file": "marc8-supplementary-eacc.mrc",
+  "knownDifference": "MARC4J truncates three supplementary EACC Unicode scalars to 16 bits; OxRefine uses their exact Library of Congress scalar mappings.",
+  "locUnicode": "\ud844\udec4\ud849\udd1b\ud84b\udc4d"
+ },
+ {
+  "name": "marc8-ncr",
+  "file": "marc8-ncr.mrc"
+ },
+ {
+  "name": "escaped-entities",
+  "file": "escaped-entities.mrc"
+ },
+ {
+  "name": "empty-uppercase-subfields",
+  "file": "empty-uppercase-subfields.mrc"
+ },
+ {
+  "name": "interleaved-fields",
+  "file": "interleaved-fields.mrc"
+ },
+ {
+  "name": "multiple-records",
+  "file": "multiple-records.mrc"
+ },
+ {
+  "name": "limit-one",
+  "file": "limit-one.mrc",
+  "options": {
+   "limit": 1
+  }
+ },
+ {
+  "name": "limit-zero",
+  "file": "limit-zero.mrc",
+  "options": {
+   "limit": 0
+  }
+ },
+ {
+  "name": "subfield-record-path",
+  "file": "subfield-record-path.mrc",
+  "options": {
+   "recordPath": [
+    "collection",
+    "record",
+    "datafield",
+    "subfield"
+   ]
+  }
+ },
+ {
+  "name": "truncated-leader",
+  "file": "truncated-leader.mrc",
+  "reject": true
+ },
+ {
+  "name": "truncated-record",
+  "file": "truncated-record.mrc",
+  "reject": true
+ },
+ {
+  "name": "missing-record-terminator",
+  "file": "missing-record-terminator.mrc",
+  "reject": true
+ },
+ {
+  "name": "invalid-base",
+  "file": "invalid-base.mrc",
+  "reject": true
+ },
+ {
+  "name": "invalid-field-length",
+  "file": "invalid-field-length.mrc",
+  "reject": true
+ },
+ {
+  "name": "nonnumeric-directory",
+  "file": "nonnumeric-directory.mrc",
+  "reject": true
+ },
+ {
+  "name": "invalid-utf8",
+  "file": "invalid-utf8.mrc",
+  "reject": true,
+  "knownDifference": "OxRefine rejects malformed UTF-8 explicitly; Marc4j attempts other encodings and repairs."
+ },
+ {
+  "name": "unknown-marc8-escape",
+  "file": "unknown-marc8-escape.mrc",
+  "reject": true,
+  "knownDifference": "OxRefine rejects unknown MARC-8 escape designations; Marc4j's permissive reader repairs some malformed sequences."
+ }
+]

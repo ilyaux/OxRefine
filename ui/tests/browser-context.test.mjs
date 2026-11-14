@@ -115,13 +115,16 @@ test("quiet process memory stays free of project contexts during a running comma
   const stale = assert.rejects(running, { name: "ProjectContextChanged" }); operation.reply(response("123", "epoch-1")); await stale
 })
 
-test("fixed-width import samples require no project context while another project is opened", async () => {
-  const a = api()
-  const sample = a.call("fixed_width_sample", { path: "input.txt" }, { quiet: true }); const request = a.requests.at(-1)
-  await select(a, "123")
-  request.reply({ data: { lines: ["ABC  123"], encoding: "UTF-8" }, ms: 0 })
-  assert.equal((await sample).data.lines[0], "ABC  123")
-  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "123")
+test("import metadata requires no project context while another project is opened", async () => {
+  for (const command of ["fixed_width_sample", "wikitext_tables"]) {
+    const a = api()
+    const sample = a.call(command, { path: "input.txt" }, { quiet: true }); const request = a.requests.at(-1)
+    await select(a, "123")
+    const data = command === "fixed_width_sample" ? { lines: ["ABC  123"] } : { tables: [{ index: 0, rows: 2, columns: 2 }] }
+    request.reply({ data, ms: 0 })
+    assert.deepEqual((await sample).data, data)
+    assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "123")
+  }
 })
 
 test("Commons snapshots stay independent of project changes; only successful creation selects a project", async () => {
@@ -146,4 +149,27 @@ test("Commons snapshots stay independent of project changes; only successful cre
   a.requests.at(-1).reply("Commons preview expired", 400)
   await assert.rejects(expired, /expired/)
   assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "789")
+})
+
+test("database profile/query commands stay free of project revisions, CAS errors do not refresh the editor", async () => {
+  for (const command of ["database_profiles", "database_save_profile", "database_delete_profile", "database_test", "database_schema", "database_prepare", "database_preview", "storage_stats"]) {
+    const a = api(); await select(a, "old")
+    const operation = a.call(command, {}); const request = a.requests.at(-1)
+    await select(a, "current")
+    request.reply({ data: { id: "snapshot" }, ms: 0 }); await operation
+    assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "current")
+  }
+  const a = api(); await select(a, "old")
+  let conflicts = 0; a.onProjectConflict(() => conflicts++)
+  const save = a.call("database_save_profile", { params: { profile: {} } })
+  a.requests.at(-1).reply({ code: "stale_profile", message: "Connection profile changed; reload profiles" }, 409)
+  await assert.rejects(save, /reload profiles/)
+  assert.equal(conflicts, 0)
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "old")
+  const failed = a.call("database_create", { id: "expired", name: "Data" })
+  a.requests.at(-1).reply("Database snapshot expired", 400); await assert.rejects(failed, /expired/)
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "old")
+  const create = a.call("database_create", { id: "snapshot", name: "Data" })
+  a.requests.at(-1).reply(response("new", "epoch-0", { id: "new" })); await create
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "new")
 })

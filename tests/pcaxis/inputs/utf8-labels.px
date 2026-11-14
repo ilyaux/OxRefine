@@ -1,0 +1,4 @@
+CHARSET="UTF-8";
+STUB="Регион";
+VALUES("Регион")="Åland","東京";
+DATA=1 2;

@@ -477,7 +477,7 @@ struct RangeStats {
 fn range_panel(t: &Table, ev: &Evaluated, others: &[u32], record_based: bool) -> J {
     let starts = if record_based { record_starts(t) } else { vec![] };
     let tally = |rows: &mut dyn Iterator<Item = usize>| {
-        let (mut s, mut nums) = (RangeStats::default(), vec![]);
+        let (mut s, mut lo, mut hi) = (RangeStats::default(), f64::INFINITY, f64::NEG_INFINITY);
         let mut boundaries = starts.iter().peekable();
         let mut seen = [false; 4];
         for r in rows {
@@ -489,7 +489,8 @@ fn range_panel(t: &Table, ev: &Evaluated, others: &[u32], record_based: bool) ->
             for it in ev.of(t, r) {
                 let (kind, count) = match it {
                     Item::Val { num: Some(n), .. } if n.is_finite() => {
-                        nums.push(*n);
+                        lo = lo.min(*n);
+                        hi = hi.max(*n);
                         (0, &mut s.numeric)
                     }
                     Item::Val { num: Some(_), .. } | Item::Error => (3, &mut s.error),
@@ -500,35 +501,100 @@ fn range_panel(t: &Table, ev: &Evaluated, others: &[u32], record_based: bool) ->
                 seen[kind] = true;
             }
         }
-        (s, nums)
+        (s, lo, hi)
     };
-    let (base, base_nums) = tally(&mut (0..t.rows));
-    let (cur, cur_nums) = tally(&mut others.iter().map(|&r| r as usize));
+    let (base, lo, hi) = tally(&mut (0..t.rows));
+    let (cur, _, _) = tally(&mut others.iter().map(|&r| r as usize));
     let mut out = json!({
         "baseNumericCount": base.numeric, "baseNonNumericCount": base.non_numeric, "baseBlankCount": base.blank, "baseErrorCount": base.error,
         "numericCount": cur.numeric, "nonNumericCount": cur.non_numeric, "blankCount": cur.blank, "errorCount": cur.error,
     });
-    if base_nums.is_empty() {
+    if base.numeric == 0 {
         out["error"] = json!("No numeric value present.");
         return out;
     }
-    let lo = base_nums.iter().copied().fold(f64::INFINITY, f64::min);
-    let hi = base_nums.iter().copied().fold(f64::NEG_INFINITY, f64::max);
     let (min, max, step, n) = binning(lo, hi);
-    let bins = |nums: &[f64]| {
+    // Scan the evaluated cells again instead of retaining two f64 copies of every numeric row.
+    let bins = |rows: &mut dyn Iterator<Item = usize>| {
         let mut b = vec![0usize; n];
-        for v in nums {
-            let i = ((v - min) / step).floor() as usize;
-            b[i.min(n - 1)] += 1;
+        for r in rows {
+            for item in ev.of(t, r) {
+                if let Item::Val { num: Some(v), .. } = item {
+                    if v.is_finite() {
+                        let i = ((v - min) / step).floor() as usize;
+                        b[i.min(n - 1)] += 1;
+                    }
+                }
+            }
         }
         b
     };
     out["min"] = json!(min);
     out["max"] = json!(max);
     out["step"] = json!(step);
-    out["baseBins"] = json!(bins(&base_nums));
-    out["bins"] = json!(bins(&cur_nums));
+    out["baseBins"] = json!(bins(&mut (0..t.rows)));
+    out["bins"] = json!(bins(&mut others.iter().map(|&r| r as usize)));
     out
+}
+
+#[cfg(test)]
+mod range_panel_tests {
+    use super::*;
+    use crate::table::Column;
+    use std::sync::Arc;
+
+    fn table(values: Vec<Value>, keys: Vec<Value>) -> Table {
+        let rows = values.len();
+        assert_eq!(rows, keys.len());
+        Table { names: vec!["key".into(), "value".into()], columns: vec![Arc::new(Column::from_values(keys)), Arc::new(Column::from_values(values))],
+            rows, starred: Arc::new(vec![false; rows]), flagged: Arc::new(vec![false; rows]), key: Some("key".into()) }
+    }
+
+    #[test]
+    fn finite_histograms_preserve_filtered_nan_infinity_error_blank_and_array_categories() {
+        use Value::*;
+        let values = vec![Int(0), Int(10), Int(100), Num(f64::NAN), Num(f64::INFINITY), Num(f64::NEG_INFINITY),
+            Error("bad".into()), Null, Str("text".into()), Array(vec![Int(10), Int(10), Int(100), Null])];
+        let t = table(values, (0..10).map(Int).collect());
+        let ev = Evaluated::new(&t, "value", "value", None).unwrap();
+        let mut base_bins = vec![0; 101];
+        base_bins[0] = 1; base_bins[10] = 2; base_bins[100] = 2;
+        let mut bins = vec![0; 101];
+        bins[10] = 2; bins[100] = 1;
+        assert_eq!(range_panel(&t, &ev, &[1, 3, 7, 9], false), json!({
+            "baseNumericCount": 5, "baseNonNumericCount": 1, "baseBlankCount": 2, "baseErrorCount": 4,
+            "numericCount": 3, "nonNumericCount": 0, "blankCount": 2, "errorCount": 1,
+            "min": 0.0, "max": 101.0, "step": 1.0, "baseBins": base_bins, "bins": bins,
+        }));
+    }
+
+    #[test]
+    fn record_categories_count_once_while_histograms_count_each_numeric_cell() {
+        use Value::*;
+        let t = table(vec![Array(vec![Int(0), Int(10)]), Int(10), Error("bad".into()), Num(f64::NAN), Null,
+            Array(vec![Int(100), Str("text".into()), Null])],
+            vec![Str("a".into()), Null, Str("b".into()), Null, Null, Str("c".into())]);
+        let ev = Evaluated::new(&t, "value", "value", None).unwrap();
+        let mut bins = vec![0; 101];
+        bins[0] = 1; bins[10] = 2; bins[100] = 1;
+        assert_eq!(range_panel(&t, &ev, &[0, 1, 3, 5], true), json!({
+            "baseNumericCount": 2, "baseNonNumericCount": 1, "baseBlankCount": 2, "baseErrorCount": 1,
+            "numericCount": 2, "nonNumericCount": 1, "blankCount": 1, "errorCount": 1,
+            "min": 0.0, "max": 101.0, "step": 1.0, "baseBins": bins, "bins": bins,
+        }));
+    }
+
+    #[test]
+    fn no_finite_numbers_keeps_the_existing_error_shape() {
+        use Value::*;
+        let t = table(vec![Null, Str("text".into()), Num(f64::NAN), Error("bad".into())], (0..4).map(Int).collect());
+        let ev = Evaluated::new(&t, "value", "value", None).unwrap();
+        assert_eq!(range_panel(&t, &ev, &[0, 2], false), json!({
+            "baseNumericCount": 0, "baseNonNumericCount": 1, "baseBlankCount": 1, "baseErrorCount": 2,
+            "numericCount": 0, "nonNumericCount": 0, "blankCount": 1, "errorCount": 1,
+            "error": "No numeric value present.",
+        }));
+    }
 }
 
 /// OpenRefine's TimeBinIndex steps: millisecond … week, then average Gregorian months and years.

@@ -1,0 +1,1341 @@
+{
+  "provenance": {
+    "release": "3.10.1",
+    "releaseUrl": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+    "releaseSha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+    "artifacts": {
+      "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+      "webapp/extensions/pc-axis/module/MOD-INF/lib/openrefine-pcaxis.jar": "e899c40b601df090484636301e4ef7e63215e168b6323a1f02b888c2d2236682"
+    },
+    "reportedVersion": {
+      "version": "3.10-SNAPSHOT",
+      "revision": "TRUNK",
+      "full_version": "3.10-SNAPSHOT [TRUNK]",
+      "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+      "java_vm_name": "OpenJDK 64-Bit Server VM",
+      "java_vm_version": "11.0.30+7",
+      "java_runtime_name": "OpenJDK Runtime Environment",
+      "java_runtime_version": "11.0.30+7",
+      "display_new_version_notice": "true",
+      "module_names": [
+        "core",
+        "database",
+        "jython",
+        "pc-axis",
+        "wikidata"
+      ]
+    },
+    "generator": "tests/pcaxis/gen.mjs",
+    "normalization": "Generated failed-project ids replaced by <project> in error messages"
+  },
+  "wizard": {
+    "fileName": "table.px",
+    "format": "text/line-based/pc-axis",
+    "options": {
+      "includeFileSources": false,
+      "skipDataLines": 0,
+      "limit": -1
+    },
+    "columns": [
+      "Country",
+      "Year",
+      "value"
+    ],
+    "rows": [
+      [
+        {
+          "v": "Sweden"
+        },
+        {
+          "v": "2022"
+        },
+        {
+          "v": "1"
+        }
+      ],
+      [
+        {
+          "v": "Sweden"
+        },
+        {
+          "v": "2023"
+        },
+        {
+          "v": "2"
+        }
+      ],
+      [
+        {
+          "v": "Sweden"
+        },
+        {
+          "v": "2024"
+        },
+        {
+          "v": "."
+        }
+      ],
+      [
+        {
+          "v": "Finland"
+        },
+        {
+          "v": "2022"
+        },
+        {
+          "v": ".."
+        }
+      ],
+      [
+        {
+          "v": "Finland"
+        },
+        {
+          "v": "2023"
+        },
+        {
+          "v": "\"...\""
+        }
+      ],
+      [
+        {
+          "v": "Finland"
+        },
+        {
+          "v": "2024"
+        },
+        {
+          "v": "-6"
+        }
+      ]
+    ]
+  },
+  "cases": [
+    {
+      "name": "cube-dimension-order-missing-markers",
+      "file": "inputs/cube-dimension-order-missing-markers.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "-6"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "skip-limit",
+      "file": "inputs/skip-limit.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 2,
+        "limit": 3
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ]
+      ]
+    },
+    {
+      "name": "limit-zero",
+      "file": "inputs/limit-zero.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": 0
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "-6"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "forced-header-blank-settings",
+      "file": "inputs/forced-header-blank-settings.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1,
+        "ignoreLines": 99,
+        "headerLines": 0,
+        "storeBlankRows": false,
+        "storeBlankCellsAsNulls": false
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "-6"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "typed-trim-explicit",
+      "file": "inputs/typed-trim-explicit.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1,
+        "guessCellValueTypes": true,
+        "trimStrings": true
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": 2022
+          },
+          {
+            "v": 1
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": 2023
+          },
+          {
+            "v": 2
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": 2024
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": 2022
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": 2023
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": 2024
+          },
+          {
+            "v": -6
+          }
+        ]
+      ]
+    },
+    {
+      "name": "three-dimensions",
+      "file": "inputs/three-dimensions.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Area",
+        "Sex",
+        "Time",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "F"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "F"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "M"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "3"
+          }
+        ],
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "M"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "4"
+          }
+        ],
+        [
+          {
+            "v": "B"
+          },
+          {
+            "v": "F"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "5"
+          }
+        ],
+        [
+          {
+            "v": "B"
+          },
+          {
+            "v": "F"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "6"
+          }
+        ],
+        [
+          {
+            "v": "B"
+          },
+          {
+            "v": "M"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "7"
+          }
+        ],
+        [
+          {
+            "v": "B"
+          },
+          {
+            "v": "M"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "8"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "multiline-values-and-string-continuation",
+      "file": "inputs/multiline-values-and-string-continuation.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Kind",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Long label"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Long label"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Other"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "3"
+          }
+        ],
+        [
+          {
+            "v": "Other"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "4"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "quoted-punctuation-and-empty-dimension",
+      "file": "inputs/quoted-punctuation-and-empty-dimension.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "value",
+        "value2"
+      ],
+      "rows": [
+        [
+          {
+            "v": "a,b;=c"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          null,
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": " spaced "
+          },
+          {
+            "v": "3"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "scalar",
+      "file": "inputs/scalar.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "12.5"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "unquoted-unicode-metadata",
+      "file": "inputs/unquoted-unicode-metadata.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Kind",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "東京"
+          },
+          {
+            "v": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "data-semicolon-discards-rest-of-line",
+      "file": "inputs/data-semicolon-discards-rest-of-line.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "3"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "unicode-whitespace-after-ascii-boundary",
+      "file": "inputs/unicode-whitespace-after-ascii-boundary.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "3"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "unicode-whitespace-inside-token",
+      "file": "inputs/unicode-whitespace-inside-token.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "1 2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "numeric-forms-stay-text",
+      "file": "inputs/numeric-forms-stay-text.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Item",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "a"
+          },
+          {
+            "v": "001"
+          }
+        ],
+        [
+          {
+            "v": "b"
+          },
+          {
+            "v": "-2"
+          }
+        ],
+        [
+          {
+            "v": "c"
+          },
+          {
+            "v": "+3"
+          }
+        ],
+        [
+          {
+            "v": "d"
+          },
+          {
+            "v": "1.25"
+          }
+        ],
+        [
+          {
+            "v": "e"
+          },
+          {
+            "v": "1e3"
+          }
+        ],
+        [
+          {
+            "v": "f"
+          },
+          {
+            "v": "NaN"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "utf8-labels",
+      "file": "inputs/utf8-labels.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Регион",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Åland"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "東京"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "windows1252-labels",
+      "file": "inputs/windows1252-labels.px",
+      "options": {
+        "encoding": "windows-1252",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Région",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Åland"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Café €"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "windows1252-blank-encoding",
+      "file": "inputs/windows1252-blank-encoding.px",
+      "options": {
+        "encoding": "",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Région",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Åland"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Café €"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "utf8-charset-does-not-override-option",
+      "file": "inputs/utf8-charset-does-not-override-option.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Регион",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Åland"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "東京"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "crlf-data-and-metadata",
+      "file": "inputs/crlf-data-and-metadata.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "-6"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "cr-data-and-metadata",
+      "file": "inputs/cr-data-and-metadata.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Country",
+        "Year",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "2"
+          }
+        ],
+        [
+          {
+            "v": "Sweden"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2022"
+          },
+          {
+            "v": ".."
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2023"
+          },
+          {
+            "v": "\"...\""
+          }
+        ],
+        [
+          {
+            "v": "Finland"
+          },
+          {
+            "v": "2024"
+          },
+          {
+            "v": "-6"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "metadata-localized-values-ignored",
+      "file": "inputs/metadata-localized-values-ignored.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": false,
+      "columns": [
+        "Kind",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "B"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "no-data-section",
+      "file": "inputs/no-data-section.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": true,
+      "columns": [
+        "Kind",
+        "value"
+      ],
+      "rows": []
+    },
+    {
+      "name": "too-few-data-points",
+      "file": "inputs/too-few-data-points.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": true,
+      "columns": [
+        "Kind",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "1"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "too-many-data-points",
+      "file": "inputs/too-many-data-points.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": true,
+      "columns": [
+        "Kind",
+        "value"
+      ],
+      "rows": [
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "1"
+          }
+        ],
+        [
+          {
+            "v": "A"
+          },
+          {
+            "v": "2"
+          }
+        ]
+      ]
+    },
+    {
+      "name": "missing-dimension-order",
+      "file": "inputs/missing-dimension-order.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": true,
+      "error": {
+        "status": 500
+      }
+    },
+    {
+      "name": "unclosed-quoted-value",
+      "file": "inputs/unclosed-quoted-value.px",
+      "options": {
+        "encoding": "UTF-8",
+        "skipDataLines": 0,
+        "limit": -1
+      },
+      "malformed": true,
+      "error": {
+        "models": {
+          "status": "error",
+          "message": "Failed to find project id #<project> - may be corrupt"
+        }
+      }
+    }
+  ]
+}

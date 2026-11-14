@@ -25,7 +25,7 @@ impl Scope {
 pub struct Reply(pub u16, pub Value);
 
 pub fn free(cmd: &str, args: &Value, scope: &Scope) -> Option<Reply> {
-    if matches!(cmd, "commons_prepare" | "commons_preview") {
+    if matches!(cmd, "commons_prepare" | "commons_preview" | "database_test" | "database_schema" | "database_prepare" | "database_preview") {
         return jobs::with_owner(scope.owner.as_deref(), || dispatch_free(cmd, args).map(|result| match result {
             Ok(data) => Reply(200, data), Err(error) => Reply(400, json!(error)),
         }));
@@ -65,7 +65,7 @@ pub struct Projects {
 }
 
 fn global(cmd: &str) -> bool {
-    matches!(cmd, "inspect" | "fixed_width_sample" | "json_paths" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference" | "commons_prepare" | "commons_preview")
+    matches!(cmd, "inspect" | "fixed_width_sample" | "json_paths" | "wikitext_tables" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference" | "commons_prepare" | "commons_preview" | "database_profiles" | "database_save_profile" | "database_delete_profile" | "database_test" | "database_schema" | "database_prepare" | "database_preview" | "storage_stats")
 }
 
 fn metadata(cmd: &str) -> bool {
@@ -137,7 +137,7 @@ impl Projects {
             }
         } else { self.legacy.clone() };
         let target = if metadata(cmd) || cmd == "open_project" { args["id"].as_str().map(str::to_owned) } else { selected.clone() };
-        let needs_project = !global(cmd) && !matches!(cmd, "open" | "import_project" | "commons_create" | "close");
+        let needs_project = !global(cmd) && !matches!(cmd, "open" | "import_project" | "commons_create" | "database_create" | "close");
 
         if needs_project {
             let Some(id) = target.as_deref() else { return Reply(400, json!("no project open")); };
@@ -158,7 +158,7 @@ impl Projects {
         let mut session = Session { project, store: Some(self.store.clone()) };
         let command = if cmd == "open_project" { "summary" } else { cmd };
         let result = jobs::with_owner(scope.owner.as_deref(), || dispatch(&mut session, command, args));
-        let selected_command = matches!(cmd, "open" | "import_project" | "open_project" | "commons_create" | "close");
+        let selected_command = matches!(cmd, "open" | "import_project" | "open_project" | "commons_create" | "database_create" | "close");
         let result_id = session.project.as_ref().map(|p| p.meta.as_ref().map(|m| m.id.clone()).unwrap_or_else(|| STARTUP.into()));
         if let Some(project) = session.project.take() {
             let id = result_id.as_ref().unwrap().clone();
@@ -193,6 +193,7 @@ impl Projects {
                 value["context"] = self.context(context_id.as_deref());
                 Reply(200, value)
             }
+            Err(error) if error.starts_with("DATABASE_PROFILE_CONFLICT:") => Reply(409, json!({ "code": "database_profile_conflict", "message": error.trim_start_matches("DATABASE_PROFILE_CONFLICT: ") })),
             Err(error) => Reply(400, json!(error)),
         }
     }

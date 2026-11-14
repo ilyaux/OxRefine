@@ -46,6 +46,8 @@ impl Project {
 
     /// Rebuild a saved project: the original table, then its operations replayed.
     pub fn restore(meta: Meta, original: Table, history: History) -> Result<Project> {
+        let budget = original.columns.iter().find_map(|column| column.codes.budget()).unwrap_or_else(crate::storage::current_budget);
+        crate::storage::with_budget(budget, || {
         let mut p = Project::new(meta.name.clone(), original);
         for (i, op) in history.ops.into_iter().enumerate() {
             p.apply(op).map_err(|e| format!("replaying step {}: {e}", i + 1))?;
@@ -58,6 +60,7 @@ impl Project {
         }
         p.original = history.original;
         Ok(p)
+        })
     }
 
     /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
@@ -179,7 +182,7 @@ fn share(prev: &Table, mut t: Table) -> Table {
     for i in 0..t.columns.len() {
         let Some(p) = prev.names.iter().position(|n| *n == t.names[i]).map(|j| &prev.columns[j]) else { continue };
         let c = &t.columns[i];
-        if Arc::ptr_eq(p, c) || Arc::ptr_eq(&p.codes, &c.codes) {
+        if Arc::ptr_eq(p, c) || crate::spill::Codes::ptr_eq(&p.codes, &c.codes) {
             continue;
         }
         let same_recon = match (&p.recon, &c.recon) {
@@ -274,6 +277,7 @@ fn table_page(t: &Table, rows: impl Iterator<Item = usize>, starts: Option<&[u32
 #[serde(default)]
 struct Args {
     id: String,
+    revision: String,
     name: String,
     path: String,
     format: Option<String>,
@@ -310,13 +314,14 @@ fn deserialize_recipe<'de, D: serde::Deserializer<'de>>(deserializer: D) -> std:
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
 /// Each command runs as a job, so `processes` can report its progress and `cancel_process` stop it.
 pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
-    if let Some(r) = dispatch_free(cmd, &args) {
+    let budget = s.store.as_ref().map(Store::code_budget).unwrap_or_else(crate::storage::current_budget);
+    if let Some(r) = crate::storage::with_budget(budget.clone(), || dispatch_free(cmd, &args)) {
         return r;
     }
     let t0 = Instant::now();
     let a = serde_json::from_value(args).map_err(err)?;
     let find = projects_by_name(s);
-    let data = crate::jobs::run_result("Working", || crate::cross::scope(find, || run(s, cmd, a)))?;
+    let data = crate::storage::with_budget(budget, || crate::jobs::run_result("Working", || crate::cross::scope(find, || run(s, cmd, a))))?;
     Ok(json!({ "data": data, "ms": t0.elapsed().as_secs_f64() * 1000.0 }))
 }
 
@@ -346,12 +351,18 @@ fn projects_by_name(s: &Session) -> impl Fn(&str) -> Vec<Table> + 'static {
 /// Commands that need no session, so hosts answer them while another command holds it:
 /// `processes` (running jobs with progress) and `cancel_process` (`id`, or every job without one).
 pub fn dispatch_free(cmd: &str, args: &Value) -> Option<Result<Value>> {
-    if matches!(cmd, "commons_prepare" | "commons_preview") {
+    if matches!(cmd, "commons_prepare" | "commons_preview" | "database_test" | "database_schema" | "database_prepare" | "database_preview") {
         let started = Instant::now();
-        let data = crate::jobs::run_result("Commons import", || {
+        let data = crate::jobs::run_result(if cmd.starts_with("database_") { "Database import" } else { "Commons import" }, || {
             let a: Args = serde_json::from_value(args.clone()).map_err(err)?;
-            if cmd == "commons_prepare" { crate::commons::prepare(a.params) }
-            else { crate::commons::preview(&a.id, a.start, a.limit) }
+            match cmd {
+                "commons_prepare" => crate::commons::prepare(a.params),
+                "commons_preview" => crate::commons::preview(&a.id, a.start, a.limit),
+                "database_test" => crate::database::test(a.params),
+                "database_schema" => crate::database::schema(a.params),
+                "database_prepare" => crate::database::prepare(a.params),
+                _ => crate::database::preview(&a.id, a.start, a.limit),
+            }
         });
         return Some(data.map(|data| json!({ "data": data, "ms": started.elapsed().as_secs_f64() * 1000.0 })));
     }
@@ -371,9 +382,14 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     let store = s.store.as_ref();
     // ---------------------------------------------------------- no project needed
     match cmd {
+        "storage_stats" => return Ok(crate::storage::snapshot()),
+        "database_profiles" => return crate::database_profiles::list(store.ok_or("Database profiles need a project data directory")?),
+        "database_save_profile" => return crate::database_profiles::save(store.ok_or("Database profiles need a project data directory")?, a.params["profile"].clone()),
+        "database_delete_profile" => return crate::database_profiles::delete(store.ok_or("Database profiles need a project data directory")?, &a.id, &a.revision),
         "inspect" => return import::inspect(Path::new(&a.path)),
         "fixed_width_sample" => return import::fixed_width_sample(Path::new(&a.path), &a.options),
         "json_paths" => return import::json_paths(Path::new(&a.path), a.format.as_deref(), &a.options),
+        "wikitext_tables" => return import::wikitext_tables(Path::new(&a.path), &a.options),
         // Clipboard and Web Addresses: stage the data as a file, then the usual import wizard runs on it
         "paste" => {
             let path = import::stage_text(&import::staging_dir(store.map(|s| s.root())), &a.text)?;
@@ -388,7 +404,14 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         "preview_import" => {
             let mut o = a.options.clone();
-            o.limit = if a.limit == 0 { 100 } else { a.limit as i64 };
+            let cap = i64::try_from(if a.limit == 0 { 100 } else { a.limit }).map_err(|_| "Preview limit is too large")?;
+            // MARC, wikitext and PC-Axis use zero for unlimited; other importers keep zero rows.
+            let zero_unlimited = if o.limit == 0 {
+                let format = if a.format.is_some() { json!(import::format_for(Path::new(&a.path), a.format.as_deref())) }
+                    else { import::inspect(Path::new(&a.path))?["format"].clone() };
+                matches!(format.as_str(), Some("marc" | "wikitext" | "pcaxis"))
+            } else { false };
+            o.limit = if o.limit >= 0 && !zero_unlimited { o.limit.min(cap) } else { cap };
             let t = import::import(Path::new(&a.path), a.format.as_deref(), &o)?;
             return Ok(json!({ "columns": t.names, "rows": table_page(&t, 0..t.rows, None) }));
         }
@@ -400,6 +423,18 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 return Ok(json!({ "total": total, "projects": projects.into_iter().skip(a.start).take(limit).collect::<Vec<_>>() }));
             }
             return Ok(json!(projects));
+        }
+        "database_create" => {
+            let prepared = crate::database::prepared(&a.id)?;
+            if prepared.table.rows == 0 { return Err("No database rows to import. Prepare a nonempty query first.".into()); }
+            crate::jobs::tick(0)?;
+            let name = if a.name.trim().is_empty() { prepared.name } else { a.name.trim().to_string() };
+            let mut project = Project::new(name.clone(), prepared.table);
+            if let Some(st) = store {
+                let source = Source { path: format!("database:{}", prepared.profile_id), format: Some("database".into()), options: ImportOptions::default() };
+                project.meta = Some(st.create(&name, project.table(), Some(source))?);
+            }
+            s.project = Some(project);
         }
         "commons_create" => {
             let prepared = crate::commons::prepared(&a.id)?;
@@ -495,7 +530,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     // ---------------------------------------------------------- the open project
     let p = s.project.as_mut().ok_or("no project open")?;
     Ok(match cmd {
-        "open" | "open_project" | "commons_create" | "summary" => p.summary(),
+        "open" | "open_project" | "commons_create" | "database_create" | "summary" => p.summary(),
         "rows" => {
             let rows = p.rows(&a.engine)?;
             let hints = a.params["clusterHints"].as_bool().unwrap_or(false).then(|| p.cluster_hints(&a.engine)).transpose()?;
@@ -679,15 +714,15 @@ mod tests {
         }
         // a step that merges values changes codes, and gets codes of its own
         p.apply(op("city", "value.substring(0, 5)")).unwrap();
-        let codes: Vec<&Arc<Vec<u32>>> = p.states.iter().flat_map(|t| t.columns.iter().map(|c| &c.codes)).collect();
-        let mut unique: Vec<&Arc<Vec<u32>>> = vec![];
+        let codes: Vec<&crate::spill::Codes> = p.states.iter().flat_map(|t| t.columns.iter().map(|c| &c.codes)).collect();
+        let mut unique: Vec<&crate::spill::Codes> = vec![];
         for c in codes {
-            if !unique.iter().any(|u| Arc::ptr_eq(u, c)) {
+            if !unique.iter().any(|u| crate::spill::Codes::ptr_eq(u, c)) {
                 unique.push(c);
             }
         }
         // name's codes once (its four steps only change the distinct values), city's twice
-        let per_state: Vec<Vec<usize>> = p.states.iter().map(|t| t.columns.iter().map(|c| unique.iter().position(|u| Arc::ptr_eq(u, &c.codes)).unwrap()).collect()).collect();
+        let per_state: Vec<Vec<usize>> = p.states.iter().map(|t| t.columns.iter().map(|c| unique.iter().position(|u| crate::spill::Codes::ptr_eq(u, &c.codes)).unwrap()).collect()).collect();
         assert_eq!(unique.len(), 3, "6 states x 2 columns should keep 3 code vectors: {per_state:?}");
         assert_eq!(p.table().columns[0].get(0).as_str(), Some("person 0"));
     }

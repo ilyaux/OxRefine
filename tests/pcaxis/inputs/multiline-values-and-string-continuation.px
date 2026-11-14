@@ -1,0 +1,8 @@
+STUB="Kind";
+HEADING="Year";
+VALUES("Kind")="Long "
+"label","Other";
+VALUES("Year")="2023",
+"2024";
+DATA=1	2
+3 4;

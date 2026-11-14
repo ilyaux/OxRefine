@@ -85,21 +85,25 @@ function libraryBytes(path) {
 }
 
 /** Milliseconds exclude the OS memory probe. RAM is process high-water-mark so far, not per-step allocation.
- * HTTP writes already autosave. `save` rewrites native history/meta using goto(current); reopen reads
- * the original table and replays saved operations after close, without using the in-memory project. */
+ * HTTP writes already autosave. `save` rewrites native history/meta using goto(current). Reopen reads
+ * the original and replays history in a fresh backend; stop/start/readiness are outside its timer. */
 export async function runCardinality(data, out, { history = 40, ...options } = {}) {
   const ops = operations(history)
   const final = hash()
   line(final, "category,id,value")
   for (let i = 0; i < data.rows; i++) line(final, finalRow(i, data.distinct, history))
   const expected = { sha256: final.digest("hex"), lines: data.rows + 1 }
-  return withOx(async ({ ox, peak, store }) => {
-    const r = { rows: data.rows, distinct: data.distinct, historySteps: history, idle: peak(), phasePeakMB: {} }
+  return withOx(async ({ ox, peak, pid, restart, store }) => {
+    const idle = peak()
+    const r = { protocol: "cardinality-history-v2", reopenProtocol: "fresh-backend-process; startup excluded; filesystem cache not flushed",
+      rows: data.rows, distinct: data.distinct, historySteps: history, idle, phasePeakMB: {}, phasePid: {},
+      processLifetimes: [{ pid: pid(), role: "editing", idleMiB: idle }] }
     const time = async (name, f) => {
       const t = performance.now()
       const v = await f()
       r[name] = performance.now() - t
       r.phasePeakMB[name] = peak()
+      r.phasePid[name] = pid()
       return v
     }
     const summary = await time("import", () => ox("open", { path: data.path }))
@@ -128,7 +132,10 @@ export async function runCardinality(data, out, { history = 40, ...options } = {
     assert.equal(redo.cursor, end)
     await time("save", () => ox("goto", { index: end }))
     r.savedBytes = libraryBytes(store)
-    await ox("close")
+    r.restart = await restart()
+    assert.notEqual(r.restart.pid, r.restart.previousPid, "reopen needs a different backend process")
+    r.processLifetimes[0].peakMiB = Math.max(r.idle, ...Object.values(r.phasePeakMB), r.restart.previousPeakMB)
+    r.processLifetimes.push({ pid: r.restart.pid, role: "reopened", idleMiB: r.restart.idlePeakMB })
     const reopened = await time("reopen", () => ox("open_project", { id: summary.id }))
     assert.equal(reopened.cursor, end)
     assert.equal(reopened.history.length, end)
@@ -136,7 +143,8 @@ export async function runCardinality(data, out, { history = 40, ...options } = {
     await time("export", () => ox("export", { engine: noFacets, path: out }))
     r.output = await csvDigest(out)
     assert.deepEqual(r.output, expected, "output differs from independently generated expected rows")
-    r.peak = Math.max(r.idle, ...Object.values(r.phasePeakMB), peak())
+    r.processLifetimes[1].peakMiB = Math.max(r.restart.idlePeakMB, r.phasePeakMB.reopen, r.phasePeakMB.export, peak())
+    r.peak = Math.max(...r.processLifetimes.map((p) => p.peakMiB))
     return r
   }, options)
 }

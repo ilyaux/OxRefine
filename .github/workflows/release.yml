@@ -11,8 +11,31 @@ permissions:
   contents: write
 
 jobs:
+  preflight:
+    name: Version and same-commit CI checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      release-body: ${{ steps.release.outputs.release_body }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test release checks
+        run: node --test tests/release/*.test.mjs
+      - name: Require a matching version tag and successful main CI
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/release-preflight.mjs
+
   desktop:
     name: Desktop (${{ matrix.name }})
+    needs: preflight
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +77,7 @@ jobs:
           projectPath: ui
           tagName: ${{ github.ref_name }}
           releaseName: OxRefine __VERSION__
-          releaseBody: See the notes below for what's in this release.
+          releaseBody: ${{ needs.preflight.outputs.release-body }}
           releaseDraft: true
           prerelease: false
           includeUpdaterJson: true
@@ -100,7 +123,8 @@ jobs:
         run: |
           dir=ox-${GITHUB_REF_NAME}-${{ matrix.target }}
           mkdir "$dir"
-          cp README.md LICENSE NOTICE "$dir/"
+          cp README.md "$dir/"
+          node tools/package-licenses.mjs "$dir"
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp target/${{ matrix.target }}/release/ox.exe "$dir/"
             7z a "$dir.zip" "$dir" > /dev/null
