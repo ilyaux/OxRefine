@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="database-import-title database-import-desc">
+<title id="database-import-title">Import a database query as a saved project</title>
+<desc id="database-import-desc">PostgreSQL, MySQL, MariaDB and SQLite feed a read-only query. Explicitly prepare and review its preview, then create a saved OxRefine project from that result. Creating the project does not run the query again.</desc>
+<style>
+svg{--bg:#fff;--ink:#111113;--mute:#5f5f66;--rule:#e4e4e0;--ox:#1d4ed8;--wash:#eff4ff}
+@media(prefers-color-scheme:dark){svg{--bg:#0d1117;--ink:#e6edf3;--mute:#9198a1;--rule:#30363d;--ox:#74a7ff;--wash:#15233c}}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink)}
+.mono,.mono text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.muted{fill:var(--mute)}.blue,.blue text{fill:var(--ox)}.bold{font-weight:600}.rule{fill:none;stroke:var(--rule)}.flow{fill:none;stroke:var(--ox);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.compact{display:none}
+.trace{stroke-dasharray:9 7;animation:trace 3.8s ease-out 1}.settle,.settle text{animation:settle 3.4s ease-out 1}.meter{stroke-width:20}.compact .flow{stroke-width:4}.spill{stroke-width:12;transform-box:fill-box;transform-origin:left;animation:spill 3.8s cubic-bezier(.16,1,.3,1) 1}
+@keyframes trace{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}@keyframes settle{0%,25%{fill:var(--ink)}70%,100%{fill:var(--ox)}}@keyframes spill{0%,28%{transform:scaleX(.12)}80%,100%{transform:scaleX(1)}}
+@media(max-width:650px){.wide{display:none}.compact{display:inline}}
+@media(prefers-reduced-motion:reduce){.trace,.settle,.settle text,.spill{animation:none}}
+</style>
+<rect width="1200" height="440" fill="var(--bg)"/><rect x=".5" y=".5" width="1199" height="439" class="rule"/>
+<g class="wide">
+<text x="48" y="65" font-size="34" class="bold">From database query to saved project</text><text x="48" y="102" font-size="20" class="muted">Choose a connection, review the result, then create your project.</text><path d="M48 130H1152" class="rule"/>
+<g font-size="22"><text x="48" y="188">PostgreSQL</text><text x="48" y="225">MySQL</text><text x="48" y="262">MariaDB</text><text x="48" y="299">SQLite</text></g>
+<path d="M200 180H247V240H310M200 217H247M200 254H247M200 291H247V240M298 232L310 240L298 248" class="flow trace"/>
+<rect x="334.5" y="184.5" width="242" height="112" class="rule"/><text x="356" y="221" font-size="23" class="bold">Read-only query</text><text x="356" y="263" font-size="21" class="mono muted">SELECT …</text>
+<path d="M598 240H660M648 232L660 240L648 248" class="flow trace"/><rect x="684.5" y="184.5" width="170" height="112" class="rule"/><text x="706" y="221" font-size="24" class="bold">Preview</text><path d="M706 245H832M706 263H832M706 281H832M758 238V286" class="rule"/>
+<path d="M876 240H938M926 232L938 240L926 248" class="flow trace"/><rect x="962" y="184" width="190" height="112" fill="var(--wash)"/><text x="984" y="221" font-size="23" class="bold blue settle">Create project</text><text x="984" y="263" font-size="18" class="muted">Save the snapshot</text>
+<path d="M48 356H1152" class="rule"/><text x="48" y="397" font-size="19" class="bold">Preview is explicit.</text><text x="1152" y="397" font-size="18" text-anchor="end" class="muted">Creation saves the prepared result, without repeating the query.</text>
+</g>
+<g class="compact"><text x="48" y="96" font-size="65" class="bold">Database import</text><text x="52" y="175" font-size="43" class="muted">PostgreSQL · MySQL · MariaDB · SQLite</text><g font-size="48" class="bold"><text x="52" y="275">Read-only query</text><text x="590" y="275">Preview</text><text x="978" y="275" class="blue settle">Save</text></g><path d="M440 257H534M516 245L534 257L516 269M815 257H920M902 245L920 257L902 269" class="flow trace" stroke-width="4"/><text x="52" y="380" font-size="41" class="muted">Review first. Create from the prepared result.</text></g>
+</svg>

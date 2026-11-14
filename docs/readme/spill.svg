@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="spill-title spill-desc">
+<title id="spill-title">Experimental row-code spilling</title>
+<desc id="spill-desc">Append-only row codes share a heap budget. When that budget is reached, new codes spill to private immutable files and are memory-mapped. Dictionary values, flags, row indexes and operation scratch stay in RAM. This is not a universal memory limit for every workload.</desc>
+<style>
+svg{--bg:#fff;--ink:#111113;--mute:#5f5f66;--rule:#e4e4e0;--ox:#1d4ed8;--wash:#eff4ff}
+@media(prefers-color-scheme:dark){svg{--bg:#0d1117;--ink:#e6edf3;--mute:#9198a1;--rule:#30363d;--ox:#74a7ff;--wash:#15233c}}
+text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink)}
+.mono,.mono text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.muted{fill:var(--mute)}.blue,.blue text{fill:var(--ox)}.bold{font-weight:600}.rule{fill:none;stroke:var(--rule)}.flow{fill:none;stroke:var(--ox);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.compact{display:none}
+.trace{stroke-dasharray:9 7;animation:trace 3.8s ease-out 1}.settle,.settle text{animation:settle 3.4s ease-out 1}.meter{stroke-width:20}.compact .flow{stroke-width:4}.spill{stroke-width:12;transform-box:fill-box;transform-origin:left;animation:spill 3.8s cubic-bezier(.16,1,.3,1) 1}
+@keyframes trace{from{stroke-dashoffset:80}to{stroke-dashoffset:0}}@keyframes settle{0%,25%{fill:var(--ink)}70%,100%{fill:var(--ox)}}@keyframes spill{0%,28%{transform:scaleX(.12)}80%,100%{transform:scaleX(1)}}
+@media(max-width:650px){.wide{display:none}.compact{display:inline}}
+@media(prefers-reduced-motion:reduce){.trace,.settle,.settle text,.spill{animation:none}}
+</style>
+<rect width="1200" height="440" fill="var(--bg)"/><rect x=".5" y=".5" width="1199" height="439" class="rule"/>
+<g class="wide">
+<text x="48" y="65" font-size="34" class="bold">Row codes can spill to disk</text><text x="1152" y="65" font-size="19" text-anchor="end" class="muted">Experimental · opt-in code budget</text><text x="48" y="102" font-size="20" class="muted">Shared immutable storage, with copies made for changed codes.</text><path d="M48 130H1152" class="rule"/>
+<text x="48" y="182" font-size="22" class="bold">Row codes</text><rect x="48" y="202" width="286" height="56" fill="var(--wash)"/><path d="M105 202V258M162 202V258M219 202V258M276 202V258" class="rule"/>
+<g font-size="21" class="mono blue" text-anchor="middle"><text x="76" y="238">0</text><text x="133" y="238">2</text><text x="190" y="238">0</text><text x="247" y="238">1</text><text x="305" y="238">…</text></g>
+<path d="M354 230H426M414 222L426 230L414 238" class="flow trace"/><rect x="450.5" y="172.5" width="270" height="114" class="rule"/>
+<text x="472" y="206" font-size="21" class="bold">Shared code budget</text><path d="M472 244H694" class="rule" stroke-width="20"/><path d="M472 244H630" class="flow meter"/><path d="M646 224V264" class="rule" stroke-dasharray="4 4"/><text x="472" y="318" font-size="17" class="muted">Tracked code heap is bounded.</text>
+<path d="M742 230H816M804 222L816 230L804 238" class="flow trace"/><rect x="840" y="172" width="312" height="114" fill="var(--wash)"/><text x="862" y="206" font-size="22" class="bold blue">Private spill file</text><path d="M864 242H1128" class="flow spill" stroke-width="12"/><text x="840" y="318" font-size="17" class="muted">Memory-mapped row codes.</text>
+<path d="M48 356H1152" class="rule"/><text x="48" y="397" font-size="19" class="bold">Dictionary values stay in RAM.</text><text x="1152" y="397" font-size="17" text-anchor="end" class="muted">Flags, row indexes and operation scratch remain resident.</text>
+</g>
+<g class="compact"><text x="48" y="96" font-size="65" class="bold">Experimental row-code spill</text><g font-size="52" class="bold"><text x="52" y="202">Codes</text><text x="468" y="202">Budget</text><text x="932" y="202">Disk</text></g><path d="M265 183H408M390 171L408 183L390 195M740 183H872M854 171L872 183L854 195" class="flow trace" stroke-width="5"/><text x="52" y="306" font-size="51" class="blue bold">Dictionary values stay in RAM.</text><text x="52" y="386" font-size="38" class="muted">Flags, indexes and working memory stay resident.</text></g>
+</svg>

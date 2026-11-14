@@ -72,8 +72,8 @@ svg{--bg:#fff;--ink:#111113;--mute:#5f5f66;--rule:#e4e4e0;--ox:#1d4ed8;--or:#686
 @media(prefers-color-scheme:dark){svg{--bg:#0d1117;--ink:#e6edf3;--mute:#9198a1;--rule:#30363d;--ox:#74a7ff;--or:#a4acb8;--warn:#efb44c}}
 text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink);font-variant-numeric:tabular-nums}
 .muted{fill:var(--mute)}.bold{font-weight:600}.blue{fill:var(--ox)}.gray{fill:var(--or)}.warn{fill:var(--warn)}.rule{fill:none;stroke:var(--rule)}.compact{display:none}
-.bar{transform-box:fill-box;transform-origin:left;animation:measure 2.4s cubic-bezier(.16,1,.3,1) 1}
-@keyframes measure{from{transform:scaleX(.16)}to{transform:scaleX(1)}}
+.bar{animation:measure 2.4s cubic-bezier(.16,1,.3,1) 1}
+@keyframes measure{from{fill-opacity:.45}to{fill-opacity:1}}
 @media(max-width:650px){.wide{display:none}.compact{display:inline}}
 @media(prefers-reduced-motion:reduce){.bar{animation:none}}
 </style>`
