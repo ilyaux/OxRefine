@@ -17,6 +17,8 @@ export const countryFacet = {
 }
 export const noFacets = { facets: [], mode: "row-based" }
 export const STEPS = ["import", "facet", "cluster", "recipe", "export"]
+// Use the same explicit transport for both builds; avoid platform-specific keep-alive body stalls.
+export const HTTP_CONNECTION = "close"
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const now = () => performance.now()
 
@@ -65,7 +67,7 @@ export function dataset(n) {
 export async function withOx(run, { bin = OX, port = 3030 } = {}) {
   const store = mkdtempSync(join(tmpdir(), "ox-bench-"))
   const token = randomUUID()
-  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}` }
+  const headers = { "Content-Type": "application/json", Authorization: `Bearer ${token}`, Connection: HTTP_CONNECTION }
   const url = `http://127.0.0.1:${port}/api`
   let current
   const ox = async (cmd, args = {}) => {
@@ -91,7 +93,7 @@ export async function withOx(run, { bin = OX, port = 3030 } = {}) {
     }
     await waitFor(`${url}/summary`, { method: "POST", headers, body: "{}" }, 120_000, check)
     check()
-    const denied = await fetch(`${url}/projects`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    const denied = await fetch(`${url}/projects`, { method: "POST", headers: { "Content-Type": "application/json", Connection: HTTP_CONNECTION }, body: "{}" })
     if (denied.status !== 403) throw new Error("benchmark endpoint does not enforce its private token")
     // Readiness must not pre-load a saved project before the timed open_project request.
     const ready = await fetch(`${url}/summary`, { method: "POST", headers, body: "{}" })
@@ -129,7 +131,7 @@ export async function withOx(run, { bin = OX, port = 3030 } = {}) {
 /** One run of `bin` over `csv`: milliseconds per step and peak resident RAM. */
 export async function runOx(csv, out, options = {}) {
   return withOx(async ({ ox, peak }) => {
-    const r = { idle: peak() }
+    const r = { idle: peak(), httpConnection: HTTP_CONNECTION }
     let t = now(); const s = await ox("open", { path: csv }); r.import = now() - t; r.rows = s.rows
     t = now(); const f = await ox("facets", { engine: countryFacet }); r.facet = now() - t; r.facetChoices = f[0].distinct
     t = now(); const c = await ox("cluster", { engine: noFacets, column: "city", method: "fingerprint" }); r.cluster = now() - t; r.clusters = c.length

@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: cargo build --release --locked
       - name: Tests and OpenRefine conformance
-        run: cargo test --release --locked
+        run: cargo test --profile ci --locked
 
   ui:
     name: UI typecheck and build

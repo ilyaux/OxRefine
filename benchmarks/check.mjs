@@ -9,7 +9,7 @@ import { join, basename } from "node:path"
 import { cpus, totalmem, freemem, platform, release } from "node:os"
 import { createHash } from "node:crypto"
 import assert from "node:assert/strict"
-import { DATA, OX, STEPS, dataset, runOx } from "./ox.mjs"
+import { DATA, OX, STEPS, HTTP_CONNECTION, dataset, runOx } from "./ox.mjs"
 import { MODES, CARDINALITY_STEPS, cardinalityDataset, runCardinality, csvDigest } from "./cardinality.mjs"
 
 const args = process.argv.slice(2)
@@ -79,7 +79,7 @@ for (const n of sizes) {
 }
 if (out) {
   const binary = (path) => ({ file: basename(path), sha256: createHash("sha256").update(readFileSync(path)).digest("hex") })
-  writeFileSync(out, JSON.stringify({ when: new Date().toISOString(), profile, history, runs, localMeasurement: true,
+  writeFileSync(out, JSON.stringify({ when: new Date().toISOString(), profile, history, runs, localMeasurement: true, httpConnection: HTTP_CONNECTION,
     memoryMetric: process.platform === "darwin" ? "sampled resident MB after phases (cardinality peak=max samples); transient peaks may be missed" : "cumulative process resident high-water mark MB",
     machine: { platform: platform(), release: release(), cpu: cpus()[0]?.model, cpus: cpus().length, totalMemoryMB: Math.round(totalmem() / 2 ** 20), freeMemoryMBAfter: Math.round(freemem() / 2 ** 20) },
     binaries: { ...(base ? { base: binary(base) } : {}), new: binary(next) }, results }, null, 2) + "\n")

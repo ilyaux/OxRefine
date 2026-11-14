@@ -2,6 +2,8 @@
 
 Status: the first quiet protocol is archived in [pre-fix-af937201/verdict.json](pre-fix-af937201/verdict.json). Correctness checks passed, but the people and low-cardinality history performance gates failed. Its reopen timings also reused the candidate's live project cache. Preserve those raw observations; they are not the final release figures. The final protocol below requires the corrected frozen candidate and true process restart.
 
+The first post-fix people run is preserved in [keepalive-31e9e0d1/verdict.json](keepalive-31e9e0d1/verdict.json): data checks passed and the unchanged phase gate still failed at 2M rows. A separate bounded transport diagnostic found keep-alive response-body stalls. The final protocol therefore uses explicit **`Connection: close` for every benchmark HTTP request, identically for both OxRefine builds and OpenRefine**. This connection mode is recorded in raw metadata. Historical runs keep their original transport and numbers; they are not silently relabelled as the new protocol.
+
 Run only after builds, fixture provisioning and browser tests stop competing for CPU/disk. Freeze one candidate binary and record its SHA-256; do not rebuild it during measurement. The 50-million-row spill proof remains a separate workload.
 
 ## Inputs and baseline
@@ -16,18 +18,19 @@ Run only after builds, fixture provisioning and browser tests stop competing for
 PowerShell, from the repository root. `$Candidate` must point to the frozen **0.6.0 candidate**, not a binary being rebuilt. The output directory already contains this plan and baseline manifest.
 
 ```powershell
-$Candidate = 'target/benchmark-candidate-v0.6.0/ox.exe'
+$Candidate = 'target/benchmark-candidate-v0.6.0/bulk/ox.exe'
 $Base = 'target/release-baseline-v0.5.3/windows/ox-v0.5.3-x86_64-pc-windows-msvc/ox.exe'
 $env:OR_MEM = '1400M'
+Remove-Item Env:OXREFINE_CODE_BUDGET_MIB, Env:OXREFINE_SPILL_DIR -ErrorAction SilentlyContinue
 Get-FileHash -Algorithm SHA256 $Candidate, $Base
 
-node benchmarks/compare.mjs --runs 3 --ox $Candidate --or-port 3336 --ox-port 3036 --out benchmarks/release-0.6.0/openrefine-1400M.json 100000 250000 500000 1000000 2000000
 node benchmarks/check.mjs --base $Base --new $Candidate --runs 3 --out benchmarks/release-0.6.0/people-regression.json 100000 1000000 2000000
 node benchmarks/check.mjs --profile cardinality --history 40 --base $Base --new $Candidate --runs 3 --out benchmarks/release-0.6.0/cardinality-regression.json 10000 100000
+node benchmarks/compare.mjs --runs 3 --ox $Candidate --or-port 3336 --ox-port 3036 --out benchmarks/release-0.6.0/openrefine-1400M.json 100000 250000 500000 1000000 2000000
 node benchmarks/report.mjs --input benchmarks/release-0.6.0/openrefine-1400M.json --out benchmarks/release-0.6.0/report.html
 ```
 
-Planning allowances, not measured runtimes: about 5–15 minutes for the OpenRefine comparison, 1–3 minutes for the people regression check, and 3–8 minutes for cardinality/history. Failure timeouts can extend this. Run sequentially. The initial small comparison also acts as a real launcher/HTTP smoke check; pure runner tests do not replace it.
+Run the people gate first, then cardinality with fresh-process reopen. Stop and report a failing gate before continuing to the OpenRefine and database comparisons. Planning allowances, not measured runtimes: about 5–15 minutes for the OpenRefine comparison, 1–3 minutes for the people regression check, and 3–8 minutes for cardinality/history. Failure timeouts can extend this. Run sequentially. The initial small OpenRefine comparison also acts as a real launcher/HTTP smoke check; pure runner tests do not replace it.
 
 The OpenRefine report includes each raw repetition, medians of phases and **medians of per-run totals**, input/recipe/generator/binary hashes and host facts. Every completed pair compares every output cell, row count, header, facet-choice count and cluster count. Three failed 2M runs are recorded as allocation failures only when the JVM log contains explicit OOM evidence. A timeout or other error is labelled separately and aborts publication; no speed ratio is calculated for a failed comparison. Partial reports have `complete: false` and `valid: false`.
 

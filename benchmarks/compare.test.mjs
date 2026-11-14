@@ -5,12 +5,32 @@ import { execFileSync } from "node:child_process"
 import { fileURLToPath } from "node:url"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { options, aggregate, failure, diff } from "./compare.mjs"
+import { createServer } from "node:http"
+import { options, aggregate, failure, diff, client } from "./compare.mjs"
 
 test("comparison arguments validate before starting either engine", () => {
   assert.equal(options(["--runs", "3", "--out", "report.json", "100000"]).runs, 3)
   assert.deepEqual(options([]).sizes, [100000, 250000, 500000, 1000000])
   for (const args of [["--runs"], ["--runs", "0"], ["--other"], ["NaN"], ["--or-port", "3030"]]) assert.throws(() => options(args))
+})
+
+test("benchmark OpenRefine GET, CSRF and POST requests explicitly close their HTTP connection", async () => {
+  const connections = []
+  const server = createServer((req, res) => {
+    connections.push(req.headers.connection)
+    req.resume()
+    req.once("end", () => {
+      res.setHeader("Content-Type", "application/json")
+      res.end(JSON.stringify(req.url.includes("get-csrf-token") ? { token: "fixture" } : { code: "ok" }))
+    })
+  })
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok))
+  try {
+    const or = client(`http://127.0.0.1:${server.address().port}`, 2000)
+    assert.deepEqual(await (await or.get("/command/core/health")).json(), { code: "ok" })
+    assert.deepEqual(await or.command("compute-facets", { project: "fixture", engine: {} }), { code: "ok" })
+    assert.deepEqual(connections, ["close", "close", "close"])
+  } finally { await new Promise((ok) => server.close(ok)) }
 })
 
 test("medians preserve per-run totals and never turn failed repetitions into completed results", () => {

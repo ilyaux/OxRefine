@@ -5,7 +5,7 @@ import { resolve, join, dirname, basename } from "node:path"
 import { pathToFileURL } from "node:url"
 import { createHash, randomUUID } from "node:crypto"
 import { cpus, totalmem, platform, release } from "node:os"
-import { withOx, OX, DATA, noFacets } from "./ox.mjs"
+import { withOx, OX, DATA, HTTP_CONNECTION, noFacets } from "./ox.mjs"
 import { csvDigest } from "./cardinality.mjs"
 
 export const ROWS = 100_000
@@ -32,7 +32,7 @@ async function run(connection, out, options) {
     const prepare = (sql, maxRows) => ox("database_prepare", { params: { profile, credentials, sql, maxRows, timeoutSeconds: 120, requestId: randomUUID() } })
     const version = await prepare(connection.driver === "sqlite" ? "SELECT sqlite_version() AS version" : "SELECT version() AS version", 1)
     const backendVersion = String(version.rows[0][1][0]).slice(0, 200)
-    const result = { driver: connection.driver, backendVersion, rows: ROWS, idleMiB: peak(),
+    const result = { driver: connection.driver, backendVersion, rows: ROWS, idleMiB: peak(), httpConnection: HTTP_CONNECTION,
       reopenProtocol: "fresh-backend-process; startup excluded; filesystem cache not flushed", phasePeakMiB: {}, phasePid: {} }
     result.processLifetimes = [{ pid: pid(), role: "importing", idleMiB: result.idleMiB }]
     const time = async (name, work) => {
@@ -99,7 +99,7 @@ export async function main(args) {
   selected.push({ driver: "sqlite", sqlitePath: resolve(config.sqlite), tls: "disable" })
   const binaryHash = sha256(config.new), output = resolve(config.out)
   mkdirSync(DATA, { recursive: true }); mkdirSync(dirname(output), { recursive: true })
-  const report = { when: new Date().toISOString(), workload: "database-100k-v2", rows: ROWS, query: SQL, runs: config.runs,
+  const report = { when: new Date().toISOString(), workload: "database-100k-v2", rows: ROWS, query: SQL, runs: config.runs, httpConnection: HTTP_CONNECTION,
     fixture: "id=0..99999; label=item-id; quantity=NULL when id%97=0, otherwise id%1000", expected: expectedDigest(),
     statistic: "median of raw repetitions; import=SQL prepare plus native project creation/save",
     memory: `${process.platform === "darwin" ? "Sampled backend resident memory (transient peaks may be missed)" : "Per-phase backend process OS high-water mark"} in MiB; workflow peak=max of both backend lifetimes, including full validation; database servers, parent Node and external filesystem cache excluded`,

@@ -1,0 +1,59 @@
+{
+  "schema": "oxrefine-release-benchmark-verdict-v1",
+  "archivedAt": "2026-11-14T19:22:27.487Z",
+  "runtimeSourceCommit": "be54731a85ce116521af306e045c8e4159f5931b",
+  "candidate": {
+    "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9",
+    "binary": "target/benchmark-candidate-v0.6.0/bulk/ox.exe"
+  },
+  "httpConnectionMode": "fetch default keep-alive; no explicit Connection: close header",
+  "measurement": {
+    "file": "people-regression.json",
+    "sha256": "b5134fee1779581cb78a2b63916b5c4e738f9ab4b88a367684cc367978527116",
+    "actualExitCode": 1,
+    "correctness": "All 18 base/new runs completed; all output row counts and CSV digests matched.",
+    "gateFailures": [
+      {
+        "rows": 2000000,
+        "phase": "recipe",
+        "base": 27.947700000000623,
+        "new": 60.88759999999456,
+        "threshold": 51.332010000000814,
+        "unit": "ms"
+      }
+    ]
+  },
+  "hostSettling": {
+    "file": "host-settling.json",
+    "sha256": "ab5307a528464203867d52880a9c4bcaf2e9bbed9f0ed057d126bae92249899e"
+  },
+  "harnessSnapshots": [
+    {
+      "file": "harness/cardinality.mjs",
+      "sha256": "94e622ec635fe09b41f859b048d44b7ec4b5244dc7a533751feaa7d51af4f5b5"
+    },
+    {
+      "file": "harness/check.mjs",
+      "sha256": "9a2549ad734a0c4d13d579b022af847ae58b1d01e4773c00ba095c2d46aff019"
+    },
+    {
+      "file": "harness/compare.mjs",
+      "sha256": "4085f73d2e64c4fa52f140d9a0536632f12e2dbf85e877c1091d1d5ab6b365b5"
+    },
+    {
+      "file": "harness/database.mjs",
+      "sha256": "042669c10eabe18e2dd1915b5d7e8138ad9be861b84d3685783709593aa476cc"
+    },
+    {
+      "file": "harness/ox.mjs",
+      "sha256": "6cdd49e0e8f24e98ad914a1ca29f77248f9d87cdbfdae0a4f9ee7eccaf1bfb95"
+    }
+  ],
+  "caveats": [
+    "Raw measurements and host samples moved unchanged. The performance threshold and actual exit 1 are preserved.",
+    "No cardinality, OpenRefine or database timing runs followed this failed first gate.",
+    "Background host CPU was 0–31% during the recorded settling interval; no owned build or benchmark ran concurrently.",
+    "A separate bounded Linux transport diagnostic found 41–45 ms body stalls with keep-alive while server work took 1–2 ms; explicit Connection: close removed those stalls in four of four trials.",
+    "The next protocol uses the unchanged binary with explicit Connection: close uniformly for both OxRefine builds and OpenRefine. It must produce its own complete measurements; no values here are adjusted or discarded."
+  ]
+}

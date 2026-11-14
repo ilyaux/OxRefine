@@ -1,0 +1,346 @@
+{
+  "when": "2026-11-14T19:13:40.796Z",
+  "profile": "people",
+  "history": 40,
+  "runs": 3,
+  "localMeasurement": true,
+  "memoryMetric": "cumulative process resident high-water mark MB",
+  "machine": {
+    "platform": "win32",
+    "release": "10.0.26300",
+    "cpu": "AMD Ryzen AI 7 350 w/ Radeon 860M              ",
+    "cpus": 16,
+    "totalMemoryMB": 31866,
+    "freeMemoryMBAfter": 12724
+  },
+  "binaries": {
+    "base": {
+      "file": "ox.exe",
+      "sha256": "1b6aa6e1ddd0e241801e53e577303a502cff92fd4b62f0ed5bf22d32b97f6ab2"
+    },
+    "new": {
+      "file": "ox.exe",
+      "sha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9"
+    }
+  },
+  "results": [
+    {
+      "mode": "people",
+      "rows": 100000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "import": 53.41700000000003,
+            "rows": 100000,
+            "facet": 13.577800000000025,
+            "facetChoices": 8,
+            "cluster": 2.9160999999999717,
+            "clusters": 8,
+            "recipe": 8.277699999999982,
+            "export": 29.460399999999993,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 53.96219999999994,
+            "rows": 100000,
+            "facet": 2.7849999999998545,
+            "facetChoices": 8,
+            "cluster": 16.483700000000226,
+            "clusters": 8,
+            "recipe": 20.226200000000063,
+            "export": 32.448599999999715,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 58.5,
+            "rows": 100000,
+            "facet": 9.569499999999607,
+            "facetChoices": 8,
+            "cluster": 17.282400000000052,
+            "clusters": 8,
+            "recipe": 18.298899999999776,
+            "export": 29.480999999999767,
+            "peak": 23,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "import": 66.73960000000011,
+            "rows": 100000,
+            "facet": 12.40300000000002,
+            "facetChoices": 8,
+            "cluster": 18.103000000000065,
+            "clusters": 8,
+            "recipe": 18.9529,
+            "export": 33.76070000000004,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 71.4381000000003,
+            "rows": 100000,
+            "facet": 14.113399999999729,
+            "facetChoices": 8,
+            "cluster": 18.42579999999998,
+            "clusters": 8,
+            "recipe": 9.161200000000008,
+            "export": 30.084199999999782,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 57.87029999999959,
+            "rows": 100000,
+            "facet": 7.9242999999996755,
+            "facetChoices": 8,
+            "cluster": 10.251099999999497,
+            "clusters": 8,
+            "recipe": 14.176300000000083,
+            "export": 33.44260000000031,
+            "peak": 24,
+            "output": {
+              "sha256": "f86d606d3e9a6aa5df1be184aea8a67957058401c24935fcc111ef9a17635dc4",
+              "lines": 100001
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mode": "people",
+      "rows": 1000000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "import": 387.3798999999999,
+            "rows": 1000000,
+            "facet": 10.731300000000374,
+            "facetChoices": 8,
+            "cluster": 6.821600000000217,
+            "clusters": 8,
+            "recipe": 20.771700000000237,
+            "export": 237.39029999999912,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 341.47129999999925,
+            "rows": 1000000,
+            "facet": 13.41229999999996,
+            "facetChoices": 8,
+            "cluster": 16.440199999999095,
+            "clusters": 8,
+            "recipe": 28.45050000000083,
+            "export": 208.70949999999903,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 553.4293999999991,
+            "rows": 1000000,
+            "facet": 8.084599999998318,
+            "facetChoices": 8,
+            "cluster": 23.22479999999996,
+            "clusters": 8,
+            "recipe": 48.60639999999694,
+            "export": 252.90749999999753,
+            "peak": 117,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "import": 343.53699999999844,
+            "rows": 1000000,
+            "facet": 12.244899999999689,
+            "facetChoices": 8,
+            "cluster": 16.30709999999999,
+            "clusters": 8,
+            "recipe": 38.567800000000716,
+            "export": 220.1277000000009,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 364.4363000000012,
+            "rows": 1000000,
+            "facet": 9.418100000000777,
+            "facetChoices": 8,
+            "cluster": 17.359200000000783,
+            "clusters": 8,
+            "recipe": 114.97750000000087,
+            "export": 290.97079999999914,
+            "peak": 117,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 349.48229999999967,
+            "rows": 1000000,
+            "facet": 5.448100000001432,
+            "facetChoices": 8,
+            "cluster": 8.781800000000658,
+            "clusters": 8,
+            "recipe": 38.22469999999885,
+            "export": 269.0481,
+            "peak": 116,
+            "output": {
+              "sha256": "1055eca7b767aca7031cd17d06ba9592ef7471b262ddf7f5e00f04b90edadf15",
+              "lines": 1000001
+            }
+          }
+        ]
+      }
+    },
+    {
+      "mode": "people",
+      "rows": 2000000,
+      "runs": {
+        "base": [
+          {
+            "idle": 7,
+            "import": 949.3583999999973,
+            "rows": 2000000,
+            "facet": 9.741099999999278,
+            "facetChoices": 8,
+            "cluster": 16.801899999998568,
+            "clusters": 8,
+            "recipe": 27.947700000000623,
+            "export": 394.27180000000226,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 803.9304999999986,
+            "rows": 2000000,
+            "facet": 18.54330000000118,
+            "facetChoices": 8,
+            "cluster": 17.1720000000023,
+            "clusters": 8,
+            "recipe": 38.88100000000122,
+            "export": 443.40550000000076,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 909.426099999997,
+            "rows": 2000000,
+            "facet": 9.737200000003213,
+            "facetChoices": 8,
+            "cluster": 17.521300000000338,
+            "clusters": 8,
+            "recipe": 42.94759999999951,
+            "export": 925.1303000000044,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          }
+        ],
+        "new": [
+          {
+            "idle": 7,
+            "import": 777.0728999999992,
+            "rows": 2000000,
+            "facet": 13.429799999998068,
+            "facetChoices": 8,
+            "cluster": 26.31970000000001,
+            "clusters": 8,
+            "recipe": 66.99880000000121,
+            "export": 482.3032999999996,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 876.2332000000024,
+            "rows": 2000000,
+            "facet": 13.630699999997887,
+            "facetChoices": 8,
+            "cluster": 16.015299999999115,
+            "clusters": 8,
+            "recipe": 61.117199999996956,
+            "export": 642.6548000000003,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          },
+          {
+            "idle": 7,
+            "import": 885.2502999999997,
+            "rows": 2000000,
+            "facet": 14.814100000003236,
+            "facetChoices": 8,
+            "cluster": 13.886399999995774,
+            "clusters": 8,
+            "recipe": 60.88759999999456,
+            "export": 596.7623999999996,
+            "peak": 220,
+            "output": {
+              "sha256": "71dd0f26f4fe6f484123032837421b599efe0a31b63175746c5d4fd2b9637088",
+              "lines": 2000001
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

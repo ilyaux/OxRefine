@@ -2,20 +2,21 @@ import assert from "node:assert/strict"
 import { test } from "node:test"
 import { mkdtempSync, mkdirSync, writeFileSync, realpathSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
-import { basename, dirname, join } from "node:path"
+import { basename, dirname, join, resolve } from "node:path"
 import { spawnSync } from "node:child_process"
 import { REQUIRED_JOBS, checkRelease, releaseNotes, releaseBodyOutput, versions } from "../../tools/release-preflight.mjs"
 
+const repositoryRoot = resolve(import.meta.dirname, "../..")
 const sha = "a".repeat(40)
 const context = { refType: "tag", tag: "v0.6.0", sha, repository: "ilyaux/OxRefine" }
-const packageVersions = Object.fromEntries(Object.keys(versions()).map((file) => [file, "0.6.0"]))
+const packageVersions = Object.fromEntries(Object.keys(versions(repositoryRoot)).map((file) => [file, "0.6.0"]))
 const run = { id: 7, head_sha: sha, event: "push", head_branch: "main", status: "completed", conclusion: "success", html_url: "https://github.com/ilyaux/OxRefine/actions/runs/7" }
 const jobs = REQUIRED_JOBS.map((name) => ({ name, conclusion: "success" }))
 const api = ({ release = null, runs = [run], required = jobs } = {}) => async (path) =>
   path.includes("/releases/tags/") ? release : path.includes("/jobs?") ? { jobs: required } : { workflow_runs: runs }
 
 test("every version source is read, including both lock files", () => {
-  const actual = versions()
+  const actual = versions(repositoryRoot)
   assert.equal(Object.keys(actual).length, 10)
   assert.ok(Object.values(actual).every((v) => /^\d+\.\d+\.\d+$/.test(v)))
 })
@@ -41,7 +42,7 @@ test("release notes must exist, contain a body and match the requested version",
   assert.equal(releaseNotes("v0.6.0", root), "# OxRefine 0.6.0\n\nReviewed notes.")
   assert.throws(() => releaseNotes("v0.6.1", root), /Missing release notes/)
   assert.throws(() => releaseNotes("../v0.6.0", root), /stable/)
-  assert.match(releaseNotes(context.tag), /^# OxRefine 0\.6\.0\n/)
+  assert.match(releaseNotes(context.tag, repositoryRoot), /^# OxRefine 0\.6\.0\n/)
   const failed = spawnSync(process.execPath, [join(import.meta.dirname, "../../tools/release-preflight.mjs")], {
     cwd: root, encoding: "utf8", env: { GITHUB_REF_NAME: "v0.6.1", GITHUB_OUTPUT: join(root, "output") },
   })

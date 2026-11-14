@@ -1,0 +1,66 @@
+{
+  "candidateSha256": "31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9",
+  "settlingSeconds": 60,
+  "samples": [
+    {
+      "utc": "2026-11-14T19:11:02.3639021Z",
+      "cpuPercent": 24,
+      "freeMemoryMiB": 12802.0
+    },
+    {
+      "utc": "2026-11-14T19:11:07.9531942Z",
+      "cpuPercent": 31,
+      "freeMemoryMiB": 12664.0
+    },
+    {
+      "utc": "2026-11-14T19:11:13.5472595Z",
+      "cpuPercent": 10,
+      "freeMemoryMiB": 12725.0
+    },
+    {
+      "utc": "2026-11-14T19:11:19.1350353Z",
+      "cpuPercent": 16,
+      "freeMemoryMiB": 12794.0
+    },
+    {
+      "utc": "2026-11-14T19:11:24.669935Z",
+      "cpuPercent": 13,
+      "freeMemoryMiB": 12777.0
+    },
+    {
+      "utc": "2026-11-14T19:11:30.1922644Z",
+      "cpuPercent": 16,
+      "freeMemoryMiB": 13260.0
+    },
+    {
+      "utc": "2026-11-14T19:12:03.8994058Z",
+      "cpuPercent": 19,
+      "freeMemoryMiB": 13505.0
+    },
+    {
+      "utc": "2026-11-14T19:12:09.5076875Z",
+      "cpuPercent": 15,
+      "freeMemoryMiB": 13459.0
+    },
+    {
+      "utc": "2026-11-14T19:12:15.0928124Z",
+      "cpuPercent": 0,
+      "freeMemoryMiB": 13393.0
+    },
+    {
+      "utc": "2026-11-14T19:12:20.6895179Z",
+      "cpuPercent": 7,
+      "freeMemoryMiB": 13196.0
+    },
+    {
+      "utc": "2026-11-14T19:12:26.2509254Z",
+      "cpuPercent": 9,
+      "freeMemoryMiB": 13225.0
+    },
+    {
+      "utc": "2026-11-14T19:12:31.7827244Z",
+      "cpuPercent": 19,
+      "freeMemoryMiB": 13124.0
+    }
+  ]
+}

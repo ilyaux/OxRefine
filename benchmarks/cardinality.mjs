@@ -4,7 +4,7 @@ import { createHash } from "node:crypto"
 import { createReadStream, existsSync, openSync, closeSync, writeSync, readdirSync, statSync } from "node:fs"
 import { createInterface } from "node:readline"
 import { join } from "node:path"
-import { DATA, noFacets, withOx } from "./ox.mjs"
+import { DATA, HTTP_CONNECTION, noFacets, withOx } from "./ox.mjs"
 
 export const MODES = ["low", "mixed", "high"]
 export const CARDINALITY_STEPS = ["import", "value", "merge", "history", "row", "structure", "undo", "redo", "save", "reopen", "export"]
@@ -95,7 +95,7 @@ export async function runCardinality(data, out, { history = 40, ...options } = {
   const expected = { sha256: final.digest("hex"), lines: data.rows + 1 }
   return withOx(async ({ ox, peak, pid, restart, store }) => {
     const idle = peak()
-    const r = { protocol: "cardinality-history-v2", reopenProtocol: "fresh-backend-process; startup excluded; filesystem cache not flushed",
+    const r = { protocol: "cardinality-history-v2", httpConnection: HTTP_CONNECTION, reopenProtocol: "fresh-backend-process; startup excluded; filesystem cache not flushed",
       rows: data.rows, distinct: data.distinct, historySteps: history, idle, phasePeakMB: {}, phasePid: {},
       processLifetimes: [{ pid: pid(), role: "editing", idleMiB: idle }] }
     const time = async (name, f) => {

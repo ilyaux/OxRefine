@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url"
 import { createHash } from "node:crypto"
 import { createServer } from "node:net"
 import { csvDigest } from "./cardinality.mjs"
-import { HERE, DATA, OX, STEPS, recipe, countryFacet, noFacets, sleep, peakMB, waitFor, kill, dataset, runOx } from "./ox.mjs"
+import { HERE, DATA, OX, STEPS, HTTP_CONNECTION, recipe, countryFacet, noFacets, sleep, peakMB, waitFor, kill, dataset, runOx } from "./ox.mjs"
 
 const OR_HOME = process.env.OPENREFINE_HOME ?? resolve(HERE, "../../OpenRefine/openrefine-3.10.1")
 const usage = "node benchmarks/compare.mjs [--runs 3] [--ox <binary>] [--out <report.json>] [--or-port 3333] [--ox-port 3030] [--timeout-seconds 180] [rows...]"
@@ -38,14 +38,15 @@ export function failure(error, log = "") {
   return { status, error: status === "out-of-memory" ? "OpenRefine reported a Java heap allocation failure" : message.slice(0, 600) }
 }
 
-function client(url, timeout) {
-  const get = (path) => fetch(`${url}${path}`, { signal: AbortSignal.timeout(timeout) })
+export function client(url, timeout) {
+  const headers = { Connection: HTTP_CONNECTION }
+  const get = (path) => fetch(`${url}${path}`, { headers, signal: AbortSignal.timeout(timeout) })
   const token = async () => (await (await get("/command/core/get-csrf-token")).json()).token
   const command = async (cmd, fields, { json = true } = {}) => {
     const upload = Object.values(fields).some((v) => v instanceof Blob)
     const form = upload ? new FormData() : new URLSearchParams()
     for (const [k, v] of Object.entries(fields)) form.append(k, typeof v === "string" || v instanceof Blob ? v : JSON.stringify(v))
-    const r = await fetch(`${url}/command/core/${cmd}?csrf_token=${await token()}`, { method: "POST", body: form, redirect: "manual", signal: AbortSignal.timeout(timeout) })
+    const r = await fetch(`${url}/command/core/${cmd}?csrf_token=${await token()}`, { method: "POST", headers, body: form, redirect: "manual", signal: AbortSignal.timeout(timeout) })
     if (r.status >= 400) throw new Error(`OpenRefine ${cmd}: HTTP ${r.status} ${(await r.text()).slice(0, 300)}`)
     return json ? r.json() : r
   }
@@ -78,9 +79,9 @@ export async function runOR(csv, out, { port = 3333, memory = "1400M", timeout =
   p.on("error", (error) => { spawnError = error })
   const check = () => { if (spawnError) throw spawnError; if (p.exitCode !== null) throw new Error(`OpenRefine exited with ${p.exitCode}`) }
   const or = client(url, timeout)
-  const r = {}
+  const r = { httpConnection: HTTP_CONNECTION }
   try {
-    await waitFor(`${url}/command/core/get-csrf-token`, undefined, timeout, check)
+    await waitFor(`${url}/command/core/get-csrf-token`, { headers: { Connection: HTTP_CONNECTION } }, timeout, check)
     await sleep(1000)
     r.idle = peakMB(p.pid)
     let t = performance.now()
@@ -172,7 +173,7 @@ export async function main(args) {
   const referenceHash = sha256(join(OR_HOME, "webapp/WEB-INF/lib/openrefine-main.jar"))
   if (referenceHash !== "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957") throw new Error("OpenRefine main artifact differs from the pinned 3.10.1 reference")
   const report = { when: new Date().toISOString(), openrefine: "3.10.1", orMemory: memory, runs: config.runs, statistic: "median of each phase, median of per-run totals and median peak RSS",
-    sizes: config.sizes, complete: false, localMeasurement: true, memoryMetric: "PeakWorkingSet64", memoryUnit: "MiB",
+    sizes: config.sizes, complete: false, localMeasurement: true, httpConnection: HTTP_CONNECTION, memoryMetric: "PeakWorkingSet64", memoryUnit: "MiB",
     memoryScope: "process resident high-water mark; excludes parent Node and OS overhead",
     machine: { platform: platform(), release: release(), cpu: cpus()[0]?.model, cpus: cpus().length, totalMemoryMiB: Math.round(totalmem() / 2 ** 20), node: process.version },
     oxBinary: { file: config.ox.split(/[\\/]/).at(-1), sha256: binaryHash }, openrefineMainSha256: referenceHash,
