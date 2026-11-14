@@ -148,10 +148,10 @@ function rememberContext(context: ProjectContext) {
   try { sessionStorage.setItem("ox-project-context", JSON.stringify(context)) } catch { /* Selection remains usable without browser storage. */ }
 }
 
-const projectSelection = (cmd: string) => ["open", "import_project", "open_project", "close", "summary"].includes(cmd)
+const projectSelection = (cmd: string) => ["open", "import_project", "open_project", "commons_create", "close", "summary"].includes(cmd)
 const projectMetadata = (cmd: string) => ["rename_project", "set_project_info", "delete_project"].includes(cmd)
 const projectMutation = (cmd: string) => ["apply", "apply_recipe", "goto"].includes(cmd) || projectMetadata(cmd)
-const projectFree = (cmd: string) => ["inspect", "fixed_width_sample", "json_paths", "paste", "recon_service", "recon_suggest", "fetch_url", "preview_import", "projects", "preferences", "set_preference", "processes", "cancel_process", "memory"].includes(cmd)
+const projectFree = (cmd: string) => ["inspect", "fixed_width_sample", "json_paths", "paste", "recon_service", "recon_suggest", "fetch_url", "preview_import", "commons_prepare", "commons_preview", "projects", "preferences", "set_preference", "processes", "cancel_process", "memory"].includes(cmd)
 
 function superseded(): Error {
   const error = new Error("The project view changed while this request was running.")

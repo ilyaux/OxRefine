@@ -16,7 +16,7 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-111113">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-B7410E">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2122%20of%202136%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2124%20of%202136%20checks-brightgreen">
 </p>
 
 <p align="center">
@@ -41,7 +41,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 |  |  |
 |---|---|
 | **About 20× faster, 12–22× less memory** | A million-row workflow takes 0.6 s instead of 16.8 s. At 2 million rows OpenRefine runs out of memory on its default heap; OxRefine needs 219 MB. |
-| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,122 of 2,136 checks match, and each known difference is written down with its reason. |
+| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,124 of 2,136 checks match, and each known difference is written down with its reason. |
 | **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
 | **Desktop, browser, server or command line** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, or headless with `ox apply`. |
 
@@ -122,14 +122,14 @@ Each area is checked against fixtures produced by running the same cases through
 
 Archives with unsupported extension data, such as Wikibase schemas or extra files, keep an untouched source copy across restarts. Exporting the current project back to OpenRefine requires unchanged data, history and metadata; the preserved original can always be exported separately. See [extension-data preservation](docs/src/moving-over.md#projects-with-additional-extension-data).
 
-<img src="docs/readme/compat.svg" width="100%" alt="2,122 of 2,136 checks match OpenRefine 3.10.1, 99.2%, across ten suites.">
+<img src="docs/readme/compat.svg" width="100%" alt="2,124 of 2,136 checks match OpenRefine 3.10.1, 99.4%, across ten suites.">
 
 <details>
 <summary>What each suite covers</summary>
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 559 / 561 |
+| GREL expressions | 561 / 561 |
 | Operations, including single-cell edits, stars, flags, transposing, fetching URLs and `cross()` | 83 / 84 |
 | Facets: list, range, timeline, text, custom and records mode | 39 / 39 |
 | Import options: CSV/TSV, fixed-width, Excel, ODS, JSON, XML, and zip/tar/gzip/bzip2 archives | 43 / 45 |

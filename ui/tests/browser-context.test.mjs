@@ -123,3 +123,27 @@ test("fixed-width import samples require no project context while another projec
   assert.equal((await sample).data.lines[0], "ABC  123")
   assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "123")
 })
+
+test("Commons snapshots stay independent of project changes; only successful creation selects a project", async () => {
+  const a = api(); await select(a, "123")
+  const preparation = a.call("commons_prepare", { params: { requestId: "test-request" } })
+  const pending = a.requests.at(-1)
+  await select(a, "456")
+  pending.reply({ data: { id: "snapshot", total: 2 }, ms: 10 })
+  assert.equal((await preparation).data.id, "snapshot")
+  const preview = a.call("commons_preview", { id: "snapshot" })
+  a.requests.at(-1).reply({ data: { rows: [], total: 2 }, ms: 0 }); await preview
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "456")
+
+  const oldRows = a.call("rows"); const read = a.requests.at(-1)
+  const created = a.call("commons_create", { id: "snapshot", name: "Commons files" })
+  a.requests.at(-1).reply(response("789", "epoch-0", { id: "789" })); await created
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "789")
+  const stale = assert.rejects(oldRows, { name: "ProjectContextChanged" })
+  read.reply(response("456", "epoch-0", [])); await stale
+
+  const expired = a.call("commons_create", { id: "expired" })
+  a.requests.at(-1).reply("Commons preview expired", 400)
+  await assert.rejects(expired, /expired/)
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "789")
+})

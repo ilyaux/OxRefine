@@ -4,7 +4,7 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 559 / 561 |
+| GREL expressions | 561 / 561 |
 | Operations | 83 / 84 |
 | Facets | 39 / 39 |
 | Import options | 43 / 45 |
@@ -28,6 +28,10 @@ Each suite in the repository's `tests/<suite>/` folder has three files:
 The additional customized-facet, JSON-path and export-encoding fixtures record the official 3.10.1 release archive's SHA-256 and the hashes of the relevant JAR files. They also retain the version actually reported by its API: the checksum-verified Windows release reports `3.10-SNAPSHOT [TRUNK]`. Its release identity is verified from the artifact hashes rather than inferred from that string. These extra suites do not change the fixture total in the table above.
 
 The additional custom-export corpus in `tests/export/custom-fixtures.json` compares ordered columns, headers, reconciliation output and workbook cell values with the official release. Requested date formatting and preserving the time of day in ODS have explicit [documented differences](differences.md#custom-export-date-settings). These fixtures are separate from the totals above.
+
+`tests/detect_language/` adds 113 real GREL outputs covering all 70 language profiles, short/noisy text, Unicode filtering and input boundaries. It also pins the reference's UTF-16 normalization output and seeded random-number results. The original two language-detection cases now pass in the GREL total above; the expanded corpus is counted separately.
+
+`tests/commons/reference.json` is a narrower reference: the unmodified file-to-cell mapping from the separate CommonsExtension v0.1.5 runs against the verified OpenRefine libraries on synthetic input. Its source hashes and exact scope are recorded in the fixture. It verifies file titles and reconciliation metadata, while local HTTP tests cover category traversal, continuation, failures, cancellation and snapshot creation. It does not claim that CommonsExtension is bundled with OpenRefine 3.10.1 or that the fixture covers live Commons responses.
 
 ## Reusable recipes
 

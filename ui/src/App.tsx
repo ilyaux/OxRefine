@@ -9,6 +9,7 @@ import { Home } from "@/Home"
 import { Preferences } from "@/Preferences"
 import { ExportDialog, type ExportKind } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
+import { CommonsImportDialog } from "@/CommonsImportDialog"
 import { Jobs } from "@/Jobs"
 import { useFileDrop } from "@/useFileDrop"
 import { prepareDroppedImport, type DroppedSource } from "@/fileDrop"
@@ -31,6 +32,7 @@ import pkg from "../package.json"
 import { Palette } from "@/Palette"
 
 type Modal =
+  | { kind: "commons" }
   | { kind: "drop-archive"; path: string; name?: string }
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
@@ -124,8 +126,9 @@ export function App() {
   const version = `${summary?.id}:${summary?.name}:${summary?.cursor}:${summary?.history.length}:${refreshSerial}:${JSON.stringify(engine)}`
 
   const run = useCallback(async (what: string, cmd: string, args: object = {}) => {
-    const selecting = ["open", "open_project"].includes(cmd)
+    const selecting = ["open", "open_project", "commons_create"].includes(cmd)
     if (selecting && !selectionAllowed()) throw selectionBusy()
+    if (selecting && cmd !== "commons_create") setModal((current) => current?.kind === "commons" ? null : current)
     cancelDrop()
     const finished = selecting ? trackOpening() : undefined
     try {
@@ -190,6 +193,7 @@ export function App() {
   // computer; files to save are written on the server and downloaded.
   const withPath = async (kind: string, title: string, then: (p: string) => Promise<void>) => {
     if (!selectionAllowed()) return
+    setModal((current) => current?.kind === "commons" ? null : current)
     cancelDrop()
     const p = await pickFile(kind)
     if (p) return then(p).catch(fail)
@@ -270,6 +274,12 @@ export function App() {
       onSubmit: (url) => call<Staged>("fetch_url", { url: url.trim() }).then(({ data }) => setStaged(data), fail),
     })
   }
+  const fromCommons = () => {
+    if (!selectionAllowed()) return
+    cancelDrop()
+    setStaged(null)
+    setModal({ kind: "commons" })
+  }
   const openProject = (id: string) => {
     cancelDrop()
     setFacets([])
@@ -277,6 +287,7 @@ export function App() {
   }
   const goHome = async () => {
     if (!selectionAllowed()) return
+    setModal((current) => current?.kind === "commons" ? null : current)
     cancelDrop()
     const finished = trackOpening()
     try { await call("close").then(() => setSummary(null), fail) }
@@ -565,6 +576,7 @@ export function App() {
                     <DropdownMenuItem onClick={openFile}>File…</DropdownMenuItem>
                     <DropdownMenuItem onClick={pasteData}>Paste data…</DropdownMenuItem>
                     <DropdownMenuItem onClick={fromUrl}>Web address…</DropdownMenuItem>
+                    <DropdownMenuItem onClick={fromCommons}>Wikimedia Commons…</DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
@@ -676,7 +688,7 @@ export function App() {
               </div>
             </>
           ) : (
-            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} drop={{ dragging: drop.dragging, busy: drop.busy, enabled: dropEnabled }} onInteraction={cancelDrop} />
+            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onCommons={fromCommons} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} drop={{ dragging: drop.dragging, busy: drop.busy, enabled: dropEnabled }} onInteraction={cancelDrop} />
           )}
 
           <StatusBar>
@@ -746,6 +758,7 @@ export function App() {
             { label: "Import a file or folder…", run: openFile },
             { label: "Import pasted data…", run: pasteData },
             { label: "Import from a web address…", run: fromUrl },
+            { label: "Import from Wikimedia Commons…", run: fromCommons },
             { label: "Open an OpenRefine project…", run: openOpenRefine },
           ]}
         />
@@ -772,6 +785,19 @@ export function App() {
               setFacets([])
               setStaged(null)
             }}
+          />
+        )}
+        {modal?.kind === "commons" && (
+          <CommonsImportDialog
+            onCreate={async (args) => {
+              await run("import", "commons_create", args)
+              setFacets([])
+              setMode("row-based")
+              setSelected(null)
+              setFocusCol(null)
+              setModal((current) => current?.kind === "commons" ? null : current)
+            }}
+            onClose={() => setModal((current) => current?.kind === "commons" ? null : current)}
           />
         )}
         {modal?.kind === "reconcile" && summary && (

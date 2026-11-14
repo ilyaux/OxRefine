@@ -532,8 +532,13 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             Str(s) => Str(s.clone()),
             _ => fail!("reinterpret expects string to reinterpret, an encoding and an optional source encoding"),
         },
-        // ponytail: needs a language-identification model; OpenRefine uses Optimaize language-detector
-        "detectLanguage" => fail!("detectLanguage: language detection failed"),
+        "detectLanguage" => match a {
+            [Str(s)] if !s.is_empty() => match super::language::detect(s) {
+                Some(language) => Str(language.into()),
+                None => fail!("detectLanguage: language detection failed"),
+            },
+            _ => fail!("detectLanguage expects a string"),
+        },
         "levenshteinDistance" => match (a0, a1) {
             (Str(x), Str(y)) => Int(text::levenshtein(x, y) as i64),
             _ => fail!("levenshteinDistance expects two strings"),

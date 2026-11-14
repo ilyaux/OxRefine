@@ -219,7 +219,7 @@ Converts an angle from radians to degrees.
 
 Detects the language of the given string and provides the language code.
 
-> **In OxRefine:** returns an error for now, because OxRefine has no language-identification model yet.
+Uses the same 70 bundled Optimaize language profiles and confidence threshold as OpenRefine 3.10.1. Detection runs locally, without a JVM or network access. Short, noisy or ambiguous text can produce a language-detection error instead of a confident code, as in OpenRefine. The first call loads the shared model; later calls reuse it.
 
 ### diff
 

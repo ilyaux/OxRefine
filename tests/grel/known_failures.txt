@@ -1,4 +1,2 @@
 # Expressions whose OxRefine result still differs from OpenRefine 3.10.1. Each line: expression  # reason.
 # The conformance test fails when one of these starts passing, so remove lines as they get fixed.
-'This is plain English text about cleaning data.'.detectLanguage()  # needs a language-identification model
-'Это русский текст о чистке данных.'.detectLanguage()  # needs a language-identification model

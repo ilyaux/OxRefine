@@ -346,6 +346,15 @@ fn projects_by_name(s: &Session) -> impl Fn(&str) -> Vec<Table> + 'static {
 /// Commands that need no session, so hosts answer them while another command holds it:
 /// `processes` (running jobs with progress) and `cancel_process` (`id`, or every job without one).
 pub fn dispatch_free(cmd: &str, args: &Value) -> Option<Result<Value>> {
+    if matches!(cmd, "commons_prepare" | "commons_preview") {
+        let started = Instant::now();
+        let data = crate::jobs::run_result("Commons import", || {
+            let a: Args = serde_json::from_value(args.clone()).map_err(err)?;
+            if cmd == "commons_prepare" { crate::commons::prepare(a.params) }
+            else { crate::commons::preview(&a.id, a.start, a.limit) }
+        });
+        return Some(data.map(|data| json!({ "data": data, "ms": started.elapsed().as_secs_f64() * 1000.0 })));
+    }
     let data = match cmd {
         "memory" => json!(crate::memory::snapshot()),
         "processes" => crate::jobs::list(),
@@ -391,6 +400,19 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
                 return Ok(json!({ "total": total, "projects": projects.into_iter().skip(a.start).take(limit).collect::<Vec<_>>() }));
             }
             return Ok(json!(projects));
+        }
+        "commons_create" => {
+            let prepared = crate::commons::prepared(&a.id)?;
+            if prepared.table.rows == 0 { return Err("No Commons files to import. Prepare a nonempty category first.".into()); }
+            crate::jobs::tick(0)?;
+            let name = if a.name.trim().is_empty() { prepared.name } else { a.name.trim().to_string() };
+            let mut project = Project::new(name.clone(), prepared.table);
+            if let Some(st) = store {
+                let source = Source { path: prepared.source_url, format: Some("commons".into()), options: ImportOptions::default() };
+                project.meta = Some(st.create(&name, project.table(), Some(source))?);
+            }
+            // Saving is the commit point: publish the selection only after it succeeds.
+            s.project = Some(project);
         }
         "open" => {
             let path = Path::new(&a.path);
@@ -473,7 +495,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     // ---------------------------------------------------------- the open project
     let p = s.project.as_mut().ok_or("no project open")?;
     Ok(match cmd {
-        "open" | "open_project" | "summary" => p.summary(),
+        "open" | "open_project" | "commons_create" | "summary" => p.summary(),
         "rows" => {
             let rows = p.rows(&a.engine)?;
             let hints = a.params["clusterHints"].as_bool().unwrap_or(false).then(|| p.cluster_hints(&a.engine)).transpose()?;

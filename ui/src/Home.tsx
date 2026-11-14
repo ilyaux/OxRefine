@@ -93,6 +93,7 @@ export function Home({
   onImport,
   onPaste,
   onUrl,
+  onCommons,
   onOpenRefine,
   onOpen,
   onRename,
@@ -103,6 +104,7 @@ export function Home({
   onImport: () => void
   onPaste: () => void
   onUrl: () => void
+  onCommons: () => void
   onOpenRefine: () => void
   onOpen: (id: string) => void
   onRename: (p: ProjectMeta, done: () => void) => void
@@ -143,6 +145,7 @@ export function Home({
         <Source title="From a file or folder" hint="Preview with OpenRefine's import options" keys="Ctrl O" onClick={interact(onImport)} />
         <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={interact(onPaste)} />
         <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={interact(onUrl)} />
+        <Source title="Wikimedia Commons" hint="Category files matched to Commons M-ids" onClick={interact(onCommons)} />
         <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={interact(onOpenRefine)} />
         <div className="border-t" />
         <div role="status" aria-live="polite" className={cn("border-b px-5 py-4", drop.dragging && "bg-foreground text-background")}>

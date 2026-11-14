@@ -1,5 +1,6 @@
 //! OxRefine engine: dictionary-encoded string table + OpenRefine-compatible operations.
 pub mod cluster;
+pub mod commons;
 mod cluster_hints;
 pub mod cross;
 pub mod engine;

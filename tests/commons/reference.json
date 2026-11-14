@@ -1,0 +1,599 @@
+{
+  "provenance": {
+    "reference": "CommonsExtension v0.1.5 mapping executed against OpenRefine 3.10.1 libraries",
+    "extensionCommit": "4a2c838d54e462dc51d60d21efbac66b0a0fe07a",
+    "extensionSourceBase": "https://github.com/OpenRefine/CommonsExtension/blob/4a2c838d54e462dc51d60d21efbac66b0a0fe07a/src/main/java/org/openrefine/extensions/commons/importer/",
+    "extensionSourceSha256": {
+      "FileRecord.java": "B67C211B65454F7889F897E4D02D36A15D212BA5B8680AB9B34934741A8265E9",
+      "FileRecordToRows.java": "69646BBC85B5EF2B7A42A6F1D90295CB8AFBA4E41C8F61F508A65C75573BB8E5"
+    },
+    "openRefineMainJarSha256": "B1BEE728E85B4AA44967427707ECDB501A6B4AA3D87608BA7B29115C858F0957",
+    "generator": "tests/commons/generate_reference.ps1",
+    "scope": "FileRecordToRows only; synthetic records; no HTTP requests; excludes importer column setup, fetching and Ox wikitext addition",
+    "normalization": "Removed generated recon.id only"
+  },
+  "cases": [
+    {
+      "name": "file-only",
+      "input": {
+        "categoriesColumn": false,
+        "mIdsColumn": false,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": null,
+            "error": null
+          },
+          {
+            "fileName": "File:Unicode α & \"quote\".png",
+            "pageId": "456",
+            "relatedCategories": null,
+            "error": null
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            }
+          ],
+          [
+            {
+              "v": "File:Unicode α & \"quote\".png",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M456",
+                  "name": "File:Unicode α & \"quote\".png",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M456",
+                    "name": "File:Unicode α & \"quote\".png",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "name": "empty",
+      "input": {
+        "categoriesColumn": false,
+        "mIdsColumn": false,
+        "files": []
+      },
+      "expected": {
+        "rows": []
+      }
+    },
+    {
+      "name": "duplicate-files",
+      "input": {
+        "categoriesColumn": false,
+        "mIdsColumn": false,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": null,
+            "error": null
+          },
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": null,
+            "error": null
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            }
+          ],
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "name": "mids",
+      "input": {
+        "categoriesColumn": false,
+        "mIdsColumn": true,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": null,
+            "error": null
+          },
+          {
+            "fileName": "File:Unicode α & \"quote\".png",
+            "pageId": "456",
+            "relatedCategories": null,
+            "error": null
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "M123"
+            }
+          ],
+          [
+            {
+              "v": "File:Unicode α & \"quote\".png",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M456",
+                  "name": "File:Unicode α & \"quote\".png",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M456",
+                    "name": "File:Unicode α & \"quote\".png",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "M456"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "name": "categories",
+      "input": {
+        "categoriesColumn": true,
+        "mIdsColumn": false,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": [
+              "Category:First",
+              "Category:Second"
+            ],
+            "error": null
+          },
+          {
+            "fileName": "File:Unicode α & \"quote\".png",
+            "pageId": "456",
+            "relatedCategories": null,
+            "error": null
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "Category:First"
+            }
+          ],
+          [
+            null,
+            {
+              "v": "Category:Second"
+            }
+          ],
+          [
+            {
+              "v": "File:Unicode α & \"quote\".png",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M456",
+                  "name": "File:Unicode α & \"quote\".png",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M456",
+                    "name": "File:Unicode α & \"quote\".png",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            null
+          ]
+        ]
+      }
+    },
+    {
+      "name": "categories-and-mids",
+      "input": {
+        "categoriesColumn": true,
+        "mIdsColumn": true,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": [
+              "Category:First",
+              "Category:Second"
+            ],
+            "error": null
+          },
+          {
+            "fileName": "File:Unicode α & \"quote\".png",
+            "pageId": "456",
+            "relatedCategories": null,
+            "error": null
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "M123"
+            },
+            {
+              "v": "Category:First"
+            }
+          ],
+          [
+            null,
+            null,
+            {
+              "v": "Category:Second"
+            }
+          ],
+          [
+            {
+              "v": "File:Unicode α & \"quote\".png",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M456",
+                  "name": "File:Unicode α & \"quote\".png",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M456",
+                    "name": "File:Unicode α & \"quote\".png",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "M456"
+            },
+            null
+          ]
+        ]
+      }
+    },
+    {
+      "name": "category-fetch-error",
+      "input": {
+        "categoriesColumn": true,
+        "mIdsColumn": false,
+        "files": [
+          {
+            "fileName": "File:Example alpha.jpg",
+            "pageId": "123",
+            "relatedCategories": null,
+            "error": "Could not fetch related categories: synthetic failure"
+          }
+        ]
+      },
+      "expected": {
+        "rows": [
+          [
+            {
+              "v": "File:Example alpha.jpg",
+              "recon": {
+                "judgmentHistoryEntry": 0,
+                "j": "matched",
+                "m": {
+                  "id": "M123",
+                  "name": "File:Example alpha.jpg",
+                  "types": [],
+                  "score": 100
+                },
+                "f": [
+                  null,
+                  null,
+                  null,
+                  null
+                ],
+                "c": [
+                  {
+                    "id": "M123",
+                    "name": "File:Example alpha.jpg",
+                    "types": [],
+                    "score": 100
+                  }
+                ],
+                "service": "https://commonsreconcile.toolforge.org/en/api",
+                "identifierSpace": "https://commons.wikimedia.org/entity/",
+                "schemaSpace": "http://www.wikidata.org/prop/direct/",
+                "judgmentAction": "mass",
+                "judgmentBatchSize": 1,
+                "matchRank": -1
+              }
+            },
+            {
+              "v": "Could not fetch related categories: synthetic failure"
+            }
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -118,6 +118,27 @@ fn selections_stale_writes_and_reads_are_isolated_with_shared_authoritative_data
 }
 
 #[test]
+fn commons_previews_need_no_project_context_and_failed_creation_keeps_the_selection() {
+    let root = work("commons-routing"); let server = Server::start(&root.join("store"), None);
+    let mut a = Client::new("browser-a"); let mut b = Client::new("browser-b");
+    let id = a.call(&server, "open", json!({ "path": csv(&root, "original") }))["id"].as_str().unwrap().to_owned();
+    b.call(&server, "open_project", json!({ "id": id }));
+    a.call(&server, "apply", json!({ "op": rename("name", "person") }));
+    assert_eq!(b.request(&server, "rows", json!({})).0, 409);
+
+    // Invalid options are rejected locally: this regression makes no Commons requests.
+    let (status, error) = b.request(&server, "commons_prepare", json!({ "params": { "categories": [], "requestId": "routing-test" } }));
+    assert_eq!(status, 400); assert!(error.as_str().unwrap().contains("categories"));
+    assert_eq!(server.request(Some("fresh-page"), None, "commons_preview", json!({ "id": "expired" })).0, 400);
+    let (status, error) = b.request(&server, "commons_create", json!({ "id": "expired" }));
+    assert_eq!(status, 400); assert!(error.as_str().unwrap().contains("expired"));
+    assert_eq!(b.request(&server, "rows", json!({})).0, 409, "failed creation does not bless an old editor revision");
+    assert_eq!(b.call(&server, "summary", json!({}))["id"], id);
+    assert_eq!(b.call(&server, "rows", json!({ "limit": 1 }))["rows"][0][1][0], "original");
+    assert_eq!(a.call(&server, "projects", json!({})).as_array().unwrap().len(), 1);
+}
+
+#[test]
 fn partial_failures_metadata_eviction_and_restart_keep_revision_guards() {
     let root = work("restart"); let data = root.join("store"); let mut server = Server::start(&data, None);
     let mut a = Client::new("browser-a"); let mut b = Client::new("browser-b");

@@ -2,7 +2,7 @@
 
 ## Known differences
 
-OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,136 checks, 14 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,136 checks, 12 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
 
 | Area | What differs | Why |
 |---|---|---|
@@ -10,7 +10,6 @@ OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [H
 | SQL export | OpenRefine drops numeric and null values from `INSERT` rows, which shifts the columns | Deliberate: OxRefine writes `NULL` and unquoted numbers, so the dump loads |
 | ODS import | OpenRefine adds an empty row for the filler row LibreOffice writes at the end of a sheet (2 cases) | Deliberate: OxRefine leaves it out |
 | JSON import | OpenRefine can't read integers beyond 64 bits and creates no project | Deliberate: OxRefine imports them as numbers |
-| `detectLanguage()` | OxRefine doesn't identify languages yet (2 cases) | Needs a language-identification model |
 | Beider-Morse keys | Names with more than 20 phonetic alternatives can get a different key (7 cases) | Apache Commons Codec truncates its list while building it, and keeps a different 20 |
 
 The other cases in that fixture total match. They cover GREL results and errors, operations, facet counts, import options, exports, clustering, reconciliation, and project archives with their full history.
@@ -35,14 +34,18 @@ The additional `tests/export/custom-fixtures.json` cases show OpenRefine 3.10.1 
 
 The same corpus records OpenRefine's ODS exporter dropping the time of day from a date cell. OxRefine retains its timestamp, including milliseconds. The remaining cells, selected columns and ordering are still compared with the reference.
 
+### Commons category imports
+
+The separate CommonsExtension v0.1.5 can emit duplicate file rows from overlapping categories and repeats category traversal. OxRefine preserves direct-files-first depth-first ordering, deduplicates by file page ID and tracks visited categories with the remaining depth. It follows empty batches that still have continuation and fails the entire preparation on an API error or a limit, keeping partial data out of the project library. Loading file-page wikitext during preparation is an OxRefine addition. These behaviors and the extension mapping references are outside the 2,136-check total.
+
 ## Not in OxRefine yet
 
 - **Import:** databases (PostgreSQL, MySQL, MariaDB, SQLite), RDF (N-Triples, Turtle, RDF/XML, JSON-LD), MARC, wikitext tables, PC-Axis, Google Sheets
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Expressions:** Python (Jython) and Clojure; `detectLanguage()`; `wikibaseIssues()`
+- **Expressions:** Python (Jython) and Clojure; `wikibaseIssues()`
 - **Export:** Google Sheets
-- **Extensions:** Wikibase schemas and uploads, Wikimedia Commons, OpenRefine's extension modules
+- **Extensions:** Wikibase schemas and uploads, Commons-specific GREL functions, OpenRefine's extension modules
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 
