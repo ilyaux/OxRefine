@@ -2861,6 +2861,7 @@ dependencies = [
  "ox-core",
  "serde_json",
  "tiny_http",
+ "ureq",
 ]
 
 [[package]]

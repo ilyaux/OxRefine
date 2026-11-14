@@ -607,6 +607,63 @@ fn import_fixed(path: &Path, o: &ImportOptions) -> Result<Table> {
     Ok(b.finish())
 }
 
+/// A bounded, decoded source sample for the fixed-width ruler. Widths use the importer's Unicode
+/// scalar positions; OpenRefine's shared-space heuristic uses Java UTF-16 positions.
+pub fn fixed_width_sample(path: &Path, o: &ImportOptions) -> Result<serde_json::Value> {
+    let u = crate::unpack::unpack(path)?;
+    let (picked, _) = pick(&u, o)?;
+    let first = picked.first().ok_or("no files to sample")?.1;
+    // Four UTF-8 bytes per character; never read an arbitrarily long first line into memory.
+    let mut bytes = vec![];
+    File::open(first).map_err(err)?.take(4 * 65536 + 1).read_to_end(&mut bytes).map_err(err)?;
+    let byte_limit = bytes.len() > 4 * 65536;
+    bytes.truncate(4 * 65536);
+    let text = if is_utf8(&o.encoding) {
+        String::from_utf8_lossy(&bytes).into_owned()
+    } else {
+        let enc = encoding_rs::Encoding::for_label(o.encoding.as_bytes()).ok_or_else(|| format!("unknown encoding {}", o.encoding))?;
+        enc.decode(&bytes).0.into_owned()
+    };
+    let mut out = fixed_sample_text(text.strip_prefix('\u{feff}').unwrap_or(&text));
+    if byte_limit { out["truncated"] = serde_json::json!(true); }
+    Ok(out)
+}
+
+fn fixed_sample_text(text: &str) -> serde_json::Value {
+    let normalized = text.replace("\r\n", "\n").replace('\r', "\n");
+    let mut chars = normalized.chars();
+    let text: String = chars.by_ref().take(65536).collect();
+    let mut truncated = chars.next().is_some();
+    let mut shared_spaces: Option<Vec<bool>> = None;
+    let mut nonempty = 0;
+    let mut lines = vec![];
+    for line in text.lines() {
+        if nonempty == 100 { truncated = true; break; }
+        if lines.len() < 20 {
+            lines.push(line.chars().take(512).collect::<String>());
+            truncated |= line.chars().count() > 512;
+        } else { truncated = true; }
+        if line.is_empty() { continue; }
+        nonempty += 1;
+        let spaces = shared_spaces.get_or_insert_with(|| vec![true; line.chars().count()]);
+        let mut input = line.chars();
+        for space in spaces { *space &= input.next() == Some(' '); }
+    }
+    let mut widths = vec![];
+    if nonempty > 2 {
+        let mut previous = 0;
+        for (i, shared) in shared_spaces.unwrap_or_default().into_iter().enumerate() {
+            if shared { widths.push(i + 1 - previous); previous = i + 1; }
+        }
+        // Adjacent shared spaces belong to the following field, except the final separator.
+        for i in (0..widths.len().saturating_sub(1)).rev() {
+            if widths[i] == 1 { widths[i + 1] += 1; widths.remove(i); }
+        }
+    }
+    serde_json::json!({ "columnWidths": widths, "lines": lines, "sampledLines": nonempty,
+        "truncated": truncated, "characterUnit": "unicode-scalar" })
+}
+
 fn is_utf8(label: &str) -> bool {
     label.is_empty() || label.eq_ignore_ascii_case("utf-8") || label.eq_ignore_ascii_case("utf8")
 }
@@ -1425,6 +1482,44 @@ impl Table {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn fixed_width_guesses_match_real_wizard_with_declared_unicode_units() {
+        let fixtures: serde_json::Value = serde_json::from_str(include_str!("../../../tests/import/fixed-width-guesses.json")).unwrap();
+        for case in fixtures["cases"].as_array().unwrap() {
+            let sample = fixed_sample_text(case["text"].as_str().unwrap());
+            let expected = case.get("scalarWidths").unwrap_or(&case["columnWidths"]);
+            assert_eq!(&sample["columnWidths"], expected, "{}", case["name"]);
+            if case.get("knownDifference").is_some() {
+                assert_ne!(sample["columnWidths"], case["columnWidths"], "Java counts UTF-16 units, import and ruler count Unicode scalars");
+            }
+        }
+    }
+
+    #[test]
+    fn fixed_width_sample_is_bounded_decoded_and_uses_the_selected_file() {
+        let temp = std::env::temp_dir();
+        let folder = temp.join(format!("oxrefine-fixed-sample-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+        std::fs::create_dir(&folder).unwrap();
+        std::fs::write(folder.join("first.txt"), "wrong source").unwrap();
+        std::fs::write(folder.join("second.txt"), b"\xe9\xe9 bb\n\xf6\xf6 cc\n\xe4\xe4 dd\n").unwrap();
+        let options = ImportOptions { encoding: "windows-1252".into(), files: vec!["second.txt".into()], ..Default::default() };
+        let sample = fixed_width_sample(&folder, &options).unwrap();
+        assert_eq!(sample["columnWidths"], serde_json::json!([3]));
+        assert_eq!(sample["lines"][0], "éé bb");
+        assert_eq!(sample["characterUnit"], "unicode-scalar");
+        let huge = folder.join("huge.txt");
+        std::fs::write(&huge, "x".repeat(1024 * 1024)).unwrap();
+        let sample = fixed_width_sample(&huge, &ImportOptions::default()).unwrap();
+        assert_eq!(sample["truncated"], true);
+        assert_eq!(sample["lines"][0].as_str().unwrap().chars().count(), 512);
+        let sample = fixed_sample_text(&"aa bb\n".repeat(1000));
+        assert_eq!(sample["sampledLines"], 100);
+        assert_eq!(sample["lines"].as_array().unwrap().len(), 20);
+        assert_eq!(sample["truncated"], true);
+        assert_eq!(folder.parent(), Some(temp.as_path()));
+        std::fs::remove_dir_all(folder).unwrap();
+    }
 
     /// The parallel data stage must build exactly the table the single-threaded one builds: same
     /// names, codes and dictionary order, across batch boundaries, ragged rows, late columns,

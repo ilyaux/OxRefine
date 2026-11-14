@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { FlipHorizontal2Icon, PencilIcon, XIcon } from "lucide-react"
-import type { Facet, FacetData, ListData, ListFacet, RangeData, RangeFacet, Summary, TextFacet, TimeData, TimeFacet } from "@/api"
+import { useEffect, useId, useState } from "react"
+import { ChevronDownIcon, FlipHorizontal2Icon, PencilIcon, RotateCcwIcon, XIcon } from "lucide-react"
+import { rangeFacet, timeFacet, type Facet, type FacetData, type ListData, type ListFacet, type RangeData, type RangeFacet, type Summary, type TextFacet, type TimeData, type TimeFacet } from "@/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,25 @@ const fmt = (n: number) => (Math.abs(n) >= 1e6 || (n !== 0 && Math.abs(n) < 1e-3
 
 /** A square checkbox mark, filled in the data colour when on (the row itself is the control). */
 const Square = ({ on }: { on: boolean }) => <span aria-hidden="true" className={cn("size-2.5 shrink-0 border", on ? "border-data bg-data" : "border-faint")} />
+
+type FacetKeys = { facets: Facet[]; entries: { facet: Facet; identity: string; key: number }[]; next: number }
+function trackFacets(facets: Facet[], previous?: FacetKeys): FacetKeys {
+  const used = new Set<FacetKeys["entries"][number]>()
+  // Reserve unchanged duplicates before matching facets replaced by an immutable update.
+  const exact = facets.map((facet) => {
+    const entry = previous?.entries.find((entry) => entry.facet === facet && !used.has(entry))
+    if (entry) used.add(entry)
+    return entry
+  })
+  let next = previous?.next ?? 0
+  const entries = facets.map((facet, i) => {
+    const identity = facetKey(facets, i)
+    const entry = exact[i] ?? previous?.entries.find((entry) => entry.identity === identity && !used.has(entry))
+    if (entry) used.add(entry)
+    return { facet, identity, key: entry?.key ?? next++ }
+  })
+  return { facets, entries, next }
+}
 
 /** The facet rail: one ruled section per facet, flat. */
 export function Facets({
@@ -32,40 +51,17 @@ export function Facets({
   /** add a text facet on a column */
   onAdd: (column: string) => void
 }) {
+  const [tracked, setTracked] = useState(() => trackFacets(facets))
+  let keyed = tracked
+  if (tracked.facets !== facets) {
+    keyed = trackFacets(facets, tracked)
+    setTracked(keyed)
+  }
   const update = (i: number, f: Facet) => onChange(facets.map((x, j) => (j === i ? f : x)))
   return (
     <div className="flex flex-col">
-      {facets.map((f, i) => (
-        // keyed by what the facet is, not where it is, so removing one above keeps the others' sort and inputs
-        <section key={facetKey(facets, i)} aria-label={`Facet ${f.name}`} className="flex flex-col border-b pb-3">
-          <div className="flex items-center gap-1 py-2.5 pr-1.5 pl-3.5">
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="truncate font-semibold">{f.name}</span>
-              {f.type !== "text" && f.expression !== "value" && f.expression !== "grel:value" && (
-                <span className="truncate font-mono text-[11px] text-muted-foreground" title={f.expression}>
-                  {f.expression.replace(/^grel:/, "")}
-                </span>
-              )}
-            </div>
-            <FacetCount facet={f} data={data[i]} />
-            {(f.type === "list" || f.type === "text") && (
-              <Button variant="ghost" size="icon-xs" aria-label={f.invert ? "Stop inverting the facet" : "Invert facet"} aria-pressed={f.invert} onClick={() => update(i, { ...f, invert: !f.invert })}>
-                <FlipHorizontal2Icon className={f.invert ? "text-data" : undefined} />
-              </Button>
-            )}
-            <Button variant="ghost" size="icon-xs" aria-label={`Remove the ${f.name} facet`} onClick={() => onChange(facets.filter((_, j) => j !== i))}>
-              <XIcon />
-            </Button>
-          </div>
-          {f.type === "list" && (data[i] as ListData | null)?.tooMany ? (
-            <TooMany data={data[i] as ListData} onLimit={onLimit} />
-          ) : (
-            f.type === "list" && <ListChoices facet={f} data={data[i] as ListData | null} onChange={(nf) => update(i, nf)} onEdit={(c) => onEditChoice(f, c)} />
-          )}
-          {f.type === "text" && <TextQuery facet={f} onChange={(nf) => update(i, nf)} />}
-          {f.type === "range" && <RangePanel facet={f} data={data[i] as RangeData | null} onChange={(nf) => update(i, nf)} />}
-          {f.type === "timerange" && <TimePanel facet={f} data={data[i] as TimeData | null} onChange={(nf) => update(i, nf)} />}
-        </section>
+      {keyed.entries.map(({ facet, key }, i) => (
+        <FacetSection key={key} facet={facet} data={data[i]} onChange={(f) => update(i, f)} onRemove={() => onChange(facets.filter((_, j) => j !== i))} onEditChoice={onEditChoice} onLimit={onLimit} />
       ))}
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -97,9 +93,63 @@ export function Facets({
   )
 }
 
+function FacetSection({ facet: f, data, onChange, onRemove, onEditChoice, onLimit }: {
+  facet: Facet
+  data: FacetData | undefined
+  onChange: (f: Facet) => void
+  onRemove: () => void
+  onEditChoice: (facet: ListFacet, choice: string) => void
+  onLimit: (n: number) => void
+}) {
+  const [collapsed, setCollapsed] = useState(false)
+  const [resetVersion, setResetVersion] = useState(0)
+  const bodyId = useId()
+  const reset = () => {
+    if (f.type !== "range" && f.type !== "timerange") return
+    onChange({ ...(f.type === "range" ? rangeFacet(f.columnName, f.expression) : timeFacet(f.columnName, f.expression)), name: f.name })
+    setResetVersion((n) => n + 1)
+  }
+  return (
+    <section aria-label={`Facet ${f.name}`} className={cn("flex flex-col border-b", !collapsed && "pb-3")}>
+      <div className="flex items-center gap-1 py-2.5 pr-1.5 pl-3.5">
+        <button type="button" aria-label={`${collapsed ? "Expand" : "Collapse"} the ${f.name} facet`} aria-expanded={!collapsed} aria-controls={bodyId} onClick={() => setCollapsed(!collapsed)} className="flex min-w-0 flex-1 items-center gap-1.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <ChevronDownIcon aria-hidden="true" className={cn("size-3 shrink-0", collapsed && "-rotate-90")} />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate font-semibold" title={f.name}>{f.name}</span>
+            {f.type !== "text" && f.expression !== "value" && f.expression !== "grel:value" && (
+              <span className="truncate font-mono text-[11px] text-muted-foreground" title={f.expression}>
+                {f.expression.replace(/^grel:/, "")}
+              </span>
+            )}
+          </span>
+        </button>
+        <FacetCount facet={f} data={data} />
+        {f.type === "list" || f.type === "text" ? (
+          <Button variant="ghost" size="icon-xs" aria-label={f.invert ? "Stop inverting the facet" : "Invert facet"} aria-pressed={f.invert} onClick={() => onChange({ ...f, invert: !f.invert })}>
+            <FlipHorizontal2Icon className={f.invert ? "text-data" : undefined} />
+          </Button>
+        ) : (
+          <Button variant="ghost" size="icon-xs" aria-label={`Reset the ${f.name} facet`} onClick={reset}><RotateCcwIcon /></Button>
+        )}
+        <Button variant="ghost" size="icon-xs" aria-label={`Remove the ${f.name} facet`} onClick={onRemove}><XIcon /></Button>
+      </div>
+      <div id={bodyId} hidden={collapsed} key={resetVersion}>
+        {f.type === "list" && (data as ListData | null)?.tooMany ? (
+          <TooMany data={data as ListData} onLimit={onLimit} />
+        ) : (
+          f.type === "list" && <ListChoices facet={f} data={data as ListData | null} onChange={onChange} onEdit={(c) => onEditChoice(f, c)} />
+        )}
+        {f.type === "text" && <TextQuery facet={f} onChange={onChange} />}
+        {f.type === "range" && <RangePanel facet={f} data={data as RangeData | null} onChange={onChange} />}
+        {f.type === "timerange" && <TimePanel facet={f} data={data as TimeData | null} onChange={onChange} />}
+      </div>
+    </section>
+  )
+}
+
 /** A facet's identity: type, column and expression, plus how many identical facets come before it. */
 const facetKey = (facets: Facet[], i: number) => {
-  const id = (f: Facet) => `${f.type}:${f.columnName}:${"expression" in f ? f.expression : ""}`
+  const id = (f: Facet) => JSON.stringify([f.type, f.columnName, "expression" in f ? f.expression : ""])
   return `${id(facets[i])}:${facets.slice(0, i).filter((f) => id(f) === id(facets[i])).length}`
 }
 
@@ -206,13 +256,14 @@ function ListChoices({ facet, data, onChange, onEdit }: { facet: ListFacet; data
 function Histogram({ label, bins, baseBins, inside, ticks }: { label: string; bins: number[]; baseBins: number[]; inside: (i: number) => boolean; ticks: string[] }) {
   const top = maxOf(baseBins, 1)
   const w = 100 / baseBins.length
+  const gap = Math.min(0.3, w / 4)
   return (
     <div className="px-3.5">
       <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="block h-12 w-full" role="img" aria-label={label}>
         {baseBins.map((c, i) => (
           <g key={i}>
-            <rect x={i * w + 0.15} y={40 - (c / top) * 40} width={w - 0.3} height={(c / top) * 40} className="fill-row-rule" />
-            <rect x={i * w + 0.15} y={40 - (bins[i] / top) * 40} width={w - 0.3} height={(bins[i] / top) * 40} className={inside(i) ? "fill-data" : "fill-faint"} />
+            <rect x={i * w + gap / 2} y={40 - (c / top) * 40} width={w - gap} height={(c / top) * 40} className="fill-row-rule" />
+            <rect x={i * w + gap / 2} y={40 - (bins[i] / top) * 40} width={w - gap} height={(bins[i] / top) * 40} className={inside(i) ? "fill-data" : "fill-faint"} />
           </g>
         ))}
       </svg>

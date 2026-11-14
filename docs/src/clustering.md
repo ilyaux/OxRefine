@@ -4,6 +4,12 @@
 
 ![Clustering the city column](images/cluster.png)
 
+## Suggestions in the grid
+
+When different text values share a fingerprint, the column header shows **N variants · M groups**. Click it to review the clusters. A dotted amber underline marks the affected text cells; identical repeats alone do not create a suggestion, and numbers and errors are excluded.
+
+Suggestions follow the current facets and rows/records mode. They use the default fingerprint method, so other clustering methods may find additional groups. Nothing changes until you choose a merge. The first calculation scans the matching rows and distinct text values in each column; its result is reused while paging and recalculated after a data or filter change.
+
 ## Methods
 
 **Key collision** turns each value into a key, and values with the same key form a cluster. The keying functions are OpenRefine's:

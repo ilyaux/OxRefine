@@ -29,6 +29,7 @@ pub fn free(cmd: &str, args: &Value, scope: &Scope) -> Option<Reply> {
         return dispatch_free(cmd, args).map(|result| match result { Ok(data) => Reply(200, data), Err(error) => Reply(400, json!(error)) });
     };
     let data = match cmd {
+        "memory" => json!(ox_core::memory::snapshot()),
         "processes" => jobs::list_owned(owner),
         "cancel_process" => {
             if !jobs::cancel_owned(owner, args["id"].as_u64().unwrap_or(0)) {
@@ -59,7 +60,7 @@ pub struct Projects {
 }
 
 fn global(cmd: &str) -> bool {
-    matches!(cmd, "inspect" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference")
+    matches!(cmd, "inspect" | "fixed_width_sample" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference")
 }
 
 fn metadata(cmd: &str) -> bool {
@@ -104,6 +105,22 @@ impl Projects {
     }
 
     pub fn call(&mut self, cmd: &str, args: Value, scope: &Scope) -> Reply {
+        // The stdio adapter attaches to this cache, never opens a second Store. Resolve the
+        // actual roots so its local file grants cannot be confused with another server's data.
+        if cmd == "server_info" {
+            let roots = || -> Result<Value, String> {
+                let root = self.store.root();
+                let data = root.parent().ok_or("missing data directory")?.canonicalize().map_err(|e| e.to_string())?;
+                let projects = root.canonicalize().map_err(|e| e.to_string())?;
+                let staging = ox_core::import::staging_dir(Some(root));
+                let staging = if staging.exists() { staging.canonicalize().map_err(|e| e.to_string())? } else { data.join("staging") };
+                Ok(json!({ "dataRoot": data, "projectsRoot": projects, "stagingRoot": staging }))
+            };
+            return match roots() {
+                Ok(data) => Reply(200, json!({ "data": data, "ms": 0.0 })),
+                Err(error) => Reply(400, json!(error)),
+            };
+        }
         self.clock += 1;
         let scoped = scope.owner.is_some();
         let selected = if scoped {
@@ -160,7 +177,9 @@ impl Projects {
         match result {
             Ok(mut value) => {
                 if cmd == "projects" {
-                    if let Some(projects) = value["data"].as_array_mut() {
+                    let data = &mut value["data"];
+                    let projects = if data.is_array() { data.as_array_mut() } else { data["projects"].as_array_mut() };
+                    if let Some(projects) = projects {
                         for project in projects {
                             if let Some(id) = project["id"].as_str() { let revision = self.revision(id); project["revision"] = json!(revision); }
                         }

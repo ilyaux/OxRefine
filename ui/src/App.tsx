@@ -10,6 +10,7 @@ import { Preferences } from "@/Preferences"
 import { ExportDialog, type ExportKind } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
+import { ProcessMemory, useProcessMemory } from "@/ProcessMemory"
 import { Facets, History } from "@/Sidebar"
 import { Bar, BarCell, BrandCell, CellButton, CellLink, Crumbs, ProjectName, Spacer, StateDot, StatusBar, StatusCell } from "@/components/instrument"
 import {
@@ -76,6 +77,7 @@ const fail = (e: unknown) => {
 }
 
 export function App() {
+  const memory = useProcessMemory()
   const [summary, setSummary] = useState<Summary | null>(null)
   const [refreshSerial, setRefreshSerial] = useState(0)
   const [facets, setFacets] = useState<Facet[]>([])
@@ -610,7 +612,7 @@ export function App() {
                   )}
                 </aside>
                 <main className="min-w-0 flex-1">
-                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={(n, rec) => (setTotal(n), setRecords(rec))} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} dataVersion={`${summary.name}:${summary.cursor}:${summary.history.length}`} />
+                  <Grid columns={summary.columns} engine={engine} version={version} onTotal={(n, rec) => (setTotal(n), setRecords(rec))} onAction={onAction} onApply={apply} onFocusColumn={setFocusCol} onSelect={setSelected} dataVersion={`${summary.id}:${summary.name}:${summary.cursor}:${summary.history.length}:${refreshSerial}`} />
                 </main>
               </div>
             </>
@@ -634,6 +636,7 @@ export function App() {
                 {summary.id && " · saved"}
               </StatusCell>
             )}
+            <StatusCell><ProcessMemory memory={memory} /></StatusCell>
             <Spacer />
             {summary && selected && selected.column && summary.columns.includes(selected.column) && (
               <StatusCell rule="left" className="min-w-0 gap-2">
@@ -655,7 +658,7 @@ export function App() {
           </StatusBar>
         </div>
 
-        <Jobs />
+        <Jobs memory={memory} />
         <Palette
           open={palette}
           onOpenChange={setPalette}

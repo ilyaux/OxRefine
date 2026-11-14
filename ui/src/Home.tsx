@@ -33,7 +33,7 @@ export type ProjectInfo = {
   image: string
   customMetadata: Record<string, unknown>
 }
-export type ProjectMeta = { id: string; name: string; created: string; modified: string; rows: number; columns: number; source?: { path: string }; info?: Partial<ProjectInfo> }
+export type ProjectMeta = { id: string; name: string; created: string; modified: string; rows: number; columns: number; source?: { path: string }; info?: Partial<ProjectInfo>; stats?: { historySteps?: number | null; sizeBytes?: number | null } }
 
 type Text = Exclude<keyof ProjectInfo, "tags" | "customMetadata" | "description">
 const FIELDS: [Text, string][] = [
@@ -66,6 +66,13 @@ const changed = (iso: string) => {
 }
 
 const fileName = (path?: string) => path?.split(/[\\/]/).pop()
+const knownCount = (n: number | null | undefined): n is number => typeof n === "number" && Number.isSafeInteger(n) && n >= 0
+const size = (n: number | null | undefined) => {
+  if (!knownCount(n)) return "Unavailable"
+  if (n < 1024) return `${n.toLocaleString()} B`
+  const unit = Math.min(4, Math.floor(Math.log2(n) / 10))
+  return `${(n / 1024 ** unit).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${["B", "KiB", "MiB", "GiB", "TiB"][unit]}`
+}
 
 /** One way to start a project: a full-width row with a rule above it. */
 function Source({ title, hint, keys, onClick }: { title: string; hint: string; keys?: string; onClick: () => void }) {
@@ -181,10 +188,10 @@ export function Home({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] border-collapse">
+            <table className="w-full min-w-[900px] border-collapse">
               <thead>
                 <tr>
-                  <th scope="col" className={cn(th, "pl-5")}>
+                  <th scope="col" className={cn(th, "w-full min-w-64 pl-5")}>
                     Name
                   </th>
                   <th scope="col" className={cn(th, "text-right")}>
@@ -192,6 +199,12 @@ export function Home({
                   </th>
                   <th scope="col" className={cn(th, "text-right")}>
                     Cols
+                  </th>
+                  <th scope="col" className={cn(th, "text-right")} title="Saved history steps, including steps available to redo">
+                    Steps
+                  </th>
+                  <th scope="col" className={cn(th, "text-right")} title="Total bytes in project files, including history and preserved original archives">
+                    On disk
                   </th>
                   <th scope="col" className={cn(th, "text-right")}>
                     Changed
@@ -204,8 +217,8 @@ export function Home({
               <tbody>
                 {shown.map((p) => (
                   <tr key={p.id} className="group/row hover:bg-muted">
-                    <td className="h-13 max-w-0 border-b py-2 pr-3 pl-5">
-                      <button type="button" onClick={() => onOpen(p.id)} className="flex max-w-full flex-col items-start gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <td className="h-13 max-w-0 min-w-64 border-b py-2 pr-3 pl-5">
+                      <button type="button" title={p.name} onClick={() => onOpen(p.id)} className="flex max-w-full flex-col items-start gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <span className="max-w-full truncate font-medium group-hover/row:underline">{p.name}</span>
                         {fileName(p.source?.path) && <span className="max-w-full truncate font-mono text-[11px] text-muted-foreground">{fileName(p.source?.path)}</span>}
                       </button>
@@ -222,7 +235,13 @@ export function Home({
                     </td>
                     <td className={num}>{p.rows.toLocaleString()}</td>
                     <td className={cn(num, "text-muted-foreground")}>{p.columns}</td>
-                    <td className={cn(num, "text-xs text-muted-foreground")} title={when(p.modified)}>
+                    <td className={num} title={knownCount(p.stats?.historySteps) ? "Includes steps available to redo" : "Saved history could not be counted"}>
+                      {knownCount(p.stats?.historySteps) ? p.stats.historySteps.toLocaleString() : "Unavailable"}
+                    </td>
+                    <td className={cn(num, "whitespace-nowrap")} title={knownCount(p.stats?.sizeBytes) ? `${p.stats.sizeBytes.toLocaleString()} bytes in project files` : "Project file size could not be measured"}>
+                      {size(p.stats?.sizeBytes)}
+                    </td>
+                    <td className={cn(num, "text-xs whitespace-nowrap text-muted-foreground")} title={when(p.modified)}>
                       {changed(p.modified)}
                     </td>
                     <td className="border-b pr-3 pl-3 text-right whitespace-nowrap">

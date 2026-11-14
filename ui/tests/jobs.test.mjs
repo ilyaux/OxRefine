@@ -6,7 +6,7 @@ import ts from "typescript"
 
 // Execute the real component with deterministic hook effects, timers and HTTP responses.
 // The harness provides React's state/dependency/cleanup mechanics, not Jobs' polling logic.
-function jobsPanel() {
+function jobsPanel(memory) {
   const hooks = [],
     timers = new Map(),
     calls = []
@@ -74,6 +74,7 @@ function jobsPanel() {
       if (name === "lucide-react") return {}
       if (name === "@/components/ui/button") return { Button: "button" }
       if (name === "@/lib/utils") return { cn: (...values) => values.join(" ") }
+      if (name === "@/ProcessMemory") return { ProcessMemory: "process-memory" }
       if (name === "@/api")
         return {
           onPending(listener) {
@@ -110,7 +111,7 @@ function jobsPanel() {
       )
       dirty = false
       cursor = 0
-      view = exports.Jobs()
+      view = exports.Jobs({ memory })
       const queued = effects
       effects = []
       queued.forEach((effect) => effect())
@@ -279,4 +280,20 @@ test("unmount cancels a scheduled poll and quick initial commands never show sta
   panel.unmount()
   await panel.advance(1000)
   assert.equal(panel.calls.length, 0)
+})
+
+test("Jobs shows the shared backend memory sample without starting another memory poller", async () => {
+  const memory = { pid: 123, currentBytes: 1024, peakBytes: 2048, metric: "rss", peakSource: "os", error: null }
+  const panel = jobsPanel(memory)
+  panel.data = [job(7)]
+  panel.pending(1)
+  await panel.advance(300)
+  const memoryLabel = nodes(panel.view).find((node) => node.type === "process-memory")
+  assert.ok(memoryLabel)
+  assert.equal(memoryLabel.props.memory, memory)
+  panel.data = [job(7, "completed")]
+  panel.pending(0)
+  await panel.advance(0)
+  assert.equal(nodes(panel.view).find((node) => node.type === "process-memory").props.memory, memory)
+  panel.unmount()
 })

@@ -3,6 +3,7 @@ import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react"
 import { call, onPending } from "@/api"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { ProcessMemory, type ProcessMemoryData } from "@/ProcessMemory"
 
 type Stage = {
   label: string
@@ -28,7 +29,7 @@ const SEGMENTS = 40
 
 /** OpenRefine's process panel, docked: while a command runs for more than a moment, what it is doing, how
  * far along, for how long, with Cancel. */
-export function Jobs() {
+export function Jobs({ memory }: { memory?: ProcessMemoryData | null } = {}) {
   const [pending, setPending] = useState(0)
   const [jobs, setJobs] = useState<Job[]>([])
   const [open, setOpen] = useState(true)
@@ -112,6 +113,11 @@ export function Jobs() {
           )}
         </button>
       </div>
+      {memory !== undefined && (
+        <div className="border-b px-4 py-2">
+          <ProcessMemory memory={memory} />
+        </div>
+      )}
       {open &&
         shown.map((j) => {
           const share = j.total ? Math.min(1, j.done / j.total) : null

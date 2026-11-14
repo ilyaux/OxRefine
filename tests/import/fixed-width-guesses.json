@@ -1,0 +1,103 @@
+{
+ "openrefine": "3.10.1",
+ "method": "FixedWidthImporter.guessColumnWidths via initialize-parser-ui",
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/src/com/google/refine/importers/FixedWidthImporter.java",
+ "cases": [
+  {
+   "name": "existing fixed.txt",
+   "text": "ID   NAME      CITY     AMOUNT\n1    Alice     Boston   10.5\n2    Bob Jones New York 7\n3    Ünïcödé   Köln\n\n44444Overflow  TooLongCityName 12345678\nshort\n",
+   "columnWidths": []
+  },
+  {
+   "name": "aligned fields",
+   "text": "AAA BBB CCC\nDDD EEE FFF\nGGG HHH III\n",
+   "columnWidths": [
+    4,
+    4
+   ]
+  },
+  {
+   "name": "consecutive separator spaces",
+   "text": "aa   bb  cc\ndd   ee  ff\ngg   hh  ii\n",
+   "columnWidths": [
+    3,
+    5,
+    1
+   ]
+  },
+  {
+   "name": "two lines cannot establish widths",
+   "text": "aa bb\ncc dd\n",
+   "columnWidths": []
+  },
+  {
+   "name": "blank lines ignored",
+   "text": "\naa bb\n\ncc dd\nee ff\n",
+   "columnWidths": [
+    3
+   ]
+  },
+  {
+   "name": "shorter first line caps positions",
+   "text": "a b\nc d extra\ne f extra\n",
+   "columnWidths": [
+    2
+   ]
+  },
+  {
+   "name": "short row disqualifies later spaces",
+   "text": "aa bb cc\ndd\nee ff gg\n",
+   "columnWidths": []
+  },
+  {
+   "name": "tabs are not separators",
+   "text": "aa\tbb\ncc\tdd\nee\tff\n",
+   "columnWidths": []
+  },
+  {
+   "name": "CR and CRLF breaks",
+   "text": "aa bb\rcc dd\r\nee ff\r",
+   "columnWidths": [
+    3
+   ]
+  },
+  {
+   "name": "BMP Unicode character positions",
+   "text": "Жя éé  京\nЮё öö  市\nДя ää  村\n",
+   "columnWidths": [
+    3,
+    3,
+    1
+   ]
+  },
+  {
+   "name": "astral characters before padding",
+   "text": "😀  bb  cc\n🦀  dd  ee\n🦊  ff  gg\n",
+   "knownDifference": "OpenRefine counts UTF-16 units; OxRefine widths count Unicode scalar characters.",
+   "scalarWidths": [
+    2,
+    4,
+    1
+   ],
+   "columnWidths": [
+    3,
+    4,
+    1
+   ]
+  },
+  {
+   "name": "spaces are nonempty lines",
+   "text": "aa bb\n     \ncc dd\n",
+   "columnWidths": [
+    3
+   ]
+  },
+  {
+   "name": "first 100 nonempty lines",
+   "text": "aa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\naa bb\nxxxxx\n",
+   "columnWidths": [
+    3
+   ]
+  }
+ ]
+}

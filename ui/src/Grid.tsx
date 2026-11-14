@@ -21,8 +21,9 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cn } from "cn"
 import { ReconPanel, type Judging } from "@/ReconPanel"
 
-/** [row, cells, starred, flagged, cell types (one letter each), record number when the row starts a record] */
-type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?, Record<string, Recon>?]
+/** Row, cells, stars/flags, types, record start, reconciliation, and optional fingerprint-variant columns. */
+type Row = [number, (string | null)[], boolean, boolean, string, (number | null)?, Record<string, Recon>?, number[]?]
+type ClusterHints = { rows: number; columns: { column: string; values: number; groups: number; cells: number }[] }
 
 /** A reconciled cell, as the grid gets it: judgment, match, best candidates (with how many there are), error. */
 type Candidate = { id: string; name: string; score: number }
@@ -234,6 +235,14 @@ export function Grid({
     }
   }, [dataVersion])
   const profileOf = (j: number) => (profiles && profiles.key === dataVersion ? profiles.data[j] : undefined)
+  const [clusterHints, setClusterHints] = useState<{ key: string; data: ClusterHints } | null>(null)
+  useEffect(() => {
+    let live = true
+    call<ClusterHints>("cluster_hints", { engine }, { quiet: true }).then(({ data }) => live && setClusterHints({ key: version, data }), () => {})
+    return () => { live = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [version])
+  const hints = clusterHints?.key === version ? clusterHints.data : undefined
   // values a list facet selects, per column, to show them in blue in the header's bar
   const facetPicks = (c: string) => new Set(engine.facets.flatMap((f) => (f.type === "list" && f.columnName === c && (f.expression === "value" || f.expression === "grel:value") ? f.selection.map((x) => x.v.l || String(x.v.v)) : [])))
 
@@ -241,7 +250,7 @@ export function Grid({
     if (pending.current.has(b)) return
     pending.current.add(b)
     const v = version
-    call<{ total: number; rows: Row[]; records?: number; recordTotal?: number }>("rows", { engine, start: b * BLOCK, limit: BLOCK })
+    call<{ total: number; rows: Row[]; records?: number; recordTotal?: number }>("rows", { engine, start: b * BLOCK, limit: BLOCK, params: { clusterHints: true } })
       .then(({ data }) => {
         if (current.current !== v) return
         setTotal(data.total)
@@ -388,6 +397,17 @@ export function Grid({
                     <ProfileChart p={profileOf(j)!} selected={facetPicks(c)} />
                   </div>
                 )}
+                {!!hints?.columns[j]?.values && (
+                  <button
+                    type="button"
+                    className="mx-3 mb-2.5 block max-w-[calc(100%_-_1.5rem)] truncate text-left text-xs text-warn-text underline decoration-dotted underline-offset-4 hover:decoration-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    aria-label={`Cluster ${hints.columns[j].values} fingerprint variants in ${hints.columns[j].groups} ${hints.columns[j].groups === 1 ? "group" : "groups"} in ${c}`}
+                    title={`Review ${hints.columns[j].cells.toLocaleString()} text cells in ${hints.rows.toLocaleString()} matching rows with fingerprint clustering`}
+                    onClick={() => onAction({ kind: "cluster", column: c })}
+                  >
+                    {hints.columns[j].values.toLocaleString()} variants · {hints.columns[j].groups.toLocaleString()} {hints.columns[j].groups === 1 ? "group" : "groups"}
+                  </button>
+                )}
                 <div
                   role="separator"
                   aria-orientation="vertical"
@@ -439,7 +459,11 @@ export function Grid({
                       onClick={() => row && (setSel([i, j]), onFocusColumn?.(c))}
                       onDoubleClick={() => row && edit(i, j)}
                     >
-                      {text}
+                      {hints && type === "s" && row?.[7]?.includes(j) ? (
+                        <span className="underline decoration-warn decoration-dotted underline-offset-4" title="Possible fingerprint variant. Review clustering from the column header.">
+                          {text}
+                        </span>
+                      ) : text}
                       {recon && row && (
                         <Button
                           variant="ghost"

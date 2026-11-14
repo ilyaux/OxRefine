@@ -5,13 +5,18 @@ use std::{
     time::Instant,
 };
 mod web;
+mod mcp;
 
 const USAGE: &str = "usage:
   ox apply <history.json> <input> -o <output>          replay an OpenRefine operation history headlessly
                                                         (input or output may be an .openrefine.tar.gz project)
   ox serve [file] [--port 3030] [--data DIR] [--host ADDR] [--token T]
                                                         the app in a browser, at http://127.0.0.1:3030/; projects are saved
-                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token";
+                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token
+  ox mcp [--url http://127.0.0.1:3030] [--data DIR] [--allow PATH] [--token T]
+                                                        MCP over stdio; attach to a running local ox serve using the SAME
+                                                        --data DIR. Repeat --allow for additional files/folders; token may
+                                                        also be set in OXREFINE_TOKEN. Logs go to stderr";
 
 fn main() {
     if let Err(e) = run() {
@@ -25,6 +30,7 @@ fn run() -> Result<(), String> {
     match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
         ["apply", recipe, input, "-o", out] => apply(recipe, input, out),
         ["serve", rest @ ..] => serve(rest),
+        ["mcp", rest @ ..] => mcp::run(rest),
         _ => Err(USAGE.into()),
     }
 }

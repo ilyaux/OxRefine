@@ -1,6 +1,6 @@
 # Command line and server
 
-The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). It is one file with two commands.
+The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). The commands below run recipes and host the browser app; [`ox mcp`](mcp.md) connects an assistant to a running local server.
 
 ## `ox apply`: recipes in scripts
 
@@ -29,6 +29,8 @@ The full app runs in your browser, as OpenRefine does. Projects are saved in the
 
 For a command that takes more than a moment, **Jobs** shows the work stages, their elapsed times and the result: completed, failed or cancelled. Streaming CSV reads, parsing and optional type detection happen together and are shown as a combined stage. Cancel takes effect at the next cancellation check; it cannot interrupt every library call immediately. Completed jobs seen by the panel remain visible until dismissed or another long-running job is observed. The server retains at most 20 recent finished jobs for up to 60 seconds; these timings are not saved in the project.
 
+The status bar and Jobs show the OxRefine process's current resident memory and its peak reported by the operating system. In browser mode this is the server process, including all its open projects; in the desktop app it is the backend process. It does not include the browser's JavaScript heap, and it is separate from a project's size on disk. Linux's kernel figures are approximate. An unavailable measurement is shown explicitly instead of zero.
+
 ### On a server
 
 ```bash
@@ -42,6 +44,8 @@ ox serve --host 0.0.0.0 --data /srv/oxrefine
 ### Browser sessions and handing work over
 
 Each browser page chooses its own active project. Opening or closing a project in one page does not redirect another page's commands. To continue on another computer, open the same server link and select the saved project from **Projects**; its data and undo/redo history remain on the server.
+
+The project list shows the recorded history length, including undone steps that can still be redone, and the size of its saved files. That size includes any preserved original OpenRefine archive; it is separate from the memory used while the project is open. A missing, unreadable or oversized history, or a directory containing links, can make a statistic unavailable; this does not mean the project is empty.
 
 When two pages open the same project, each command carries the project id and the revision the page displayed. If another page has changed the data, schema, history cursor or metadata, stale reads and edits are rejected. The app closes the old dialog, clears its facets and refreshes the project with a warning. Review the refreshed data and repeat your intended action; a rejected edit is never retried automatically. Reloading the page also refreshes the current project. There is no live push of another editor's changes.
 

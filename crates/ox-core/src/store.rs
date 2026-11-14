@@ -14,9 +14,10 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
-    io::{BufWriter, Write},
+    collections::{HashMap, HashSet},
+    io::{BufReader, BufWriter, Read, Write},
     path::{Path, PathBuf},
-    sync::Arc,
+    sync::{Arc, Mutex},
     time::{SystemTime, UNIX_EPOCH},
 };
 
@@ -80,6 +81,103 @@ pub struct History {
 #[derive(Clone)]
 pub struct Store {
     root: PathBuf,
+    history_counts: Arc<Mutex<HashMap<String, CachedHistory>>>,
+}
+
+#[derive(Serialize)]
+pub struct ListedProject {
+    #[serde(flatten)]
+    pub meta: Meta,
+    pub stats: ProjectStats,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ProjectStats {
+    pub history_steps: Option<usize>,
+    pub size_bytes: Option<u64>,
+}
+
+#[derive(Clone)]
+struct CachedHistory {
+    stamp: (u64, SystemTime),
+    steps: Option<usize>,
+}
+
+// Older libraries are counted once per file version, without loading operations or their payloads.
+const HISTORY_SCAN_LIMIT: u64 = 64 * 1024 * 1024;
+const SIZE_ENTRY_LIMIT: usize = 10_000;
+
+fn linked(metadata: &std::fs::Metadata) -> bool {
+    #[cfg(windows)]
+    {
+        use std::os::windows::fs::MetadataExt;
+        if metadata.file_attributes() & 0x400 != 0 { return true; }
+    }
+    metadata.file_type().is_symlink()
+}
+
+fn regular_file(path: &Path) -> Option<std::fs::Metadata> {
+    let metadata = std::fs::symlink_metadata(path).ok()?;
+    (metadata.is_file() && !linked(&metadata)).then_some(metadata)
+}
+
+fn history_stamp(path: &Path) -> Option<(u64, SystemTime)> {
+    let metadata = regular_file(path)?;
+    Some((metadata.len(), metadata.modified().ok()?))
+}
+
+fn count_operations<'de, D: serde::Deserializer<'de>>(deserializer: D) -> std::result::Result<usize, D::Error> {
+    struct Counter;
+    impl<'de> serde::de::Visitor<'de> for Counter {
+        type Value = usize;
+        fn expecting(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result { f.write_str("an operation array") }
+        fn visit_seq<A: serde::de::SeqAccess<'de>>(self, mut seq: A) -> std::result::Result<usize, A::Error> {
+            #[derive(Deserialize)]
+            struct Name { op: String }
+            let mut count = 0;
+            while let Some(operation) = seq.next_element::<Name>()? {
+                if operation.op.is_empty() { return Err(serde::de::Error::custom("missing operation name")); }
+                count += 1;
+            }
+            Ok(count)
+        }
+    }
+    deserializer.deserialize_seq(Counter)
+}
+
+fn history_steps(path: &Path, len: u64) -> Option<usize> {
+    if len > HISTORY_SCAN_LIMIT { return None; }
+    #[derive(Deserialize)]
+    struct Count {
+        #[serde(deserialize_with = "count_operations")]
+        ops: usize,
+        cursor: usize,
+    }
+    let reader = BufReader::new(std::fs::File::open(path).ok()?).take(HISTORY_SCAN_LIMIT + 1);
+    let count: Count = serde_json::from_reader(reader).ok()?;
+    (count.cursor <= count.ops).then_some(count.ops)
+}
+
+/// Logical bytes in regular files; links, unreadable entries and oversized trees are unknown.
+fn project_bytes(path: &Path) -> Option<u64> {
+    let mut directories = vec![path.to_owned()];
+    let (mut bytes, mut entries) = (0u64, 0);
+    while let Some(dir) = directories.pop() {
+        let metadata = std::fs::symlink_metadata(&dir).ok()?;
+        if !metadata.is_dir() || linked(&metadata) { return None; }
+        for entry in std::fs::read_dir(dir).ok()? {
+            entries += 1;
+            if entries > SIZE_ENTRY_LIMIT { return None; }
+            let path = entry.ok()?.path();
+            let metadata = std::fs::symlink_metadata(&path).ok()?;
+            if linked(&metadata) { return None; }
+            if metadata.is_dir() { directories.push(path); }
+            else if metadata.is_file() { bytes = bytes.checked_add(metadata.len())?; }
+            else { return None; }
+        }
+    }
+    Some(bytes)
 }
 
 fn now() -> String {
@@ -127,7 +225,7 @@ impl Store {
     pub fn open(root: impl Into<PathBuf>) -> Result<Store> {
         let root = root.into().join("projects");
         std::fs::create_dir_all(&root).map_err(|e| format!("{}: {e}", root.display()))?;
-        Ok(Store { root })
+        Ok(Store { root, history_counts: Arc::new(Mutex::new(HashMap::new())) })
     }
 
     /// Project folder; ids are digits and dashes only, so a request can't reach outside the store.
@@ -146,6 +244,34 @@ impl Store {
             .filter_map(|e| serde_json::from_slice(&std::fs::read(e.path().join("meta.json")).ok()?).ok())
             .collect();
         out.sort_by(|a, b| b.modified.cmp(&a.modified));
+        out
+    }
+
+    /// Home's derived statistics; ordinary metadata/cross() listing does not scan project files.
+    pub fn list_with_stats(&self) -> Vec<ListedProject> {
+        let mut out = vec![];
+        for entry in std::fs::read_dir(&self.root).into_iter().flatten().flatten() {
+            let path = entry.path();
+            let Ok(metadata) = std::fs::symlink_metadata(&path) else { continue };
+            if !metadata.is_dir() || linked(&metadata) { continue; }
+            let Some(id) = path.file_name().and_then(|n| n.to_str()) else { continue };
+            if self.dir(id).is_err() || regular_file(&path.join("meta.json")).is_none() { continue; }
+            let Some(meta) = std::fs::read(path.join("meta.json")).ok().and_then(|b| serde_json::from_slice::<Meta>(&b).ok()) else { continue };
+            if meta.id != id { continue; }
+            let history = path.join("history.json");
+            let steps = history_stamp(&history).and_then(|stamp| {
+                let cached = self.history_counts.lock().unwrap_or_else(|e| e.into_inner()).get(id).cloned();
+                if let Some(cached) = cached.filter(|cached| cached.stamp == stamp) { return cached.steps; }
+                let steps = history_steps(&history, stamp.0);
+                if history_stamp(&history) != Some(stamp) { return None; }
+                self.history_counts.lock().unwrap_or_else(|e| e.into_inner()).insert(id.into(), CachedHistory { stamp, steps });
+                steps
+            });
+            out.push(ListedProject { meta, stats: ProjectStats { history_steps: steps, size_bytes: project_bytes(&path) } });
+        }
+        out.sort_by(|a, b| b.meta.modified.cmp(&a.meta.modified));
+        let ids: HashSet<_> = out.iter().map(|p| p.meta.id.as_str()).collect();
+        self.history_counts.lock().unwrap_or_else(|e| e.into_inner()).retain(|id, _| ids.contains(id.as_str()));
         out
     }
 
@@ -178,6 +304,11 @@ impl Store {
         }
         write_atomic(&dir.join("history.json"), |w| serde_json::to_writer(w, history).map_err(std::io::Error::other))?;
         let result = write_atomic(&dir.join("meta.json"), |w| serde_json::to_writer_pretty(w, meta).map_err(std::io::Error::other));
+        if result.is_ok() {
+            if let Some(stamp) = history_stamp(&dir.join("history.json")) {
+                self.history_counts.lock().unwrap_or_else(|e| e.into_inner()).insert(meta.id.clone(), CachedHistory { stamp, steps: Some(history.ops.len()) });
+            }
+        }
         crate::jobs::finish_stage(&result);
         result
     }

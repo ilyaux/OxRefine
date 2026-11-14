@@ -111,7 +111,7 @@ The opt-in [cardinality and history workloads](benchmarks/README.md) also cover 
 | **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard or a web address. A preview wizard with OpenRefine's options. |
 | **Explore** | Text, numeric, timeline and custom facets, text filters, records mode, and a grid that stays fast at millions of rows. |
 | **Clean** | GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, and `cross()` between projects. |
-| **Cluster** | Key collision (fingerprint, n-gram, metaphone and the other phonetic keyers) and nearest-neighbour (Levenshtein) clustering, with filters on cluster size, row count and length. |
+| **Cluster** | Key collision (fingerprint, n-gram, metaphone and the other phonetic keyers) and nearest-neighbour (Levenshtein) clustering, with filters on cluster size, row count and length. Fingerprint suggestions in column headers highlight possible variants in the grid. |
 | **Reconcile** | Match a column against any W3C Reconciliation service, such as Wikidata or your own: judge candidates cell by cell or in bulk, search the service, preview entities, and add columns from the matched items. |
 | **Keep track** | Full undo and redo, saved projects, recipes, and progress with cancel for long steps. |
 | **Export** | CSV and TSV, custom tabular, HTML, templating, Excel, OpenDocument, SQL, and OpenRefine projects. |
@@ -181,6 +181,8 @@ docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
 
 Browser pages select projects independently. If another page changes the same project, stale reads and edits are rejected and the app refreshes the view for review. The shared token grants the server user's file access; see [browser sessions and handover](docs/src/command-line.md#browser-sessions-and-handing-work-over) for concurrency and persistence limits.
 
+`ox mcp` connects an MCP client to the same running local server: inspect projects, preview GREL, apply undoable operations and export within explicitly granted file paths. See [MCP setup and limits](docs/src/mcp.md) for Claude Desktop and Claude Code examples.
+
 ### Headless
 
 ```bash
@@ -212,7 +214,7 @@ Additional [recipe-reuse fixtures](tests/recipes/sources.json) use small CC0 eco
 
 ```
 crates/ox-core   the engine: tables, import, facets, operations, GREL, clustering, reconciliation, export, history
-crates/ox-cli    `ox apply` (batch) and `ox serve` (the browser app and its JSON API, UI built in)
+crates/ox-cli    `ox apply` (batch), `ox serve` (the browser app and its JSON API, UI built in), `ox mcp` (local stdio adapter)
 ui/              React + shadcn/ui in the "Instrument" design: virtualized grid, facets, and full-window views for transform, cluster, reconcile, import, export and history
 ui/src-tauri     the desktop shell: one command that forwards to the engine
 tests/           OpenRefine conformance suites and their fixtures

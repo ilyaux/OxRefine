@@ -101,3 +101,25 @@ test("partial errors require a fresh summary and free job polls do not change th
   assert.equal(a.requests.at(-1).options.headers["X-Ox-Revision"], "epoch-1")
   a.requests.at(-1).reply(response("123", "epoch-2")); await next
 })
+
+test("quiet process memory stays free of project contexts during a running command and selection change", async () => {
+  const a = api(); await select(a, "123")
+  const counts = []; a.onPending((n) => counts.push(n))
+  const running = a.call("apply", { op: {} }); const operation = a.requests.at(-1)
+  const memory = a.call("memory", {}, { quiet: true }); const read = a.requests.at(-1)
+  await select(a, "456")
+  read.reply({ data: { pid: 9, currentBytes: 100, peakBytes: 200, metric: "rss", peakSource: "os", error: null }, ms: 0 })
+  assert.equal((await memory).data.currentBytes, 100, "global read needs no project context and survives project switching")
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "456")
+  assert.deepEqual(counts, [0, 1, 2, 1], "memory polling must not count as an active command")
+  const stale = assert.rejects(running, { name: "ProjectContextChanged" }); operation.reply(response("123", "epoch-1")); await stale
+})
+
+test("fixed-width import samples require no project context while another project is opened", async () => {
+  const a = api()
+  const sample = a.call("fixed_width_sample", { path: "input.txt" }, { quiet: true }); const request = a.requests.at(-1)
+  await select(a, "123")
+  request.reply({ data: { lines: ["ABC  123"], encoding: "UTF-8" }, ms: 0 })
+  assert.equal((await sample).data.lines[0], "ABC  123")
+  assert.equal(JSON.parse(a.storage.get("ox-project-context")).project, "123")
+})

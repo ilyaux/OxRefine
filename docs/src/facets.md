@@ -2,6 +2,10 @@
 
 Facets show what is in a column and narrow the grid to the rows you pick. Every operation and every export then applies to those rows only, as in OpenRefine. Open them from a column's menu under **Filter**. They appear in the **Facets** tab of the side panel; **+ Facet on a column…** at the bottom of the panel, or <kbd>F</kbd> on the column you last used, adds one. Each facet that filters shows as a chip in the bar above the grid: its × clears that filter, **Clear all** clears every one, and the bar shows how many rows match.
 
+Use the arrow in a facet's header to collapse its controls. Its filter stays active, and expanding it restores the same choices, sort order and inputs. Removing a different facet does not move that collapsed state to another one.
+
+Numeric and timeline facets also have **Reset facet** in the header. It restores the full range and includes every value kind again, keeping the facet and its expression. It does not add a history step.
+
 ## Kinds
 
 - **Text facet:** each distinct value with its row count, by count or by name. Click choices to include them, use *invert* to exclude them instead, and use the pencil to change a value in every row. As in OpenRefine, a facet with more than 2,000 choices lists none; **Show all** raises the limit, which you can also set in Preferences.

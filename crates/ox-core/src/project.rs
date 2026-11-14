@@ -22,6 +22,7 @@ pub struct Project {
     cursor: usize,
     gen: u64,
     cache: Option<(u64, String, Arc<Vec<u32>>)>,
+    cluster_cache: Option<(u64, String, Arc<crate::cluster_hints::Hints>)>,
     /// Set when the project lives in a store; every step is saved.
     pub meta: Option<Meta>,
     /// OpenRefine's metadata: tags, description... (also in `meta` for the project list)
@@ -31,7 +32,7 @@ pub struct Project {
 
 impl Project {
     pub fn new(name: impl Into<String>, table: Table) -> Project {
-        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, meta: None, info: Info::default(), original: None }
+        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension),
@@ -62,7 +63,7 @@ impl Project {
     /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
     pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>) -> Project {
         let cursor = ops.len();
-        Project { name, states: tables, ops, cursor, gen: 0, cache: None, meta: None, info: Info::default(), original: None }
+        Project { name, states: tables, ops, cursor, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Every table, every step and the cursor (for writing the whole history out).
@@ -119,6 +120,17 @@ impl Project {
         let r = Arc::new(engine::filter(self.table(), cfg, None)?);
         self.cache = Some((self.gen, key, r.clone()));
         Ok(r)
+    }
+
+    pub(crate) fn cluster_hints(&mut self, cfg: &EngineConfig) -> Result<Arc<crate::cluster_hints::Hints>> {
+        let key = serde_json::to_string(cfg).map_err(err)?;
+        if let Some((generation, cached_key, hints)) = &self.cluster_cache {
+            if *generation == self.gen && *cached_key == key { return Ok(hints.clone()); }
+        }
+        let rows = self.rows(cfg)?;
+        let hints = Arc::new(crate::cluster_hints::Hints::build(self.table(), &rows)?);
+        self.cluster_cache = Some((self.gen, key, hints.clone()));
+        Ok(hints)
     }
 
     fn summary(&self) -> Value {
@@ -335,6 +347,7 @@ fn projects_by_name(s: &Session) -> impl Fn(&str) -> Vec<Table> + 'static {
 /// `processes` (running jobs with progress) and `cancel_process` (`id`, or every job without one).
 pub fn dispatch_free(cmd: &str, args: &Value) -> Option<Result<Value>> {
     let data = match cmd {
+        "memory" => json!(crate::memory::snapshot()),
         "processes" => crate::jobs::list(),
         "cancel_process" => {
             crate::jobs::cancel(args.get("id").and_then(Value::as_u64).unwrap_or(0));
@@ -350,6 +363,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     // ---------------------------------------------------------- no project needed
     match cmd {
         "inspect" => return import::inspect(Path::new(&a.path)),
+        "fixed_width_sample" => return import::fixed_width_sample(Path::new(&a.path), &a.options),
         // Clipboard and Web Addresses: stage the data as a file, then the usual import wizard runs on it
         "paste" => {
             let path = import::stage_text(&import::staging_dir(store.map(|s| s.root())), &a.text)?;
@@ -368,7 +382,15 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let t = import::import(Path::new(&a.path), a.format.as_deref(), &o)?;
             return Ok(json!({ "columns": t.names, "rows": table_page(&t, 0..t.rows, None) }));
         }
-        "projects" => return Ok(json!(store.map(Store::list).unwrap_or_default())),
+        "projects" => {
+            let projects = store.map(Store::list_with_stats).unwrap_or_default();
+            if a.params["paginate"].as_bool().unwrap_or(false) {
+                let total = projects.len();
+                let limit = if a.limit == 0 { 100 } else { a.limit.min(500) };
+                return Ok(json!({ "total": total, "projects": projects.into_iter().skip(a.start).take(limit).collect::<Vec<_>>() }));
+            }
+            return Ok(json!(projects));
+        }
         "open" => {
             let path = Path::new(&a.path);
             let table = import::import(path, a.format.as_deref(), &a.options)?;
@@ -453,13 +475,23 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "open" | "open_project" | "summary" => p.summary(),
         "rows" => {
             let rows = p.rows(&a.engine)?;
+            let hints = a.params["clusterHints"].as_bool().unwrap_or(false).then(|| p.cluster_hints(&a.engine)).transpose()?;
             let t = p.table();
             // ponytail: record numbers are recounted per page (O(rows)); cache them per table version if paging gets slow
             let starts: Option<Vec<u32>> = (a.engine.mode == "record-based").then(|| {
                 let mut n = 0u32;
                 t.record_starts(t.key_index()).into_iter().enumerate().map(|(r, s)| { if s && r > 0 { n += 1 } n }).collect()
             });
-            let page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
+            let mut page = table_page(t, rows[a.start.min(rows.len())..].iter().take(a.limit.min(1000)).map(|&r| r as usize), starts.as_deref());
+            if let Some(hints) = hints {
+                for row in &mut page {
+                    let columns = hints.columns_for_row(t, row[0].as_u64().unwrap() as usize);
+                    if columns.is_empty() { continue; }
+                    let row = row.as_array_mut().unwrap();
+                    while row.len() < 7 { row.push(Value::Null); }
+                    row.push(json!(columns));
+                }
+            }
             match &starts {
                 // records mode counts records, not their rows: those matching, and all of them
                 Some(n) => {
@@ -472,6 +504,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         // what each column holds, for the grid's headers (over every row; facets don't change it)
         "profile" => json!(engine::profile(p.table())),
+        "cluster_hints" => p.cluster_hints(&a.engine)?.summary(p.table()),
         "facets" => {
             let prefs = store.map(Store::preferences).unwrap_or_default();
             let limit = prefs.get("ui.browsing.listFacet.limit").and_then(Value::as_u64).map_or(engine::FACET_LIMIT, |n| n as usize);
@@ -585,7 +618,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             if !a.path.is_empty() {
                 std::fs::write(&a.path, serde_json::to_string_pretty(&r).map_err(err)?).map_err(err)?;
             }
-            r
+            if !a.path.is_empty() && a.params["fileReply"].as_bool().unwrap_or(false) { json!(a.path) } else { r }
         }
         _ => return Err(format!("unknown command `{cmd}`")),
     })

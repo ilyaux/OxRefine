@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { call } from "@/api"
 import { FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip } from "@/components/instrument"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
+import { FixedWidthRuler } from "@/FixedWidthRuler"
 
 type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml"
 /** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
@@ -19,6 +20,7 @@ type Info = {
 }
 type Options = Record<string, unknown>
 type Preview = { columns: string[]; rows: [number, (string | null)[], boolean, boolean][] }
+type FixedSample = { columnWidths: number[]; lines: string[]; sampledLines: number; truncated: boolean; characterUnit: "unicode-scalar" }
 
 const ENCODINGS = ["UTF-8", "windows-1252", "ISO-8859-1", "UTF-16LE", "UTF-16BE", "windows-1251", "KOI8-R", "Shift_JIS", "GBK"]
 const SEPARATORS: [string, string, string][] = [[",", ",", "Comma"], ["\t", "\\t", "Tab"], [";", ";", "Semicolon"], ["|", "|", "Pipe"]]
@@ -40,37 +42,74 @@ export function ImportDialog({
   onCreate: (args: { path: string; name: string; format: string; options: Options }) => Promise<void>
   onClose: () => void
 }) {
-  const [info, setInfo] = useState<Info | null>(null)
+  const [inspection, setInspection] = useState<{ path: string; data: Info } | null>(null)
+  const info = inspection?.path === path ? inspection.data : null
   const [format, setFormat] = useState<Format>("csv")
   const [options, setOptions] = useState<Options>({})
   const label = initialName ?? baseName(path)
-  const [name, setName] = useState(label)
-  const [preview, setPreview] = useState<Preview | null>(null)
-  const [ms, setMs] = useState<number | null>(null)
-  const [error, setError] = useState("")
+  const [named, setNamed] = useState<{ path: string; value: string } | null>(null)
+  const name = named?.path === path ? named.value : label
+  const previewKey = JSON.stringify({ path, format, options })
+  const sampleKey = JSON.stringify({ path, options: { encoding: options.encoding, files: options.files } })
+  const [previewReply, setPreviewReply] = useState<{ key: string; data: Preview; ms: number } | null>(null)
+  const preview = info && previewReply?.key === previewKey ? previewReply.data : null
+  const ms = previewReply?.key === previewKey ? previewReply.ms : null
+  const [sampleReply, setSampleReply] = useState<{ key: string; data: FixedSample } | null>(null)
+  const sample = sampleReply?.key === sampleKey ? sampleReply.data : null
+  const [failure, setFailure] = useState<{ key: string; message: string } | null>(null)
+  const error = failure && [previewKey, `inspect:${path}`, ...(format === "fixed-width" ? [sampleKey] : [])].includes(failure.key) ? failure.message : ""
+  const [widthDraft, setWidthDraft] = useState<{ path: string; widths: unknown; text: string; error: string } | null>(null)
+  const widthEdited = useRef<string | null>(null)
+  const activeDraft = widthDraft?.path === path && widthDraft.widths === options.columnWidths ? widthDraft : null
+  const widthError = format === "fixed-width" ? activeDraft?.error : ""
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
+    let live = true
     call<Info>("inspect", { path })
       .then(({ data }) => {
-        setInfo(data)
+        if (!live) return
+        widthEdited.current = null
+        setInspection({ path, data })
         setFormat(data.format)
-        setOptions({ ...data.options, ...(data.files ? { files: data.files.filter((f) => f.selected).map((f) => f.name) } : {}) })
+        const next: Options = { ...data.options, ...(data.files ? { files: data.files.filter((f) => f.selected).map((f) => f.name) } : {}) }
+        if (data.format === "fixed-width" && !(next.columnWidths as number[] | undefined)?.length) delete next.columnWidths
+        setOptions(next)
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => live && setFailure({ key: `inspect:${path}`, message: e.message }))
+    return () => { live = false }
   }, [path])
 
   useEffect(() => {
     if (!info) return
+    let live = true
     const t = setTimeout(() => {
       call<Preview>("preview_import", { path, format, options, limit: 50 })
-        .then(({ data, ms }) => (setPreview(data), setMs(ms), setError("")))
-        .catch((e) => (setPreview(null), setError(e.message)))
+        .then(({ data, ms }) => { if (live) { setPreviewReply({ key: previewKey, data, ms }); setFailure(null) } })
+        .catch((e) => live && setFailure({ key: previewKey, message: e.message }))
     }, 300)
-    return () => clearTimeout(t)
-  }, [path, info, format, options])
+    return () => { live = false; clearTimeout(t) }
+  }, [path, info, format, options, previewKey])
+
+  useEffect(() => {
+    if (!info || format !== "fixed-width") return
+    let live = true
+    call<FixedSample>("fixed_width_sample", JSON.parse(sampleKey), { quiet: true })
+      .then(({ data }) => {
+        if (!live) return
+        setSampleReply({ key: sampleKey, data })
+        setOptions((current) => widthEdited.current === path || Object.hasOwn(current, "columnWidths") ? current : { ...current, columnWidths: data.columnWidths })
+      })
+      .catch((e) => live && setFailure({ key: sampleKey, message: e.message }))
+    return () => { live = false }
+  }, [sampleKey, info, format, path])
 
   const set = (patch: Options) => setOptions((o) => ({ ...o, ...patch }))
+  const setWidths = (columnWidths: number[]) => {
+    widthEdited.current = path
+    setWidthDraft(null)
+    set({ columnWidths })
+  }
   // a numeric option as a label and a short mono input on one line
   const num = (key: string, label: string, help?: string) => (
     <label className="flex items-center gap-2 px-4 py-1.5" title={help}>
@@ -104,11 +143,12 @@ export function ImportDialog({
   const sheets = (options.sheets as { fileNameAndSheetIndex: string; selected: boolean; name: string }[]) ?? []
 
   const create = async () => {
+    if (!preview || widthError || busy) return
     setBusy(true)
     try {
       await onCreate({ path, name: name.trim() || label, format, options })
     } catch (e) {
-      setError((e as Error).message)
+      setFailure({ key: previewKey, message: (e as Error).message })
     } finally {
       setBusy(false)
     }
@@ -128,7 +168,7 @@ export function ImportDialog({
       <div
         className="flex min-h-0 flex-1 flex-col"
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !busy) {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !widthError && !busy) {
             e.preventDefault()
             create()
           }
@@ -141,13 +181,13 @@ export function ImportDialog({
           </Metric>
           <label className="flex w-80 flex-col justify-center gap-1 border-r px-5">
             <span className="text-[11.5px] text-muted-foreground">project name</span>
-            <Input value={name} onChange={(e) => setName(e.target.value)} className="h-8" />
+            <Input value={name} onChange={(e) => setNamed({ path, value: e.target.value })} className="h-8" />
           </label>
           <Metric label="detected" className="[&>span:last-child]:text-[12.5px] [&>span:last-child]:font-normal">
             {detected}
           </Metric>
           <Spacer />
-          <StripAction ink keys="Ctrl ↵" disabled={!preview || busy} onClick={create}>
+          <StripAction ink keys="Ctrl ↵" disabled={!preview || !!widthError || busy} onClick={create}>
             {busy && <Spinner />}
             Create project
           </StripAction>
@@ -222,9 +262,18 @@ export function ImportDialog({
                 <Input
                   className="h-7.5 font-mono"
                   placeholder="5, 10, 9"
-                  defaultValue={((options.columnWidths as number[]) ?? []).join(", ")}
-                  onChange={(e) => set({ columnWidths: e.target.value.split(/[\s,]+/).map(Number).filter((n) => n > 0) })}
+                  value={activeDraft ? activeDraft.text : ((options.columnWidths as number[]) ?? []).join(", ")}
+                  aria-invalid={!!widthError}
+                  aria-describedby={widthError ? "widths-error" : undefined}
+                  onChange={(e) => {
+                    widthEdited.current = path
+                    const widths = e.target.value.split(/[\s,]+/).filter(Boolean).map(Number)
+                    const valid = widths.every((n) => Number.isSafeInteger(n) && n > 0) && Number.isSafeInteger(widths.reduce((sum, n) => sum + n, 0))
+                    setWidthDraft({ path, widths: valid ? widths : options.columnWidths, text: e.target.value, error: valid ? "" : "Enter positive whole numbers separated by commas." })
+                    if (valid) set({ columnWidths: widths })
+                  }}
                 />
+                {widthError && <span id="widths-error" role="alert" className="text-xs text-destructive">{widthError}</span>}
               </label>
             )}
             {format === "xml" && info?.elements && (
@@ -331,6 +380,18 @@ export function ImportDialog({
                 </span>
               )}
             </div>
+            {format === "fixed-width" && (
+              <>
+                <div className="flex flex-wrap items-center gap-3 border-b px-5 py-2 text-xs">
+                  <button type="button" className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:text-muted-foreground" disabled={!sample} onClick={() => sample && setWidths(sample.columnWidths)}>Guess widths</button>
+                  <span className="text-muted-foreground">
+                    {sample ? `Guess: ${sample.sampledLines} nonempty lines, up to 65,536 characters. Ruler: first ${sample.lines.length} lines, up to 512 characters each${sample.truncated ? " (sample truncated)" : ""}.` : "Reading source sample…"}
+                    {" "}Positions count Unicode characters; the rest of each line is the last column.
+                  </span>
+                </div>
+                {sample && <FixedWidthRuler key={sampleKey} lines={sample.lines} widths={(options.columnWidths as number[]) ?? []} onChange={setWidths} />}
+              </>
+            )}
             <div className="min-h-0 flex-1 overflow-auto">
               {!preview ? (
                 <div className="flex justify-center p-10">{error ? null : <Spinner />}</div>
