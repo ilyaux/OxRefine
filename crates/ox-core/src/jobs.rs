@@ -33,6 +33,7 @@ struct State {
 
 struct Job {
     id: u64,
+    owner: Option<String>,
     started: Instant,
     state: Mutex<State>,
     done: AtomicU64,
@@ -79,6 +80,15 @@ impl Job {
 static JOBS: Mutex<Vec<Arc<Job>>> = Mutex::new(Vec::new());
 static NEXT: AtomicU64 = AtomicU64::new(1);
 thread_local!(static CURRENT: RefCell<Option<Arc<Job>>> = const { RefCell::new(None) });
+thread_local!(static OWNER: RefCell<Option<String>> = const { RefCell::new(None) });
+
+/// Associate this request's jobs with its browser page, without locking the project during polling.
+pub fn with_owner<T>(owner: Option<&str>, work: impl FnOnce() -> T) -> T {
+    struct Restore(Option<String>);
+    impl Drop for Restore { fn drop(&mut self) { OWNER.with(|o| *o.borrow_mut() = self.0.take()); } }
+    let _restore = Restore(OWNER.with(|o| o.replace(owner.map(str::to_owned))));
+    work()
+}
 
 fn jobs() -> std::sync::MutexGuard<'static, Vec<Arc<Job>>> {
     JOBS.lock().unwrap_or_else(|e| e.into_inner())
@@ -106,7 +116,7 @@ fn current<T>(f: impl FnOnce(&Job) -> T) -> Option<T> {
 pub fn run<T>(label: &str, work: impl FnOnce() -> T) -> T {
     let started = Instant::now();
     let job = Arc::new(Job {
-        id: NEXT.fetch_add(1, Relaxed), started,
+        id: NEXT.fetch_add(1, Relaxed), owner: OWNER.with(|o| o.borrow().clone()), started,
         state: Mutex::new(State { stages: vec![Stage { label: label.into(), unit: "items", started, elapsed: None, state: "running", done: 0, total: 0 }], state: "running", finished: None }),
         done: 0.into(), total: 0.into(), cancel: false.into(),
     });
@@ -210,6 +220,22 @@ pub fn list() -> Value {
     let mut list = jobs();
     prune(&mut list);
     json!(list.iter().map(|j| j.snapshot()).collect::<Vec<_>>())
+}
+
+pub fn list_owned(owner: &str) -> Value {
+    let mut list = jobs();
+    prune(&mut list);
+    json!(list.iter().filter(|j| j.owner.as_deref() == Some(owner)).map(|j| j.snapshot()).collect::<Vec<_>>())
+}
+
+/// A scoped cancel never cancels another page's work, including the all-jobs shorthand.
+pub fn cancel_owned(owner: &str, id: u64) -> bool {
+    let list = jobs();
+    let found = id == 0 || list.iter().any(|j| j.id == id && j.owner.as_deref() == Some(owner));
+    list.iter().filter(|j| j.owner.as_deref() == Some(owner) && (id == 0 || j.id == id)).for_each(|j| {
+        if j.state.lock().unwrap_or_else(|e| e.into_inner()).finished.is_none() { j.cancel.store(true, Relaxed); }
+    });
+    found
 }
 
 /// Ask a running job (or every job for id 0) to stop at its next cancellation check.

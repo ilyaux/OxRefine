@@ -26,6 +26,13 @@ import { cn, maxOf, minOf } from "@/lib/utils"
 const vis = (s: string | null) => (s === null ? "(null)" : s === "" ? "(blank)" : s.replace(/^ +| +$/g, (m) => "␣".repeat(m.length)))
 /** A preview result: text, null, or an error the transform would hit (onError decides what the cell gets). */
 type Result = string | null | { error: string }
+type PreviewCell = { text: string | null; type: string }
+type TransformPair = { before: PreviewCell; after: PreviewCell; changed: boolean; rows?: number; row?: number }
+type TransformPreview = {
+  rows: number; changedRows: number; distinctBefore: number; distinctAfter: number; changedValues: number
+  columnDistinctAfter: number; multipleResults: boolean; totalPairs: number; matchingPairs: number
+  start: number; items: TransformPair[]; rowPreview: TransformPair[]
+}
 const show = (r: Result) => (r !== null && typeof r === "object" ? `Error: ${r.error}` : vis(r))
 const grel = (e: string) => (e.trim().startsWith("grel:") ? e.trim() : `grel:${e.trim()}`)
 
@@ -127,6 +134,9 @@ export function TransformDialog({
   const [cache, setCache] = useState(true)
   const [headers, setHeaders] = useState("")
   const [preview, setPreview] = useState<[string | null, Result][]>([])
+  const [distinct, setDistinct] = useState<TransformPreview | null>(null)
+  const [previewBy, setPreviewBy] = useState<"values" | "rows">("values")
+  const [loadedKey, setLoadedKey] = useState("")
   const [ms, setMs] = useState<number | null>(null)
   const [error, setError] = useState("")
   // OpenRefine's text-transform options; their defaults are what this dialog always used
@@ -134,18 +144,36 @@ export function TransformDialog({
   const [repeat, setRepeat] = useState(false)
   const [onlyChanged, setOnlyChanged] = useState(false)
   const debounced = useDebounced(expr)
+  const exact = mode === "transform"
+  const previewKey = JSON.stringify([mode, debounced, column, engine, exact && onError, exact && repeat, exact && onlyChanged])
+  const waiting = loadedKey !== previewKey || expr !== debounced
 
   useEffect(() => {
-    call<[string | null, Result][]>("preview", { engine, column, expression: debounced, limit: 20 })
-      .then(({ data, ms }) => (setPreview(data), setMs(ms), setError("")))
-      .catch((e) => setError(e.message))
-  }, [debounced, column, engine])
+    let live = true
+    setError("")
+    const request = exact
+      ? call<TransformPreview>("preview_transform", { op: { op: "core/text-transform", engineConfig: engine, columnName: column, expression: grel(debounced), onError, repeat, repeatCount: 10 }, limit: 200, params: { onlyChanged } })
+      : call<[string | null, Result][]>("preview", { engine, column, expression: debounced, limit: 20 })
+    request.then(({ data, ms }) => {
+      if (!live) return
+      if (exact) setDistinct(data as TransformPreview)
+      else setPreview(data as [string | null, Result][])
+      setMs(ms)
+      setLoadedKey(previewKey)
+    }).catch((e) => {
+      if (!live) return
+      setError(e.message)
+      setLoadedKey(previewKey)
+    })
+    return () => { live = false }
+  }, [previewKey, exact, engine, column, debounced, onError, repeat, onlyChanged])
   const changed = (a: string | null, b: Result) => !(typeof b === "string" || b === null) || b !== a
   const shownPreview = onlyChanged ? preview.filter(([a, b]) => changed(a, b)) : preview
 
   const named = mode === "add" || mode === "fetch"
   const nameTaken = named && columns.includes(name.trim())
-  const blocked = !!error || (named && (!name.trim() || nameTaken))
+  const blocked = waiting || !!error || (named && (!name.trim() || nameTaken))
+  const pairs = distinct ? previewBy === "values" ? distinct.items : distinct.rowPreview : []
   const apply = () => {
     if (blocked) return
     rememberExpression(expr.trim())
@@ -212,7 +240,7 @@ export function TransformDialog({
             <Spacer />
             <span role="status" className={cn("flex items-center gap-1.5 border-l px-4 font-mono text-[11.5px]", error ? "text-destructive" : "text-ok-text")}>
               <span aria-hidden="true" className={cn("size-1.5", error ? "bg-destructive" : "bg-ok")} />
-              {error ? "error" : `ok · ${preview.length} rows${ms !== null ? ` · ${ms < 10 ? ms.toFixed(1) : Math.round(ms)} ms` : ""}`}
+              {waiting ? "calculating…" : error ? "error" : `ok · ${exact ? distinct?.rows.toLocaleString() ?? 0 : preview.length} rows${ms !== null ? ` · ${ms < 10 ? ms.toFixed(1) : Math.round(ms)} ms` : ""}`}
             </span>
           </div>
           <div className="shrink-0 border-b px-4 py-3">
@@ -273,17 +301,37 @@ export function TransformDialog({
           )}
           <div className={cn("flex h-10 shrink-0 items-center gap-3 border-b px-5", !named && "border-t border-t-foreground")}>
             <span className="font-semibold">Preview</span>
-            <span className="font-mono text-xs text-muted-foreground">
-              {preview.filter(([a, b]) => changed(a, b)).length} of {preview.length} rows change
-            </span>
+            {exact ? <div className="flex items-center gap-1" role="group" aria-label="Preview grouping">
+              <Button size="sm" variant={previewBy === "values" ? "secondary" : "ghost"} aria-pressed={previewBy === "values"} onClick={() => setPreviewBy("values")}>Distinct values</Button>
+              <Button size="sm" variant={previewBy === "rows" ? "secondary" : "ghost"} aria-pressed={previewBy === "rows"} onClick={() => setPreviewBy("rows")}>Rows</Button>
+            </div> : <span className="font-mono text-xs text-muted-foreground">
+              {preview.filter(([a, b]) => changed(a, b)).length} of {preview.length} preview rows change
+            </span>}
             <Spacer />
             <label className="flex items-center gap-2 text-ink-2">
               <input type="checkbox" checked={onlyChanged} onChange={(e) => setOnlyChanged(e.target.checked)} className="accent-foreground" />
               only changed
             </label>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            <table className="w-full table-fixed border-collapse">
+          {exact && distinct && !waiting && !error && <div className="shrink-0 space-y-1 border-b px-5 py-2 text-xs text-muted-foreground" aria-label="Transform totals">
+            <p><strong className="text-foreground">{distinct.changedValues.toLocaleString()} of {distinct.distinctBefore.toLocaleString()} distinct values change</strong> · {distinct.distinctAfter.toLocaleString()} distinct values after · {distinct.changedRows.toLocaleString()} of {distinct.rows.toLocaleString()} matching rows change</p>
+            <p>{previewBy === "values" ? `Showing ${pairs.length.toLocaleString()} of ${distinct.matchingPairs.toLocaleString()} ${distinct.multipleResults ? "value/result pairs" : "distinct values"}${onlyChanged ? " that change" : ""}.` : `Showing the first ${pairs.length} ${onlyChanged ? "changed " : ""}matching rows.`} {distinct.multipleResults && "The same input value has different results in different rows."} {engine.facets.length > 0 && `${distinct.columnDistinctAfter.toLocaleString()} distinct values remain in the full column, including excluded rows.`}</p>
+          </div>}
+          <div className="min-h-0 flex-1 overflow-y-auto" aria-busy={waiting}>
+            {waiting ? <p role="status" className="px-5 py-4 text-muted-foreground">{exact ? "Calculating the transform over all matching rows…" : "Loading preview…"}</p> : error ? null : exact ? <table className="w-full table-fixed border-collapse">
+              <thead><tr className="text-left text-[11.5px] text-muted-foreground">
+                <th scope="col" className="border-b px-5 py-2 font-normal">{column}</th>
+                <th scope="col" className="w-10 border-b font-normal"><span className="sr-only">becomes</span></th>
+                <th scope="col" className="border-b px-5 py-2 font-normal">result</th>
+                <th scope="col" className="w-24 border-b px-5 py-2 text-right font-normal">{previewBy === "values" ? "Rows" : "Row"}</th>
+              </tr></thead>
+              <tbody>{pairs.map((pair, i) => <tr key={i} className="h-8.5">
+                <td className="truncate border-b px-5 font-mono text-[12.5px] text-ink-2" title={`${pair.before.type}: ${vis(pair.before.text)}`}>{vis(pair.before.text)} <span className="text-[10px] text-muted-foreground">{pair.before.type}</span></td>
+                <td aria-hidden="true" className="border-b text-center text-faint">→</td>
+                <td className="truncate border-b px-5 font-mono text-[12.5px]" title={`${pair.after.type}: ${vis(pair.after.text)}`}><span className={cn(pair.after.type === "error" ? "text-destructive" : pair.changed && "bg-data/8")}>{pair.after.type === "error" && "Error: "}{vis(pair.after.text)}</span> <span className="text-[10px] text-muted-foreground">{pair.after.type}</span></td>
+                <td className="border-b px-5 text-right font-mono text-[12.5px]">{(previewBy === "values" ? pair.rows : (pair.row ?? 0) + 1)?.toLocaleString()}</td>
+              </tr>)}</tbody>
+            </table> : <table className="w-full table-fixed border-collapse">
               <thead>
                 <tr className="text-left text-[11.5px] text-muted-foreground">
                   <th scope="col" className="border-b px-5 py-2 font-normal">
@@ -313,8 +361,8 @@ export function TransformDialog({
                   )
                 })}
               </tbody>
-            </table>
-            {onlyChanged && !shownPreview.length && <p className="px-5 py-4 text-muted-foreground">Nothing changes in these rows.</p>}
+            </table>}
+            {!waiting && !error && (exact ? !pairs.length : onlyChanged && !shownPreview.length) && <p className="px-5 py-4 text-muted-foreground">{exact ? onlyChanged ? "No matching rows change." : "No rows match the current facets." : "Nothing changes in these preview rows."}</p>}
           </div>
           <div className="flex h-11 shrink-0 items-stretch border-t">
             {mode === "transform" && (
@@ -775,8 +823,13 @@ export function AskDialog({
   const [v, setV] = useState(initial)
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSubmit(v)
-    onClose()
+    try {
+      await onSubmit(v)
+      onClose()
+    } catch (e) {
+      // The app has already replaced this dialog and refreshed the project.
+      if (!["ProjectConflict", "ProjectContextChanged"].includes((e as Error)?.name)) throw e
+    }
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>

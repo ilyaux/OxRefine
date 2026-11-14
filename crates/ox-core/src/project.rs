@@ -494,6 +494,10 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let c = &t.columns[t.col(&a.column)?];
             json!(c.recon(a.index).map(|r| r.to_json(true)))
         }
+        "recon_values" => {
+            let rows = p.rows(&a.engine)?;
+            crate::recon_values::page(p.table(), &a.column, &rows, a.start, a.limit, &a.params)?
+        }
         "apply" => {
             p.apply(a.op.ok_or("missing op")?)?;
             p.save(store)?;
@@ -529,6 +533,9 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let (n, block) = (if a.n == 0 { 2 } else { a.n }, if a.block == 0 { 6 } else { a.block });
             json!(cluster::cluster(&vc, &a.method, n, a.radius.unwrap_or(1.0), block)?)
         }
+        "preview_transform" => crate::transform_preview::preview(
+            p.table(), a.op.ok_or("missing op")?, a.start, a.limit, a.params["onlyChanged"].as_bool().unwrap_or(false),
+        )?,
         "preview" => {
             let e = grel::compile(&a.expression)?;
             let rows = p.rows(&a.engine)?;

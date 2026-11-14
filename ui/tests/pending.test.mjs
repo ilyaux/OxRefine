@@ -26,7 +26,7 @@ function api() {
       new Promise((resolve, reject) =>
         requests.push({
           resolve: () =>
-            resolve({ ok: true, json: async () => ({ data: null, ms: 0 }) }),
+            resolve({ ok: true, json: async () => ({ data: null, ms: 0, context: { project: null, revision: null } }) }),
           reject,
         })
       ),

@@ -11,6 +11,7 @@ export type Summary = {
   recipe: boolean[]
   cursor: number
   archiveWarning?: string | null
+  recon?: Record<string, unknown>
 }
 
 /** What happened to an OpenRefine project's history on import. */
@@ -123,6 +124,41 @@ const token = (() => {
 })()
 const auth: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {}
 
+type ProjectContext = { project: string | null; revision: string | null }
+// A new page identity keeps duplicated tabs independent even when their sessionStorage was copied.
+const browserSession = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`
+let projectContext: ProjectContext | undefined = (() => {
+  try {
+    const stored = JSON.parse(sessionStorage.getItem("ox-project-context") ?? "null")
+    if (stored && (typeof stored.project === "string" || stored.project === null) && (typeof stored.revision === "string" || stored.revision === null)) return stored
+  } catch { /* Storage may be disabled; this page still keeps its own selection. */ }
+})()
+let projectGeneration = 0
+const libraryRevisions = new Map<string, string>()
+const conflictListeners = new Set<(message: string) => void>()
+
+export function onProjectConflict(listener: (message: string) => void) {
+  conflictListeners.add(listener)
+  return () => void conflictListeners.delete(listener)
+}
+
+function rememberContext(context: ProjectContext) {
+  projectContext = context
+  projectGeneration++
+  try { sessionStorage.setItem("ox-project-context", JSON.stringify(context)) } catch { /* Selection remains usable without browser storage. */ }
+}
+
+const projectSelection = (cmd: string) => ["open", "import_project", "open_project", "close", "summary"].includes(cmd)
+const projectMetadata = (cmd: string) => ["rename_project", "set_project_info", "delete_project"].includes(cmd)
+const projectMutation = (cmd: string) => ["apply", "apply_recipe", "goto"].includes(cmd) || projectMetadata(cmd)
+const projectFree = (cmd: string) => ["inspect", "paste", "recon_service", "recon_suggest", "fetch_url", "preview_import", "projects", "preferences", "set_preference", "processes", "cancel_process"].includes(cmd)
+
+function superseded(): Error {
+  const error = new Error("The project view changed while this request was running.")
+  error.name = "ProjectContextChanged"
+  return error
+}
+
 /** Browser (`ox serve`): send a file from this computer to the server, staged for the import wizard. */
 export async function upload(file: File): Promise<{ path: string; name: string }> {
   const r = await fetch("/upload", { method: "POST", headers: { ...auth, "X-File-Name": encodeURIComponent(file.name) }, body: file })
@@ -175,13 +211,45 @@ async function send<T>(cmd: string, args: object): Promise<{ data: T; ms: number
       throw new Error(String(e))
     }
   }
+  const selects = projectSelection(cmd)
+  const generation = selects ? ++projectGeneration : projectGeneration
+  const current = projectContext
+  const target = projectMetadata(cmd) || cmd === "open_project" ? (args as { id?: string }).id : current?.project
+  const revision = target && target !== current?.project ? libraryRevisions.get(target) : current?.revision
+  const contextHeaders: Record<string, string> = { "X-Ox-Session": browserSession }
+  if (target !== undefined) contextHeaders["X-Ox-Project"] = target ?? "none"
+  if (revision) contextHeaders["X-Ox-Revision"] = revision
   const r = await fetch(`/api/${cmd}`, {
     method: "POST",
-    headers: { ...auth, "Content-Type": "application/json" },
+    headers: { ...auth, ...contextHeaders, "Content-Type": "application/json" },
     body: JSON.stringify(args),
   })
   const j = await r.json()
-  if (!r.ok) throw new Error(String(j))
+  if (!projectFree(cmd) && generation !== projectGeneration && !(projectMutation(cmd) && target === projectContext?.project && j?.code === "stale_project")) throw superseded()
+  if (!r.ok) {
+    if (j?.code === "stale_project" || j?.code === "project_gone") {
+      if (j.code === "project_gone" && target === projectContext?.project) rememberContext({ project: null, revision: null })
+      const message = String(j.message)
+      conflictListeners.forEach((listener) => listener(message))
+      const error = new Error(message)
+      error.name = "ProjectConflict"
+      throw error
+    }
+    throw new Error(String(j))
+  }
+  if (cmd === "projects") {
+    for (const project of j.data ?? []) {
+      if (typeof project.id === "string" && typeof project.revision === "string") libraryRevisions.set(project.id, project.revision)
+    }
+  }
+  if (!projectFree(cmd)) {
+    if (!j.context) throw new Error("This server does not support browser project contexts. Reload with a matching OxRefine server build.")
+    if (selects) rememberContext(j.context)
+    else if (projectMutation(cmd)) {
+      if (j.context.project) libraryRevisions.set(j.context.project, j.context.revision)
+      if (target === current?.project) rememberContext(cmd === "delete_project" ? { project: null, revision: null } : j.context)
+    }
+  }
   return j
 }
 

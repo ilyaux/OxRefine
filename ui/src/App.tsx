@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
-import { call, isProjectArchive, listFacet, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
+import { call, isProjectArchive, listFacet, onProjectConflict, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, HistoryView, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
 import { Grid, RECON_FACETS, type ColumnAction, type SelectedCell } from "@/Grid"
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
+import { ReconciliationValues } from "@/ReconciliationValues"
 import { Home } from "@/Home"
 import { Preferences } from "@/Preferences"
 import { ExportDialog, type ExportKind } from "@/ExportDialog"
@@ -28,7 +29,7 @@ import { Palette } from "@/Palette"
 type Modal =
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
-  | { kind: "reconcile"; column: string }
+  | { kind: "reconcile" | "recon-values"; column: string }
   | { kind: "extend"; column: string }
   | { kind: "export"; format: ExportKind }
   | { kind: "extract" }
@@ -67,6 +68,7 @@ function cleared(f: Facet): Facet {
 }
 
 const fail = (e: unknown) => {
+  if (["ProjectContextChanged", "ProjectConflict"].includes((e as Error)?.name)) return
   const message = String((e as Error).message ?? e)
   const cause = message.split(";", 1)[0]
   if (cause === "Cancelled" || /^step \d+: Cancelled$/.test(cause)) return void toast.add({ title: "Cancelled", description: message === "Cancelled" ? "The command was stopped." : message })
@@ -75,6 +77,7 @@ const fail = (e: unknown) => {
 
 export function App() {
   const [summary, setSummary] = useState<Summary | null>(null)
+  const [refreshSerial, setRefreshSerial] = useState(0)
   const [facets, setFacets] = useState<Facet[]>([])
   const [mode, setMode] = useState<Engine["mode"]>("row-based")
   // facet counts with the facets they were computed for: after a facet is removed or added, the old
@@ -94,7 +97,7 @@ export function App() {
   const [focusCol, setFocusCol] = useState<string | null>(null)
 
   const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
-  const version = `${summary?.name}:${summary?.cursor}:${summary?.history.length}:${JSON.stringify(engine)}`
+  const version = `${summary?.id}:${summary?.name}:${summary?.cursor}:${summary?.history.length}:${refreshSerial}:${JSON.stringify(engine)}`
 
   const run = useCallback(async (what: string, cmd: string, args: object = {}) => {
     const { data, ms } = await call<Summary>(cmd, args)
@@ -107,6 +110,36 @@ export function App() {
   useEffect(() => {
     call<Summary>("summary").then(({ data }) => setSummary(data), () => {})
     checkForUpdates()
+  }, [])
+
+  useEffect(() => {
+    let refreshing = false
+    let live = true
+    const off = onProjectConflict((message) => {
+      if (refreshing) return
+      refreshing = true
+      setModal(null)
+      setStaged(null)
+      setPalette(false)
+      setFacets([])
+      setMode("row-based")
+      setSelected(null)
+      setFocusCol(null)
+      call<Summary>("summary").then(
+        ({ data }) => {
+          if (!live) return
+          setSummary(data)
+          setRefreshSerial((n) => n + 1)
+          toast.add({ title: "Project refreshed", description: message, type: "warning" })
+        },
+        (e) => {
+          if (!live || (e as Error)?.name === "ProjectContextChanged") return
+          setSummary(null)
+          toast.add({ title: "Project unavailable", description: message, type: "warning" })
+        },
+      ).finally(() => { refreshing = false })
+    })
+    return () => { live = false; off() }
   }, [])
 
   const [prefsChanged, setPrefsChanged] = useState(0)
@@ -322,7 +355,7 @@ export function App() {
     else if (a.kind === "common")
       apply({ op: "core/text-transform", engineConfig: engine, columnName: c, expression: `grel:${a.expression}`, onError: "keep-original", repeat: false, repeatCount: 10 }).catch(() => {})
     else if (a.kind === "transform" || a.kind === "cluster") setModal({ kind: a.kind, column: c })
-    else if (a.kind === "reconcile") setModal({ kind: "reconcile", column: c })
+    else if (a.kind === "reconcile") setModal({ kind: summary?.recon?.[c] ? "recon-values" : "reconcile", column: c })
     else if (a.kind.startsWith("recon-")) reconAction(a.kind, c)
     else if (a.kind === "add-column" || a.kind === "fetch") setModal({ kind: a.kind === "fetch" ? "fetch" : "add", column: c })
     else if (a.kind === "transpose-columns" || a.kind === "transpose-rows" || a.kind === "columnize")
@@ -677,9 +710,13 @@ export function App() {
               // as OpenRefine does when reconciling finishes: facets by judgment and by best score
               const c = modal.column
               setFacets((f) => [...f, { ...listFacet(c, RECON_FACETS[0][2]), name: `${c}: judgment` }, { ...rangeFacet(c, RECON_FACETS[1][2]), name: `${c}: best candidate's score` }])
+              setModal({ kind: "recon-values", column: c })
             }}
-            onClose={() => setModal(null)}
+            onClose={() => setModal((current) => current?.kind === "reconcile" ? null : current)}
           />
+        )}
+        {modal?.kind === "recon-values" && summary && (
+          <ReconciliationValues column={modal.column} engine={engine} version={version} onApply={apply} onClose={() => setModal(null)} onReconcile={() => setModal({ kind: "reconcile", column: modal.column })} />
         )}
         {modal?.kind === "extend" && summary && (
           <ExtendDialog column={modal.column} columns={summary.columns} engine={engine} onApply={apply} onClose={() => setModal(null)} />

@@ -13,9 +13,11 @@ pub mod orproject;
 pub mod ppm;
 pub mod project;
 pub mod recon;
+pub mod recon_values;
 pub mod reshape;
 pub mod store;
 pub mod table;
+mod transform_preview;
 pub mod unpack;
 
 pub use project::{dispatch, dispatch_free, Project, Session};

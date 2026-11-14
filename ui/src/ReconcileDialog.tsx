@@ -211,7 +211,7 @@ export function ReconcileDialog({
                 className="h-7.5 w-20 rounded-[3px] border border-input bg-background px-2 text-right font-mono text-[12.5px] outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
               />
             </label>
-            <p className="px-3.5 pt-3 text-xs text-muted-foreground">Cells with the same text are asked once. Judge single cells in the grid afterwards.</p>
+            <p className="px-3.5 pt-3 text-xs text-muted-foreground">Cells with the same text are asked once. Review results by value or judge individual cells in the grid.</p>
           </aside>
           <div className="min-w-0 flex-1 overflow-y-auto">
             {error && (

@@ -1,9 +1,10 @@
-use ox_core::{dispatch, dispatch_free, ops::parse_recipe, store::Store, Project, Session};
+use ox_core::{ops::parse_recipe, store::Store, Project, Session};
 use serde_json::{json, Value};
 use std::{
     sync::{Arc, Mutex},
     time::Instant,
 };
+mod web;
 
 const USAGE: &str = "usage:
   ox apply <history.json> <input> -o <output>          replay an OpenRefine operation history headlessly
@@ -136,7 +137,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
     let mut session = Session::with_store(store);
     // a file named on the command line opens without being added to the project library
     session.project = file.map(|f| Project::open(f.as_ref())).transpose()?;
-    let slot = Arc::new(Mutex::new(session));
+    let slot = Arc::new(Mutex::new(web::Projects::new(session, new_token()?)));
     eprintln!("projects are saved in {}", data.display());
     let server = tiny_http::Server::http((host.as_str(), port)).map_err(|e| format!("{host}:{port}: {e}"))?;
     let shown = if host == "0.0.0.0" || host == "::" { "<this machine's address>".to_string() } else { host.clone() };
@@ -219,13 +220,16 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 }
             } else {
                 let cmd = path.trim_start_matches("/api/").to_owned();
+                let scope = web::Scope::new(header("X-Ox-Session"), header("X-Ox-Project"), header("X-Ox-Revision"));
                 let mut body = String::new();
                 req.as_reader().read_to_string(&mut body).ok();
                 let args = serde_json::from_str(&body).unwrap_or_else(|_| json!({}));
-                let result = dispatch_free(&cmd, &args).unwrap_or_else(|| dispatch(&mut slot.lock().unwrap_or_else(|e| e.into_inner()), &cmd, args));
-                match result {
-                    Ok(v) => json(200, v),
-                    Err(e) => json(400, Value::String(e)),
+                match scope {
+                    Ok(scope) => {
+                        let web::Reply(code, value) = web::free(&cmd, &args, &scope).unwrap_or_else(|| slot.lock().unwrap_or_else(|e| e.into_inner()).call(&cmd, args, &scope));
+                        json(code, value)
+                    }
+                    Err(error) => json(400, Value::String(error)),
                 }
             };
             req.respond(response).ok();

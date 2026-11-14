@@ -15,6 +15,10 @@ Cells with the same text are queried once. The job shows its progress and can be
 
 ## Judge the results
 
+After reconciliation, the **Reconcile** view shows one row per matching text with its cell count, types, saved reconciliation states, candidates and scores. It reads saved results without calling the service again. Different candidate lists or judgments for the same text remain visible as separate states, with pagination for values, states and candidates.
+
+**Match cell** acts on the explicitly numbered representative row of the selected state. **Match all** applies the candidate to all matching cells inside the current facets (including the selected records in records mode). It uses OpenRefine's same-text semantics: numeric `1` and text `"1"` share a visible group, with their type counts shown. Bulk matching is disabled when cells lack reconciliation data or use different services or identifier spaces; individual cells can still be judged. The action enters the normal undo history. **Reconcile again…** returns to service configuration.
+
 Each reconciled cell shows a mark after its value:
 
 - **matched:** a check mark and the entity's name;

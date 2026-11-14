@@ -179,6 +179,8 @@ docker build -t oxrefine .
 docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
 ```
 
+Browser pages select projects independently. If another page changes the same project, stale reads and edits are rejected and the app refreshes the view for review. The shared token grants the server user's file access; see [browser sessions and handover](docs/src/command-line.md#browser-sessions-and-handing-work-over) for concurrency and persistence limits.
+
 ### Headless
 
 ```bash
