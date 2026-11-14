@@ -9,12 +9,14 @@ Numeric and timeline facets also have **Reset facet** in the header. It restores
 ## Kinds
 
 - **Text facet:** each distinct value with its row count, by count or by name. Click choices to include them, use *invert* to exclude them instead, and use the pencil to change a value in every row. As in OpenRefine, a facet with more than 2,000 choices lists none; **Show all** raises the limit, which you can also set in Preferences.
-- **Numeric facet:** a histogram with the selected range in blue and *from* / *to* boxes to type the range, plus switches for non-numeric, blank and error cells.
-- **Timeline facet:** the same for dates, with dates in the boxes.
+- **Numeric facet:** drag across the histogram to select a range, or drag either boundary handle. The *from* / *to* boxes let you enter exact values; switches include non-numeric, blank and error cells.
+- **Timeline facet:** the same for dates, with dates in the boxes. Both histograms have focusable boundary handles: arrow keys adjust a boundary, Page Up / Page Down make larger changes, and Home / End move to the available limits. Escape or a cancelled pointer gesture leaves the previous range in place.
 - **Text filter:** keeps the rows whose cell contains the text you type.
 - **Custom text facet… / Custom numeric facet…:** a facet over a GREL expression, such as `value.length()` or `cells["city"].value + ", " + value`.
-- **Customized facets:** ready-made expressions for words, duplicates, text length, Unicode character codes, blank cells, errors, stars and flags.
+- **Customized facets:** ready-made expressions for words, duplicates, text length, Unicode character codes, blank cells, errors, stars and flags. Logarithmic numeric and text-length facets help inspect wide ranges; the **1-bounded numeric log facet** clamps numbers below 1 before taking the logarithm. **Facet by null** and **Facet by empty string** distinguish missing values from empty text.
 - **Reconciliation facets:** judgment, best candidate's score, type match, name match, edit distance, word similarity, types, judgment action and history entry. See [Reconciliation](reconciliation.md).
+
+Numeric ranges include the lower boundary and exclude the upper one; timeline ranges include both. Dragging updates the filter when you release the pointer. Empty, degenerate or unrepresentably wide domains do not offer draggable handles; the value-kind switches and available input boxes still work.
 
 ## Rows and records
 

@@ -25,6 +25,10 @@ Each suite in the repository's `tests/<suite>/` folder has three files:
 
 `cargo test` runs every case through OxRefine and compares the results. A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks.
 
+The additional customized-facet, JSON-path and export-encoding fixtures record the official 3.10.1 release archive's SHA-256 and the hashes of the relevant JAR files. They also retain the version actually reported by its API: the checksum-verified Windows release reports `3.10-SNAPSHOT [TRUNK]`. Its release identity is verified from the artifact hashes rather than inferred from that string. These extra suites do not change the fixture total in the table above.
+
+The additional custom-export corpus in `tests/export/custom-fixtures.json` compares ordered columns, headers, reconciliation output and workbook cell values with the official release. Requested date formatting and preserving the time of day in ODS have explicit [documented differences](differences.md#custom-export-date-settings). These fixtures are separate from the totals above.
+
 ## Reusable recipes
 
 The additional `tests/recipes/` corpus uses small CC0 excerpts from the Portal Project Teaching Database. The data's source revision, license and selections are recorded in `sources.json`; the cleanup recipes were authored for these tests. `gen.mjs` records typed tables, history and per-step errors from OpenRefine 3.10.1.

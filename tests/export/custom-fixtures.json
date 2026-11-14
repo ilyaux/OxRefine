@@ -1,0 +1,1858 @@
+{
+ "openrefine": "3.10.1",
+ "reportedVersion": {
+  "version": "3.10-SNAPSHOT",
+  "revision": "TRUNK",
+  "full_version": "3.10-SNAPSHOT [TRUNK]",
+  "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+  "java_vm_name": "OpenJDK 64-Bit Server VM",
+  "java_vm_version": "11.0.30+7",
+  "java_runtime_name": "OpenJDK Runtime Environment",
+  "java_runtime_version": "11.0.30+7",
+  "display_new_version_notice": "true",
+  "module_names": [
+   "core",
+   "database",
+   "jython",
+   "pc-axis",
+   "wikidata"
+  ]
+ },
+ "release": {
+  "url": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+  "sha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+  "artifacts": {
+   "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+   "webapp/WEB-INF/lib/grel-3.10.1.jar": "7158cd697ab4f6b43e21af7484a9eba1a8ac355759b3267d7f6ec9018f39e8dd",
+   "webapp/WEB-INF/lib/core-3.10.1.jar": "a135638474451a220705560624e5c6a0720840edc9d7150b29132a30a3e3ac38",
+   "server/target/lib/openrefine-3.10.1-server.jar": "5906b7db2ad82332cb9295490759b189adf5ef79939cb14b02878aff2903aece"
+  }
+ },
+ "corpus": "name,when,n,alive,url\nDouglas Adams,2024-01-02T03:04:05.123Z,42,true,https://example.org/a?x=1&y=2\nDouglas Adams,2023-12-31T23:59:00Z,7,false,plain\nNobody Known,,0,true,\"<tag> & quote\"\n",
+ "typed": [
+  {
+   "op": "core/text-transform",
+   "columnName": "when",
+   "engineConfig": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "expression": "grel:value.toDate()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "columnName": "n",
+   "engineConfig": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "expression": "grel:value.toNumber()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "columnName": "alive",
+   "engineConfig": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "expression": "grel:value == 'true'",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  }
+ ],
+ "table": {
+  "columns": [
+   "name",
+   "when",
+   "n",
+   "alive",
+   "url"
+  ],
+  "rows": [
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "Douglas Adams",
+      "r": {
+       "id": 4867126777758882000,
+       "j": "matched",
+       "m": {
+        "id": "Q1",
+        "name": "Douglas Adams",
+        "types": [
+         "Q5"
+        ],
+        "score": 100
+       },
+       "service": "https://recon.example.test/svc",
+       "identifierSpace": "http://ox.test/entity/",
+       "schemaSpace": "http://ox.test/prop/"
+      }
+     },
+     {
+      "v": "2024-01-02T03:04:05.123Z",
+      "t": "date"
+     },
+     {
+      "v": 42
+     },
+     {
+      "v": true
+     },
+     {
+      "v": "https://example.org/a?x=1&y=2"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "Douglas Adams",
+      "r": {
+       "id": 1474794086835998700,
+       "j": "matched",
+       "m": {
+        "id": "Q3",
+        "name": "Ada Lovelace",
+        "types": [
+         "Q5"
+        ],
+        "score": 100
+       },
+       "service": "https://recon.example.test/svc",
+       "identifierSpace": "http://ox.test/entity/",
+       "schemaSpace": "http://ox.test/prop/"
+      }
+     },
+     {
+      "v": "2023-12-31T23:59:00Z",
+      "t": "date"
+     },
+     {
+      "v": 7
+     },
+     {
+      "v": false
+     },
+     {
+      "v": "plain"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "Nobody Known",
+      "r": {
+       "id": 819141886960397600,
+       "j": "none",
+       "c": [],
+       "service": "https://recon.example.test/svc",
+       "identifierSpace": "http://ox.test/entity/",
+       "schemaSpace": "http://ox.test/prop/"
+      }
+     },
+     null,
+     {
+      "v": 0
+     },
+     {
+      "v": true
+     },
+     {
+      "v": "<tag> & quote"
+     }
+    ]
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "ordered csv headers true",
+   "format": "csv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "url,name,when,n,alive\r\nhttps://example.org/a?x=1&y=2,Q1,2024-01-02T03:04:05.123Z,42,true\r\nplain,Q3,2023-12-31T23:59:00Z,7,false\r\n<tag> & quote,Nobody Known,,0,true\r\n"
+  },
+  {
+   "name": "ordered csv headers false",
+   "format": "csv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "https://example.org/a?x=1&y=2,Q1,2024-01-02T03:04:05.123Z,42,true\r\nplain,Q3,2023-12-31T23:59:00Z,7,false\r\n<tag> & quote,Nobody Known,,0,true\r\n"
+  },
+  {
+   "name": "ordered tsv headers true",
+   "format": "tsv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "url\tname\twhen\tn\talive\r\nhttps://example.org/a?x=1&y=2\tQ1\t2024-01-02T03:04:05.123Z\t42\ttrue\r\nplain\tQ3\t2023-12-31T23:59:00Z\t7\tfalse\r\n<tag> & quote\tNobody Known\t\t0\ttrue\r\n"
+  },
+  {
+   "name": "ordered tsv headers false",
+   "format": "tsv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "https://example.org/a?x=1&y=2\tQ1\t2024-01-02T03:04:05.123Z\t42\ttrue\r\nplain\tQ3\t2023-12-31T23:59:00Z\t7\tfalse\r\n<tag> & quote\tNobody Known\t\t0\ttrue\r\n"
+  },
+  {
+   "name": "ordered *sv headers true",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "url,name,when,n,alive\r\nhttps://example.org/a?x=1&y=2,Q1,2024-01-02T03:04:05.123Z,42,true\r\nplain,Q3,2023-12-31T23:59:00Z,7,false\r\n<tag> & quote,Nobody Known,,0,true\r\n"
+  },
+  {
+   "name": "ordered *sv headers false",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "https://example.org/a?x=1&y=2,Q1,2024-01-02T03:04:05.123Z,42,true\r\nplain,Q3,2023-12-31T23:59:00Z,7,false\r\n<tag> & quote,Nobody Known,,0,true\r\n"
+  },
+  {
+   "name": "ordered html headers true",
+   "format": "html",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "<html>\n<head>\n<title>custom-export</title>\n<meta charset=\"utf-8\" />\n</head>\n<body>\n<table>\n<tr><th>url</th><th>name</th><th>when</th><th>n</th><th>alive</th></tr>\n<tr><td><a href=\"https://example.org/a?x=1&amp;y=2\">https://example.org/a?x=1&amp;y=2</a></td><td><a href=\"http://ox.test/entity/Q1\">Q1</a></td><td>2024-01-02T03:04:05.123Z</td><td>42</td><td>true</td></tr>\n<tr><td>plain</td><td><a href=\"http://ox.test/entity/Q3\">Q3</a></td><td>2023-12-31T23:59:00Z</td><td>7</td><td>false</td></tr>\n<tr><td>&lt;tag&gt; &amp; quote</td><td>Nobody Known</td><td></td><td>0</td><td>true</td></tr>\n</table>\n</body>\n</html>\n"
+  },
+  {
+   "name": "ordered html headers false",
+   "format": "html",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "<html>\n<head>\n<title>custom-export</title>\n<meta charset=\"utf-8\" />\n</head>\n<body>\n<table>\n<tr><td><a href=\"https://example.org/a?x=1&amp;y=2\">https://example.org/a?x=1&amp;y=2</a></td><td><a href=\"http://ox.test/entity/Q1\">Q1</a></td><td>2024-01-02T03:04:05.123Z</td><td>42</td><td>true</td></tr>\n<tr><td>plain</td><td><a href=\"http://ox.test/entity/Q3\">Q3</a></td><td>2023-12-31T23:59:00Z</td><td>7</td><td>false</td></tr>\n<tr><td>&lt;tag&gt; &amp; quote</td><td>Nobody Known</td><td></td><td>0</td><td>true</td></tr>\n</table>\n</body>\n</html>\n"
+  },
+  {
+   "name": "ordered xlsx headers true",
+   "format": "xlsx",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "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"
+  },
+  {
+   "name": "ordered xlsx headers false",
+   "format": "xlsx",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "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"
+  },
+  {
+   "name": "ordered xls headers true",
+   "format": "xls",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "0M8R4KGxGuEAAAAAAAAAAAAAAAAAAAAAOwADAP7/CQAGAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAEAAAAgAAAAEAAAD+////AAAAAAEAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9SAG8AbwB0ACAARQBuAHQAcgB5AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFgAFAf//////////AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAABACgAAAAAAAFcAbwByAGsAYgBvAG8AawAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAIB////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7////9/////v///wQAAAAFAAAABgAAAAcAAAAIAAAA/v//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AQAAAAIAAAADAAAABAAAAAUAAAAGAAAABwAAAAgAAAAJAAAACgAAAAsAAAAMAAAADQAAAA4AAAAPAAAAEAAAABEAAAASAAAAEwAAABQAAAAVAAAAFgAAABcAAAAYAAAAGQAAABoAAAAbAAAAHAAAAB0AAAAeAAAAHwAAACAAAAAhAAAAIgAAACMAAAAkAAAAJQAAACYAAAAnAAAAKAAAAP7///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8JCBAAAAYFANMQzAdBAAAABgAAAOEAAgCwBMEAAgAAAOIAAABcAHAABQAAaWx5YWsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEIAAgCwBGEBAgAAAD0BAgAAAJwAAgAOABkAAgAAABIAAgAAABMAAgAAAK8BAgAAALwBAgAAAD0AEgBoAQ4BXDq+IzgAAAAAAAEAWAJAAAIAAACNAAIAAAAiAAIAAAAOAAIAAQC3AQIAAADaAAIAAAAxABUAyAAAAP9/kAEAAAAAAAAFAEFyaWFsMQAVAMgAAAD/f5ABAAAAAAAABQBBcmlhbDEAFQDIAAAA/3+QAQAAAAAAAAUAQXJpYWwxABUAyAAAAP9/kAEAAAAAAAAFAEFyaWFsHgQaAAUAFQAAIiQiIywjIzBfKTsoIiQiIywjIzApHgQfAAYAGgAAIiQiIywjIzBfKTtbUmVkXSgiJCIjLCMjMCkeBCAABwAbAAAiJCIjLCMjMC4wMF8pOygiJCIjLCMjMC4wMCkeBCUACAAgAAAiJCIjLCMjMC4wMF8pO1tSZWRdKCIkIiMsIyMwLjAwKR4ENQAqADAAAF8oIiQiKiAjLCMjMF8pO18oIiQiKiAoIywjIzApO18oIiQiKiAiLSJfKTtfKEBfKR4ELAApACcAAF8oKiAjLCMjMF8pO18oKiAoIywjIzApO18oKiAiLSJfKTtfKEBfKR4EPQAsADgAAF8oIiQiKiAjLCMjMC4wMF8pO18oIiQiKiAoIywjIzAu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"
+  },
+  {
+   "name": "ordered xls headers false",
+   "format": "xls",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "0M8R4KGxGuEAAAAAAAAAAAAAAAAAAAAAOwADAP7/CQAGAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAEAAAAgAAAAEAAAD+////AAAAAAEAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9SAG8AbwB0ACAARQBuAHQAcgB5AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFgAFAf//////////AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAADACQAAAAAAAFcAbwByAGsAYgBvAG8AawAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAIB////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALQJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7////9/////v///wQAAAAFAAAABgAAAAcAAAD+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////AQAAAAIAAAADAAAABAAAAAUAAAAGAAAABwAAAAgAAAAJAAAACgAAAAsAAAAMAAAADQAAAA4AAAAPAAAAEAAAABEAAAASAAAAEwAAABQAAAAVAAAAFgAAABcAAAAYAAAAGQAAABoAAAAbAAAAHAAAAB0AAAAeAAAAHwAAACAAAAAhAAAAIgAAACMAAAAkAAAAJQAAACYAAAD+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8JCBAAAAYFANMQzAdBAAAABgAAAOEAAgCwBMEAAgAAAOIAAABcAHAABQAAaWx5YWsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEIAAgCwBGEBAgAAAD0BAgAAAJwAAgAOABkAAgAAABIAAgAAABMAAgAAAK8BAgAAALwBAgAAAD0AEgBoAQ4BXDq+IzgAAAAAAAEAWAJAAAIAAACNAAIAAAAiAAIAAAAOAAIAAQC3AQIAAADaAAIAAAAxABUAyAAAAP9/kAEAAAAAAAAFAEFyaWFsMQAVAMgAAAD/f5ABAAAAAAAABQBBcmlhbDEAFQDIAAAA/3+QAQAAAAAAAAUAQXJpYWwxABUAyAAAAP9/kAEAAAAAAAAFAEFyaWFsHgQaAAUAFQAAIiQiIywjIzBfKTsoIiQiIywjIzApHgQfAAYAGgAAIiQiIywjIzBfKTtbUmVkXSgiJCIjLCMjMCkeBCAABwAbAAAiJCIjLCMjMC4wMF8pOygiJCIjLCMjMC4wMCkeBCUACAAgAAAiJCIjLCMjMC4wMF8pO1tSZWRdKCIkIiMsIyMwLjAwKR4ENQAqADAAAF8oIiQiKiAjLCMjMF8pO18oIiQiKiAoIywjIzApO18oIiQiKiAiLSJfKTtfKEBfKR4ELAApACcAAF8oKiAjLCMjMF8pO18oKiAoIywjIzApO18oKiAiLSJfKTtfKEBfKR4EPQAsADgAAF8oIiQiKiAjLCMjMC4wMF8pO18oIiQiKiAoIywjIzAu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"
+  },
+  {
+   "name": "ordered ods headers true",
+   "format": "ods",
+   "differenceKind": "ods-time",
+   "knownDifference": "OpenRefine 3.10.1 drops the time from ODS date cells; OxRefine preserves their timestamps.",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": true,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "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"
+  },
+  {
+   "name": "ordered ods headers false",
+   "format": "ods",
+   "differenceKind": "ods-time",
+   "knownDifference": "OpenRefine 3.10.1 drops the time from ODS date cells; OxRefine preserves their timestamps.",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "url"
+      },
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": false,
+        "linkToEntityPages": true
+       }
+      },
+      {
+       "name": "when"
+      },
+      {
+       "name": "n"
+      },
+      {
+       "name": "alive"
+      }
+     ],
+     "outputColumnHeaders": false,
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "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"
+  },
+  {
+   "name": "recon entity-name",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-name",
+        "blankUnmatchedCells": true,
+        "linkToEntityPages": true
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "name\nDouglas Adams\nAda Lovelace\n"
+  },
+  {
+   "name": "recon entity-id",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "entity-id",
+        "blankUnmatchedCells": true,
+        "linkToEntityPages": true
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "name\nQ1\nQ3\n"
+  },
+  {
+   "name": "recon cell-content",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "name",
+       "reconSettings": {
+        "output": "cell-content",
+        "blankUnmatchedCells": true,
+        "linkToEntityPages": true
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "name\nDouglas Adams\nDouglas Adams\n"
+  },
+  {
+   "name": "one empty column quote-all",
+   "format": "*sv",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "when"
+      }
+     ],
+     "quoteAll": true,
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "\"when\"\n\"2024-01-02T03:04:05.123Z\"\n\"2023-12-31T23:59:00Z\"\n\"\"\n"
+  },
+  {
+   "name": "date controls ignored by OR *sv",
+   "format": "*sv",
+   "differenceKind": "date-controls",
+   "knownDifference": "OpenRefine 3.10.1 builds dateFormatter but never applies it; OxRefine applies requested formatting (as text in workbooks).",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "when",
+       "dateSettings": {
+        "format": "custom",
+        "custom": "yyyy/MM/dd HH:mm:ss",
+        "omitTime": false,
+        "useLocalTimeZone": false
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "when\n2024-01-02T03:04:05.123Z\n2023-12-31T23:59:00Z\n"
+  },
+  {
+   "name": "date controls ignored by OR html",
+   "format": "html",
+   "differenceKind": "date-controls",
+   "knownDifference": "OpenRefine 3.10.1 builds dateFormatter but never applies it; OxRefine applies requested formatting (as text in workbooks).",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "when",
+       "dateSettings": {
+        "format": "custom",
+        "custom": "yyyy/MM/dd HH:mm:ss",
+        "omitTime": false,
+        "useLocalTimeZone": false
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputText": "<html>\n<head>\n<title>custom-export</title>\n<meta charset=\"utf-8\" />\n</head>\n<body>\n<table>\n<tr><th>when</th></tr>\n<tr><td>2024-01-02T03:04:05.123Z</td></tr>\n<tr><td>2023-12-31T23:59:00Z</td></tr>\n<tr><td></td></tr>\n</table>\n</body>\n</html>\n"
+  },
+  {
+   "name": "date controls ignored by OR xlsx",
+   "format": "xlsx",
+   "differenceKind": "date-controls",
+   "knownDifference": "OpenRefine 3.10.1 builds dateFormatter but never applies it; OxRefine applies requested formatting (as text in workbooks).",
+   "params": {
+    "options": {
+     "columns": [
+      {
+       "name": "when",
+       "dateSettings": {
+        "format": "custom",
+        "custom": "yyyy/MM/dd HH:mm:ss",
+        "omitTime": false,
+        "useLocalTimeZone": false
+       }
+      }
+     ],
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputBlankRows": true
+    },
+    "reconciliationServices": [
+     {
+      "url": "https://recon.example.test/svc",
+      "versions": [
+       "0.2"
+      ],
+      "name": "OxRefine test service",
+      "identifierSpace": "http://ox.test/entity/",
+      "schemaSpace": "http://ox.test/prop/",
+      "defaultTypes": [
+       {
+        "id": "Q5",
+        "name": "human"
+       },
+       {
+        "id": "Q515",
+        "name": "city"
+       }
+      ],
+      "view": {
+       "url": "http://ox.test/entity/{{id}}"
+      },
+      "preview": {
+       "url": "https://recon.example.test/svc/preview?id={{id}}",
+       "width": 300,
+       "height": 100
+      },
+      "extend": {
+       "propose_properties": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/properties"
+       },
+       "property_settings": []
+      },
+      "suggest": {
+       "entity": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/entity"
+       },
+       "type": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/type"
+       },
+       "property": {
+        "service_url": "https://recon.example.test",
+        "service_path": "/svc/suggest/property"
+       }
+      }
+     }
+    ]
+   },
+   "outputBase64": "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"
+  }
+ ]
+}

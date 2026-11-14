@@ -97,6 +97,8 @@ export function Home({
   onOpen,
   onRename,
   onError,
+  drop,
+  onInteraction,
 }: {
   onImport: () => void
   onPaste: () => void
@@ -105,6 +107,8 @@ export function Home({
   onOpen: (id: string) => void
   onRename: (p: ProjectMeta, done: () => void) => void
   onError: (e: unknown) => void
+  drop: { dragging: boolean; busy: boolean; enabled: boolean }
+  onInteraction: () => void
 }) {
   const [projects, setProjects] = useState<ProjectMeta[] | null>(null)
   const [deleting, setDeleting] = useState<ProjectMeta | null>(null)
@@ -129,17 +133,22 @@ export function Home({
 
   const th = "border-b px-3 py-2.5 text-left text-[11.5px] font-normal text-muted-foreground"
   const num = "border-b px-3 text-right font-mono text-[12.5px]"
+  const interact = (action: () => void) => () => { onInteraction(); action() }
   return (
-    <div className="flex min-h-0 flex-1 flex-wrap overflow-auto">
+    <div className={cn("flex min-h-0 flex-1 flex-wrap overflow-auto", drop.dragging && "outline-2 -outline-offset-2 outline-foreground")}>
       <aside aria-labelledby="new-h" className="flex max-w-[340px] flex-[1_1_300px] flex-col border-r">
         <h2 id="new-h" className="px-5 pt-5 pb-3 font-semibold">
           New project
         </h2>
-        <Source title="From a file or folder" hint="Preview with OpenRefine's import options" keys="Ctrl O" onClick={onImport} />
-        <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={onPaste} />
-        <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={onUrl} />
-        <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={onOpenRefine} />
+        <Source title="From a file or folder" hint="Preview with OpenRefine's import options" keys="Ctrl O" onClick={interact(onImport)} />
+        <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={interact(onPaste)} />
+        <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={interact(onUrl)} />
+        <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={interact(onOpenRefine)} />
         <div className="border-t" />
+        <div role="status" aria-live="polite" className={cn("border-b px-5 py-4", drop.dragging && "bg-foreground text-background")}>
+          <p className="font-medium">{drop.busy ? "Preparing file…" : drop.dragging ? "Drop to preview the file" : "Or drop a file here"}</p>
+          <p className={cn("mt-1 text-xs", !drop.dragging && "text-muted-foreground")}>{drop.busy ? "The import preview opens when the file is ready." : !drop.enabled ? "Close dialogs and wait for the project view to finish loading." : "One file at a time. Preview it before creating a project."}</p>
+        </div>
         <p className="px-5 py-4 font-mono text-[11px] leading-relaxed text-muted-foreground">
           csv tsv xlsx xls ods json xml txt
           <br />
@@ -218,7 +227,7 @@ export function Home({
                 {shown.map((p) => (
                   <tr key={p.id} className="group/row hover:bg-muted">
                     <td className="h-13 max-w-0 min-w-64 border-b py-2 pr-3 pl-5">
-                      <button type="button" title={p.name} onClick={() => onOpen(p.id)} className="flex max-w-full flex-col items-start gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                      <button type="button" title={p.name} onClick={interact(() => onOpen(p.id))} className="flex max-w-full flex-col items-start gap-0.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring">
                         <span className="max-w-full truncate font-medium group-hover/row:underline">{p.name}</span>
                         {fileName(p.source?.path) && <span className="max-w-full truncate font-mono text-[11px] text-muted-foreground">{fileName(p.source?.path)}</span>}
                       </button>
@@ -246,13 +255,13 @@ export function Home({
                     </td>
                     <td className="border-b pr-3 pl-3 text-right whitespace-nowrap">
                       <span className="inline-flex opacity-60 group-focus-within/row:opacity-100 group-hover/row:opacity-100">
-                        <Button variant="ghost" size="sm" onClick={() => setAbout(p)}>
+                        <Button variant="ghost" size="sm" onClick={interact(() => setAbout(p))}>
                           About
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => onRename(p, load)}>
+                        <Button variant="ghost" size="sm" onClick={interact(() => onRename(p, load))}>
                           Rename
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => setDeleting(p)}>
+                        <Button variant="ghost" size="sm" onClick={interact(() => setDeleting(p))}>
                           Delete
                         </Button>
                       </span>

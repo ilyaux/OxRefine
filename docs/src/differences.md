@@ -23,6 +23,18 @@ The additional recipe-reuse tests expose a separate difference: OpenRefine 3.10.
 
 Fixed-width import and its ruler count Unicode code points. OpenRefine 3.10.1 counts Java UTF-16 code units. In the additional wizard-reference tests, padding after an emoji produces widths `[3, 4, 1]` in OpenRefine and `[2, 4, 1]` in OxRefine. ASCII and basic multilingual plane examples match. This difference is recorded separately in `tests/import/fixed-width-guesses.json`, outside the 2,136-check total above. Check the import preview before sharing widths for text containing supplementary characters.
 
+### JSON Lines limits and export encoding errors
+
+Additional JSON Lines reference cases show that OpenRefine 3.10.1 can import more sequential root values than its requested record limit. OxRefine applies a global record limit and stops reading once it is reached. Its limited preview therefore does not validate malformed data after that point; a full import still reports it. The reference outputs and declared differences are recorded separately in `tests/import/json-paths-fixtures.json`.
+
+For legacy text export encodings, OpenRefine replaces unrepresentable characters with `?`. OxRefine rejects them by default before opening the output file; explicitly selecting replacement reproduces that behavior. The additional byte references in `tests/export/encoding-fixtures.json` are outside the 2,136-check total above, as are the JSON Lines cases.
+
+### Custom export date settings
+
+The additional `tests/export/custom-fixtures.json` cases show OpenRefine 3.10.1 ignoring requested custom date settings in text, HTML and workbook exports. OxRefine applies the supported requested format instead. Default workbook dates remain typed; nondefault date formatting produces text cells. These cases are separate from the 2,136-check total. See [export options](exporting.md#columns-dates-and-reconciliation) for the supported patterns and typed-cell reconciliation behavior.
+
+The same corpus records OpenRefine's ODS exporter dropping the time of day from a date cell. OxRefine retains its timestamp, including milliseconds. The remaining cells, selected columns and ordering are still compared with the reference.
+
 ## Not in OxRefine yet
 
 - **Import:** databases (PostgreSQL, MySQL, MariaDB, SQLite), RDF (N-Triples, Turtle, RDF/XML, JSON-LD), MARC, wikitext tables, PC-Axis, Google Sheets

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { PlusIcon } from "lucide-react"
 import { call, type Engine, type Op } from "@/api"
 import { Button } from "@/components/ui/button"
@@ -11,9 +11,10 @@ import { Spinner } from "@/components/ui/spinner"
 import { SuggestBox } from "@/ReconPanel"
 import { FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
 import { cn } from "@/lib/utils"
+import { saveServiceView } from "@/reconServiceViews"
 
 type Service = { url: string; name: string }
-type Manifest = { name?: string; identifierSpace: string; schemaSpace: string; defaultTypes?: { id: string; name: string }[] }
+type Manifest = { name?: string; identifierSpace: string; schemaSpace: string; defaultTypes?: { id: string; name: string }[]; view?: { url?: string } }
 type Guess = { id: string; name: string; score: number; count: number }
 
 /** OpenRefine's preset service, then any the user added (kept in this browser profile). */
@@ -64,17 +65,29 @@ export function ReconcileDialog({
   const [props, setProps] = useState<Record<string, string>>({})
   const [error, setError] = useState("")
   const [busy, setBusy] = useState(false)
+  const [viewWarning, setViewWarning] = useState(false)
+  const viewRequest = useRef(0)
+
+  const persistView = (service: string, descriptor: Manifest, request: number) => {
+    void saveServiceView(service, descriptor).then(
+      () => { if (request === viewRequest.current) setViewWarning(false) },
+      () => { if (request === viewRequest.current) setViewWarning(true) },
+    )
+  }
 
   // the service's manifest, then the types its answers suggest for this column
   useEffect(() => {
     let live = true
+    const request = ++viewRequest.current
     setManifest(null)
     setGuesses(null)
     setError("")
+    setViewWarning(false)
     call<Manifest>("recon_service", { url }, { quiet: true })
       .then(({ data }) => {
         if (!live) return
         setManifest(data)
+        persistView(url, data, request)
         return call<Guess[]>("recon_guess_types", { column, url }, { quiet: true }).then(({ data: g }) => {
           if (!live) return
           setGuesses(g)
@@ -84,6 +97,7 @@ export function ReconcileDialog({
       .catch((e) => live && setError(String((e as Error).message ?? e)))
     return () => {
       live = false
+      if (viewRequest.current === request) viewRequest.current++
     }
   }, [url, column])
 
@@ -93,6 +107,8 @@ export function ReconcileDialog({
     setError("")
     try {
       const { data } = await call<Manifest>("recon_service", { url: u })
+      if (u === url) setManifest(data)
+      persistView(u, data, viewRequest.current)
       const list = [...services.filter((s) => s.url !== u), { url: u, name: data.name || u }]
       setServices(list)
       saveServices(list)
@@ -194,6 +210,12 @@ export function ReconcileDialog({
                 Add
               </Button>
             </form>
+            {viewWarning && manifest && (
+              <div role="status" className="space-y-2 px-3.5 pt-3 text-xs text-muted-foreground">
+                <p>Could not save the service's page-link template. Reconciliation remains available; HTML export may use identifier links instead.</p>
+                <Button variant="outline" size="sm" onClick={() => persistView(url, manifest, viewRequest.current)}>Retry saving page links</Button>
+              </div>
+            )}
             <div className="mt-3 border-t" />
             <RailLabel>Options</RailLabel>
             <label className="flex cursor-pointer items-start gap-2.5 px-3.5 py-1.5">

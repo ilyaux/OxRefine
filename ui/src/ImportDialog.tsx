@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 import { FixedWidthRuler } from "@/FixedWidthRuler"
+import { JsonPathPicker, type JsonPaths } from "@/JsonPathPicker"
 
 type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml"
 /** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
@@ -17,6 +18,7 @@ type Info = {
   files?: { name: string; size: number; format: Format | null; selected: boolean }[]
   archive?: string | null
   elements?: { path: string[]; count: number }[]
+  json?: JsonPaths
 }
 type Options = Record<string, unknown>
 type Preview = { columns: string[]; rows: [number, (string | null)[], boolean, boolean][] }
@@ -57,12 +59,21 @@ export function ImportDialog({
   const [sampleReply, setSampleReply] = useState<{ key: string; data: FixedSample } | null>(null)
   const sample = sampleReply?.key === sampleKey ? sampleReply.data : null
   const [failure, setFailure] = useState<{ key: string; message: string } | null>(null)
-  const error = failure && [previewKey, `inspect:${path}`, ...(format === "fixed-width" ? [sampleKey] : [])].includes(failure.key) ? failure.message : ""
   const [widthDraft, setWidthDraft] = useState<{ path: string; widths: unknown; text: string; error: string } | null>(null)
   const widthEdited = useRef<string | null>(null)
   const activeDraft = widthDraft?.path === path && widthDraft.widths === options.columnWidths ? widthDraft : null
   const widthError = format === "fixed-width" ? activeDraft?.error : ""
   const [busy, setBusy] = useState(false)
+  const isJson = format === "json" || format === "jsonlines"
+  const jsonKey = JSON.stringify({ path, format, options: { encoding: options.encoding, files: options.files } })
+  const error = failure && [previewKey, `inspect:${path}`, ...(format === "fixed-width" ? [sampleKey] : []), ...(isJson ? [jsonKey] : [])].includes(failure.key) ? failure.message : ""
+  const [jsonReply, setJsonReply] = useState<{ key: string; data: JsonPaths } | null>(null)
+  const json = jsonReply?.key === jsonKey ? jsonReply.data : null
+  const chosenPath = useRef<string | null>(null)
+  const [pathDraft, setPathDraft] = useState<{ path: string; value: unknown; text: string; error: string } | null>(null)
+  const activePathDraft = pathDraft?.path === path && pathDraft.value === options.recordPath ? pathDraft : null
+  const pathError = isJson ? activePathDraft?.error : ""
+  const emptyJson = isJson && preview && (!preview.rows.length || !preview.columns.length)
 
   useEffect(() => {
     let live = true
@@ -70,11 +81,13 @@ export function ImportDialog({
       .then(({ data }) => {
         if (!live) return
         widthEdited.current = null
+        chosenPath.current = null
         setInspection({ path, data })
         setFormat(data.format)
         const next: Options = { ...data.options, ...(data.files ? { files: data.files.filter((f) => f.selected).map((f) => f.name) } : {}) }
         if (data.format === "fixed-width" && !(next.columnWidths as number[] | undefined)?.length) delete next.columnWidths
         setOptions(next)
+        if (data.json) setJsonReply({ key: JSON.stringify({ path, format: data.format, options: { encoding: next.encoding, files: next.files } }), data: data.json })
       })
       .catch((e) => live && setFailure({ key: `inspect:${path}`, message: e.message }))
     return () => { live = false }
@@ -104,11 +117,29 @@ export function ImportDialog({
     return () => { live = false }
   }, [sampleKey, info, format, path])
 
+  useEffect(() => {
+    if (!info || !isJson || jsonReply?.key === jsonKey) return
+    let live = true
+    call<JsonPaths>("json_paths", JSON.parse(jsonKey), { quiet: true })
+      .then(({ data }) => {
+        if (!live) return
+        setJsonReply({ key: jsonKey, data })
+        if (chosenPath.current !== path) setOptions((current) => ({ ...current, recordPath: data.suggestedPath, jsonLinesRoot: format === "jsonlines" }))
+      })
+      .catch((e) => live && setFailure({ key: jsonKey, message: e.message }))
+    return () => { live = false }
+  }, [info, isJson, jsonKey, jsonReply?.key, path, format])
+
   const set = (patch: Options) => setOptions((o) => ({ ...o, ...patch }))
   const setWidths = (columnWidths: number[]) => {
     widthEdited.current = path
     setWidthDraft(null)
     set({ columnWidths })
+  }
+  const pickPath = (recordPath: string[]) => {
+    chosenPath.current = path
+    setPathDraft(null)
+    set({ recordPath })
   }
   // a numeric option as a label and a short mono input on one line
   const num = (key: string, label: string, help?: string) => (
@@ -143,7 +174,7 @@ export function ImportDialog({
   const sheets = (options.sheets as { fileNameAndSheetIndex: string; selected: boolean; name: string }[]) ?? []
 
   const create = async () => {
-    if (!preview || widthError || busy) return
+    if (!preview || widthError || pathError || emptyJson || busy) return
     setBusy(true)
     try {
       await onCreate({ path, name: name.trim() || label, format, options })
@@ -158,7 +189,7 @@ export function ImportDialog({
   const detected = info
     ? [
         NAMES[format] ?? format,
-        ...(format === "csv" || format === "lines" || format === "fixed-width" ? [String(options.encoding ?? "UTF-8")] : []),
+        ...(format === "csv" || format === "lines" || format === "fixed-width" || isJson ? [String(options.encoding ?? "UTF-8")] : []),
         ...(format === "csv" ? [`“${sep === "\t" ? "\\t" : sep}”`] : []),
         ...(!tree && Number(options.headerLines) > 0 ? ["header"] : []),
       ].join(" · ")
@@ -168,7 +199,7 @@ export function ImportDialog({
       <div
         className="flex min-h-0 flex-1 flex-col"
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !widthError && !busy) {
+          if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && preview && !widthError && !pathError && !emptyJson && !busy) {
             e.preventDefault()
             create()
           }
@@ -187,7 +218,7 @@ export function ImportDialog({
             {detected}
           </Metric>
           <Spacer />
-          <StripAction ink keys="Ctrl ↵" disabled={!preview || !!widthError || busy} onClick={create}>
+          <StripAction ink keys="Ctrl ↵" disabled={!preview || !!widthError || !!pathError || !!emptyJson || busy} onClick={create}>
             {busy && <Spinner />}
             Create project
           </StripAction>
@@ -222,6 +253,22 @@ export function ImportDialog({
                 <RailLabel>Read the text as</RailLabel>
                 <div role="radiogroup" aria-label="Read the text as">
                   {TEXT.map(([v, l, h]) => radio(v, format === v, l, h, () => setFormat(v)))}
+                </div>
+              </>
+            ) : info && (info.format === "json" || info.format === "jsonlines") ? (
+              <>
+                <RailLabel>Read as</RailLabel>
+                <div role="radiogroup" aria-label="JSON input format">
+                  {(["json", "jsonlines"] as const).map((f) => (
+                    <label key={f} className={cn("flex cursor-pointer items-center gap-2.5 px-4 py-1.5 hover:bg-accent", format === f && "bg-secondary")}>
+                      <input type="radio" name="imp-json-format" checked={format === f} onChange={() => {
+                        setFormat(f)
+                        set({ jsonLinesRoot: f === "jsonlines", ...(chosenPath.current !== path ? { recordPath: ["_"] } : {}) })
+                      }} className="accent-foreground" />
+                      <span className="flex-1">{NAMES[f]}</span>
+                      <span className="font-mono text-[11px] text-muted-foreground">{f === "jsonlines" ? "one root / line" : "one document"}</span>
+                    </label>
+                  ))}
                 </div>
               </>
             ) : (
@@ -292,15 +339,31 @@ export function ImportDialog({
                 </select>
               </label>
             )}
-            {(format === "json" || format === "jsonlines") && (
-              <label className="flex flex-col gap-1 px-4 pt-2" title="Field names from the top, with _ for the items of an array. A list of objects is “_, _”.">
+            {isJson && (
+              <>
+              {json && <JsonPathPicker data={json} value={(options.recordPath as string[]) ?? []} onChange={pickPath} />}
+              <label className="flex flex-col gap-1 px-4 pt-2" title={'JSON array of path segments. ["_"] is the root; each array level adds "_". Field names keep their exact punctuation.'}>
                 <span>Path to the records</span>
                 <Input
                   className="h-7.5 font-mono"
-                  value={(options.recordPath as string[]).join(", ")}
-                  onChange={(e) => set({ recordPath: e.target.value.split(",").map((x) => x.trim()).filter(Boolean) })}
+                  value={activePathDraft ? activePathDraft.text : JSON.stringify(options.recordPath ?? [])}
+                  aria-invalid={!!pathError}
+                  aria-describedby={pathError ? "json-path-error" : undefined}
+                  onChange={(e) => {
+                    chosenPath.current = path
+                    try {
+                      const recordPath: unknown = JSON.parse(e.target.value)
+                      if (!Array.isArray(recordPath) || !recordPath.every((p) => typeof p === "string")) throw new Error("path")
+                      setPathDraft({ path, value: recordPath, text: e.target.value, error: "" })
+                      set({ recordPath })
+                    } catch {
+                      setPathDraft({ path, value: options.recordPath, text: e.target.value, error: 'Enter a JSON array of field names, e.g. ["_", "data", "items", "_"].' })
+                    }
+                  }}
                 />
+                {pathError && <span id="json-path-error" role="alert" className="text-xs text-destructive">{pathError}</span>}
               </label>
+              </>
             )}
             {(format === "excel" || format === "ods") && info && (
               <>
@@ -326,7 +389,7 @@ export function ImportDialog({
               </>
             )}
             <div className="pt-2" />
-            {(format === "csv" || format === "lines" || format === "fixed-width") && (
+            {(format === "csv" || format === "lines" || format === "fixed-width" || isJson) && (
               <label className="flex items-center gap-2 px-4 py-1.5">
                 <span className="min-w-0 flex-1">Character encoding</span>
                 <select
@@ -380,6 +443,7 @@ export function ImportDialog({
                 </span>
               )}
             </div>
+            {emptyJson && <p role="status" className="border-b px-5 py-3 text-sm text-muted-foreground">No rows or columns at this record path. The source may be empty or null, or the path may not match. Pick an object or array of records above; use another “_” for each array level.</p>}
             {format === "fixed-width" && (
               <>
                 <div className="flex flex-wrap items-center gap-3 border-b px-5 py-2 text-xs">
@@ -402,8 +466,8 @@ export function ImportDialog({
                       <th scope="col" className="w-14 border-r border-b border-b-foreground px-3 py-2.5 text-right font-mono text-[11.5px] font-normal text-muted-foreground">
                         line
                       </th>
-                      {preview.columns.map((c) => (
-                        <th key={c} scope="col" className="max-w-60 truncate border-r border-b border-b-foreground px-3 py-2.5 text-left font-semibold whitespace-nowrap">
+                      {preview.columns.map((c, j) => (
+                        <th key={j} scope="col" className="max-w-60 truncate border-r border-b border-b-foreground px-3 py-2.5 text-left font-semibold whitespace-nowrap">
                           {c}
                         </th>
                       ))}

@@ -1,0 +1,1288 @@
+{
+ "openrefine": "3.10.1",
+ "reportedVersion": {
+  "version": "3.10-SNAPSHOT",
+  "revision": "TRUNK",
+  "full_version": "3.10-SNAPSHOT [TRUNK]",
+  "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+  "java_vm_name": "OpenJDK 64-Bit Server VM",
+  "java_vm_version": "11.0.30+7",
+  "java_runtime_name": "OpenJDK Runtime Environment",
+  "java_runtime_version": "11.0.30+7",
+  "display_new_version_notice": "true",
+  "module_names": [
+   "core",
+   "database",
+   "jython",
+   "pc-axis",
+   "wikidata"
+  ]
+ },
+ "release": {
+  "url": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+  "sha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+  "artifacts": {
+   "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+   "webapp/WEB-INF/lib/grel-3.10.1.jar": "7158cd697ab4f6b43e21af7484a9eba1a8ac355759b3267d7f6ec9018f39e8dd",
+   "webapp/WEB-INF/lib/core-3.10.1.jar": "a135638474451a220705560624e5c6a0720840edc9d7150b29132a30a3e3ac38",
+   "server/target/lib/openrefine-3.10.1-server.jar": "5906b7db2ad82332cb9295490759b189adf5ef79939cb14b02878aff2903aece"
+  }
+ },
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/src/com/google/refine/commands/project/ExportRowsCommand.java",
+ "corpus": "name,city,note\nZoë,München,\"café €; \"\"quote\"\"\"\nИлья,Москва,Привет\n😀,東京,astral\nControl,Latin,\"\"\n,,\n",
+ "policy": "OpenRefine replaces unmappable characters with the Java charset replacement. OxRefine requires encodingErrors=replace explicitly; its default is a strict preflight error. bom is an OxRefine option; these references do not send it.",
+ "cases": [
+  {
+   "name": "CSV defaults UTF-8 without BOM or all-null rows",
+   "format": "csv",
+   "params": {},
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpvw6ssTcO8bmNoZW4sImNhZsOpIOKCrDsgIiJxdW90ZSIiIg0K0JjQu9GM0Y8s0JzQvtGB0LrQstCwLNCf0YDQuNCy0LXRgg0K8J+YgCzmnbHkuqwsYXN0cmFsDQpDb250cm9sLExhdGluLMKAwoHCgsKDwoTChcKGwofCiMKJworCi8KMwo3CjsKPwpDCkcKSwpPClMKVwpbCl8KYwpnCmsKbwpzCncKewp8NCg=="
+  },
+  {
+   "name": "custom defaults without options",
+   "format": "*sv",
+   "params": {},
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpvw6ssTcO8bmNoZW4sImNhZsOpIOKCrDsgIiJxdW90ZSIiIg0K0JjQu9GM0Y8s0JzQvtGB0LrQstCwLNCf0YDQuNCy0LXRgg0K8J+YgCzmnbHkuqwsYXN0cmFsDQpDb250cm9sLExhdGluLMKAwoHCgsKDwoTChcKGwofCiMKJworCi8KMwo3CjsKPwpDCkcKSwpPClMKVwpbCl8KYwpnCmsKbwpzCncKewp8NCg=="
+  },
+  {
+   "name": "custom UTF-8 unicode",
+   "format": "*sv",
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZTtjaXR5O25vdGUKWm/DqztNw7xuY2hlbjsiY2Fmw6kg4oKsOyAiInF1b3RlIiIiCtCY0LvRjNGPO9Cc0L7RgdC60LLQsDvQn9GA0LjQstC10YIK8J+YgDvmnbHkuqw7YXN0cmFsCkNvbnRyb2w7TGF0aW47woDCgcKCwoPChMKFwobCh8KIwonCisKLwozCjcKOwo/CkMKRwpLCk8KUwpXClsKXwpjCmcKawpvCnMKdwp7Cnwo7Owo="
+  },
+  {
+   "name": "custom UTF-16 unicode",
+   "format": "*sv",
+   "params": {
+    "encoding": "UTF-16",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "/v8AbgBhAG0AZQA7AGMAaQB0AHkAOwBuAG8AdABlAAoAWgBvAOsAOwBNAPwAbgBjAGgAZQBuADsAIgBjAGEAZgDpACAgrAA7ACAAIgAiAHEAdQBvAHQAZQAiACIAIgAKBBgEOwRMBE8AOwQcBD4EQQQ6BDIEMAA7BB8EQAQ4BDIENQRCAArYPd4AADtncU6sADsAYQBzAHQAcgBhAGwACgBDAG8AbgB0AHIAbwBsADsATABhAHQAaQBuADsAgACBAIIAgwCEAIUAhgCHAIgAiQCKAIsAjACNAI4AjwCQAJEAkgCTAJQAlQCWAJcAmACZAJoAmwCcAJ0AngCfAAoAOwA7AAo="
+  },
+  {
+   "name": "custom UTF-16LE unicode",
+   "format": "*sv",
+   "params": {
+    "encoding": "UTF-16LE",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bgBhAG0AZQA7AGMAaQB0AHkAOwBuAG8AdABlAAoAWgBvAOsAOwBNAPwAbgBjAGgAZQBuADsAIgBjAGEAZgDpACAArCA7ACAAIgAiAHEAdQBvAHQAZQAiACIAIgAKABgEOwRMBE8EOwAcBD4EQQQ6BDIEMAQ7AB8EQAQ4BDIENQRCBAoAPdgA3jsAcWesTjsAYQBzAHQAcgBhAGwACgBDAG8AbgB0AHIAbwBsADsATABhAHQAaQBuADsAgACBAIIAgwCEAIUAhgCHAIgAiQCKAIsAjACNAI4AjwCQAJEAkgCTAJQAlQCWAJcAmACZAJoAmwCcAJ0AngCfAAoAOwA7AAoA"
+  },
+  {
+   "name": "custom UTF-16BE unicode",
+   "format": "*sv",
+   "params": {
+    "encoding": "UTF-16BE",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "AG4AYQBtAGUAOwBjAGkAdAB5ADsAbgBvAHQAZQAKAFoAbwDrADsATQD8AG4AYwBoAGUAbgA7ACIAYwBhAGYA6QAgIKwAOwAgACIAIgBxAHUAbwB0AGUAIgAiACIACgQYBDsETARPADsEHAQ+BEEEOgQyBDAAOwQfBEAEOAQyBDUEQgAK2D3eAAA7Z3FOrAA7AGEAcwB0AHIAYQBsAAoAQwBvAG4AdAByAG8AbAA7AEwAYQB0AGkAbgA7AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwAKADsAOwAK"
+  },
+  {
+   "name": "CSV UTF-16LE quotes and CRLF",
+   "format": "csv",
+   "params": {
+    "encoding": "UTF-16LE"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bgBhAG0AZQAsAGMAaQB0AHkALABuAG8AdABlAA0ACgBaAG8A6wAsAE0A/ABuAGMAaABlAG4ALAAiAGMAYQBmAOkAIACsIDsAIAAiACIAcQB1AG8AdABlACIAIgAiAA0ACgAYBDsETARPBCwAHAQ+BEEEOgQyBDAELAAfBEAEOAQyBDUEQgQNAAoAPdgA3iwAcWesTiwAYQBzAHQAcgBhAGwADQAKAEMAbwBuAHQAcgBvAGwALABMAGEAdABpAG4ALACAAIEAggCDAIQAhQCGAIcAiACJAIoAiwCMAI0AjgCPAJAAkQCSAJMAlACVAJYAlwCYAJkAmgCbAJwAnQCeAJ8ADQAKAA=="
+  },
+  {
+   "name": "TSV UTF-16BE",
+   "format": "tsv",
+   "params": {
+    "encoding": "UTF-16BE"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "AG4AYQBtAGUACQBjAGkAdAB5AAkAbgBvAHQAZQANAAoAWgBvAOsACQBNAPwAbgBjAGgAZQBuAAkAYwBhAGYA6QAgIKwAOwAgACIAcQB1AG8AdABlACIADQAKBBgEOwRMBE8ACQQcBD4EQQQ6BDIEMAAJBB8EQAQ4BDIENQRCAA0ACtg93gAACWdxTqwACQBhAHMAdAByAGEAbAANAAoAQwBvAG4AdAByAG8AbAAJAEwAYQB0AGkAbgAJAIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwANAAo="
+  },
+  {
+   "name": "windows-1251 Cyrillic",
+   "format": "*sv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Илья",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "windows-1251",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "outputBase64": "bmFtZTtjaXR5O25vdGUKyOv8/zvM7vHq4uA7z/Do4uXyCg=="
+  },
+  {
+   "name": "windows-1252 Latin and euro",
+   "format": "csv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Zoë",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "windows-1252"
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpv6yxN/G5jaGVuLCJjYWbpIIA7ICIicXVvdGUiIiINCg=="
+  },
+  {
+   "name": "ISO-8859-1 Latin",
+   "format": "*sv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Zoë",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "ISO-8859-1",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      }
+     ]
+    }
+   },
+   "outputBase64": "bmFtZTtjaXR5Clpv6ztN/G5jaGVuCg=="
+  },
+  {
+   "name": "ISO-8859-1 C1 controls are not windows-1252",
+   "format": "csv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Control",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "ISO-8859-1"
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNCkNvbnRyb2wsTGF0aW4sgIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp8NCg=="
+  },
+  {
+   "name": "US-ASCII represented text",
+   "format": "*sv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Control",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "US-ASCII",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      }
+     ]
+    }
+   },
+   "outputBase64": "bmFtZTtjaXR5CkNvbnRyb2w7TGF0aW4K"
+  },
+  {
+   "name": "windows-1251 replacement",
+   "format": "csv",
+   "params": {
+    "encoding": "windows-1251",
+    "encodingErrors": "replace"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpvPyxNP25jaGVuLCJjYWY/IIg7ICIicXVvdGUiIiINCsjr/P8szO7x6uLgLM/w6OLl8g0KPyw/Pyxhc3RyYWwNCkNvbnRyb2wsTGF0aW4sPz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8NCg=="
+  },
+  {
+   "name": "windows-1252 replacement",
+   "format": "csv",
+   "params": {
+    "encoding": "windows-1252",
+    "encodingErrors": "replace"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpv6yxN/G5jaGVuLCJjYWbpIIA7ICIicXVvdGUiIiINCj8/Pz8sPz8/Pz8/LD8/Pz8/Pw0KPyw/Pyxhc3RyYWwNCkNvbnRyb2wsTGF0aW4sPz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8NCg=="
+  },
+  {
+   "name": "ISO-8859-1 replacement",
+   "format": "csv",
+   "params": {
+    "encoding": "ISO-8859-1",
+    "encodingErrors": "replace"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpv6yxN/G5jaGVuLCJjYWbpID87ICIicXVvdGUiIiINCj8/Pz8sPz8/Pz8/LD8/Pz8/Pw0KPyw/Pyxhc3RyYWwNCkNvbnRyb2wsTGF0aW4sgIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp8NCg=="
+  },
+  {
+   "name": "US-ASCII replacement",
+   "format": "csv",
+   "params": {
+    "encoding": "US-ASCII",
+    "encodingErrors": "replace"
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "outputBase64": "bmFtZSxjaXR5LG5vdGUNClpvPyxNP25jaGVuLCJjYWY/ID87ICIicXVvdGUiIiINCj8/Pz8sPz8/Pz8/LD8/Pz8/Pw0KPyw/Pyxhc3RyYWwNCkNvbnRyb2wsTGF0aW4sPz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8NCg=="
+  },
+  {
+   "name": "UTF-16 no selected rows or headers",
+   "format": "*sv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "no-match",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "UTF-16",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": false,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "city"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "outputBase64": ""
+  },
+  {
+   "name": "UTF-16LE selected columns and quote-all",
+   "format": "*sv",
+   "engine": {
+    "mode": "row-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "name",
+      "columnName": "name",
+      "query": "Zoë",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "params": {
+    "encoding": "UTF-16LE",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": false,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "note"
+      },
+      {
+       "name": "name"
+      }
+     ],
+     "quoteAll": true
+    }
+   },
+   "outputBase64": "IgBjAGEAZgDpACAArCA7ACAAIgAiAHEAdQBvAHQAZQAiACIAIgA7ACIAWgBvAOsAIgAKAA=="
+  },
+  {
+   "name": "UTF-16BE records retain sibling rows",
+   "format": "*sv",
+   "engine": {
+    "mode": "record-based",
+    "facets": [
+     {
+      "type": "text",
+      "name": "note",
+      "columnName": "note",
+      "query": "sibling",
+      "mode": "text",
+      "caseSensitive": true,
+      "invert": false
+     }
+    ]
+   },
+   "corpus": "name,note\nrecord,root\n,sibling\nother,skip\n",
+   "params": {
+    "encoding": "UTF-16BE",
+    "options": {
+     "separator": ";",
+     "lineSeparator": "\n",
+     "outputColumnHeaders": true,
+     "outputBlankRows": true,
+     "columns": [
+      {
+       "name": "name"
+      },
+      {
+       "name": "note"
+      }
+     ]
+    }
+   },
+   "outputBase64": "AG4AYQBtAGUAOwBuAG8AdABlAAoAcgBlAGMAbwByAGQAOwByAG8AbwB0AAoAOwBzAGkAYgBsAGkAbgBnAAo="
+  },
+  {
+   "name": "null vs text-empty csv options 0",
+   "format": "csv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty tsv options 1",
+   "format": "tsv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUJc2Vjb25kDQoJDQoJDQoJDQp0ZXh0CQ0K"
+  },
+  {
+   "name": "null vs text-empty *sv options 2",
+   "format": "*sv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty csv options 3",
+   "format": "csv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ]
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty csv options 4",
+   "format": "csv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ],
+     "outputBlankRows": false
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty csv options 5",
+   "format": "csv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ],
+     "outputBlankRows": true
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty *sv options 6",
+   "format": "*sv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ],
+     "outputBlankRows": false
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQp0ZXh0LA0K"
+  },
+  {
+   "name": "null vs text-empty *sv options 7",
+   "format": "*sv",
+   "corpus": "value,second,marker\nnull,,keep\nempty,,keep\nspaces,,keep\ntext,,keep\n",
+   "setup": [
+    {
+     "op": "core/text-transform",
+     "columnName": "value",
+     "expression": "grel:if(value == 'null', null, if(value == 'empty', '', if(value == 'spaces', '   ', value)))",
+     "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+     },
+     "onError": "keep-original",
+     "repeat": false,
+     "repeatCount": 10
+    }
+   ],
+   "params": {
+    "encoding": "UTF-8",
+    "options": {
+     "columns": [
+      {
+       "name": "value"
+      },
+      {
+       "name": "second"
+      }
+     ],
+     "outputBlankRows": true
+    }
+   },
+   "engine": {
+    "mode": "row-based",
+    "facets": []
+   },
+   "referenceTable": {
+    "columns": [
+     "value",
+     "second",
+     "marker"
+    ],
+    "rows": [
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       null,
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": ""
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "   "
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     },
+     {
+      "starred": false,
+      "flagged": false,
+      "cells": [
+       {
+        "v": "text"
+       },
+       null,
+       {
+        "v": "keep"
+       }
+      ]
+     }
+    ]
+   },
+   "outputBase64": "dmFsdWUsc2Vjb25kDQosDQosDQosDQp0ZXh0LA0K"
+  }
+ ]
+}

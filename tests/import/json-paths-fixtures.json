@@ -1,0 +1,552 @@
+{
+ "openrefine": "3.10.1",
+ "reportedVersion": {
+  "version": "3.10-SNAPSHOT",
+  "revision": "TRUNK",
+  "full_version": "3.10-SNAPSHOT [TRUNK]",
+  "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+  "java_vm_name": "OpenJDK 64-Bit Server VM",
+  "java_vm_version": "11.0.30+7",
+  "java_runtime_name": "OpenJDK Runtime Environment",
+  "java_runtime_version": "11.0.30+7",
+  "display_new_version_notice": "true",
+  "module_names": [
+   "core",
+   "database",
+   "jython",
+   "pc-axis",
+   "wikidata"
+  ]
+ },
+ "release": {
+  "url": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+  "sha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+  "artifacts": {
+   "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+   "webapp/WEB-INF/lib/grel-3.10.1.jar": "7158cd697ab4f6b43e21af7484a9eba1a8ac355759b3267d7f6ec9018f39e8dd",
+   "webapp/WEB-INF/lib/core-3.10.1.jar": "a135638474451a220705560624e5c6a0720840edc9d7150b29132a30a3e3ac38",
+   "server/target/lib/openrefine-3.10.1-server.jar": "5906b7db2ad82332cb9295490759b189adf5ef79939cb14b02878aff2903aece"
+  }
+ },
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/src/com/google/refine/importers/JsonImporter.java",
+ "cases": [
+  {
+   "name": "nested records",
+   "text": "{\"meta\":{\"count\":2},\"data\":{\"items\":[{\"sku\":\"A-1\",\"price\":9.99,\"qty\":3},{\"sku\":\"B-2\",\"price\":15,\"qty\":0,\"discontinued\":true}]}}",
+   "recordPath": [
+    "_",
+    "data",
+    "items",
+    "_"
+   ],
+   "columns": [
+    "_ - sku",
+    "_ - price",
+    "_ - qty",
+    "_ - discontinued"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A-1"
+     },
+     {
+      "v": 9.99
+     },
+     {
+      "v": 3
+     },
+     null
+    ],
+    [
+     {
+      "v": "B-2"
+     },
+     {
+      "v": 15
+     },
+     {
+      "v": 0
+     },
+     {
+      "v": true
+     }
+    ]
+   ]
+  },
+  {
+   "name": "root object with nested fields",
+   "text": "{\"id\":1,\"nested\":{\"city\":\"Zürich\"},\"tags\":[\"a\",\"b\"]}",
+   "recordPath": [
+    "_"
+   ],
+   "columns": [
+    "_ - id",
+    "_ - tags - tags",
+    "_ - nested - city"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "a"
+     },
+     {
+      "v": "Zürich"
+     }
+    ],
+    [
+     null,
+     {
+      "v": "b"
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "root array records",
+   "text": "[{\"id\":1,\"n\":{\"v\":\"a\"}},{\"id\":2,\"n\":{\"v\":\"b\"}}]",
+   "recordPath": [
+    "_",
+    "_"
+   ],
+   "columns": [
+    "_ - id",
+    "_ - n - v"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "b"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "array container as one record",
+   "text": "{\"meta\":{\"count\":2},\"data\":{\"items\":[{\"sku\":\"A-1\",\"price\":9.99,\"qty\":3},{\"sku\":\"B-2\",\"price\":15,\"qty\":0,\"discontinued\":true}]}}",
+   "recordPath": [
+    "_",
+    "data",
+    "items"
+   ],
+   "columns": [
+    "items - _ - sku",
+    "items - _ - price",
+    "items - _ - qty",
+    "items - _ - discontinued"
+   ],
+   "rows": [
+    [
+     {
+      "v": "A-1"
+     },
+     {
+      "v": 9.99
+     },
+     {
+      "v": 3
+     },
+     null
+    ],
+    [
+     {
+      "v": "B-2"
+     },
+     {
+      "v": 15
+     },
+     {
+      "v": 0
+     },
+     {
+      "v": true
+     }
+    ]
+   ]
+  },
+  {
+   "name": "empty array",
+   "text": "[]",
+   "recordPath": [
+    "_",
+    "_"
+   ],
+   "columns": [],
+   "rows": []
+  },
+  {
+   "name": "null root",
+   "text": "null",
+   "recordPath": [
+    "_"
+   ],
+   "columns": [],
+   "rows": []
+  },
+  {
+   "name": "empty object",
+   "text": "{}",
+   "recordPath": [
+    "_"
+   ],
+   "columns": [],
+   "rows": []
+  },
+  {
+   "name": "wrong path",
+   "text": "{\"meta\":{\"count\":2},\"data\":{\"items\":[{\"sku\":\"A-1\",\"price\":9.99,\"qty\":3},{\"sku\":\"B-2\",\"price\":15,\"qty\":0,\"discontinued\":true}]}}",
+   "recordPath": [
+    "_",
+    "missing",
+    "_"
+   ],
+   "columns": [],
+   "rows": []
+  },
+  {
+   "name": "JSON Lines records",
+   "text": "{\"id\":1,\"n\":{\"x\":\"a\"}}\n{\"id\":2,\"n\":{\"x\":\"b\"}}\n",
+   "lines": true,
+   "recordPath": [
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_"
+   ],
+   "columns": [
+    "_ - id",
+    "_ - n - x"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     {
+      "v": "b"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines nested arrays",
+   "text": "{\"items\":[{\"id\":1},{\"id\":2}]}\n{\"items\":[{\"id\":3}]}\n",
+   "lines": true,
+   "recordPath": [
+    "_",
+    "items",
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_",
+    "items",
+    "_"
+   ],
+   "columns": [
+    "_ - id"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     }
+    ],
+    [
+     {
+      "v": 2
+     }
+    ],
+    [
+     {
+      "v": 3
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines literal underscore key",
+   "text": "{\"_\":[{\"id\":1},{\"id\":2}]}\n{\"_\":[{\"id\":3}]}\n",
+   "lines": true,
+   "recordPath": [
+    "_",
+    "_",
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_",
+    "_",
+    "_"
+   ],
+   "columns": [
+    "_ - id"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     }
+    ],
+    [
+     {
+      "v": 2
+     }
+    ],
+    [
+     {
+      "v": 3
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines root arrays",
+   "text": "[{\"id\":1},{\"id\":2}]\n[{\"id\":3}]\n",
+   "lines": true,
+   "recordPath": [
+    "_",
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_",
+    "_"
+   ],
+   "columns": [
+    "_ - id"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     }
+    ],
+    [
+     {
+      "v": 2
+     }
+    ],
+    [
+     {
+      "v": 3
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines limit",
+   "text": "{\"id\":1}\n{\"id\":2}\n",
+   "lines": true,
+   "limit": 1,
+   "recordPath": [
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_"
+   ],
+   "knownDifference": "OpenRefine resets its row limit for each JSON root; OxRefine keeps the pre-existing global JSONL record limit.",
+   "oxRows": 1,
+   "columns": [
+    "_ - id"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     }
+    ],
+    [
+     {
+      "v": 2
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines limit before malformed tail",
+   "text": "{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\n{\"id\":1}\nINVALID\n",
+   "lines": true,
+   "limit": 1,
+   "recordPath": [
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_"
+   ],
+   "knownDifference": "OxRefine stops its JSONL reader at the requested record limit; this OpenRefine release rejects the source during import setup.",
+   "referenceError": {
+    "message": "Failed to find project id #<project> - may be corrupt",
+    "status": "error"
+   }
+  },
+  {
+   "name": "punctuation in path keys",
+   "text": "{\"data.with/slash\":{\"rows,here\":[{\"field\":2}]}}",
+   "recordPath": [
+    "_",
+    "data.with/slash",
+    "rows,here",
+    "_"
+   ],
+   "columns": [
+    "_ - field"
+   ],
+   "rows": [
+    [
+     {
+      "v": 2
+     }
+    ]
+   ]
+  },
+  {
+   "name": "colliding flattened field names",
+   "text": "{\"a - b\":\"literal\",\"a\":{\"b\":\"nested\"}}",
+   "recordPath": [
+    "_"
+   ],
+   "columns": [
+    "_ - a - b",
+    "_ - a - b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "literal"
+     },
+     {
+      "v": "nested"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines colliding flattened field names",
+   "text": "{\"a - b\":\"literal\",\"a\":{\"b\":\"nested\"}}\n{\"a - b\":\"second\",\"a\":{\"b\":\"deep\"}}\n",
+   "lines": true,
+   "recordPath": [
+    "_"
+   ],
+   "legacyRecordPath": [
+    "_",
+    "_"
+   ],
+   "columns": [
+    "_ - a - b",
+    "_ - a - b"
+   ],
+   "rows": [
+    [
+     {
+      "v": "literal"
+     },
+     {
+      "v": "nested"
+     }
+    ],
+    [
+     {
+      "v": "second"
+     },
+     {
+      "v": "deep"
+     }
+    ]
+   ]
+  },
+  {
+   "name": "array record with nested subrows",
+   "text": "[{\"id\":1,\"items\":[{\"x\":\"a\"},{\"x\":\"b\"}]},{\"id\":2}]",
+   "recordPath": [
+    "_"
+   ],
+   "columns": [
+    "_ - _ - id",
+    "_ - _ - items - _ - x"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     null,
+     {
+      "v": "b"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     null
+    ]
+   ]
+  },
+  {
+   "name": "JSON Lines canonical array record",
+   "text": "[{\"id\":1,\"items\":[{\"x\":\"a\"},{\"x\":\"b\"}]},{\"id\":2}]\n",
+   "lines": true,
+   "recordPath": [
+    "_"
+   ],
+   "columns": [
+    "_ - _ - id",
+    "_ - _ - items - _ - x"
+   ],
+   "rows": [
+    [
+     {
+      "v": 1
+     },
+     {
+      "v": "a"
+     }
+    ],
+    [
+     null,
+     {
+      "v": "b"
+     }
+    ],
+    [
+     {
+      "v": 2
+     },
+     null
+    ]
+   ]
+  }
+ ]
+}

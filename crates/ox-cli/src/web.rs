@@ -60,7 +60,7 @@ pub struct Projects {
 }
 
 fn global(cmd: &str) -> bool {
-    matches!(cmd, "inspect" | "fixed_width_sample" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference")
+    matches!(cmd, "inspect" | "fixed_width_sample" | "json_paths" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference")
 }
 
 fn metadata(cmd: &str) -> bool {

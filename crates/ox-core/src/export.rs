@@ -9,6 +9,42 @@ use crate::{
 };
 use serde::Deserialize;
 use serde_json::Value as J;
+#[path = "export_encoding.rs"]
+mod encoding;
+#[path = "export_custom.rs"]
+mod custom;
+pub use custom::{DateSettings, ReconSettings};
+
+fn options(params: &J) -> J {
+    match params.get("options") {
+        Some(J::String(s)) => serde_json::from_str(s).unwrap_or(J::Null),
+        Some(o) => o.clone(),
+        None => J::Null,
+    }
+}
+
+fn tabular_options(format: &str, opts: &J) -> Result<TabularOptions> {
+    // OpenRefine skips all-null rows when the options parameter is absent; an options object
+    // defaults outputBlankRows to true. Explicit true/false keeps its own meaning.
+    let mut o: TabularOptions = if opts.is_null() { TabularOptions { output_blank_rows: false, ..TabularOptions::default() } } else { serde_json::from_value(opts.clone()).map_err(err)? };
+    match format { "csv" => o.separator = ",".into(), "tsv" => { o.separator = "\t".into(); o.raw = true; }, _ => {} }
+    Ok(o)
+}
+
+fn encoded_tabular(t: &Table, rows: &[u32], format: &str, params: &J, output: &mut dyn std::io::Write) -> Result<()> {
+    let o = tabular_options(format, &options(params))?;
+    let encoding = encoding::Encoding::parse(params)?;
+    if encoding.passthrough() { return tabular_write(t, rows, &o, output); }
+    let mut writer = encoding.writer(output)?;
+    tabular_write(t, rows, &o, &mut writer)
+}
+
+/// A decoded preview of the bytes this charset would write, with a leading transport BOM hidden.
+/// This also checks representability, so replacing a charset in the UI never produces mojibake.
+pub fn preview_text(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str) -> Result<String> {
+    let encoding = encoding::Encoding::parse(params)?;
+    encoding.decode(&export(t, rows, format, params, project_name)?)
+}
 
 /// OpenRefine's "*sv" exporter options (the Custom tabular exporter dialog).
 #[derive(Clone, Deserialize)]
@@ -34,6 +70,10 @@ impl Default for TabularOptions {
 #[derive(Clone, Deserialize)]
 pub struct ColumnChoice {
     pub name: String,
+    #[serde(default,rename="dateSettings")]
+    pub date_settings: DateSettings,
+    #[serde(default,rename="reconSettings")]
+    pub recon_settings: ReconSettings,
 }
 
 #[derive(Clone, Deserialize, Default)]
@@ -94,6 +134,16 @@ pub fn export(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &
 
 /// Export straight into a file: delimited text is written as it is made, never whole in memory.
 pub fn export_file(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str, path: &std::path::Path) -> Result<()> {
+    if matches!(format, "csv" | "tsv" | "*sv" | "custom") {
+        let encoding = encoding::Encoding::parse(params)?;
+        let o = tabular_options(format, &options(params))?;
+        columns(t, &o.columns)?;
+        custom::validate(t,&o)?;
+        // A strict legacy charset may reject a value beyond the preview's first rows. Validate
+        // the exact filtered/rendered stream before File::create can truncate an existing file.
+        if encoding.needs_preflight() { encoded_tabular(t, rows, format, params, &mut std::io::sink())?; }
+    }
+    if matches!(format,"html"|"xlsx"|"xls"|"ods") && params.get("options").is_some() { custom::validate(t,&tabular_options(format,&options(params))?)?; }
     let f = std::fs::File::create(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let mut w = std::io::BufWriter::new(f);
     export_to(t, rows, format, params, project_name, &mut w)?;
@@ -101,26 +151,10 @@ pub fn export_file(t: &Table, rows: &[u32], format: &str, params: &J, project_na
 }
 
 pub fn export_to(t: &Table, rows: &[u32], format: &str, params: &J, project_name: &str, w: &mut dyn std::io::Write) -> Result<()> {
-    let options = |p: &J| -> J {
-        match p.get("options") {
-            Some(J::String(s)) => serde_json::from_str(s).unwrap_or(J::Null),
-            Some(o) => o.clone(),
-            None => J::Null,
-        }
-    };
     let opts = options(params);
-    let tabular = |sep: &str| -> Result<TabularOptions> {
-        let mut o: TabularOptions = if opts.is_null() { TabularOptions::default() } else { serde_json::from_value(opts.clone()).map_err(err)? };
-        if !sep.is_empty() {
-            o.separator = sep.into();
-        }
-        Ok(o)
-    };
     let bytes = match format {
-        "csv" => return tabular_write(t, rows, &tabular(",")?, w),
-        "tsv" => return tabular_write(t, rows, &TabularOptions { raw: true, ..tabular("\t")? }, w),
-        "*sv" | "custom" => return tabular_write(t, rows, &tabular("")?, w),
-        "html" => html(t, rows, project_name).into_bytes(),
+        "csv" | "tsv" | "*sv" | "custom" => return encoded_tabular(t, rows, format, params, w),
+        "html" => if params.get("options").is_some() { custom_html(t,rows,project_name,&tabular_options(format,&opts)?,params)?.into_bytes() } else { html(t, rows, project_name).into_bytes() },
         "template" => {
             let o: TemplateOptions = serde_json::from_value(params.clone()).map_err(err)?;
             template(t, rows, &o)?.into_bytes()
@@ -128,6 +162,11 @@ pub fn export_to(t: &Table, rows: &[u32], format: &str, params: &J, project_name
         "sql" => {
             let o: SqlOptions = if opts.is_null() { SqlOptions::default() } else { serde_json::from_value(opts).map_err(err)? };
             sql(t, rows, &o)?.into_bytes()
+        }
+        "xlsx" | "xls" | "ods" if params.get("options").is_some() => {
+            let o=tabular_options(format,&opts)?; let projected=custom::project(t,rows,&o)?;
+            let selected=(0..projected.rows as u32).collect::<Vec<_>>();
+            match format { "xlsx"=>xlsx_options(&projected,&selected,project_name,o.output_column_headers)?,"xls"=>xls_options(&projected,&selected,project_name,o.output_column_headers)?,_=>ods_options(&projected,&selected,project_name,o.output_column_headers)? }
         }
         "xlsx" => xlsx(t, rows, project_name)?,
         "xls" => xls(t, rows, project_name)?,
@@ -173,17 +212,19 @@ pub fn tabular_text(t: &Table, rows: &[u32], o: &TabularOptions) -> Result<Strin
 }
 
 fn tabular_write(t: &Table, rows: &[u32], o: &TabularOptions, w: &mut dyn std::io::Write) -> Result<()> {
+    custom::validate(t,o)?;
     let cols = columns(t, &o.columns)?;
     // what the grid shows, trimmed like OpenRefine does; (quoted text, blank)
-    let render = |v: &Value| {
-        let s = java_strip(&v.display()).to_string();
-        let blank = s.is_empty();
+    let render = |v: &Value, recon: Option<&crate::recon::Recon>, choice: Option<&ColumnChoice>| {
+        let value=if choice.is_some() { std::borrow::Cow::Owned(custom::value(v,recon,choice,false)) } else { std::borrow::Cow::Borrowed(v) };
+        let s = java_strip(&value.display()).to_string();
+        let blank = value.is_null();
         (quote(&s, o), blank)
     };
     // render each distinct value once per column when values repeat; columns of mostly unique values
     // (and previews of a few rows) are rendered row by row instead of keeping every value's text
     let text: Vec<Option<Vec<(String, bool)>>> =
-        cols.iter().map(|&c| (rows.len() >= 2 * t.columns[c].dict.len()).then(|| t.columns[c].dict.iter().map(render).collect())).collect();
+        cols.iter().enumerate().map(|(slot,&c)| (t.columns[c].recon.is_none() && rows.len() >= 2 * t.columns[c].dict.len()).then(|| t.columns[c].dict.iter().map(|v|render(v,None,o.columns.get(slot))).collect())).collect();
     let mut out = String::new();
     if o.output_column_headers {
         out += &cols.iter().map(|&c| quote(&t.names[c], o)).collect::<Vec<_>>().join(&o.separator);
@@ -192,16 +233,19 @@ fn tabular_write(t: &Table, rows: &[u32], o: &TabularOptions, w: &mut dyn std::i
     let mut cells: Vec<std::borrow::Cow<(String, bool)>> = Vec::with_capacity(cols.len());
     for &r in rows {
         cells.clear();
-        cells.extend(cols.iter().zip(&text).map(|(&c, txt)| {
+        cells.extend(cols.iter().zip(&text).enumerate().map(|(slot,(&c, txt))| {
             let code = t.columns[c].codes[r as usize] as usize;
             match txt {
                 Some(txt) => std::borrow::Cow::Borrowed(&txt[code]),
-                None => std::borrow::Cow::Owned(render(&t.columns[c].dict[code])),
+                None => std::borrow::Cow::Owned(render(&t.columns[c].dict[code],t.columns[c].recon(r as usize).map(|r|r.as_ref()),o.columns.get(slot))),
             }
         }));
         if !o.output_blank_rows && cells.iter().all(|c| c.1) {
             continue;
         }
+        // Univocity suppresses an empty physical line, even when outputBlankRows includes
+        // null cells. Delimited rows and quoteAll's quoted empty cell are still written.
+        if cells.len()==1 && cells[0].0.is_empty() { continue; }
         for (i, c) in cells.iter().enumerate() {
             if i > 0 {
                 out += &o.separator;
@@ -237,6 +281,24 @@ fn html(t: &Table, rows: &[u32], name: &str) -> String {
         out += "</tr>\n";
     }
     out + "</table>\n</body>\n</html>\n"
+}
+
+fn custom_html(t: &Table, rows: &[u32], name: &str, o: &TabularOptions, params: &J) -> Result<String> {
+    custom::validate(t,o)?; let cols=columns(t,&o.columns)?;
+    let mut out=format!("<html>\n<head>\n<title>{}</title>\n<meta charset=\"utf-8\" />\n</head>\n<body>\n<table>\n",escape(name));
+    if o.output_column_headers { out+="<tr>"; for &ci in &cols { out+=&format!("<th>{}</th>",escape(&t.names[ci])); } out+="</tr>\n"; }
+    for &row in rows {
+        let values=cols.iter().enumerate().map(|(slot,&ci)|custom::value(t.columns[ci].get(row as usize),t.columns[ci].recon(row as usize).map(|r|r.as_ref()),o.columns.get(slot),false)).collect::<Vec<_>>();
+        if !o.output_blank_rows && values.iter().all(Value::is_null) { continue; }
+        out+="<tr>";
+        for ((slot,&ci),value) in cols.iter().enumerate().zip(values) {
+            let text=escape(&value.display());
+            let cell=if !value.is_null() { custom::link(t,ci,row as usize,o.columns.get(slot),params).map(|url|format!("<a href=\"{}\">{text}</a>",escape(&url))).unwrap_or(text) } else { String::new() };
+            out+=&format!("<td>{cell}</td>");
+        }
+        out+="</tr>\n";
+    }
+    Ok(out+"</table>\n</body>\n</html>\n")
 }
 
 enum Piece {
@@ -343,16 +405,19 @@ pub fn sql(t: &Table, rows: &[u32], o: &SqlOptions) -> Result<String> {
 }
 
 pub fn xlsx(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
+    xlsx_options(t,rows,name,true)
+}
+fn xlsx_options(t: &Table, rows: &[u32], name: &str, headers: bool) -> Result<Vec<u8>> {
     use rust_xlsxwriter::{ExcelDateTime, Format, Workbook};
     let mut wb = Workbook::new();
     let date_fmt = Format::new().set_num_format("yyyy-mm-dd hh:mm:ss");
     let ws = wb.add_worksheet();
     ws.set_name(sheet_name(name)).map_err(err)?;
-    for (c, n) in t.names.iter().enumerate() {
+    for (c, n) in t.names.iter().enumerate().filter(|_|headers) {
         ws.write_string(0, c as u16, n).map_err(err)?;
     }
     for (i, &r) in rows.iter().enumerate() {
-        let row = i as u32 + 1;
+        let row = i as u32 + u32::from(headers);
         for (c, col) in t.columns.iter().enumerate() {
             let c = c as u16;
             match col.get(r as usize) {
@@ -363,7 +428,7 @@ pub fn xlsx(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
                 Value::Date(d) => {
                     use chrono::{Datelike, Timelike};
                     let dt = ExcelDateTime::from_ymd(d.year() as u16, d.month() as u8, d.day() as u8)
-                        .and_then(|x| x.and_hms(d.hour() as u16, d.minute() as u8, d.second() as f64))
+                        .and_then(|x| x.and_hms(d.hour() as u16, d.minute() as u8, d.second() as f64 + d.nanosecond() as f64 / 1e9))
                         .map_err(err)?;
                     ws.write_datetime_with_format(row, c, &dt, &date_fmt).map_err(err)?;
                 }
@@ -385,10 +450,13 @@ fn sheet_name(name: &str) -> String {
 /// as text, cut at Excel's 32,767 characters; blank cells stay empty. A sheet holds at most 65,536 rows
 /// and 256 columns.
 pub fn xls(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
+    xls_options(t,rows,name,true)
+}
+fn xls_options(t: &Table, rows: &[u32], name: &str, headers: bool) -> Result<Vec<u8>> {
     use std::io::Write;
     const MAX_ROWS: usize = 65_536;
-    if rows.len() + 1 > MAX_ROWS {
-        return Err(format!("an Excel 97 sheet holds at most {MAX_ROWS} rows; this export has {} with the header. Use .xlsx", rows.len() + 1));
+    if rows.len() + usize::from(headers) > MAX_ROWS {
+        return Err(format!("an Excel 97 sheet holds at most {MAX_ROWS} rows; this export has {} including its headers. Use .xlsx", rows.len() + usize::from(headers)));
     }
     if t.names.len() > 256 {
         return Err(format!("an Excel 97 sheet holds at most 256 columns; this table has {}. Use .xlsx", t.names.len()));
@@ -413,12 +481,12 @@ pub fn xls(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
         Cell::Text(i)
     };
     let mut cells: Vec<(u16, u16, Cell)> = vec![];
-    for (c, n) in t.names.iter().enumerate() {
+    for (c, n) in t.names.iter().enumerate().filter(|_|headers) {
         cells.push((0, c as u16, text(n.clone())));
     }
     let epoch = chrono::NaiveDate::from_ymd_opt(1899, 12, 30).unwrap().and_hms_opt(0, 0, 0).unwrap();
     for (i, &r) in rows.iter().enumerate() {
-        let row = (i + 1) as u16;
+        let row = (i + usize::from(headers)) as u16;
         for (c, col) in t.columns.iter().enumerate() {
             let cell = match col.get(r as usize) {
                 Value::Null => continue,
@@ -524,7 +592,7 @@ pub fn xls(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
     let at = wb.len() as u32;
     wb[boundsheet_at..boundsheet_at + 4].copy_from_slice(&at.to_le_bytes());
     record(&mut wb, 0x0809, &bof(0x0010));
-    let mut dims = ((rows.len() + 1) as u32).to_le_bytes().to_vec();
+    let mut dims = ((rows.len() + usize::from(headers)) as u32).to_le_bytes().to_vec();
     dims.splice(0..0, 0u32.to_le_bytes());
     dims.extend_from_slice(&u16s(&[0, t.names.len() as u16, 0]));
     record(&mut wb, 0x0200, &dims); // DIMENSIONS
@@ -556,6 +624,9 @@ fn xml_escape(s: &str) -> String {
 /// OpenRefine's ODS export: one sheet named after the project, a header row, then text, numbers
 /// (floats), booleans and dates as typed cells; blank cells stay empty.
 pub fn ods(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
+    ods_options(t,rows,name,true)
+}
+fn ods_options(t: &Table, rows: &[u32], name: &str, headers: bool) -> Result<Vec<u8>> {
     use std::io::Write;
     let cell = |v: &Value| -> String {
         match v {
@@ -567,7 +638,7 @@ pub fn ods(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
             }
             Value::Bool(b) => format!("<table:table-cell office:value-type=\"boolean\" office:boolean-value=\"{b}\"><text:p>{b}</text:p></table:table-cell>"),
             Value::Date(d) => {
-                let s = if d.time() == chrono::NaiveTime::MIN { d.format("%Y-%m-%d").to_string() } else { d.format("%Y-%m-%dT%H:%M:%S").to_string() };
+                let s = if d.time() == chrono::NaiveTime::MIN { d.format("%Y-%m-%d").to_string() } else { d.format("%Y-%m-%dT%H:%M:%S%.3f").to_string() };
                 format!("<table:table-cell office:value-type=\"date\" office:date-value=\"{s}\"><text:p>{s}</text:p></table:table-cell>")
             }
             v => {
@@ -578,11 +649,11 @@ pub fn ods(t: &Table, rows: &[u32], name: &str) -> Result<Vec<u8>> {
     };
     let sheet = if name.trim().is_empty() { "Sheet1".to_string() } else { xml_escape(name) };
     let mut body = format!("<table:table table:name=\"{sheet}\"><table:table-column table:number-columns-repeated=\"{}\"/>", t.names.len().max(1));
-    body += "<table:table-row>";
-    for n in &t.names {
-        body += &cell(&Value::Str(n.clone()));
+    if headers {
+        body += "<table:table-row>";
+        for n in &t.names { body += &cell(&Value::Str(n.clone())); }
+        body += "</table:table-row>";
     }
-    body += "</table:table-row>";
     for &r in rows {
         body += "<table:table-row>";
         for c in &t.columns {

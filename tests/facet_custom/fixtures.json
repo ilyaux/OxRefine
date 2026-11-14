@@ -1,0 +1,3546 @@
+{
+ "openrefine": "3.10.1",
+ "reportedVersion": {
+  "version": "3.10-SNAPSHOT",
+  "revision": "TRUNK",
+  "full_version": "3.10-SNAPSHOT [TRUNK]",
+  "full_name": "OpenRefine 3.10-SNAPSHOT [TRUNK]",
+  "java_vm_name": "OpenJDK 64-Bit Server VM",
+  "java_vm_version": "11.0.30+7",
+  "java_runtime_name": "OpenJDK Runtime Environment",
+  "java_runtime_version": "11.0.30+7",
+  "display_new_version_notice": "true",
+  "module_names": [
+   "core",
+   "database",
+   "jython",
+   "pc-axis",
+   "wikidata"
+  ]
+ },
+ "release": {
+  "url": "https://github.com/OpenRefine/OpenRefine/releases/download/3.10.1/openrefine-win-with-java-3.10.1.zip",
+  "sha256": "6155b20a8103244a26a8f21d41698ee52251538a838e3d5f2d5af507c8b6f3c8",
+  "artifacts": {
+   "webapp/WEB-INF/lib/openrefine-main.jar": "b1bee728e85b4aa44967427707ecdb501a6b4aa3d87608ba7b29115c858f0957",
+   "webapp/WEB-INF/lib/grel-3.10.1.jar": "7158cd697ab4f6b43e21af7484a9eba1a8ac355759b3267d7f6ec9018f39e8dd",
+   "webapp/WEB-INF/lib/core-3.10.1.jar": "a135638474451a220705560624e5c6a0720840edc9d7150b29132a30a3e3ac38",
+   "server/target/lib/openrefine-3.10.1-server.jar": "5906b7db2ad82332cb9295490759b189adf5ef79939cb14b02878aff2903aece"
+  }
+ },
+ "source": "https://github.com/OpenRefine/OpenRefine/blob/3.10.1/main/webapp/modules/core/scripts/views/data-table/menu-facets.js",
+ "menuSha256": "96af8148597c8fcbec141a5b542c36f09e872937e09a54b915539cb2ea2cb2ab",
+ "corpus": "id,v,gate\nA,-10,keep\n,0,drop\nB,0.1,keep\n,1,keep\nC,10,drop\n,100,keep\nD,alpha,keep\n,,drop\nE,empty,keep\n, ,keep\nF,é😀,drop\n,bad,keep\nG,true,keep\n,date,drop\nH,10,keep\n",
+ "ops": [
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "v",
+   "expression": "grel:if(rowIndex == 8, '', if(rowIndex == 12, true, if(rowIndex == 13, '2024-01-01'.toDate(), if(or(rowIndex < 6, rowIndex == 11), value.toNumber(), value))))",
+   "onError": "store-error",
+   "repeat": false,
+   "repeatCount": 10
+  }
+ ],
+ "table": {
+  "columns": [
+   "id",
+   "v",
+   "gate"
+  ],
+  "rows": [
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "A"
+     },
+     {
+      "v": -10
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "v": 0
+     },
+     {
+      "v": "drop"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "B"
+     },
+     {
+      "v": 0.1
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "v": 1
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "C"
+     },
+     {
+      "v": 10
+     },
+     {
+      "v": "drop"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "v": 100
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "D"
+     },
+     {
+      "v": "alpha"
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     null,
+     {
+      "v": "drop"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "E"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "v": " "
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "F"
+     },
+     {
+      "v": "é😀"
+     },
+     {
+      "v": "drop"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "e": "Unable to parse as number"
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "G"
+     },
+     {
+      "v": true
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     null,
+     {
+      "v": "2024-01-01T00:00:00Z",
+      "t": "date"
+     },
+     {
+      "v": "drop"
+     }
+    ]
+   },
+   {
+    "starred": false,
+    "flagged": false,
+    "cells": [
+     {
+      "v": "H"
+     },
+     {
+      "v": "10"
+     },
+     {
+      "v": "keep"
+     }
+    ]
+   }
+  ]
+ },
+ "presets": [
+  {
+   "label": "Numeric log facet",
+   "type": "range",
+   "expression": "value.log()",
+   "preview": [
+    "NaN",
+    "-Infinity",
+    "-1",
+    "0",
+    "1",
+    "2",
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    },
+    {
+     "message": "log expects a number"
+    }
+   ]
+  },
+  {
+   "label": "1-bounded numeric log facet",
+   "type": "range",
+   "expression": "log(max(1, value))",
+   "preview": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "1",
+    "2",
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "Unable to parse as number"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    },
+    {
+     "message": "max expects two numbers"
+    }
+   ]
+  },
+  {
+   "label": "Log of text length facet",
+   "type": "range",
+   "expression": "value.length().log()",
+   "preview": [
+    "0.47712125471966244",
+    "0",
+    "0.47712125471966244",
+    "0",
+    "0.3010299956639812",
+    "0.47712125471966244",
+    "0.6989700043360189",
+    {
+     "message": "length expects an array or a string"
+    },
+    "-Infinity",
+    "0",
+    "0.47712125471966244",
+    {
+     "message": "Unable to parse as number"
+    },
+    "0.6020599913279624",
+    "1.2304489213782739",
+    "0.3010299956639812"
+   ]
+  },
+  {
+   "label": "Facet by null",
+   "type": "list",
+   "expression": "isNull(value)",
+   "preview": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "label": "Facet by empty string",
+   "type": "list",
+   "expression": "isEmptyString(value)",
+   "preview": [
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "true",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false",
+    "false"
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "name": "Numeric log facet: all rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.log()",
+      "from": -1.7976931348623157e+308,
+      "to": 1.7976931348623157e+308,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 4,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 11,
+     "numericCount": 4,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 11,
+     "name": "v",
+     "columnName": "v",
+     "from": -1,
+     "max": 2.02,
+     "min": -1,
+     "baseBins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 2.02,
+     "expression": "value.log()",
+     "bins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 15
+  },
+  {
+   "name": "Numeric log facet: selected rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.log()",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 4,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 11,
+     "numericCount": 3,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 7,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 2.02,
+     "min": -1,
+     "baseBins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "value.log()",
+     "bins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    3
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "Numeric log facet: selected records",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.log()",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 2,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 6,
+     "numericCount": 2,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 6,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 2.02,
+     "min": -1,
+     "baseBins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "value.log()",
+     "bins": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 2,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    2,
+    3
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "1-bounded numeric log facet: all rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "log(max(1, value))",
+      "from": -1.7976931348623157e+308,
+      "to": 1.7976931348623157e+308,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 6,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 9,
+     "numericCount": 6,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 9,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 2.02,
+     "min": 0,
+     "baseBins": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 2.02,
+     "expression": "log(max(1, value))",
+     "bins": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 15
+  },
+  {
+   "name": "1-bounded numeric log facet: selected rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "log(max(1, value))",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 6,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 9,
+     "numericCount": 4,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 6,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 2.02,
+     "min": 0,
+     "baseBins": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "log(max(1, value))",
+     "bins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 3,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    2,
+    3
+   ],
+   "filtered": 3
+  },
+  {
+   "name": "1-bounded numeric log facet: selected records",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "log(max(1, value))",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 3,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 5,
+     "numericCount": 3,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 5,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 2.02,
+     "min": 0,
+     "baseBins": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "log(max(1, value))",
+     "bins": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 3,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "filtered": 2
+  },
+  {
+   "name": "Log of text length facet: all rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.length().log()",
+      "from": -1.7976931348623157e+308,
+      "to": 1.7976931348623157e+308,
+      "selectNumeric": true,
+      "selectNonNumeric": true,
+      "selectBlank": true,
+      "selectError": true
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 12,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 3,
+     "numericCount": 12,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 3,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 1.24,
+     "min": 0,
+     "baseBins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1.24,
+     "expression": "value.length().log()",
+     "bins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 15
+  },
+  {
+   "name": "Log of text length facet: selected rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.length().log()",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 12,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 3,
+     "numericCount": 8,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 2,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 1.24,
+     "min": 0,
+     "baseBins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "value.length().log()",
+     "bins": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 3,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 8,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    2,
+    3,
+    5,
+    6,
+    9,
+    12,
+    14
+   ],
+   "filtered": 8
+  },
+  {
+   "name": "Log of text length facet: selected records",
+   "engine": {
+    "facets": [
+     {
+      "type": "range",
+      "name": "v",
+      "columnName": "v",
+      "expression": "value.length().log()",
+      "from": 0,
+      "to": 1,
+      "selectNumeric": true,
+      "selectNonNumeric": false,
+      "selectBlank": false,
+      "selectError": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "baseNumericCount": 8,
+     "baseNonNumericCount": 0,
+     "baseBlankCount": 0,
+     "baseErrorCount": 3,
+     "numericCount": 8,
+     "nonNumericCount": 0,
+     "blankCount": 0,
+     "errorCount": 3,
+     "name": "v",
+     "columnName": "v",
+     "from": 0,
+     "max": 1.24,
+     "min": 0,
+     "baseBins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "to": 1,
+     "expression": "value.length().log()",
+     "bins": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+     ],
+     "step": 0.02
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 5,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 10,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 8
+  },
+  {
+   "name": "Facet by null: all rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isNull(value)",
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isNull(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 14,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 15
+  },
+  {
+   "name": "Facet by null: selected rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isNull(value)",
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isNull(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 10,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 0,
+       "s": true
+      }
+     ]
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 0,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [],
+   "filtered": 0
+  },
+  {
+   "name": "Facet by null: selected records",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isNull(value)",
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isNull(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 14,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "drop",
+        "l": "drop"
+       },
+       "c": 1,
+       "s": false
+      },
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    6,
+    7
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "Facet by empty string: all rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isEmptyString(value)",
+      "selection": [],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isEmptyString(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 14,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 1,
+       "s": false
+      }
+     ]
+    }
+   ],
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "filtered": 15
+  },
+  {
+   "name": "Facet by empty string: selected rows",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isEmptyString(value)",
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isEmptyString(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 9,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    8
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "Facet by empty string: selected records",
+   "engine": {
+    "facets": [
+     {
+      "type": "list",
+      "name": "v",
+      "columnName": "v",
+      "expression": "isEmptyString(value)",
+      "selection": [
+       {
+        "v": {
+         "v": true,
+         "l": "true"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     },
+     {
+      "type": "list",
+      "name": "gate",
+      "columnName": "gate",
+      "expression": "value",
+      "selection": [
+       {
+        "v": {
+         "v": "keep",
+         "l": "keep"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facets": [
+    {
+     "name": "v",
+     "columnName": "v",
+     "expression": "isEmptyString(value)",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": false,
+        "l": "false"
+       },
+       "c": 14,
+       "s": false
+      },
+      {
+       "v": {
+        "v": true,
+        "l": "true"
+       },
+       "c": 1,
+       "s": true
+      }
+     ]
+    },
+    {
+     "name": "gate",
+     "columnName": "gate",
+     "expression": "value",
+     "invert": false,
+     "choices": [
+      {
+       "v": {
+        "v": "keep",
+        "l": "keep"
+       },
+       "c": 2,
+       "s": true
+      }
+     ]
+    }
+   ],
+   "matching": [
+    8,
+    9
+   ],
+   "filtered": 1
+  }
+ ]
+}

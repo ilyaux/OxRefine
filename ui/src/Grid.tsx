@@ -91,8 +91,13 @@ export const COMMON: [string, string][] = [
 export const PRESETS: [string, "list" | "range", string][] = [
   ["Word facet", "list", "value.split(' ')"],
   ["Duplicates facet", "list", "facetCount(value, 'value', $COL) > 1"],
+  ["Numeric log facet", "range", "value.log()"],
+  ["1-bounded numeric log facet", "range", "log(max(1, value))"],
   ["Text length facet", "range", "value.length()"],
+  ["Log of text length facet", "range", "value.length().log()"],
   ["Unicode char-code facet", "range", "value.unicode()"],
+  ["Facet by null", "list", "isNull(value)"],
+  ["Facet by empty string", "list", "isEmptyString(value)"],
   ["Facet by blank", "list", "isBlank(value)"],
   ["Facet by error", "list", "isError(value)"],
   ["Facet by star", "list", "row.starred"],

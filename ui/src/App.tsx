@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
 import { call, isProjectArchive, listFacet, onProjectConflict, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, HistoryView, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
@@ -10,6 +10,9 @@ import { Preferences } from "@/Preferences"
 import { ExportDialog, type ExportKind } from "@/ExportDialog"
 import { ImportDialog } from "@/ImportDialog"
 import { Jobs } from "@/Jobs"
+import { useFileDrop } from "@/useFileDrop"
+import { prepareDroppedImport, type DroppedSource } from "@/fileDrop"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { ProcessMemory, useProcessMemory } from "@/ProcessMemory"
 import { Facets, History } from "@/Sidebar"
 import { Bar, BarCell, BrandCell, CellButton, CellLink, Crumbs, ProjectName, Spacer, StateDot, StatusBar, StatusCell } from "@/components/instrument"
@@ -28,6 +31,7 @@ import pkg from "../package.json"
 import { Palette } from "@/Palette"
 
 type Modal =
+  | { kind: "drop-archive"; path: string; name?: string }
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "reconcile" | "recon-values"; column: string }
@@ -56,7 +60,7 @@ function chip(f: Facet): string | null {
   const all = f.from <= -Number.MAX_VALUE && f.to >= Number.MAX_VALUE
   const kinds = f.type === "range" ? f.selectNumeric && f.selectNonNumeric && f.selectBlank && f.selectError : f.selectTime && f.selectNonTime && f.selectBlank && f.selectError
   if (all && kinds) return null
-  const range = all ? "" : f.type === "range" ? ` ∈ [${num(f.from)}, ${num(f.to)}]` : ` ∈ [${day(f.from)}, ${day(f.to)}]`
+  const range = all ? "" : f.type === "range" ? ` ∈ [${num(f.from)}, ${num(f.to)})` : ` ∈ [${day(f.from)}, ${day(f.to)}]`
   return `${f.columnName}${range}${kinds ? "" : " (some kinds)"}`
 }
 
@@ -79,6 +83,10 @@ const fail = (e: unknown) => {
 export function App() {
   const memory = useProcessMemory()
   const [summary, setSummary] = useState<Summary | null>(null)
+  const [sessionReady, setSessionReady] = useState(false)
+  const [opening, setOpening] = useState(0)
+  const openingCount = useRef(0)
+  const [prefsOpen, setPrefsOpen] = useState(false)
   const [refreshSerial, setRefreshSerial] = useState(0)
   const [facets, setFacets] = useState<Facet[]>([])
   const [mode, setMode] = useState<Engine["mode"]>("row-based")
@@ -97,21 +105,43 @@ export function App() {
   const [selected, setSelected] = useState<SelectedCell | null>(null)
   // the column the command palette works on: the one last used in the grid
   const [focusCol, setFocusCol] = useState<string | null>(null)
+  const dropEnabled = sessionReady && !opening && !summary && !modal && !staged && !palette && !prefsOpen
+  const drop = useFileDrop({ enabled: dropEnabled, onDrop: prepareDrop, onError: fail })
+  const { cancel: cancelDrop } = drop
+  const trackOpening = useCallback(() => {
+    openingCount.current++
+    setOpening((n) => n + 1)
+    return () => { openingCount.current--; setOpening((n) => n - 1) }
+  }, [])
+  const selectionAllowed = useCallback(() => {
+    if (sessionReady && !openingCount.current) return true
+    toast.add({ title: "Project view is busy", description: "Wait for the current project operation to finish. You can cancel supported operations from Jobs." })
+    return false
+  }, [sessionReady])
+  const selectionBusy = () => Object.assign(new Error("Wait for the current project operation to finish."), { name: "ProjectContextChanged" })
 
   const engine: Engine = useMemo(() => ({ facets, mode }), [facets, mode])
   const version = `${summary?.id}:${summary?.name}:${summary?.cursor}:${summary?.history.length}:${refreshSerial}:${JSON.stringify(engine)}`
 
   const run = useCallback(async (what: string, cmd: string, args: object = {}) => {
-    const { data, ms } = await call<Summary>(cmd, args)
-    setSummary(data)
-    setLastMs({ what, ms })
-    // facets on columns that no longer exist would make every request fail
-    setFacets((fs) => fs.filter((f) => data.columns.includes(f.columnName)))
-  }, [])
+    const selecting = ["open", "open_project"].includes(cmd)
+    if (selecting && !selectionAllowed()) throw selectionBusy()
+    cancelDrop()
+    const finished = selecting ? trackOpening() : undefined
+    try {
+      const { data, ms } = await call<Summary>(cmd, args)
+      setSummary(data)
+      setLastMs({ what, ms })
+      // facets on columns that no longer exist would make every request fail
+      setFacets((fs) => fs.filter((f) => data.columns.includes(f.columnName)))
+    } finally { finished?.() }
+  }, [cancelDrop, selectionAllowed, trackOpening])
 
   useEffect(() => {
-    call<Summary>("summary").then(({ data }) => setSummary(data), () => {})
+    let live = true
+    call<Summary>("summary").then(({ data }) => { if (live) setSummary(data) }, () => {}).finally(() => { if (live) setSessionReady(true) })
     checkForUpdates()
+    return () => { live = false }
   }, [])
 
   useEffect(() => {
@@ -120,6 +150,8 @@ export function App() {
     const off = onProjectConflict((message) => {
       if (refreshing) return
       refreshing = true
+      cancelDrop()
+      const finished = trackOpening()
       setModal(null)
       setStaged(null)
       setPalette(false)
@@ -139,13 +171,12 @@ export function App() {
           setSummary(null)
           toast.add({ title: "Project unavailable", description: message, type: "warning" })
         },
-      ).finally(() => { refreshing = false })
+      ).finally(() => { refreshing = false; finished() })
     })
     return () => { live = false; off() }
-  }, [])
+  }, [cancelDrop, trackOpening])
 
   const [prefsChanged, setPrefsChanged] = useState(0)
-  const [prefsOpen, setPrefsOpen] = useState(false)
   useEffect(() => {
     if (summary) call<FacetData[]>("facets", { engine }).then(({ data }) => setFacetData({ facets: engine.facets, data }), fail)
   }, [summary, engine, prefsChanged])
@@ -158,6 +189,8 @@ export function App() {
   // Desktop: native dialogs. Browser (`ox serve`): open a path on the server or upload a file from this
   // computer; files to save are written on the server and downloaded.
   const withPath = async (kind: string, title: string, then: (p: string) => Promise<void>) => {
+    if (!selectionAllowed()) return
+    cancelDrop()
     const p = await pickFile(kind)
     if (p) return then(p).catch(fail)
     if (p !== undefined) return
@@ -174,18 +207,31 @@ export function App() {
     })
   }
   const importProject = async (path: string) => {
-    setFacets([])
-    const { data, ms } = await call<Summary & { report: ImportReport }>("import_project", { path })
-    setSummary(data)
-    setLastMs({ what: "import", ms })
-    const r = data.report
-    const notes = [
-      r.merged && `${r.merged > 1 ? `The first ${r.merged} steps were` : "The first step was"} merged into the starting data and can't be undone.`,
-      r.dropped && `${r.dropped} undone step${r.dropped > 1 ? "s were" : " was"} left out.`,
-      r.reason && (data.archiveWarning ? "The full history remains available in the preserved original archive." : `Reason: ${r.reason}.`),
-      ...(r.warnings ?? []).filter((warning) => warning !== data.archiveWarning),
-    ].filter(Boolean)
-    if (notes.length) toast.add({ title: r.merged || r.dropped ? "Opened with part of its history" : "Additional project data preserved", description: notes.join(" "), type: "warning", timeout: 0 })
+    if (!selectionAllowed()) throw selectionBusy()
+    cancelDrop()
+    const finished = trackOpening()
+    try {
+      setFacets([])
+      const { data, ms } = await call<Summary & { report: ImportReport }>("import_project", { path })
+      setSummary(data)
+      setLastMs({ what: "import", ms })
+      const r = data.report
+      const notes = [
+        r.merged && `${r.merged > 1 ? `The first ${r.merged} steps were` : "The first step was"} merged into the starting data and can't be undone.`,
+        r.dropped && `${r.dropped} undone step${r.dropped > 1 ? "s were" : " was"} left out.`,
+        r.reason && (data.archiveWarning ? "The full history remains available in the preserved original archive." : `Reason: ${r.reason}.`),
+        ...(r.warnings ?? []).filter((warning) => warning !== data.archiveWarning),
+      ].filter(Boolean)
+      if (notes.length) toast.add({ title: r.merged || r.dropped ? "Opened with part of its history" : "Additional project data preserved", description: notes.join(" "), type: "warning", timeout: 0 })
+    } finally { finished() }
+  }
+  async function prepareDrop(source: DroppedSource, current: () => boolean) {
+    await prepareDroppedImport(source, current, {
+      upload,
+      inspect: (path) => call<{ format: string }>("inspect", { path }).then(({ data }) => data),
+      stage: setStaged,
+      confirmArchive: (archive) => setModal({ kind: "drop-archive", ...archive }),
+    })
   }
   // an OpenRefine project opens with its history; anything else goes through the import wizard
   const openFile = () =>
@@ -203,7 +249,9 @@ export function App() {
     })
   const exportProject = () => exportArchive(false)
   const exportOriginalProject = () => exportArchive(true)
-  const pasteData = () =>
+  const pasteData = () => {
+    if (!selectionAllowed()) return
+    cancelDrop()
     setModal({
       kind: "ask",
       title: "Paste data",
@@ -211,18 +259,29 @@ export function App() {
       multiline: true,
       onSubmit: (text) => call<Staged>("paste", { text }).then(({ data }) => setStaged(data), fail),
     })
-  const fromUrl = () =>
+  }
+  const fromUrl = () => {
+    if (!selectionAllowed()) return
+    cancelDrop()
     setModal({
       kind: "ask",
       title: "Import from a web address",
       label: "URL of a CSV, TSV, Excel, OpenDocument or JSON file",
       onSubmit: (url) => call<Staged>("fetch_url", { url: url.trim() }).then(({ data }) => setStaged(data), fail),
     })
+  }
   const openProject = (id: string) => {
+    cancelDrop()
     setFacets([])
     run("open", "open_project", { id }).catch(fail)
   }
-  const goHome = () => call("close").then(() => setSummary(null), fail)
+  const goHome = async () => {
+    if (!selectionAllowed()) return
+    cancelDrop()
+    const finished = trackOpening()
+    try { await call("close").then(() => setSummary(null), fail) }
+    finally { finished() }
+  }
   const renameProject = (p: { id: string; name: string }, done: () => void) =>
     setModal({
       kind: "ask",
@@ -617,7 +676,7 @@ export function App() {
               </div>
             </>
           ) : (
-            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} />
+            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} drop={{ dragging: drop.dragging, busy: drop.busy, enabled: dropEnabled }} onInteraction={cancelDrop} />
           )}
 
           <StatusBar>
@@ -691,6 +750,18 @@ export function App() {
           ]}
         />
         {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+        <AlertDialog open={modal?.kind === "drop-archive"} onOpenChange={(open) => !open && setModal((current) => current?.kind === "drop-archive" ? null : current)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Open this OpenRefine project?</AlertDialogTitle>
+              <AlertDialogDescription><span className="break-all">{modal?.kind === "drop-archive" && modal.name}</span> will open as a new project with its saved data and history.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => { if (modal?.kind === "drop-archive") { const path = modal.path; setModal(null); void importProject(path).catch(fail) } }}>Open project</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
         {prefsOpen && <Preferences onClose={() => setPrefsOpen(false)} onError={fail} onChanged={() => setPrefsChanged((k) => k + 1)} />}
         {staged && (
           <ImportDialog

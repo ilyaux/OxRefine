@@ -364,6 +364,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     match cmd {
         "inspect" => return import::inspect(Path::new(&a.path)),
         "fixed_width_sample" => return import::fixed_width_sample(Path::new(&a.path), &a.options),
+        "json_paths" => return import::json_paths(Path::new(&a.path), a.format.as_deref(), &a.options),
         // Clipboard and Web Addresses: stage the data as a file, then the usual import wizard runs on it
         "paste" => {
             let path = import::stage_text(&import::staging_dir(store.map(|s| s.root())), &a.text)?;
@@ -591,12 +592,21 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "export" => {
             let rows = p.rows(&a.engine)?;
             let format = a.format.as_deref().unwrap_or_else(|| crate::export::format_for(&a.path));
+            let mut params = a.params;
+            if let Some(services) = store.map(Store::preferences).and_then(|prefs| prefs.get("reconciliation.standardServices").cloned()) {
+                if params.is_null() { params = json!({}); }
+                if let Some(object) = params.as_object_mut() { object.insert("reconciliationServices".into(), services); }
+            }
             if a.path.is_empty() {
                 let rows = &rows[..rows.len().min(if a.limit == 0 { usize::MAX } else { a.limit })];
-                let bytes = crate::export::export(p.table(), rows, format, &a.params, &p.name)?;
-                json!(String::from_utf8_lossy(&bytes))
+                if matches!(format, "csv" | "tsv" | "*sv" | "custom") {
+                    json!(crate::export::preview_text(p.table(), rows, format, &params, &p.name)?)
+                } else {
+                    let bytes = crate::export::export(p.table(), rows, format, &params, &p.name)?;
+                    json!(String::from_utf8_lossy(&bytes))
+                }
             } else {
-                crate::export::export_file(p.table(), &rows, format, &a.params, &p.name, Path::new(&a.path))?;
+                crate::export::export_file(p.table(), &rows, format, &params, &p.name, Path::new(&a.path))?;
                 json!(rows.len())
             }
         }

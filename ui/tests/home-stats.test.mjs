@@ -34,7 +34,7 @@ function home() {
   })
   function render() {
     cursor = 0
-    view = exports.Home({ onError(e) { throw e } })
+    view = exports.Home({ onError(e) { throw e }, drop: { dragging: false, busy: false, enabled: true }, onInteraction() {} })
     effects.splice(0).forEach((f) => f())
     return view
   }

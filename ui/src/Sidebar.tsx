@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { cn, maxOf } from "@/lib/utils"
+import { HistogramRange } from "@/HistogramRange"
 
 const SHOWN = 200
 const fmt = (n: number) => (Math.abs(n) >= 1e6 || (n !== 0 && Math.abs(n) < 1e-3) ? n.toExponential(2) : Number(n.toFixed(6)).toLocaleString())
@@ -252,31 +253,6 @@ function ListChoices({ facet, data, onChange, onEdit }: { facet: ListFacet; data
   )
 }
 
-/** A histogram over an ink baseline: counts inside the facet's range in the data colour, the rest grey. */
-function Histogram({ label, bins, baseBins, inside, ticks }: { label: string; bins: number[]; baseBins: number[]; inside: (i: number) => boolean; ticks: string[] }) {
-  const top = maxOf(baseBins, 1)
-  const w = 100 / baseBins.length
-  const gap = Math.min(0.3, w / 4)
-  return (
-    <div className="px-3.5">
-      <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="block h-12 w-full" role="img" aria-label={label}>
-        {baseBins.map((c, i) => (
-          <g key={i}>
-            <rect x={i * w + gap / 2} y={40 - (c / top) * 40} width={w - gap} height={(c / top) * 40} className="fill-row-rule" />
-            <rect x={i * w + gap / 2} y={40 - (bins[i] / top) * 40} width={w - gap} height={(bins[i] / top) * 40} className={inside(i) ? "fill-data" : "fill-faint"} />
-          </g>
-        ))}
-      </svg>
-      <div className="h-px bg-foreground" />
-      <div className="flex justify-between pt-1 font-mono text-[11px] text-muted-foreground">
-        {ticks.map((t, i) => (
-          <span key={i}>{t}</span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 /** A from/to pair of mono inputs that commit on Enter or when leaving the field. */
 function Bounds({ label, lo, hi, show, parse, onCommit }: { label: string; lo: number; hi: number; show: (n: number) => string; parse: (s: string) => number; onCommit: (lo: number, hi: number) => void }) {
   const [a, setA] = useState(show(lo))
@@ -356,14 +332,15 @@ function RangePanel({ facet, data, onChange }: { facet: RangeFacet; data: RangeD
   const hi = Math.min(facet.to, max)
   return (
     <>
-      <Histogram
+      <HistogramRange
         label={`Histogram of ${facet.columnName}`}
         bins={bins}
         baseBins={baseBins}
-        inside={(i) => min + i * step + step > lo && min + i * step < hi}
         ticks={[fmt(min), fmt((min + max) / 2), fmt(max)]}
+        min={min} max={max} step={step} from={lo} to={hi} revision={facet} format={String}
+        onCommit={(from, to) => onChange({ ...facet, from, to, selectNumeric: true })}
       />
-      <Bounds key={`${lo}:${hi}`} label={facet.columnName} lo={lo} hi={hi} show={(n) => String(Number(n.toFixed(6)))} parse={Number} onCommit={(from, to) => onChange({ ...facet, from, to })} />
+      <Bounds key={`${lo}:${hi}`} label={facet.columnName} lo={lo} hi={hi} show={String} parse={Number} onCommit={(from, to) => onChange({ ...facet, from, to })} />
       <Kinds facet={facet} kinds={kinds} onChange={onChange} />
     </>
   )
@@ -374,6 +351,7 @@ const day = (ms: number, step: number) => {
   const iso = new Date(ms).toISOString()
   return step < 86_400_000 ? iso.slice(0, 16).replace("T", " ") : iso.slice(0, 10)
 }
+const dateBound = (ms: number) => new Date(ms).toISOString().replace(/T00:00:00\.000Z$/, "").replace(/:00\.000Z$/, "").replace(/\.000Z$/, "").replace(/Z$/, "").replace("T", " ")
 
 function TimePanel({ facet, data, onChange }: { facet: TimeFacet; data: TimeData | null; onChange: (f: TimeFacet) => void }) {
   if (!data) return null
@@ -401,14 +379,15 @@ function TimePanel({ facet, data, onChange }: { facet: TimeFacet; data: TimeData
   const hi = Math.min(facet.to, max)
   return (
     <>
-      <Histogram
+      <HistogramRange
         label={`Timeline of ${facet.columnName}`}
         bins={bins}
         baseBins={baseBins}
-        inside={(i) => min + i * step + step > lo && min + i * step <= hi}
         ticks={[day(min, step), day(max, step)]}
+        min={min} max={max} step={step} from={lo} to={hi} revision={facet} inclusive format={dateBound}
+        onCommit={(from, to) => onChange({ ...facet, from, to, selectTime: true })}
       />
-      <Bounds key={`${lo}:${hi}`} label={facet.columnName} lo={lo} hi={hi} show={(n) => day(n, step)} parse={(s) => Date.parse(s.length <= 10 ? `${s}T00:00:00Z` : `${s.replace(" ", "T")}Z`)} onCommit={(from, to) => onChange({ ...facet, from, to })} />
+      <Bounds key={`${lo}:${hi}`} label={facet.columnName} lo={lo} hi={hi} show={dateBound} parse={(s) => Date.parse(s.length <= 10 ? `${s}T00:00:00Z` : `${s.replace(" ", "T")}Z`)} onCommit={(from, to) => onChange({ ...facet, from, to })} />
       <Kinds facet={facet} kinds={kinds} onChange={onChange} />
     </>
   )

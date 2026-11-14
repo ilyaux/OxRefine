@@ -3,13 +3,16 @@
 //! address (the last two staged as files, then imported like any other file).
 //! Behaviour is pinned to OpenRefine 3.10.1 by tests/import_conformance.rs.
 use crate::{
-    err,
+    err, jobs,
     grel::{funcs::parse_number, value::from_json, Value},
     table::{Column, Interner, Table},
     Result,
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, fs::File, io::Read, path::Path, sync::Arc};
+#[path = "json_paths.rs"]
+mod json_paths;
+pub use json_paths::json_paths;
 
 /// OpenRefine's importer options (same JSON names), with its defaults.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -33,6 +36,8 @@ pub struct ImportOptions {
     pub sheets: Vec<SheetChoice>,
     /// JSON path to the records, e.g. ["_", "_"] for a top-level array of objects.
     pub record_path: Vec<String>,
+    /// JSON Lines: each line is a root (canonical paths). False preserves the legacy virtual array.
+    pub json_lines_root: bool,
     pub store_empty_strings: bool,
     /// Line-based text: how many lines make one row.
     pub lines_per_row: i64,
@@ -63,6 +68,7 @@ impl Default for ImportOptions {
             trim_strings: false,
             sheets: vec![],
             record_path: vec!["_".into(), "_".into()],
+            json_lines_root: false,
             store_empty_strings: true,
             lines_per_row: 1,
             column_widths: vec![],
@@ -276,7 +282,13 @@ fn inspect_file(path: &Path) -> Result<serde_json::Value> {
             merge(json!({ "separator": sep.to_string(), "encoding": encoding, "processQuotes": sep != '\t', "quoteCharacter": "\"", "trimStrings": true, "guessCellValueTypes": false }))
         }
         Format::Lines => merge(json!({ "headerLines": 0, "linesPerRow": 1, "encoding": encoding, "guessCellValueTypes": false })),
-        Format::Json | Format::JsonLines => json!({ "recordPath": ["_", "_"], "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true }),
+        Format::Json | Format::JsonLines => {
+            let meta = json_paths(path, Some(if f == Format::JsonLines { "jsonlines" } else { "json" }), &ImportOptions { encoding: encoding.into(), ..Default::default() })?;
+            let options = json!({ "recordPath": meta["suggestedPath"], "jsonLinesRoot": f == Format::JsonLines,
+                "limit": -1, "encoding": encoding, "trimStrings": false, "guessCellValueTypes": false, "storeEmptyStrings": true });
+            out["json"] = meta;
+            options
+        },
         // OpenRefine leaves the record element to the user; OxRefine suggests the first repeated one
         Format::Xml => {
             let paths = xml_paths(&parse_xml(&decode(path, encoding)?)?);
@@ -1131,6 +1143,8 @@ fn concat_by_name(tables: Vec<Table>) -> Table {
 /// row the next value goes on (`next`, per group and per column) while a record is read.
 #[derive(Default)]
 struct Group {
+    /// Raw segments distinguish names containing the display separator from nested fields.
+    path: Vec<String>,
     /// (local name, full column name, cells filled, next row) in discovery order
     columns: Vec<(String, String, usize, usize)>,
     /// (local name, group) in discovery order
@@ -1158,7 +1172,8 @@ impl Group {
         while rec.rows.len() <= row {
             rec.rows.push(vec![]);
         }
-        rec.rows[row].push((full.to_string(), v));
+        let mut key = self.path.clone(); key.push(local.into());
+        rec.rows[row].push((full.to_string(), key, v));
         self.columns[i].3 = row + 1;
     }
     /// Start a sub-record (a nested object or element): it can't begin above where this group is.
@@ -1181,7 +1196,8 @@ impl Group {
         let i = match self.groups.iter().position(|g| g.0 == local) {
             Some(i) => i,
             None => {
-                self.groups.push((local.to_string(), Group::default()));
+                let mut path = self.path.clone(); path.push(local.into());
+                self.groups.push((local.to_string(), Group { path, ..Default::default() }));
                 self.groups.len() - 1
             }
         };
@@ -1193,10 +1209,13 @@ impl Group {
     }
     /// OpenRefine's column order: a group's own columns, then its subgroups, each sorted by cells
     /// filled, most first; ties keep the order they were found in.
-    fn order(&self, out: &mut Vec<String>) {
+    fn order(&self, out: &mut Vec<(String, Vec<String>)>) {
         let mut cols: Vec<_> = self.columns.iter().collect();
         cols.sort_by_key(|c| std::cmp::Reverse(c.2));
-        out.extend(cols.into_iter().map(|c| c.1.clone()));
+        out.extend(cols.into_iter().map(|c| {
+            let mut key = self.path.clone(); key.push(c.0.clone());
+            (c.1.clone(), key)
+        }));
         let mut groups: Vec<_> = self.groups.iter().collect();
         groups.sort_by_key(|g| std::cmp::Reverse(g.1.filled()));
         for g in groups {
@@ -1206,7 +1225,7 @@ impl Group {
 }
 
 struct JsonRecord {
-    rows: Vec<Vec<(String, Value)>>,
+    rows: Vec<Vec<(String, Vec<String>, Value)>>,
 }
 
 /// A text value of a JSON or XML tree, with the trim, empty-string and type-guessing options.
@@ -1230,7 +1249,7 @@ fn json_scalar(v: &serde_json::Value, o: &ImportOptions) -> Value {
     }
 }
 
-fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mut JsonRecord, o: &ImportOptions) {
+fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mut JsonRecord, o: &ImportOptions, anonymous_arrays: bool) {
     use serde_json::Value as J;
     match node {
         J::Object(m) => {
@@ -1239,15 +1258,21 @@ fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mu
                 match v {
                     J::Object(_) => {
                         let g = group.enter(k);
-                        walk_json(v, &full, g, rec, o);
+                        walk_json(v, &full, g, rec, o, anonymous_arrays);
                         g.settle();
                     }
                     // each item is a sub-record of the field's group
                     J::Array(items) => {
+                        if anonymous_arrays {
+                            let g = group.enter(k);
+                            walk_json(v, &full, g, rec, o, true);
+                            g.settle();
+                            continue;
+                        }
                         for item in items {
                             let g = group.enter(k);
                             match item {
-                                J::Object(_) | J::Array(_) => walk_json(item, &full, g, rec, o),
+                                J::Object(_) | J::Array(_) => walk_json(item, &full, g, rec, o, false),
                                 scalar => g.add(rec, k, &format!("{full} - {k}"), json_scalar(scalar, o)),
                             }
                             g.settle();
@@ -1259,25 +1284,28 @@ fn walk_json(node: &serde_json::Value, prefix: &str, group: &mut Group, rec: &mu
         }
         J::Array(items) => {
             for item in items {
-                walk_json(item, prefix, group, rec, o);
+                if anonymous_arrays {
+                    match item {
+                        J::Object(_) | J::Array(_) => {
+                            let g = group.enter("_");
+                            walk_json(item, &format!("{prefix} - _"), g, rec, o, true);
+                            g.settle();
+                        }
+                        scalar => {
+                            let local = group.path.last().map_or(prefix, String::as_str).to_string();
+                            group.add(rec, &local, &format!("{prefix} - {local}"), json_scalar(scalar, o));
+                        }
+                    }
+                } else { walk_json(item, prefix, group, rec, o, false); }
             }
         }
         scalar => group.add(rec, prefix, prefix, json_scalar(scalar, o)),
     }
 }
 
-fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
-    let text = decode(path, &o.encoding)?;
-    parsing(o);
-    crate::jobs::tick(0)?;
-    let root: serde_json::Value = if lines {
-        serde_json::Value::Array(text.lines().filter(|l| !l.trim().is_empty()).map(serde_json::from_str).collect::<std::result::Result<_, _>>().map_err(err)?)
-    } else {
-        serde_json::from_str(text.trim_start_matches('\u{feff}')).map_err(|e| format!("{}: {e}", path.display()))?
-    };
-    // the first path element names the root; "_" steps into array elements, anything else into a field
-    let mut nodes = vec![&root];
-    for seg in o.record_path.iter().skip(1) {
+fn json_nodes<'a>(root: &'a serde_json::Value, path: &[String]) -> Vec<&'a serde_json::Value> {
+    let mut nodes = vec![root];
+    for seg in path {
         nodes = nodes
             .into_iter()
             .flat_map(|n| -> Vec<&serde_json::Value> {
@@ -1290,29 +1318,100 @@ fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
             })
             .collect();
     }
-    let record_name = o.record_path.last().cloned().unwrap_or_else(|| "_".into());
-    let mut group = Group::default();
-    let mut records = vec![];
-    for node in nodes.into_iter().take(if o.limit >= 0 { o.limit as usize } else { usize::MAX }) {
-        crate::jobs::tick(1)?;
-        let mut rec = JsonRecord { rows: vec![vec![]] };
-        group.reset();
-        walk_json(node, &record_name, &mut group, &mut rec, o);
-        records.push(rec);
+    nodes
+}
+
+#[derive(Default)]
+struct JsonColumns {
+    columns: std::collections::HashMap<Vec<String>, (Interner, Vec<u32>)>,
+    rows: usize,
+}
+impl JsonColumns {
+    fn append(&mut self, record: JsonRecord) {
+        if record.rows.iter().all(Vec::is_empty) { return; }
+        for row in record.rows {
+            for (_, key, value) in row {
+                let (dict, codes) = self.columns.entry(key).or_insert_with(|| {
+                    let mut dict = Interner::default(); dict.intern(Value::Null);
+                    (dict, vec![])
+                });
+                codes.resize(self.rows + 1, 0);
+                codes[self.rows] = dict.intern(value);
+            }
+            self.rows += 1;
+        }
     }
-    Ok(tree_table(&group, &records))
+    fn finish(mut self, group: &Group) -> Table {
+        let mut names = vec![];
+        group.order(&mut names);
+        let columns = names.iter().map(|(_, key)| {
+            let (dict, mut codes) = self.columns.remove(key).unwrap();
+            codes.resize(self.rows, 0);
+            Column { dict: dict.finish(), codes: codes.into(), recon: None }
+        }).collect();
+        Table::new(names.into_iter().map(|(name, _)| name).collect(), columns, self.rows)
+    }
+}
+
+fn import_json(path: &Path, lines: bool, o: &ImportOptions) -> Result<Table> {
+    use std::io::BufRead;
+    let record_name = o.record_path.last().map_or("_", String::as_str);
+    let max = if o.limit >= 0 { o.limit as usize } else { usize::MAX };
+    let streaming = lines && (o.json_lines_root || o.record_path.len() > 1);
+    let mut group = Group::default();
+    let mut columns = JsonColumns::default();
+    if max == 0 { return Ok(columns.finish(&group)); }
+    let mut count = 0;
+    let mut add = |node: &serde_json::Value| -> Result<bool> {
+        if count == max { return Ok(false); }
+        count += 1;
+        jobs::tick(if streaming { 0 } else { 1 })?;
+        if !node.is_null() {
+            group.reset();
+            let mut record = JsonRecord { rows: vec![vec![]] };
+            walk_json(node, record_name, &mut group, &mut record, o, !lines || o.json_lines_root);
+            columns.append(record);
+        }
+        Ok(count < max)
+    };
+    if streaming {
+        let mut source = json_paths::reader(path, &o.encoding)?;
+        let mut line = String::new();
+        let mut number = 0;
+        let skip = if !o.json_lines_root && o.record_path.get(1).is_some_and(|p| p == "_") { 2 } else { 1 };
+        let path = o.record_path.get(skip..).unwrap_or_default();
+        'read: loop {
+            line.clear();
+            if source.read_line(&mut line).map_err(err)? == 0 { break; }
+            number += 1;
+            if line.trim().is_empty() { continue; }
+            let value: serde_json::Value = serde_json::from_str(&line).map_err(|e| format!("JSON Lines line {number}: {e}"))?;
+            for node in json_nodes(&value, path) { if !add(node)? { break 'read; } }
+        }
+    } else {
+        // shortcut: legacy JSONL path []/['_'] makes the whole virtual array one record; retain its
+        // cross-line alignment here. Canonical and legacy item paths above stream one line at a time.
+        let text = decode(path, &o.encoding)?;
+        parsing(o);
+        jobs::tick(0)?;
+        let root = if lines {
+            serde_json::Value::Array(text.lines().filter(|l| !l.trim().is_empty()).map(serde_json::from_str).collect::<std::result::Result<_, _>>().map_err(err)?)
+        } else { serde_json::from_str(text.trim_start_matches('\u{feff}')).map_err(|e| format!("{}: {e}", path.display()))? };
+        for node in json_nodes(&root, o.record_path.get(1..).unwrap_or_default()) { if !add(node)? { break; } }
+    }
+    Ok(columns.finish(&group))
 }
 
 /// Rows of tree records, columns in OpenRefine's order.
 fn tree_table(group: &Group, records: &[JsonRecord]) -> Table {
     let mut names = vec![];
     group.order(&mut names);
-    let rows: Vec<&Vec<(String, Value)>> = records.iter().flat_map(|r| r.rows.iter()).collect();
+    let rows: Vec<_> = records.iter().flat_map(|r| r.rows.iter()).collect();
     let cols = names
         .iter()
-        .map(|n| Column::from_values(rows.iter().map(|r| r.iter().find(|(c, _)| c == n).map_or(Value::Null, |(_, v)| v.clone()))))
+        .map(|(n, _)| Column::from_values(rows.iter().map(|r| r.iter().find(|(c, _, _)| c == n).map_or(Value::Null, |(_, _, v)| v.clone()))))
         .collect();
-    Table::new(names, cols, rows.len())
+    Table::new(names.into_iter().map(|(name, _)| name).collect(), cols, rows.len())
 }
 
 // ---------------------------------------------------------------- XML

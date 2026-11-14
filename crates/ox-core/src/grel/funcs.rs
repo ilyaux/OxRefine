@@ -276,6 +276,12 @@ pub fn call(name: &str, a: &[Value]) -> Value {
         "trim" | "strip" => a0.as_str().map_or_else(|| Value::err(format!("{name} expects a string")), |s| Str(text::java_strip(s).into())),
         "length" => match a0 {
             Str(s) => Int(text::utf16_len(s) as i64),
+            Int(_) | Num(_) | Bool(_) => Int(text::utf16_len(&a0.to_java_string()) as i64),
+            Date(d) => {
+                // OffsetDateTime.toString() omits zero seconds and groups fractional digits in threes.
+                let pattern = if d.nanosecond() != 0 { "%Y-%m-%dT%H:%M:%S%.fZ" } else if d.second() != 0 { "%Y-%m-%dT%H:%M:%SZ" } else { "%Y-%m-%dT%H:%MZ" };
+                Int(d.format(pattern).to_string().len() as i64)
+            }
             v => list(v).map_or_else(|| Value::err("length expects an array or a string"), |l| Int(l.len() as i64)),
         },
         "chomp" => match (a0, a1) {

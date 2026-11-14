@@ -303,7 +303,7 @@ impl Pass {
 fn range_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
     let [numeric, non_numeric, blank, error] = flags;
     match it {
-        Item::Val { num: Some(n), .. } => numeric && *n >= from && *n < to,
+        Item::Val { num: Some(n), .. } => if n.is_finite() { numeric && *n >= from && *n < to } else { error },
         Item::Val { .. } => non_numeric,
         Item::Blank => blank,
         Item::Error => error,
@@ -474,20 +474,30 @@ struct RangeStats {
     error: usize,
 }
 
-fn range_panel(t: &Table, ev: &Evaluated, others: &[u32]) -> J {
+fn range_panel(t: &Table, ev: &Evaluated, others: &[u32], record_based: bool) -> J {
+    let starts = if record_based { record_starts(t) } else { vec![] };
     let tally = |rows: &mut dyn Iterator<Item = usize>| {
         let (mut s, mut nums) = (RangeStats::default(), vec![]);
+        let mut boundaries = starts.iter().peekable();
+        let mut seen = [false; 4];
         for r in rows {
+            // Record categories count once; the histogram still includes each numeric cell.
+            while boundaries.peek().is_some_and(|&&start| start <= r) {
+                boundaries.next();
+                seen = [false; 4];
+            }
             for it in ev.of(t, r) {
-                match it {
-                    Item::Val { num: Some(n), .. } => {
-                        s.numeric += 1;
+                let (kind, count) = match it {
+                    Item::Val { num: Some(n), .. } if n.is_finite() => {
                         nums.push(*n);
+                        (0, &mut s.numeric)
                     }
-                    Item::Val { .. } => s.non_numeric += 1,
-                    Item::Blank => s.blank += 1,
-                    Item::Error => s.error += 1,
-                }
+                    Item::Val { num: Some(_), .. } | Item::Error => (3, &mut s.error),
+                    Item::Val { .. } => (1, &mut s.non_numeric),
+                    Item::Blank => (2, &mut s.blank),
+                };
+                if !record_based || !seen[kind] { *count += 1; }
+                seen[kind] = true;
             }
         }
         (s, nums)
@@ -653,7 +663,7 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig, limit: usize) -> Result<Vec<J
             Facet::Range { column_name, expression, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
                 let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
-                Ok(range_panel(t, &ev, &others))
+                Ok(range_panel(t, &ev, &others, cfg.mode == "record-based"))
             }
             Facet::TimeRange { column_name, expression, from, to, .. } => {
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
