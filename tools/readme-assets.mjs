@@ -67,7 +67,7 @@ export function validateReport(report) {
   return report
 }
 
-const STYLE = `<style>
+export const STYLE = `<style>
 svg{--bg:#fff;--ink:#111113;--mute:#5f5f66;--rule:#e4e4e0;--ox:#1d4ed8;--or:#686870;--warn:#99500a}
 @media(prefers-color-scheme:dark){svg{--bg:#0d1117;--ink:#e6edf3;--mute:#9198a1;--rule:#30363d;--ox:#74a7ff;--or:#a4acb8;--warn:#efb44c}}
 text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink);font-variant-numeric:tabular-nums}

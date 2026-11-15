@@ -83,16 +83,20 @@ Totals are medians of complete per-run totals; adding the phase medians can give
 
 ### New: database import workload
 
-Each backend supplied the same 100,000 SQL rows and three columns, including 1,031 NULLs. Three repetitions checked every exported row and its types. Import includes query/fetch, the typed snapshot and native project creation; source database services were local and warm. This is a workload observation, not a ranking of remote database systems.
+On the same 100,000 SQL rows and three columns, including 1,031 NULLs, OxRefine imported **4.6–11.4× faster with 14.6–16.2× lower peak process RAM** than the OpenRefine reference on the three completed backend comparisons. These are local workload measurements, not guarantees for other data or remote database systems.
 
-| Backend | Median import | OxRefine import peak |
-|---|---|---|
-| PostgreSQL | 216 ms | 23 MiB |
-| MySQL | 144 ms | 22 MiB |
-| MariaDB | 148 ms | 21 MiB |
-| SQLite | 115 ms | 23 MiB |
+![Database import time and peak RAM: OxRefine versus OpenRefine, with measured values and ratios for each backend](docs/readme/database-comparison.svg?v=847f2d5e)
 
-The [database report](benchmarks/release-0.6.0/database.json) retains all twelve repetitions. Every saved project reopened in a fresh backend process, with startup recorded separately and no repeated SQL query. Whole-workflow peak working set was 29 MiB for each backend; the table shows the earlier import peak. Database-server memory is excluded. OS caches remained warm.
+| Backend | Import: Ox / OR | Faster import | Peak RAM: Ox / OR | Lower peak RAM |
+|---|---|---|---|---|
+| PostgreSQL | 155 / 708 ms | **4.6×** | 22 / 322 MiB | **14.6×** |
+| MySQL | 114 / 1,294 ms | **11.4×** | 22 / 357 MiB | **16.2×** |
+| MariaDB | 118 / 753 ms | **6.4×** | 21 / 317 MiB | **15.1×** |
+| SQLite | 121 ms / unavailable | — | 23 MiB / unavailable | — |
+
+The [paired report](benchmarks/release-0.6.0/database-comparison.json) retains three repetitions per tool and backend, alternating tool order. Every completed import passed full exported-value, type and NULL checks. Time excludes startup and validation. **The native paths differ:** OxRefine includes its typed snapshot and project save; OpenRefine creates its project in memory, with eventual autosave excluded. RAM is the process high-water mark at import completion, including runtime overhead; database-server memory is excluded. Services and OS caches remained warm. See the [measurement protocol and reference-build fingerprints](benchmarks/README.md#paired-native-database-imports).
+
+OpenRefine supports SQLite, but its bundled JDBC driver failed to register in this reference setup. All three failed attempts are recorded; no SQLite comparison ratio is inferred. The [original OxRefine report](benchmarks/release-0.6.0/database.json) also retains all twelve earlier runs, including saved-project reopen in a fresh backend process without repeating the SQL query.
 
 <details>
 <summary>Record a new sample</summary>

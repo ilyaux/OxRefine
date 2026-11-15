@@ -26,7 +26,7 @@ export function publicProfile(connection) {
   return profile
 }
 
-async function run(connection, out, options) {
+export async function run(connection, out, options) {
   return withOx(async ({ ox, peak, pid, restart }) => {
     const profile = publicProfile(connection), credentials = { password: connection.password ?? "" }
     const prepare = (sql, maxRows) => ox("database_prepare", { params: { profile, credentials, sql, maxRows, timeoutSeconds: 120, requestId: randomUUID() } })

@@ -68,6 +68,24 @@ node benchmarks/check.mjs --profile cardinality --record --runs 1 --history 40 -
 
 ## Release 0.6.0 repeated measurements
 
+### Paired native database imports
+
+[The database comparison](release-0.6.0/database-comparison.json) adds three fresh-process runs per tool and backend, using the same local SQL fixture as the original [OxRefine database report](release-0.6.0/database.json): 100,000 rows, three columns and 1,031 SQL NULLs. Tool order alternates for each backend; backend order rotates. Every completed run checks all exported values against an independent digest and checks all 100,000 typed rows, outside the import timer. Services and filesystem caches stay warm; this is a local workload observation.
+
+Import time uses the native paths: OxRefine prepares a typed snapshot and creates/saves a native project; OpenRefine's bundled database controller queries and registers an in-memory project. OpenRefine's optional preview, full-query test and eventual autosave are excluded. No export/archive overhead is charged to either import. Thus these timings do **not** establish equal persistence guarantees. Process startup and a one-row version-query warm-up are excluded from time. Import RAM is the Windows process `PeakWorkingSet64` at import completion, including startup/runtime overhead, excluding database services, browser, parent Node and external filesystem cache. OpenRefine uses `-Xms256M -Xmx1400M`; this is not a process RAM limit. The OxRefine-only fresh-process reopen checks remain in each raw Ox run.
+
+The reference uses the same pinned 3.10.1 artifacts as the conformance suite and existing release comparisons. This build's API reports `3.10-SNAPSHOT [TRUNK]`; the report retains that response, JVM details and SHA-256 fingerprints of both applications and all four JDBC jars. SQLite is implemented by OpenRefine, but this reference build fails to register its bundled JDBC driver (`No suitable driver`). All three attempts are retained as unavailable, with **no inferred time, memory or ratio**. This is a limitation of the measured reference setup, not a claim that OpenRefine lacks SQLite support.
+
+Provision the disposable synthetic databases with [the pinned engine versions and fixture SQL](../tests/database/reference-engines.json), then run:
+
+```powershell
+node benchmarks/database-compare.mjs --config path/to/private-connections.json --sqlite path/to/fixture.sqlite --new path/to/ox.exe --runs 3 --out benchmarks/release-0.6.0/database-comparison.json
+node tools/readme-database-assets.mjs benchmarks/release-0.6.0/database-comparison.json
+node --test tools/readme-database-assets.test.mjs
+```
+
+Use the same private connection JSON format as `database.mjs`; SQLite must contain the same `db_bench_fixture` table. Credentials and private diagnostics are never report content. The SVG is generated only from a complete, checked report; its metadata identifies the source JSON and SHA-256. Each metric has a shared linear scale, and animation changes opacity without changing measured bar lengths.
+
 The frozen Windows candidate has SHA-256 `31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9`. [The release verdict](release-0.6.0/verdict.json) links every raw report and its SHA, including the rejected development measurements. The [protocol](release-0.6.0/PLAN.md) records the official 0.5.3 baseline, inputs and commands. These are three-repeat local observations; host background activity was recorded, and no owned build or second benchmark ran concurrently.
 
 Every HTTP request used `Connection: close`, identically for both OxRefine builds and OpenRefine. This avoids a separately measured keepalive response-delivery stall. Connection setup and response delivery remain inside phase timings. The OpenRefine report uses medians of per-run totals; the existing regression gate uses fastest phase timings and median peak memory, with its original thresholds.

@@ -28,7 +28,7 @@ export async function waitFor(url, init, ms = 120_000) {
 }
 
 /** Start a fresh OpenRefine JVM with its own workspace. Returns a small client. */
-export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, jvm = [] }) {
+export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, jvm = [], stdio = "ignore" }) {
   mkdirSync(workspace, { recursive: true })
   const lib = join(OR_HOME, "server/target/lib")
   const proc = spawn(join(OR_HOME, "server/target/jre/bin/java.exe"), [
@@ -36,7 +36,7 @@ export async function startOpenRefine({ mem = "1400M", port = 3333, workspace, j
     ...jvm, "-Xms256M", `-Xmx${mem}`, `-Drefine.memory=${mem}`, "-Drefine.max_form_content_size=67108864",
     `-Drefine.port=${port}`, "-Drefine.interface=127.0.0.1", "-Drefine.host=127.0.0.1", `-Drefine.webapp=${join(OR_HOME, "webapp")}`,
     `-Drefine.data_dir=${workspace}`, "-Drefine.headless=true", `-Djava.library.path=${lib}/native/windows`, "com.google.refine.Refine",
-  ], { cwd: OR_HOME, stdio: "ignore" })
+  ], { cwd: OR_HOME, stdio })
   const url = `http://127.0.0.1:${port}`
   await waitFor(`${url}/command/core/get-csrf-token`)
   await sleep(1000)
