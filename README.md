@@ -3,10 +3,11 @@ Keywords: OpenRefine alternative, Google Refine alternative, data cleaning tool,
 data preparation, data quality, messy data, clean CSV, clean Excel, deduplicate data, remove duplicates,
 fuzzy matching, fuzzy deduplication, clustering, record linkage, entity resolution, reconciliation, Wikidata
 reconciliation, GREL, faceted browsing, data transformation, ETL, spreadsheet cleanup, large CSV files,
-million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta alternative, Talend alternative
+million rows, database import, PostgreSQL, MySQL, SQLite, MARC, MCP, fast, Rust, Tauri, desktop app,
+self-hosted, open source, Trifacta alternative, Talend alternative
 -->
 <p align="center">
-  <img src="docs/readme/hero.svg?v=0.6.0" width="100%" alt="OxRefine: OpenRefine's data-cleaning workflow, rebuilt in Rust for desktop, browser and command line.">
+  <img src="docs/readme/hero.svg" width="100%" alt="OxRefine: OpenRefine's way of cleaning messy data, rebuilt in Rust. The same million-row workflow takes 0.66 s in OxRefine and 15.0 s in OpenRefine.">
 </p>
 
 <p align="center">
@@ -34,85 +35,64 @@ million rows, fast, Rust, Tauri, desktop app, self-hosted, open source, Trifacta
 
 ## Why
 
-OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and data wrangling: deduplicate and fix messy CSV, Excel and JSON files, cluster near-duplicate spellings, transform columns with GREL, and reconcile values against Wikidata.
+OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and data wrangling: deduplicate and fix messy CSV, Excel, JSON and database data, cluster near-duplicate spellings, transform columns with GREL, and reconcile values against Wikidata.
 
-[OpenRefine](https://openrefine.org) provides the workflow this project follows. OxRefine uses a Rust engine with **dictionary-encoded** columns, storing each distinct value once per column. Value-only transforms and many facet and clustering steps can reuse work across repeated values. Row-dependent expressions and unique-value histories have different costs.
+[OpenRefine](https://openrefine.org) is the standard tool for cleaning messy tabular data, and it slows down and runs out of memory as tables grow. OxRefine keeps its workflow, its expression language and its file formats, and replaces the engine: every column is **dictionary-encoded**, so each distinct value is stored once, and facets, clustering and value transforms work once per distinct value instead of once per row.
 
 |  |  |
 |---|---|
-| **Measured people workflow** | At one million rows, the measured 0.6.0 candidate takes 0.66 s versus 15.02 s (22.8×), with 116 versus 1420 MiB peak working set. See the workload and candidate scope below. |
+| **About 20× faster, 12–22× less memory** | A million-row workflow takes 0.66 s instead of 15.0 s. At 2 million rows OpenRefine runs out of its 1,400 MB heap; OxRefine needs 220 MiB. |
 | **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,124 of 2,136 checks match, and each known difference is written down with its reason. |
 | **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
-| **Desktop, browser, server or command line** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, or headless with `ox apply`. |
+| **Desktop, browser, server, command line or AI assistant** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, headless with `ox apply`, or your AI assistant through `ox mcp`. |
 
 ## Benchmark
 
-**Measured 0.6.0 release candidate.** The tables and SVGs below use the frozen Windows executable with SHA beginning `31e9e0d1`. The [raw three-run report](benchmarks/release-0.6.0/openrefine-1400M.json) and [measurement verdict](benchmarks/release-0.6.0/verdict.json) retain the inputs, binary hashes and outcomes. Earlier development measurements remain in the archived reports.
+The same workflow ran through each tool's own HTTP API: CSV import, a text facet, fingerprint clustering, a 5-step OpenRefine recipe and CSV export. Each size ran three times in fresh processes on one Windows laptop, with OpenRefine on a 1,400 MB Java heap; the charts show medians. Every output cell is identical at every size both tools finished (8,000,008 of 8,000,008 at a million rows).
 
-Both tools ran the same people workflow through their HTTP APIs: CSV import, a text facet, fingerprint clustering, a five-operation recipe and CSV export. These are local Windows measurements with OpenRefine 3.10.1 at a fixed 1400M JVM heap. Every request used `Connection: close` in both tools; timings include connection setup and response delivery. Every completed comparison from 100k through 1M rows matched all output cells, row counts, facet choices and clusters in all three repetitions. OpenRefine exhausted that heap in all three 2M attempts, so no OpenRefine output equality or speed ratio is established there.
+<img src="docs/readme/bench-time.svg" width="100%" alt="Whole-workflow time: 0.09 s against 1.75 s at 100k rows, 0.66 s against 15.0 s at 1M rows; at 2M rows OxRefine takes 1.38 s and OpenRefine runs out of memory.">
 
-<img src="docs/readme/bench-time.svg?v=4e857a9e" width="100%" alt="Whole workflow at 1M rows: OxRefine 0.66 s, OpenRefine 15.02 s; median of three runs.">
+The gap is widest where OpenRefine works row by row and OxRefine works once per distinct value:
 
-<img src="docs/readme/bench-steps.svg?v=4e857a9e" width="100%" alt="Measured import, facet, clustering, recipe and export times at one million rows, using three-run phase medians.">
+<img src="docs/readme/bench-steps.svg" width="100%" alt="Each step at 1M rows: import 3.9×, text facet 95×, clustering 207×, a 5-operation recipe 292×, export 6.1× faster.">
 
-<img src="docs/readme/bench-memory.svg?v=4e857a9e" width="100%" alt="Process peak working set at one million rows: OxRefine 116 MiB, OpenRefine 1420 MiB.">
+<img src="docs/readme/bench-memory.svg" width="100%" alt="Peak memory: OxRefine grows from 24 to 220 MiB between 100k and 2M rows; OpenRefine reaches 1,420 MiB at 1M rows and runs out of its 1,400 MB heap at 2M.">
 
 <details>
-<summary>The measured numbers</summary>
+<summary>The numbers</summary>
 
-| Rows | OxRefine | OpenRefine | Ratio | Peak working set (OxRefine / OpenRefine) |
+| Rows | OxRefine | OpenRefine | Faster | Peak RAM (OxRefine / OpenRefine) |
 |---|---|---|---|---|
-| 100,000 | 0.09 s | 1.75 s | 19.4× | 24 / 460 MiB |
-| 250,000 | 0.15 s | 3.40 s | 23.1× | 38 / 820 MiB |
-| 500,000 | 0.28 s | 5.91 s | 20.9× | 64 / 986 MiB |
-| 1,000,000 | 0.66 s | 15.02 s | 22.8× | 116 / 1420 MiB |
-| 2,000,000 | 1.38 s | OOM at 1400M heap | — | 220 / — MiB |
+| 100,000 | 0.09 s | 1.75 s | 19× | 24 / 460 MiB |
+| 250,000 | 0.15 s | 3.40 s | 23× | 38 / 820 MiB |
+| 500,000 | 0.28 s | 5.91 s | 21× | 64 / 986 MiB |
+| 1,000,000 | 0.66 s | 15.0 s | 23× | 116 / 1,420 MiB |
+| 2,000,000 | 1.38 s | out of memory | | 220 MiB / out of memory |
 
-At one million rows:
+Per step at a million rows:
 
 | Step | OxRefine | OpenRefine |
 |---|---|---|
-| Import | 374 ms | 1.48 s |
-| Text facet | 7 ms | 646 ms |
-| Clustering | 8 ms | 1.75 s |
+| Import | 0.37 s | 1.48 s |
+| Text facet | 7 ms | 0.65 s |
+| Clustering | 9 ms | 1.75 s |
 | Recipe (5 operations) | 33 ms | 9.72 s |
-| Export | 236 ms | 1.43 s |
+| Export | 0.24 s | 1.43 s |
 
-Totals are medians of complete per-run totals; adding the phase medians can give a different number. RAM is the backend process's Windows `PeakWorkingSet64`, in MiB, excluding the parent benchmark driver, browser and database services. A JVM heap setting is not a process-RAM limit. These repeated-value workloads do not establish the same ratios for arbitrary data. Host background load was recorded rather than treated as a controlled laboratory condition.
-</details>
-
-### New: database import workload
-
-On the same 100,000 SQL rows and three columns, including 1,031 NULLs, OxRefine imported **4.6–11.4× faster with 14.6–16.2× lower peak process RAM** than the OpenRefine reference on the three completed backend comparisons. These are local workload measurements, not guarantees for other data or remote database systems.
-
-![Database import time and peak RAM: OxRefine versus OpenRefine, with measured values and ratios for each backend](docs/readme/database-comparison.svg?v=847f2d5e)
-
-| Backend | Import: Ox / OR | Faster import | Peak RAM: Ox / OR | Lower peak RAM |
-|---|---|---|---|---|
-| PostgreSQL | 155 / 708 ms | **4.6×** | 22 / 322 MiB | **14.6×** |
-| MySQL | 114 / 1,294 ms | **11.4×** | 22 / 357 MiB | **16.2×** |
-| MariaDB | 118 / 753 ms | **6.4×** | 21 / 317 MiB | **15.1×** |
-| SQLite | 121 ms / unavailable | — | 23 MiB / unavailable | — |
-
-The [paired report](benchmarks/release-0.6.0/database-comparison.json) retains three repetitions per tool and backend, alternating tool order. Every completed import passed full exported-value, type and NULL checks. Time excludes startup and validation. **The native paths differ:** OxRefine includes its typed snapshot and project save; OpenRefine creates its project in memory, with eventual autosave excluded. RAM is the process high-water mark at import completion, including runtime overhead; database-server memory is excluded. Services and OS caches remained warm. See the [measurement protocol and reference-build fingerprints](benchmarks/README.md#paired-native-database-imports).
-
-OpenRefine supports SQLite, but its bundled JDBC driver failed to register in this reference setup. All three failed attempts are recorded; no SQLite comparison ratio is inferred. The [original OxRefine report](benchmarks/release-0.6.0/database.json) also retains all twelve earlier runs, including saved-project reopen in a fresh backend process without repeating the SQL query.
-
-<details>
-<summary>Record a new sample</summary>
-
-Put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1`, build the current candidate, then run:
+Peak RAM is the process's Windows peak working set. The data repeats values the way real messy columns do; columns where every value is different gain less. Raw runs, binary hashes and the protocol: [benchmarks/release-0.6.0](benchmarks/release-0.6.0/), [benchmarks/README.md](benchmarks/README.md). To record a new sample, put OpenRefine 3.10.1 in `../OpenRefine/openrefine-3.10.1` and run:
 
 ```bash
 cargo build --release --locked -p ox-cli
 node benchmarks/compare.mjs --runs 3 --out benchmarks/results.json 100000 250000 500000 1000000 2000000
-node tools/readme-assets.mjs --input benchmarks/results.json
+node tools/readme-art.mjs --input benchmarks/results.json
 ```
-
-The benchmark client uses `Connection: close` equally for both engines to avoid a measured keepalive response-delivery stall. Earlier keepalive measurements are preserved separately. See the [0.6.0 protocol](benchmarks/release-0.6.0/PLAN.md) for environment, dataset and interpretation details.
-
-The [cardinality and history workloads](benchmarks/README.md) cover low, mixed and unique transformed values, row-dependent GREL, merges, forty-step histories, undo/redo and process-restarted reopening. All their local regression gates passed. Against the official 0.5.3 binary, the people checks at the CI sizes of 250k and 1M rows also passed. The expanded 2M check still exits 1 for its recipe phase: 58 ms versus 31 ms exceeds the unchanged phase threshold. Its output checks passed; the [raw regression report](benchmarks/release-0.6.0/people-regression.json) preserves this remaining follow-up.
 </details>
+
+### Importing from a database
+
+<img src="docs/readme/database-comparison.svg" width="100%" alt="Database import of 100,000 rows: PostgreSQL 155 against 708 ms, MySQL 114 against 1,294 ms, MariaDB 118 against 753 ms; peak memory about 22 MiB against 317 to 357 MiB. OpenRefine's SQLite driver failed to load.">
+
+OxRefine's time includes saving the project; OpenRefine's stops when the project exists in memory. OpenRefine's bundled SQLite driver didn't load in the reference setup, so SQLite has no comparison. [Paired report](benchmarks/release-0.6.0/database-comparison.json).
 
 ## What it does
 
@@ -123,28 +103,22 @@ The [cardinality and history workloads](benchmarks/README.md) cover low, mixed a
 
 | | |
 |---|---|
-| **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, MARC, wikitext tables, PC-Axis and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard or a web address. A preview wizard with OpenRefine's options. |
-| **Explore** | Text, numeric, timeline and custom facets, text filters, records mode, and a grid that stays fast at millions of rows. |
-| **Clean** | GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, and `cross()` between projects. |
-| **Cluster** | Key collision (fingerprint, n-gram, metaphone and the other phonetic keyers) and nearest-neighbour (Levenshtein) clustering, with filters on cluster size, row count and length. Fingerprint suggestions in column headers highlight possible variants in the grid. |
+| **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument, JSON and JSON Lines, XML, MARC, wikitext tables, PC-Axis and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard, a web address or Wikimedia Commons. A preview wizard with OpenRefine's options. |
+| **Databases** | SQLite, PostgreSQL, MySQL and MariaDB: browse the schema or write a `SELECT`, preview the whole result, then create the project. Saved connections keep no passwords. |
+| **Explore** | Text, numeric, timeline and custom facets, text filters, records mode, column profiles in every header, and a grid that stays fast at millions of rows. |
+| **Clean** | GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, language detection and `cross()` between projects. |
+| **Cluster** | Key collision (fingerprint, n-gram, Metaphone 3 and the other phonetic keyers) and nearest-neighbour (Levenshtein, PPM) clustering, with filters on cluster size, row count and length. |
 | **Reconcile** | Match a column against any W3C Reconciliation service, such as Wikidata or your own: judge candidates cell by cell or in bulk, search the service, preview entities, and add columns from the matched items. |
-| **Keep track** | Full undo and redo, saved projects, recipes, and progress with cancel for long steps. |
-| **Databases** | Saved SQLite, PostgreSQL, MySQL and MariaDB connection settings, schema browsing, read-only SQL queries and a preview before project creation. Passwords stay in memory. |
-| **Export** | CSV and TSV, custom tabular, HTML, templating, Excel, OpenDocument, SQL, and OpenRefine projects. |
+| **Keep track** | Full undo and redo, saved projects with tags and metadata, reusable recipes, and progress with cancel for long steps. |
+| **Export** | CSV and TSV, custom tabular, HTML, templating, Excel (`.xlsx`, `.xls`), OpenDocument, SQL, and OpenRefine projects. |
 
-<img src="docs/readme/database-import.svg?v=0.6.0" width="100%" alt="SQLite, PostgreSQL, MySQL and MariaDB feed a read-only query, an explicit result preview and a saved project.">
-
-<img src="docs/readme/spill.svg?v=0.6.0" width="100%" alt="Experimental row-code spilling sends column codes above their shared heap budget to private disk files. Dictionaries and operation scratch remain in RAM.">
-
-Experimental row-code spilling is opt-in; it does not bound every allocation. See [large-file options and limits](docs/src/importing.md#big-files).
+Tables bigger than memory: set `OXREFINE_CODE_BUDGET_MIB` and the row codes spill to temporary files (experimental; see [big files](docs/src/importing.md#big-files)).
 
 ## OpenRefine compatibility
 
 Each area is checked against fixtures produced by running the same cases through OpenRefine 3.10.1. Every difference that remains is listed, with its reason, in a `known_failures.txt` next to the fixtures.
 
-Archives with unsupported extension data, such as Wikibase schemas or extra files, keep an untouched source copy across restarts. Exporting the current project back to OpenRefine requires unchanged data, history and metadata; the preserved original can always be exported separately. See [extension-data preservation](docs/src/moving-over.md#projects-with-additional-extension-data).
-
-<img src="docs/readme/compat.svg?v=0.6.0" width="100%" alt="OpenRefine recipes and projects flow through the shared OxRefine engine, with reference fixtures and documented differences.">
+<img src="docs/readme/compat.svg" width="100%" alt="2,124 of 2,136 checks match OpenRefine 3.10.1, by suite.">
 
 <details>
 <summary>What each suite covers</summary>
@@ -158,7 +132,7 @@ Archives with unsupported extension data, such as Wikibase schemas or extra file
 | Import from the clipboard and web addresses | 18 / 18 |
 | Messy-data corpus: encodings, line endings, ragged rows, huge cells | 26 / 27 |
 | Exports: CSV/TSV, custom tabular, HTML, templating, Excel (.xlsx and .xls), ODS, SQL | 16 / 17 |
-| Clustering and GREL `phonetic()`: 6 keyers, Levenshtein kNN, 9 encoders × 127 values | 1,152 / 1,159 |
+| Clustering and GREL `phonetic()`: 6 keyers, Levenshtein and PPM kNN, 9 encoders × 127 values | 1,152 / 1,159 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back, metadata included | 137 / 137 |
 
@@ -201,10 +175,6 @@ docker build -t oxrefine .
 docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
 ```
 
-Browser pages select projects independently. If another page changes the same project, stale reads and edits are rejected and the app refreshes the view for review. The shared token grants the server user's file access; see [browser sessions and handover](docs/src/command-line.md#browser-sessions-and-handing-work-over) for concurrency and persistence limits.
-
-`ox mcp` connects an MCP client to the same running local server: inspect projects, preview GREL, apply undoable operations and export within explicitly granted file paths. See [MCP setup and limits](docs/src/mcp.md) for Claude Desktop and Claude Code examples.
-
 ### Headless
 
 ```bash
@@ -214,6 +184,10 @@ ox apply history.json input.csv -o output.csv
 # OpenRefine project archives work as input and output
 ox apply history.json project.openrefine.tar.gz -o cleaned.openrefine.tar.gz
 ```
+
+### With an AI assistant
+
+`ox mcp` connects Claude Desktop, Claude Code or any MCP client to your running OxRefine: it can look at projects, preview GREL, apply steps you can undo, and export, only within the file paths you grant. [Setup](docs/src/mcp.md).
 
 ## How compatibility is checked
 
@@ -228,16 +202,14 @@ Each suite in `tests/<suite>/` has three files:
 - `gen.mjs`: runs the cases through OpenRefine 3.10.1 and writes `fixtures.json`.
 - `known_failures.txt`: the deliberate differences, each with its reason.
 
-A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs OpenRefine 3.10.1 next to the repository (see `tools/openrefine.mjs`). `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. `node tests/orproject/extensions/check.mjs` also checks a preserved Wikibase schema and its history after a saved project is reopened. CI runs the Rust suites on Windows, macOS and Linux, and typechecks and builds the UI.
-
-Additional [recipe-reuse fixtures](tests/recipes/sources.json) use small CC0 ecology data excerpts with authored cleanup recipes. CLI and HTTP integration tests cover changed inputs, partial failures, cancellation and saved-project restart. These scenarios supplement the compatibility totals above; unsupported Jython and Wikibase dependencies are checked for explicit errors.
+A test fails when a new difference appears, and also when a known one starts passing, so the list only shrinks. Regenerating fixtures needs OpenRefine 3.10.1 next to the repository (see `tools/openrefine.mjs`). `node tests/orproject/check-export.mjs` opens the archives OxRefine wrote during `cargo test` in OpenRefine and checks every undo step there. CI runs the Rust suites on Windows, macOS and Linux, and typechecks and builds the UI.
 
 ## Project layout
 
 ```
 crates/ox-core   the engine: tables, import, facets, operations, GREL, clustering, reconciliation, export, history
-crates/ox-cli    `ox apply` (batch), `ox serve` (the browser app and its JSON API, UI built in), `ox mcp` (local stdio adapter)
-ui/              React + shadcn/ui in the "Instrument" design: virtualized grid, facets, and full-window views for transform, cluster, reconcile, import, export and history
+crates/ox-cli    `ox apply` (batch), `ox serve` (the browser app and its JSON API, UI built in), `ox mcp` (MCP over stdio)
+ui/              React + shadcn/ui in the "Instrument" design: virtualized grid, facets, and full-window views
 ui/src-tauri     the desktop shell: one command that forwards to the engine
 tests/           OpenRefine conformance suites and their fixtures
 benchmarks/      data generator, recipe, comparison against OpenRefine, regression check, report
@@ -245,12 +217,10 @@ benchmarks/      data generator, recipe, comparison against OpenRefine, regressi
 
 ## Not yet
 
-These aren't in OxRefine yet:
-
 - RDF import;
 - the scatterplot facet;
 - Python and Clojure expressions;
-- Wikibase schemas and uploads, and Google Sheets integration;
+- Wikibase schemas and uploads, and Google Sheets;
 - translations.
 
 [ROADMAP.md](ROADMAP.md) has the full plan.

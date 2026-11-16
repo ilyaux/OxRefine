@@ -2,7 +2,7 @@
 // node tools/readme-assets.mjs --input benchmarks/release-0.6.0/openrefine-1400M.json
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs"
 import { createHash } from "node:crypto"
-import { resolve, relative, basename } from "node:path"
+import { resolve, relative } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url))
@@ -156,13 +156,8 @@ export function generate(input, output = resolve(ROOT, "docs/readme")) {
   return { source, files: Object.keys(assets) }
 }
 
+// The README's pictures are drawn by tools/readme-art.mjs, which validates the report with this module.
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  if (process.argv.includes("--help")) console.log(usage)
-  else {
-    try {
-      const result = generate(options(process.argv.slice(2)))
-      console.log(`Source: ${basename(result.source.path)} · SHA-256 ${result.source.sha256}`)
-      for (const file of result.files) console.log(`docs/readme/${file}`)
-    } catch (error) { console.error(error.message); process.exitCode = 1 }
-  }
+  console.error("The README pictures come from tools/readme-art.mjs: node tools/readme-art.mjs [--input <report.json>]")
+  process.exitCode = 2
 }

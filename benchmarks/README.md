@@ -1,159 +1,169 @@
-# Reproducible performance workloads
+# Benchmarks
 
-`check.mjs` compares two OxRefine binaries on the same machine, alternating base/new runs. It keeps the existing people workload and its regression thresholds: fastest time per step must stay below `base * 1.3 + 15 ms`; median peak resident memory below `base * 1.1 + 8 MB`. A failing workload or wrong result aborts the check.
+Every number here was measured, three runs per case, on one Windows laptop (AMD Ryzen AI 7 350, about 31 GiB RAM) unless it says otherwise. Raw reports keep every run, the binaries' SHA-256 and the input hashes; the 0.6.0 ones are in [release-0.6.0/](release-0.6.0/), with the [protocol](release-0.6.0/PLAN.md) and the [verdict](release-0.6.0/verdict.json) that ties them together. The pictures are drawn from those reports by `node tools/readme-art.mjs`, which refuses an incomplete or inconsistent report.
 
-```powershell
-node benchmarks/check.mjs --base path/to/base/ox.exe --runs 3 250000 1000000
-node benchmarks/check.mjs --profile cardinality --base path/to/base/ox.exe --new target/release/ox.exe --runs 3 --history 40 --out benchmarks/data/cardinality-comparison.json 10000 100000
-```
-
-To record one build without claiming a regression comparison:
-
-```powershell
-node benchmarks/check.mjs --profile cardinality --record --runs 1 --history 40 --out benchmarks/data/cardinality-local.json 10000
-node --test benchmarks/cardinality.test.mjs
-```
-
-Build release binaries first (`cargo build --release --locked -p ox-cli`). Generated CSVs and exports stay under ignored `benchmarks/data/`; each server gets a temporary project library which is removed after the run. Ports 3041 and 3042 must be free. JSON includes raw runs, binary SHA-256, CPU/OS/RAM and dataset hashes. An `--out` directory must already exist.
-
-## Cardinality and history
-
-The synthetic CSV has `id`, `value`, `group`, no external or personal data, and a fixed `cardinality-v1` generation rule. Only `value` changes cardinality: **low** has up to 16 distinct labels, **mixed** has `ceil(rows / 10)`, **high** has one label per row. IDs are always unique and group has up to eight values. This prevents confusing whole-file uniqueness with cardinality in the transformed column.
-
-Each workload measures these phases separately:
-
-| phase | work |
+| | |
 |---|---|
-| import | CSV import and initial native save |
-| value | trim and uppercase, depending only on the cell value |
-| merge | mass edits merge eight group values into two; row codes change |
-| history | append a different suffix per step (40 by default), retaining each dictionary |
-| row | append `row.index` after the history test, turning repeated values into unique values |
-| structure | add a derived column, rename and move a column, remove the derived one |
-| undo / redo | jump to the original and final history steps; each command autosaves |
-| save | rewrite native history and metadata with `goto(current)`; the original table is stored once |
-| reopen | restart the backend on the same native library, then time loading the original table and replaying saved history; startup is separate |
-| export | export the final table to CSV |
+| [Against OpenRefine](#against-openrefine-3101) | the same five-step workflow, 100k to 2M rows |
+| [Importing from a database](#importing-from-a-database) | PostgreSQL, MySQL, MariaDB and SQLite, 100k rows |
+| [Bigger than memory](#bigger-than-memory-experimental) | 50 million rows under a 1 GiB limit |
+| [Regression gates](#regression-gates) | what CI and release checks compare |
+| [Cardinality and history](#cardinality-and-history) | low, mixed and unique values, 40-step histories, restart and reopen |
 
-Every raw undone cell is compared with independently generated expected cells using paged row requests; this preserves the original surrounding spaces, which CSV export intentionally trims like OpenRefine. Every row of the reopened final export is compared with independently generated expected CSV using SHA-256 and line count. Only line-ending conventions are normalized in the CSV check. No sample-only correctness check. Timings exclude dataset generation, correctness checks and the OS memory probe. HTTP time includes serialization, scheduling and each command's autosave.
+## Against OpenRefine 3.10.1
 
-`phasePeakMB` records **cumulative** OS resident high-water marks, not memory allocated by one phase. Windows uses PeakWorkingSet64 and Linux VmHWM; macOS uses sampled current RSS and reports the maximum sample as `peak`, which can miss a transient peak. Reopen now uses a fresh backend process on the same private library: its startup is recorded separately, and only the ready server's `open_project` command is timed. This forces native file loading and history replay instead of selecting a project retained by the browser cache. Filesystem caches remain warm; this is not a cold-disk benchmark. Raw results retain the backend PIDs and both lifetime peaks. The whole-workflow peak is the maximum across the two processes, including paged validation requests.
+Both tools ran the same people workflow through their own HTTP APIs: CSV import, a text facet, fingerprint clustering, a five-operation OpenRefine recipe and CSV export. OpenRefine had a fixed 1,400 MB Java heap. Every request used `Connection: close` in both tools. All twelve completed pairs from 100k to 1M rows matched every output cell, row count, facet choice and cluster; at 2M rows OpenRefine ran out of its heap in all three attempts.
 
-The parent Node process, filesystem cache and OS overhead are excluded from server RAM. `savedBytes` is the native library size at the final cursor; the saved format replays operations, so a small library does not imply a small in-memory history. Shared snapshots reuse unchanged columns and row codes for one-to-one value changes. Code-changing edits still keep full column code vectors; unique values retain large dictionaries at every changed step. This workload does not measure spill-to-disk or operation beyond RAM.
+<img src="../docs/readme/bench-time.svg" width="100%" alt="Whole-workflow time by table size: 0.66 s against 15.0 s at 1M rows; OpenRefine runs out of memory at 2M.">
 
-Start with 10,000 rows and inspect available RAM before increasing sizes or history. The defaults intentionally stay small: unique-value histories can require memory proportional to rows times history length. The row-dependent transform runs after history so history dictionaries retain each dataset's distinct-value count. A completed run does not establish the largest safe input or an OpenRefine speed ratio. Do not extrapolate the people benchmark's speedup to these datasets.
+<img src="../docs/readme/bench-steps.svg" width="100%" alt="Each step at 1M rows on a log scale.">
 
-CI currently runs the people regression workload. Cardinality measurements are opt-in and should be recorded on an otherwise quiet machine; the local JSON is a reproducible observation, not a CI guarantee. There is no OpenRefine timing comparison in this profile.
+<img src="../docs/readme/bench-memory.svg" width="100%" alt="Peak memory by table size.">
 
-## Local baseline, 2026-11-14
+| Rows | OxRefine | OpenRefine | Faster | Peak RAM (OxRefine / OpenRefine) |
+|---|---|---|---|---|
+| 100,000 | 0.09 s | 1.75 s | 19× | 24 / 460 MiB |
+| 250,000 | 0.15 s | 3.40 s | 23× | 38 / 820 MiB |
+| 500,000 | 0.28 s | 5.91 s | 21× | 64 / 986 MiB |
+| 1,000,000 | 0.66 s | 15.0 s | 23× | 116 / 1,420 MiB |
+| 2,000,000 | 1.38 s | out of memory | | 220 MiB / out of memory |
 
-[cardinality-baseline.json](cardinality-baseline.json) records one release run per dataset on Windows 11, AMD Ryzen AI 7 350, about 31 GiB RAM. The binary SHA-256, dataset hashes, every phase and correctness digests are included. Memory units in the JSON's `MB` fields are MiB (2^20 bytes).
+Totals are medians of whole runs, so they can differ from the sum of the per-step medians. Peak RAM is the backend process's Windows `PeakWorkingSet64`; a Java heap setting is not a limit on process RAM. The data repeats values the way messy real columns do; columns where every value is different gain less, see [cardinality and history](#cardinality-and-history). [Raw report](release-0.6.0/openrefine-1400M.json).
 
-This historical baseline predates the fresh-process reopen protocol. Its reopen timings come from close/open within one server process; keep those observations separate from the new restart measurements.
-
-| rows | value cardinality | distinct values | 40 history steps | reopen | peak for whole workflow |
-|---|---|---|---|---|---|
-| 10,000 | low | 16 | 4 ms | 50 ms | 18 MiB |
-| 10,000 | mixed | 1,000 | 26 ms | 79 ms | 24 MiB |
-| 10,000 | high | 10,000 | 175 ms | 197 ms | 72 MiB |
-| 100,000 | low | 16 | 28 ms | 1,222 ms | 97 MiB |
-| 100,000 | mixed | 10,000 | 395 ms | 1,069 ms | 153 MiB |
-| 100,000 | high | 100,000 | 3,971 ms | 4,500 ms | 623 MiB |
-
-The whole-workflow peak includes the row-dependent transform, structural edits and reopen, after the cardinality-specific history phase. For example, the low-cardinality 100,000-row run had a cumulative HWM of 15 MiB after history and 97 MiB by the end. This shows why a repeated-value benchmark cannot predict unique-value history costs. These are single local observations; short timings are noisy, no base binary or OpenRefine was compared, and the RAM limit was not tested.
-
-```powershell
-node benchmarks/check.mjs --profile cardinality --record --runs 1 --history 40 --out benchmarks/cardinality-baseline.json 10000 100000
+```bash
+# OpenRefine 3.10.1 in ../OpenRefine/openrefine-3.10.1
+cargo build --release --locked -p ox-cli
+node benchmarks/compare.mjs --runs 3 --out benchmarks/results.json 100000 250000 500000 1000000 2000000
+node tools/readme-art.mjs --input benchmarks/results.json
 ```
 
-## Release 0.6.0 repeated measurements
+## Importing from a database
 
-### Paired native database imports
+<img src="../docs/readme/database-comparison.svg" width="100%" alt="Database import of 100,000 rows: OxRefine against OpenRefine on four backends.">
 
-[The database comparison](release-0.6.0/database-comparison.json) adds three fresh-process runs per tool and backend, using the same local SQL fixture as the original [OxRefine database report](release-0.6.0/database.json): 100,000 rows, three columns and 1,031 SQL NULLs. Tool order alternates for each backend; backend order rotates. Every completed run checks all exported values against an independent digest and checks all 100,000 typed rows, outside the import timer. Services and filesystem caches stay warm; this is a local workload observation.
+The same synthetic table in each database: 100,000 rows, integer ids, text labels and 1,031 NULL quantities. Each tool imported it three times in fresh processes, alternating which went first. Every completed import was checked value by value against an independent digest, outside the timer.
 
-Import time uses the native paths: OxRefine prepares a typed snapshot and creates/saves a native project; OpenRefine's bundled database controller queries and registers an in-memory project. OpenRefine's optional preview, full-query test and eventual autosave are excluded. No export/archive overhead is charged to either import. Thus these timings do **not** establish equal persistence guarantees. Process startup and a one-row version-query warm-up are excluded from time. Import RAM is the Windows process `PeakWorkingSet64` at import completion, including startup/runtime overhead, excluding database services, browser, parent Node and external filesystem cache. OpenRefine uses `-Xms256M -Xmx1400M`; this is not a process RAM limit. The OxRefine-only fresh-process reopen checks remain in each raw Ox run.
+| Backend | Import, OxRefine / OpenRefine | Faster | Peak RAM, OxRefine / OpenRefine | Less memory |
+|---|---|---|---|---|
+| PostgreSQL 17.9 | 155 / 708 ms | **4.6×** | 22 / 322 MiB | **14.6×** |
+| MySQL 8.4.13 | 114 / 1,294 ms | **11×** | 22 / 357 MiB | **16.2×** |
+| MariaDB 11.4.13 | 118 / 753 ms | **6.4×** | 21 / 317 MiB | **15.1×** |
+| SQLite 3.46.0 | 121 ms / not measured | | 23 MiB / not measured | |
 
-The reference uses the same pinned 3.10.1 artifacts as the conformance suite and existing release comparisons. This build's API reports `3.10-SNAPSHOT [TRUNK]`; the report retains that response, JVM details and SHA-256 fingerprints of both applications and all four JDBC jars. SQLite is implemented by OpenRefine, but this reference build fails to register its bundled JDBC driver (`No suitable driver`). All three attempts are retained as unavailable, with **no inferred time, memory or ratio**. This is a limitation of the measured reference setup, not a claim that OpenRefine lacks SQLite support.
+<details>
+<summary>What the times include</summary>
 
-Provision the disposable synthetic databases with [the pinned engine versions and fixture SQL](../tests/database/reference-engines.json), then run:
+- **Different finish lines.** OxRefine's import includes the typed snapshot and saving the project to disk; OpenRefine's ends when its database controller registers the project in memory, before any autosave. OpenRefine's optional preview and query test are left out.
+- **Excluded:** process startup, a one-row warm-up query, export and validation. Database services and the OS file cache stay warm, so this is not a cold-disk or remote-network test.
+- **Memory** is the backend process's peak working set at the end of the import, runtime included, database servers excluded.
+- **SQLite:** OpenRefine supports it, but this reference build's bundled JDBC driver failed to register (`No suitable driver`) in all three attempts, so there is no SQLite comparison.
+- **The reference** is the same pinned OpenRefine 3.10.1 the conformance suites use; the report keeps its API version string, JVM details and the SHA-256 of the application and all four JDBC jars.
+
+Set up the disposable databases with [the pinned engine versions and fixture SQL](../tests/database/reference-engines.json), then:
 
 ```powershell
 node benchmarks/database-compare.mjs --config path/to/private-connections.json --sqlite path/to/fixture.sqlite --new path/to/ox.exe --runs 3 --out benchmarks/release-0.6.0/database-comparison.json
-node tools/readme-database-assets.mjs benchmarks/release-0.6.0/database-comparison.json
-node --test tools/readme-database-assets.test.mjs
+node tools/readme-art.mjs
 ```
 
-Use the same private connection JSON format as `database.mjs`; SQLite must contain the same `db_bench_fixture` table. Credentials and private diagnostics are never report content. The SVG is generated only from a complete, checked report; its metadata identifies the source JSON and SHA-256. Each metric has a shared linear scale, and animation changes opacity without changing measured bar lengths.
+Credentials never go into a report. [Paired report](release-0.6.0/database-comparison.json) · [OxRefine-only runs with reopen checks](release-0.6.0/database.json).
+</details>
 
-The frozen Windows candidate has SHA-256 `31e9e0d1a177f74b895475dda821928aeecb5b649fe4ead3b0676b7a1f158cd9`. [The release verdict](release-0.6.0/verdict.json) links every raw report and its SHA, including the rejected development measurements. The [protocol](release-0.6.0/PLAN.md) records the official 0.5.3 baseline, inputs and commands. These are three-repeat local observations; host background activity was recorded, and no owned build or second benchmark ran concurrently.
+## Bigger than memory (experimental)
 
-Every HTTP request used `Connection: close`, identically for both OxRefine builds and OpenRefine. This avoids a separately measured keepalive response-delivery stall. Connection setup and response delivery remain inside phase timings. The OpenRefine report uses medians of per-run totals; the existing regression gate uses fastest phase timings and median peak memory, with its original thresholds.
+<img src="../docs/readme/spill.svg" width="100%" alt="50,000,001 rows and 20 columns under a 1 GiB Linux memory limit with no swap: 924 MiB resident peak, no out-of-memory kills.">
 
-| check | observed outcome |
+With `OXREFINE_CODE_BUDGET_MIB` set, row codes beyond the budget move to temporary mapped files (`OXREFINE_SPILL_DIR`). One run on Linux (WSL2) imported a 3.6 GB CSV of 50,000,001 rows under a 1 GiB cgroup limit with swap off, then transformed it, undid and redid every step, exported, restarted and reopened it, checking every row each time. Nothing was killed, and no spill file was left behind.
+
+The budget covers row codes only: dictionaries, row indexes and operation scratch stay in RAM, so a column where every value is different still needs memory for each value. This run shows the low-cardinality workflow fits; it isn't a general memory bound or a speed comparison. [Report](out-of-core-baseline.json).
+
+<details>
+<summary>The run in numbers, and how to repeat it</summary>
+
+| | |
 |---|---|
-| [OpenRefine comparison](release-0.6.0/openrefine-1400M.json) | Twelve completed pairs at 100k–1M rows matched every output cell, row count, facet count and cluster count. All three 2M OpenRefine attempts exhausted the fixed 1400M Java heap; no 2M reference-output comparison is established. |
-| [Required CI-size people workload](release-0.6.0/people-ci-250k.json) | The 250k check passed; the 1M check also passed inside the expanded report. Each size has three runs per binary and complete exported-row equality checks. |
-| [Expanded people workload](release-0.6.0/people-regression.json) | Exit **1**, retained: the 2M recipe phase took 58.29 ms versus 31.00 ms in 0.5.3, above its unchanged 55.30 ms threshold. All other measured gates and every output check passed. This remains a performance follow-up. |
-| [Cardinality/history](release-0.6.0/cardinality-regression.json) | All six datasets passed the gate across 36 base/new runs, including real backend restart, undo/redo and full output checks. |
-| [Database import](release-0.6.0/database.json) | All twelve 100k-row runs passed complete CSV, type/null and fresh-process reopen checks across SQLite, PostgreSQL, MySQL and MariaDB. |
+| CSV | 3,644,506,112 bytes, 50,000,001 × 20 |
+| Row codes | 4,000,000,080 bytes, of which 64 MiB in RAM at most |
+| Spill files on disk at the peak | 4,200,161,280 bytes |
+| OxRefine resident peak | 924 MiB |
+| cgroup limit / swap | 1,024 MiB / 0 |
+| cgroup peak | limit + 4 KiB (the kernel allows brief overshoot) |
+| out-of-memory events | 0 |
+| cells checked | 50,151 stored errors, 49,949,850 numbers |
 
-Current cardinality/history **medians for 0.6.0** follow. Reopen excludes process startup, loads the native project in a different backend PID, and leaves OS filesystem caches warm. Peak is the maximum resident HWM across the two process lifetimes, including validation.
+An earlier attempt at the same limit was killed in the numeric range facet, which held two arrays as long as the table; the facet now counts and bins in separate passes. That failure stays in the report.
 
-| rows | transformed value cardinality | distinct values | 40 history steps | process-restarted reopen | whole-workflow peak |
+You need Linux with cgroup v2 and its memory controller, and a fresh directory on a Linux filesystem (not `/mnt/c`). The coordinator makes one private cgroup, starts the generator, verifier and server inside it, and cleans up after itself; it doesn't touch anything else on the host. The 50M run needs about 25 GB free.
+
+```sh
+# small smoke test: 100,003 rows, spilling forced with a 1 MiB budget
+node benchmarks/out-of-core-cgroup.mjs --directory /var/tmp/ox-ooc-small --bin target/release/ox --code-budget-mib 1
+
+# the 50M run, 1 GiB limit, no swap
+node benchmarks/out-of-core-cgroup.mjs --directory /var/tmp/ox-ooc-50m --bin target/release/ox --rows 50000001 --code-budget-mib 64 --allow-large
+```
+</details>
+
+## Regression gates
+
+`check.mjs` runs two OxRefine builds on the same machine, alternating them, and fails when the new one is clearly worse: a step's fastest time over `base × 1.3 + 15 ms`, or median peak memory over `base × 1.1 + 8 MB`. A failed workload or a wrong result fails the check too. CI runs it on every push against the previous commit.
+
+```powershell
+cargo build --release --locked -p ox-cli
+node benchmarks/check.mjs --base path/to/base/ox.exe --runs 3 250000 1000000
+```
+
+The 0.6.0 checks against the official 0.5.3 binary:
+
+| Check | Result |
+|---|---|
+| [People workflow, 250k and 1M rows](release-0.6.0/people-ci-250k.json) | passed |
+| [People workflow, up to 2M rows](release-0.6.0/people-regression.json) | one step over: the 2M recipe took 58 ms against 31 ms (limit 55 ms); every output matched. Open follow-up. |
+| [Cardinality and history, six datasets](release-0.6.0/cardinality-regression.json) | passed, 36 runs per build |
+| [Database import, four backends](release-0.6.0/database.json) | all 12 runs passed their checks, reopen included |
+
+## Cardinality and history
+
+The people workflow repeats values, which is where OxRefine is strongest. This workload varies that on purpose: a synthetic `id, value, group` table where only `value` changes, with **low** (up to 16 distinct values), **mixed** (one per ten rows) and **high** (every value different) cardinality.
+
+| Phase | Work |
+|---|---|
+| import | CSV import and the first save |
+| value | trim and uppercase |
+| merge | mass edits merge eight groups into two |
+| history | 40 steps, each appending a different suffix |
+| row | append `row.index`, so every value becomes unique |
+| structure | add, rename, move and remove a column |
+| undo / redo | jump to the first and last step |
+| reopen | restart the server and open the saved project again |
+| export | the final table to CSV |
+
+0.6.0 medians:
+
+| Rows | Cardinality | Distinct values | 40 history steps | Reopen after restart | Peak |
 |---|---|---|---|---|---|
 | 10,000 | low | 16 | 6 ms | 46 ms | 19 MiB |
 | 10,000 | mixed | 1,000 | 19 ms | 61 ms | 25 MiB |
 | 10,000 | high | 10,000 | 168 ms | 242 ms | 73 MiB |
 | 100,000 | low | 16 | 26 ms | 441 ms | 97 MiB |
 | 100,000 | mixed | 10,000 | 203 ms | 724 ms | 154 MiB |
-| 100,000 | high | 100,000 | 2731 ms | 2719 ms | 623 MiB |
+| 100,000 | high | 100,000 | 2.73 s | 2.72 s | 623 MiB |
 
-The database workload uses 100,000 deterministic SQL rows with integer IDs, text labels and 1,031 NULL quantities. Import includes query/fetch, the typed snapshot and native project creation/save. Median import was 216 ms for PostgreSQL 17.9, 144 ms for MySQL 8.4.13, 148 ms for MariaDB 11.4.13 and 115 ms for SQLite 3.46.0. Import peaks were 23, 22, 21 and 23 MiB respectively; whole-workflow peaks were 29 MiB each. These exclude the database servers and parent driver. Backend services remained warm, every saved project reopened without another SQL query, and all 100,000 rows were checked after reopening. This fixture does not establish remote-network throughput or general database rankings.
+With unique values every history step keeps its own dictionary, so memory grows with rows × steps: start at 10,000 rows and watch RAM before going bigger. The peak covers the whole workflow, including the row-dependent step, so even the low case ends higher than its history phase alone.
 
-## Experimental row-code spilling
+<details>
+<summary>How it's measured</summary>
 
-`out-of-core-data.mjs` physically writes every CSV row and records a SHA-256 manifest. The low-cardinality dataset has 20 columns: 16 fixed-width labels in `value`, 1,000 numeric strings plus a deliberate `BAD` every 997th row, eight groups, periodic/end checkpoints, and 16 additional columns with two to eight values each. There is no unique ID column that would silently make the low-cardinality dictionary grow with every row. The high variant makes every `value` distinct. The validation runners explicitly refuse large high-cardinality workloads; backend dictionaries remain resident.
+- Every undone cell is compared with independently generated values through paged row requests, and the reopened export with an independent CSV by SHA-256 and line count.
+- Times leave out data generation, the checks and the memory probe; HTTP time includes serialisation and each command's autosave.
+- Peak memory is the OS high-water mark (Windows `PeakWorkingSet64`, Linux `VmHWM`; macOS samples RSS and can miss a short peak), the maximum over the two server processes, parent Node and file cache excluded.
+- Reopen runs in a fresh server process on the same project library, so it loads from disk and replays the saved history; startup is timed separately and file caches stay warm.
+- [cardinality-baseline.json](cardinality-baseline.json) is an earlier single run whose reopen didn't restart the process; keep it apart from these numbers.
 
-`out-of-core.mjs` verifies every source/exported row against a deterministic oracle. It checks uppercase, numeric conversion with stored errors, merging mass edits, typed numeric/error counts, complete undo/redo, real in-flight import cancellation, failed-operation history, process restart/native reopen, unchanged source/native-original hashes, and private spill cleanup. JSON responses are capped at 8 MiB; table verification uses streamed CSV exports. A finished import which wins a cancellation race is recorded and removed as a known new test project, then retried; it never counts as cancellation coverage.
-
-The separate code policy (`OXREFINE_CODE_BUDGET_MIB`, `OXREFINE_SPILL_DIR`) bounds tracked `CodeBuilder` allocations. `/api/storage_stats` exposes current/peak heap, separately counted writer buffers, logical mapped bytes and live spill-file counts. It does **not** bound resident dictionaries, flags, row indices, other code constructors or operation scratch. RSS includes mapped file pages and is reported separately. Total allocator heap is explicitly unknown in the report.
-
-To reproduce the constrained workflow on Linux, build the release CLI and choose a **new directory on Linux ext4**, outside host mounts such as `/mnt/c`. The coordinator needs write access to a cgroup v2 hierarchy with the memory controller enabled. It creates one uniquely named private leaf, reads back its limits, moves each child into it **before exec**, and keeps the producer, verifier and backend in that same cgroup. The supervisor remains outside so it can record OOM failures and remove its own empty cgroup. It does not change host configuration, other processes, or global page caches.
-
-```sh
-# Small smoke: defaults to 100,003 rows. Force spill with a 1 MiB code budget.
-node benchmarks/out-of-core-cgroup.mjs --directory /var/tmp/ox-ooc-small \
-  --bin target/release/ox --code-budget-mib 1
-
-# Physical 50,000,001 rows, with 1 GiB cgroup memory and no swap; requires explicit opt-in.
-node benchmarks/out-of-core-cgroup.mjs --directory /var/tmp/ox-ooc-50m \
-  --bin target/release/ox --rows 50000001 --code-budget-mib 64 --allow-large
+```powershell
+node benchmarks/check.mjs --profile cardinality --base path/to/base/ox.exe --new target/release/ox.exe --runs 3 --history 40 --out benchmarks/data/cardinality-comparison.json 10000 100000
+node benchmarks/check.mjs --profile cardinality --record --runs 1 --history 40 --out benchmarks/data/cardinality-local.json 10000
 ```
 
-The coordinator checks filesystem space before generating data and preserves inputs, reports and native projects for inspection. The recorded 50M workflow used about 16 GB at its active peak; leave at least 25 GB free in both the guest filesystem and its backing disk. Ports default to 3056. An existing result directory is refused. Smaller unconstrained runs can use `out-of-core-data.mjs generate` followed by `out-of-core.mjs --file ... --result-dir ...`; those commands alone do not install a process memory constraint.
-
-The [kernel's cgroup memory-ownership rules](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#memory-ownership) matter: cached pages can stay charged to the cgroup which created them. Keeping generation and verification inside the same leaf avoids claiming a memory proof from externally charged warm input pages. `memory.max` is a cgroup charge limit, not a heap counter or an exact per-process RSS limit, and the kernel permits temporary overshoot. The report retains real RSS, cgroup peak/stat/events, configured limits and their scopes. Anonymous spill files are unlinked while open: directory walks cannot see their disk allocation, so Linux also measures their open file descriptors and allocated blocks.
-
-### Observed 50M validation, 2026-11-14
-
-[out-of-core-baseline.json](out-of-core-baseline.json) records a successful single development-candidate run on Linux/WSL2. The binary SHA identifies the measured artifact; its package version had not yet been bumped to 0.6.0. This is correctness and memory evidence for this bounded-cardinality workflow. Later phases overlapped a Windows release compilation, explicitly recorded in the JSON, so their timings are not quiet performance comparisons.
-
-| observation | measured value |
-|---|---|
-| physical CSV rows × columns | 50,000,001 × 20 |
-| source CSV | 3,644,506,112 bytes |
-| logical original row codes | 4,000,000,080 bytes |
-| tracked code-builder heap peak | 67,108,864 bytes (64 MiB) |
-| active mapped code peak | 4,200,000,084 logical bytes |
-| anonymous spill allocated disk peak | 4,200,161,280 bytes |
-| backend OS resident peak | 968,953,856 bytes (924.07 MiB) |
-| cgroup memory.max / swap.max | 1,073,741,824 / 0 bytes |
-| actual whole-cgroup memory peak | 1,073,745,920 bytes (limit + 4 KiB) |
-| cgroup OOM / kill / group-kill events | 0 / 0 / 0 |
-| stored error / numeric cells | 50,151 / 49,949,850 |
-| spill files after backend exit | 0 |
-
-Every row matched after editing, undo and process restart; original CSV and native original-table SHA-256 remained unchanged. Cancellation stopped a new import after its first MiB and left no partial saved project. The previous 1 GiB attempt failed in the numeric range facet because it retained two numeric arrays proportional to row count. The successful implementation counts/min-maxes and builds histograms in separate passes; the failed attempt's OOM evidence remains in the baseline for comparison.
-
-This run does not establish bounds for arbitrary dictionaries, row-dependent GREL, all facets/operations or other import formats. It does not test 50M unique values, account for host VM caches as backend heap, or establish a speed ratio against OpenRefine. The scripts deliberately retain these distinctions.
+Generated CSVs and exports stay in the ignored `benchmarks/data/`; each server gets a temporary project library, removed afterwards. Ports 3041 and 3042 must be free, and an `--out` directory must exist.
+</details>

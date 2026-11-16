@@ -125,6 +125,8 @@ export function generateDatabase(input, output = resolve(ROOT, "docs/readme/data
   return source
 }
 
+// The README's pictures are drawn by tools/readme-art.mjs, which validates the report with this module.
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  console.log(generateDatabase(process.argv[2] ?? resolve(ROOT, "benchmarks/release-0.6.0/database-comparison.json")))
+  console.error("The README pictures come from tools/readme-art.mjs: node tools/readme-art.mjs [--input <report.json>]")
+  process.exitCode = 2
 }
