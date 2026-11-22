@@ -151,7 +151,7 @@ function rememberContext(context: ProjectContext) {
 const projectSelection = (cmd: string) => ["open", "import_project", "open_project", "commons_create", "database_create", "close", "summary"].includes(cmd)
 const projectMetadata = (cmd: string) => ["rename_project", "set_project_info", "delete_project"].includes(cmd)
 const projectMutation = (cmd: string) => ["apply", "apply_recipe", "goto"].includes(cmd) || projectMetadata(cmd)
-const projectFree = (cmd: string) => ["inspect", "fixed_width_sample", "json_paths", "wikitext_tables", "paste", "recon_service", "recon_suggest", "fetch_url", "preview_import", "commons_prepare", "commons_preview", "database_profiles", "database_save_profile", "database_delete_profile", "database_test", "database_schema", "database_prepare", "database_preview", "storage_stats", "projects", "preferences", "set_preference", "processes", "cancel_process", "memory"].includes(cmd)
+const projectFree = (cmd: string) => ["inspect", "fixed_width_sample", "json_paths", "wikitext_tables", "paste", "recon_service", "recon_suggest", "fetch_url", "preview_import", "commons_prepare", "commons_preview", "database_profiles", "database_save_profile", "database_delete_profile", "database_test", "database_schema", "database_prepare", "database_preview", "storage_stats", "extensions", "reload_extensions", "projects", "preferences", "set_preference", "processes", "cancel_process", "memory"].includes(cmd)
 
 function superseded(): Error {
   const error = new Error("The project view changed while this request was running.")

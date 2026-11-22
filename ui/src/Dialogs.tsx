@@ -34,7 +34,16 @@ type TransformPreview = {
   start: number; items: TransformPair[]; rowPreview: TransformPair[]
 }
 const show = (r: Result) => (r !== null && typeof r === "object" ? `Error: ${r.error}` : vis(r))
-const grel = (e: string) => (e.trim().startsWith("grel:") ? e.trim() : `grel:${e.trim()}`)
+/** OpenRefine's expression languages, as stored before the expression ("jython:return value"). */
+export type Lang = "grel" | "jython" | "clojure"
+const LANGS: { id: Lang; label: string; start: string }[] = [
+  { id: "grel", label: "GREL", start: "value" },
+  { id: "jython", label: "Python", start: "return value" },
+  { id: "clojure", label: "Clojure", start: "value" },
+]
+const PREFIX = /^(grel|jython|python|clojure):/
+/** The expression with its language prefix; a prefix the user typed wins. */
+const withLang = (lang: Lang, e: string) => (PREFIX.test(e.trim()) ? e.trim() : `${lang}:${e.trim()}`)
 
 export function useDebounced<T>(value: T, ms = 200) {
   const [v, setV] = useState(value)
@@ -125,7 +134,21 @@ export function TransformDialog({
   onFacet?: (expression: string) => void
   onClose: () => void
 }) {
-  const [expr, setExpr] = useState("value")
+  const [expr, setExprRaw] = useState("value")
+  const [lang, setLang] = useState<Lang>("grel")
+  // a recent expression stored with its prefix switches the language and shows the bare expression
+  const setExpr = (e: string) => {
+    const m = e.match(PREFIX)
+    if (m) {
+      setLang(m[1] === "python" ? "jython" : (m[1] as Lang))
+      setExprRaw(e.slice(m[0].length))
+    } else setExprRaw(e)
+  }
+  const switchLang = (next: Lang) => {
+    // swap the starting expression; anything the user typed stays
+    if (LANGS.some((l) => l.start === expr.trim())) setExprRaw(LANGS.find((l) => l.id === next)!.start)
+    setLang(next)
+  }
   const [recent] = useState(recentExpressions)
   const [name, setName] = useState("")
   // fetching URLs: OpenRefine's defaults
@@ -145,15 +168,15 @@ export function TransformDialog({
   const [onlyChanged, setOnlyChanged] = useState(false)
   const debounced = useDebounced(expr)
   const exact = mode === "transform"
-  const previewKey = JSON.stringify([mode, debounced, column, engine, exact && onError, exact && repeat, exact && onlyChanged])
+  const previewKey = JSON.stringify([mode, lang, debounced, column, engine, exact && onError, exact && repeat, exact && onlyChanged])
   const waiting = loadedKey !== previewKey || expr !== debounced
 
   useEffect(() => {
     let live = true
     setError("")
     const request = exact
-      ? call<TransformPreview>("preview_transform", { op: { op: "core/text-transform", engineConfig: engine, columnName: column, expression: grel(debounced), onError, repeat, repeatCount: 10 }, limit: 200, params: { onlyChanged } })
-      : call<[string | null, Result][]>("preview", { engine, column, expression: debounced, limit: 20 })
+      ? call<TransformPreview>("preview_transform", { op: { op: "core/text-transform", engineConfig: engine, columnName: column, expression: withLang(lang, debounced), onError, repeat, repeatCount: 10 }, limit: 200, params: { onlyChanged } })
+      : call<[string | null, Result][]>("preview", { engine, column, expression: withLang(lang, debounced), limit: 20 })
     request.then(({ data, ms }) => {
       if (!live) return
       if (exact) setDistinct(data as TransformPreview)
@@ -176,9 +199,9 @@ export function TransformDialog({
   const pairs = distinct ? previewBy === "values" ? distinct.items : distinct.rowPreview : []
   const apply = () => {
     if (blocked) return
-    rememberExpression(expr.trim())
+    rememberExpression(lang === "grel" ? expr.trim() : withLang(lang, expr))
     if (mode === "facet-list" || mode === "facet-range") {
-      onFacet?.(grel(expr))
+      onFacet?.(withLang(lang, expr))
       return onClose()
     }
     if (mode === "fetch") {
@@ -191,7 +214,7 @@ export function TransformDialog({
         op: "core/column-addition-by-fetching-urls",
         engineConfig: engine,
         baseColumnName: column,
-        urlExpression: grel(expr),
+        urlExpression: withLang(lang, expr),
         onError: fetchError,
         newColumnName: name.trim(),
         columnInsertIndex: columns.indexOf(column) + 1,
@@ -208,14 +231,14 @@ export function TransformDialog({
             baseColumnName: column,
             newColumnName: name.trim(),
             columnInsertIndex: columns.indexOf(column) + 1,
-            expression: grel(expr),
+            expression: withLang(lang, expr),
             onError: "set-to-blank",
           }
         : {
             op: "core/text-transform",
             engineConfig: engine,
             columnName: column,
-            expression: grel(expr),
+            expression: withLang(lang, expr),
             onError,
             repeat,
             repeatCount: 10,
@@ -236,7 +259,13 @@ export function TransformDialog({
       <div className="flex min-h-0 flex-1">
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex h-9.5 shrink-0 items-stretch border-b">
-            <span className="-mb-px flex items-center border-r border-b-2 border-b-foreground px-4 font-medium">GREL</span>
+            <ToggleGroup aria-label="Expression language" variant="outline" size="sm" value={[lang]} onValueChange={(v) => v[0] && switchLang(v[0] as Lang)} className="self-center px-3">
+              {LANGS.map((l) => (
+                <ToggleGroupItem key={l.id} value={l.id}>
+                  {l.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
             <Spacer />
             <span role="status" className={cn("flex items-center gap-1.5 border-l px-4 font-mono text-[11.5px]", error ? "text-destructive" : "text-ok-text")}>
               <span aria-hidden="true" className={cn("size-1.5", error ? "bg-destructive" : "bg-ok")} />
@@ -244,14 +273,14 @@ export function TransformDialog({
             </span>
           </div>
           <div className="shrink-0 border-b px-4 py-3">
-            <ExpressionEditor id="expression" value={expr} onChange={setExpr} onSubmit={apply} columns={columns} invalid={!!error} autoFocus />
+            <ExpressionEditor key={lang} id="expression" language={lang} value={expr} onChange={setExprRaw} onSubmit={apply} columns={columns} invalid={!!error} autoFocus />
             {error ? (
               <p role="alert" className="pt-2 text-xs text-destructive">
                 {error}
               </p>
             ) : (
               <p className="pt-2 text-xs text-muted-foreground">
-                {HINTS[mode]} <kbd>Ctrl Space</kbd> suggests functions, <kbd>Ctrl ↵</kbd> applies.
+                {HINTS[mode]} {lang === "grel" ? <><kbd>Ctrl Space</kbd> suggests functions, </> : lang === "jython" ? "Python: write a function body that returns the result (value, cell, cells, row, rowIndex). " : "Clojure: one expression over value, cell, cells, row and rowIndex. "}<kbd>Ctrl ↵</kbd> applies.
               </p>
             )}
             {recent.length > 0 && (

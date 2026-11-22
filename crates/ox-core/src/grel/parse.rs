@@ -256,7 +256,7 @@ impl Parser<'_> {
                 }
             }
             Ok(Expr::Call(name, args))
-        } else if is_function(&name) {
+        } else if is_function(&name) || crate::extensions::has_function(&name) {
             Ok(Expr::Call(name, args))
         } else {
             Err(format!("Parsing error at offset {at}: Unknown function or control named {}", name.trim_start_matches('\u{0}')))
@@ -350,7 +350,7 @@ impl Parser<'_> {
                 if self.is_delim('(') {
                     self.advance(true)?;
                     // only functions can be called this way: value.if(...) is unknown, as in OpenRefine
-                    if !is_function(&name) {
+                    if !is_function(&name) && !crate::extensions::has_function(&name) {
                         return Err(format!("Parsing error at offset {}: Unknown function {name}", self.at()));
                     }
                     let mut args = vec![e];

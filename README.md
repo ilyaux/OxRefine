@@ -103,14 +103,15 @@ OxRefine's time includes saving the project; OpenRefine's stops when the project
 
 | | |
 |---|---|
-| **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument, JSON and JSON Lines, XML, MARC, wikitext tables, PC-Axis and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard, a web address or Wikimedia Commons. A preview wizard with OpenRefine's options. |
+| **Import** | CSV and TSV, fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument, JSON and JSON Lines, XML, MARC, wikitext tables, PC-Axis and plain lines, from files, folders, zip/tar/gzip/bzip2 archives, the clipboard, a web address, Google Sheets or Wikimedia Commons. A preview wizard with OpenRefine's options. |
 | **Databases** | SQLite, PostgreSQL, MySQL and MariaDB: browse the schema or write a `SELECT`, preview the whole result, then create the project. Saved connections keep no passwords. |
 | **Explore** | Text, numeric, timeline and custom facets, text filters, records mode, column profiles in every header, and a grid that stays fast at millions of rows. |
-| **Clean** | GREL expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, language detection and `cross()` between projects. |
+| **Clean** | GREL, Python and Clojure expressions, common transforms, mass edits, splitting and joining columns and multi-valued cells, fill and blank down, transposing, fetching URLs, language detection and `cross()` between projects. |
 | **Cluster** | Key collision (fingerprint, n-gram, Metaphone 3 and the other phonetic keyers) and nearest-neighbour (Levenshtein, PPM) clustering, with filters on cluster size, row count and length. |
 | **Reconcile** | Match a column against any W3C Reconciliation service, such as Wikidata or your own: judge candidates cell by cell or in bulk, search the service, preview entities, and add columns from the matched items. |
 | **Keep track** | Full undo and redo, saved projects with tags and metadata, reusable recipes, and progress with cancel for long steps. |
-| **Export** | CSV and TSV, custom tabular, HTML, templating, Excel (`.xlsx`, `.xls`), OpenDocument, SQL, and OpenRefine projects. |
+| **Export** | CSV and TSV, custom tabular, HTML, templating, Excel (`.xlsx`, `.xls`), OpenDocument, SQL, OpenRefine projects, and Google Sheets or Drive. |
+| **Extend** | Add GREL functions, importers, exporters and operations in Python, without rebuilding: [extensions](docs/src/extensions.md). |
 
 Tables bigger than memory: set `OXREFINE_CODE_BUDGET_MIB` and the row codes spill to temporary files (experimental; see [big files](docs/src/importing.md#big-files)).
 
@@ -219,8 +220,7 @@ benchmarks/      data generator, recipe, comparison against OpenRefine, regressi
 
 - RDF import;
 - the scatterplot facet;
-- Python and Clojure expressions;
-- Wikibase schemas and uploads, and Google Sheets;
+- Wikibase schemas and uploads;
 - translations.
 
 [ROADMAP.md](ROADMAP.md) has the full plan.

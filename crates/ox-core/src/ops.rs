@@ -348,6 +348,16 @@ pub enum OpKind {
         apply_to_judged_cells: bool,
     },
 
+    // ------------------------------------------------------------ extensions
+    /// An operation an installed extension provides (docs/src/extensions.md). It is part of recipes;
+    /// replaying one needs the same extension installed.
+    #[serde(rename = "ext/operation", rename_all = "camelCase")]
+    Extension {
+        operation: String,
+        #[serde(default)]
+        params: serde_json::Value,
+    },
+
     // ------------------------------------------------------------ single-cell and single-row edits
     /// OpenRefine's recon-judge-one-cell: match a cell to an item, mark it new, or discard its judgment.
     #[serde(rename = "ox/recon-judge-one-cell", rename_all = "camelCase")]
@@ -506,7 +516,7 @@ fn storable(v: Value) -> Value {
         return v;
     }
     match v {
-        Value::Array(_) | Value::Json(_) | Value::Html(_) | Value::Obj(..) | Value::Re(_) => Value::err(format!("{} value not storable", v.type_name())),
+        Value::Array(_) | Value::Json(_) | Value::Html(_) | Value::Obj(..) | Value::Re(_) | Value::Java(_) => Value::err(format!("{} value not storable", v.type_name())),
         v => v,
     }
 }
@@ -1006,6 +1016,7 @@ impl Op {
         use OpKind::*;
         match &self.kind {
             TextTransform { column_name, expression, .. } => format!("Text transform on cells in column {column_name} using expression {expression}"),
+            Extension { operation, .. } => format!("Run extension operation {operation}"),
             OpKind::Recon { column_name, config, .. } => {
                 let ty = config.get("type").and_then(|t| t.get("id")).and_then(|t| t.as_str()).unwrap_or("null");
                 format!("Reconcile cells in column {column_name} to type {ty}")
@@ -1100,6 +1111,9 @@ impl Op {
         if matches!(self.kind, OpKind::Recon { .. }) {
             return self.reconcile(t);
         }
+        if let Extension { operation, params } = &self.kind {
+            return crate::extensions::operation(operation, t, params);
+        }
         if let Some(out) = self.recon_action(t) {
             return out;
         }
@@ -1127,7 +1141,8 @@ impl Op {
             | ReconUseValuesAsIdentifiers { .. }
             | ReconCopyAcrossColumns { .. }
             | ReconJudgeOneCell { .. }
-            | ReconClearOneCell { .. } => unreachable!(),
+            | ReconClearOneCell { .. }
+            | Extension { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;

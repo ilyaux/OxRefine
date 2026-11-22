@@ -65,7 +65,7 @@ pub struct Projects {
 }
 
 fn global(cmd: &str) -> bool {
-    matches!(cmd, "inspect" | "fixed_width_sample" | "json_paths" | "wikitext_tables" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference" | "commons_prepare" | "commons_preview" | "database_profiles" | "database_save_profile" | "database_delete_profile" | "database_test" | "database_schema" | "database_prepare" | "database_preview" | "storage_stats")
+    matches!(cmd, "inspect" | "fixed_width_sample" | "json_paths" | "wikitext_tables" | "paste" | "recon_service" | "recon_suggest" | "fetch_url" | "preview_import" | "projects" | "preferences" | "set_preference" | "commons_prepare" | "commons_preview" | "database_profiles" | "database_save_profile" | "database_delete_profile" | "database_test" | "database_schema" | "database_prepare" | "database_preview" | "storage_stats" | "extensions" | "reload_extensions" | "google_status" | "google_sign_in" | "google_sign_out" | "google_sheets")
 }
 
 fn metadata(cmd: &str) -> bool {

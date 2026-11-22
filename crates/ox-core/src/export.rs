@@ -168,6 +168,7 @@ pub fn export_to(t: &Table, rows: &[u32], format: &str, params: &J, project_name
             let selected=(0..projected.rows as u32).collect::<Vec<_>>();
             match format { "xlsx"=>xlsx_options(&projected,&selected,project_name,o.output_column_headers)?,"xls"=>xls_options(&projected,&selected,project_name,o.output_column_headers)?,_=>ods_options(&projected,&selected,project_name,o.output_column_headers)? }
         }
+        f if f.starts_with("ext:") => crate::extensions::export(&f[4..], t, rows, params)?,
         "xlsx" => xlsx(t, rows, project_name)?,
         "xls" => xls(t, rows, project_name)?,
         "ods" => ods(t, rows, project_name)?,

@@ -1,0 +1,5 @@
+# Cases where OxRefine knowingly differs from OpenRefine 3.10.1, one per line: `lang:expression  # reason`.
+# Newlines in an expression are written as \n. The conformance test fails when one starts passing.
+jython:return type(value).__name__  # Python 3 has one text type, str; Jython's is unicode
+jython:return str(value)  # Python 3 str() keeps non-ASCII text; Jython 2 raises UnicodeEncodeError
+jython:return {'b': 1, 'a': 2}.keys()  # dicts keep insertion order; Jython's order comes from hashing

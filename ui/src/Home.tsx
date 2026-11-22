@@ -94,6 +94,7 @@ export function Home({
   onPaste,
   onUrl,
   onCommons,
+  onGoogle,
   onDatabase,
   onOpenRefine,
   onOpen,
@@ -106,6 +107,7 @@ export function Home({
   onPaste: () => void
   onUrl: () => void
   onCommons: () => void
+  onGoogle: () => void
   onDatabase: () => void
   onOpenRefine: () => void
   onOpen: (id: string) => void
@@ -147,6 +149,7 @@ export function Home({
         <Source title="From a file or folder" hint="Preview with OpenRefine's import options" keys="Ctrl O" onClick={interact(onImport)} />
         <Source title="Paste from clipboard" hint="Tables copied from a spreadsheet or a page" onClick={interact(onPaste)} />
         <Source title="From a web address" hint="CSV, JSON or a file behind a link" onClick={interact(onUrl)} />
+        <Source title="Google Sheets" hint="A shared link, or sheets in your Google Drive" onClick={interact(onGoogle)} />
         <Source title="Wikimedia Commons" hint="Category files matched to Commons M-ids" onClick={interact(onCommons)} />
         <Source title="From a database" hint="Saved connections, schema and SQL query results" onClick={interact(onDatabase)} />
         <Source title="Open an OpenRefine project" hint=".tar.gz export, undo history included" onClick={interact(onOpenRefine)} />

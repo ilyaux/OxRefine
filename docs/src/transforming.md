@@ -31,4 +31,27 @@ From the **Rows** menu in the top bar: star, flag, keep only, or remove the rows
 
 ## GREL
 
-OxRefine runs GREL, OpenRefine's expression language, with the same functions, controls, error messages and number formatting. The expression editor completes function names and shows each function's description. See the [GREL reference](grel.md).
+OxRefine runs GREL, OpenRefine's expression language, with the same functions, controls, error messages and number formatting. The expression editor completes function names and shows each function's description. See the [GREL reference](grel.md). [Extensions](extensions.md) can add functions of their own.
+
+## Python and Clojure
+
+The language switch above the expression editor picks **GREL**, **Python** or **Clojure**, as OpenRefine's does. Steps keep OpenRefine's prefixes (`jython:`, `clojure:`), so recipes move between the two in both directions.
+
+**Python** is a function body that returns the result, with `value`, `cell`, `cells`, `row` and `rowIndex` bound as in OpenRefine:
+
+```python
+import re
+return re.sub(r"\s+", " ", value).strip().title()
+```
+
+OpenRefine runs these in Jython 2.7. OxRefine runs them in an embedded Python 3 (RustPython) and keeps the Python 2 behaviour that expressions rely on. Integer division stays integer (`5 / 2` is 2), `print x` and `except E, e:` still parse, and `unicode`, `xrange`, `long`, `reduce` and `dict.has_key` work. `\w`, `\d` and `\s` in regexes match ASCII only unless `re.UNICODE` is given. `round()` rounds halves away from zero. The standard library is there (`re`, `json`, `math`, `datetime`, `hashlib`, `base64`, `urllib`...); PyPI packages aren't. Three Jython details differ: the text type's name is `str`, not `unicode`; `str()` keeps non-ASCII text instead of raising `UnicodeEncodeError`; and dictionaries keep insertion order.
+
+**Clojure** is one expression, with the same names bound:
+
+```clojure
+(clojure.string/join "-" (clojure.string/split value #","))
+```
+
+OxRefine interprets the part of Clojure 1.12 that expressions use. That covers the core special forms and macros (`let`, `fn`, `loop`/`recur`, `cond`, `->`, `->>`, `if-let`, `case`, `try`...), about 150 `clojure.core` and `clojure.string` functions, and the numeric tower (long overflow errors, ratios, `N` and `M` literals). Java interop works on strings, numbers, `Math`, `Character`, `Integer`/`Long`/`Double` parsing and the `cells`/`row` objects (`(.getField cells "name" nil)`). An unknown name is a syntax error, as in Clojure. Sequences are eager, so `(range)` and `(iterate f x)` without a bound are refused.
+
+Both are checked against 337 expressions run through OpenRefine 3.10.1 (`tests/langs`); 334 give the same result, and the three Python differences above are the rest. Python is slower than GREL, about 50 µs a row, so a million rows takes most of a minute.

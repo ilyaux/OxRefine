@@ -28,12 +28,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Toaster, toast } from "@/components/ui/toast"
 import { checkForUpdates } from "@/updates"
+import { GoogleSheetsDialog } from "@/GoogleSheetsDialog"
+import { items as extensionItems, useExtensions, type ExtItem } from "@/extensions"
 import { cn } from "@/lib/utils"
 import pkg from "../package.json"
 import { Palette } from "@/Palette"
 
 type Modal =
   | { kind: "commons" }
+  | { kind: "google" }
   | { kind: "database" }
   | { kind: "drop-archive"; path: string; name?: string }
   | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
@@ -282,6 +285,19 @@ export function App() {
     setStaged(null)
     setModal({ kind: "commons" })
   }
+  const fromGoogle = () => {
+    if (!selectionAllowed()) return
+    cancelDrop()
+    setModal({ kind: "google" })
+  }
+  // rows to a new Google Sheet, or the project archive to Drive; Google answers with the file's link
+  const toGoogle = (what: "sheet" | "project") =>
+    call<{ name: string; webViewLink?: string }>(what === "sheet" ? "google_export_sheet" : "google_upload_project", { engine })
+      .then(({ data }) => {
+        toast.add({ title: what === "sheet" ? "Exported to Google Sheets" : "Uploaded to Google Drive", description: data.name })
+        if (data.webViewLink) window.open(data.webViewLink, "_blank", "noopener")
+      })
+      .catch(fail)
   const fromDatabase = () => {
     if (!selectionAllowed()) return
     cancelDrop()
@@ -419,6 +435,25 @@ export function App() {
         onSubmit: (name) =>
           apply({ op: "core/column-addition", engineConfig: engine, baseColumnName: c, newColumnName: name.trim(), columnInsertIndex: summary!.columns.indexOf(c) + 1, expression: "grel:cell.recon.match.id", onError: "set-to-blank" }).catch(() => {}),
       })
+  }
+
+  // operations from installed extensions: ask for each parameter, then record an ext/operation step
+  const extensions = useExtensions()
+  const runExtension = (op: ExtItem) => {
+    const params = Array.isArray(op.params) ? op.params : []
+    const step = (i: number, chosen: Record<string, unknown>) => {
+      if (i >= params.length) return void apply({ op: "ext/operation", operation: op.id, params: chosen }).catch(() => {})
+      const p = params[i]
+      setModal({
+        kind: "ask",
+        title: op.label ?? op.id,
+        label: p.label ?? p.name,
+        initial: p.default === undefined ? "" : String(p.default),
+        // the dialog closes after submitting, so the next question opens once it has
+        onSubmit: async (v) => void setTimeout(() => step(i + 1, { ...chosen, [p.name]: typeof p.default === "number" ? Number(v) : v }), 0),
+      })
+    }
+    step(0, {})
   }
 
   const onAction = (a: ColumnAction) => {
@@ -697,7 +732,7 @@ export function App() {
               </div>
             </>
           ) : (
-            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onCommons={fromCommons} onDatabase={fromDatabase} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} drop={{ dragging: drop.dragging, busy: drop.busy, enabled: dropEnabled }} onInteraction={cancelDrop} />
+            <Home onImport={openFile} onPaste={pasteData} onUrl={fromUrl} onCommons={fromCommons} onGoogle={fromGoogle} onDatabase={fromDatabase} onOpenRefine={openOpenRefine} onOpen={openProject} onRename={renameProject} onError={fail} drop={{ dragging: drop.dragging, busy: drop.busy, enabled: dropEnabled }} onInteraction={cancelDrop} />
           )}
 
           <StatusBar>
@@ -761,6 +796,7 @@ export function App() {
                   { label: "Export matching rows as OpenDocument…", run: () => exportRows("ods", "ods") },
                   { label: "Export as an OpenRefine project…", run: exportProject },
                   { label: "Back to projects", run: goHome },
+                  ...extensionItems(extensions, "operation").map((op) => ({ label: `${op.label ?? op.id}… (${op.owner})`, run: () => runExtension(op) })),
                 ]
               : []),
             { label: "Preferences…", run: () => setPrefsOpen(true) },
@@ -772,7 +808,7 @@ export function App() {
             { label: "Open an OpenRefine project…", run: openOpenRefine },
           ]}
         />
-        {modal?.kind === "ask" && <AskDialog {...modal} onClose={() => setModal(null)} />}
+        {modal?.kind === "ask" && <AskDialog key={`${modal.title}:${modal.label}`} {...modal} onClose={() => setModal(null)} />}
         <AlertDialog open={modal?.kind === "drop-archive"} onOpenChange={(open) => !open && setModal((current) => current?.kind === "drop-archive" ? null : current)}>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -795,6 +831,13 @@ export function App() {
               setFacets([])
               setStaged(null)
             }}
+          />
+        )}
+        {modal?.kind === "google" && (
+          <GoogleSheetsDialog
+            onError={fail}
+            onClose={() => setModal(null)}
+            onImport={(url) => call<Staged>("fetch_url", { url }).then(({ data }) => (setModal(null), setStaged(data)))}
           />
         )}
         {modal?.kind === "commons" && (
@@ -870,6 +913,7 @@ export function App() {
             onExport={(format, ext, params) => {
               setModal(null)
               if (format === "project") exportProject()
+              else if (format === "google-sheet" || format === "google-drive") void toGoogle(format === "google-sheet" ? "sheet" : "project")
               else if (format === "recipe") saveRecipe()
               else exportRows(format, ext, params)
             }}

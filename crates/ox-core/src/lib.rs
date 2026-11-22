@@ -7,6 +7,8 @@ pub mod database;
 mod database_profiles;
 pub mod engine;
 pub mod export;
+pub mod extensions;
+pub mod google;
 pub mod double_metaphone;
 pub mod grel;
 pub mod import;

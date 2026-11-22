@@ -314,6 +314,16 @@ fn deserialize_recipe<'de, D: serde::Deserializer<'de>>(deserializer: D) -> std:
 /// Single JSON entry point shared by the Tauri app and `ox serve`. Returns `{data, ms}`.
 /// Each command runs as a job, so `processes` can report its progress and `cancel_process` stop it.
 pub fn dispatch(s: &mut Session, cmd: &str, args: Value) -> Result<Value> {
+    if matches!(cmd, "extensions" | "reload_extensions") {
+        // extensions live next to the projects folder: <data>/extensions
+        let root = s.store.as_ref().map(|st| st.root().parent().unwrap_or(st.root()).to_path_buf());
+        if cmd == "reload_extensions" {
+            if let Some(r) = &root {
+                crate::extensions::load(&crate::extensions::folders(r));
+            }
+        }
+        return Ok(json!({ "data": crate::extensions::describe(root.as_deref()), "ms": 0.0 }));
+    }
     let budget = s.store.as_ref().map(Store::code_budget).unwrap_or_else(crate::storage::current_budget);
     if let Some(r) = crate::storage::with_budget(budget.clone(), || dispatch_free(cmd, &args)) {
         return r;
@@ -378,6 +388,11 @@ pub fn dispatch_free(cmd: &str, args: &Value) -> Option<Result<Value>> {
     Some(Ok(json!({ "data": data, "ms": 0.0 })))
 }
 
+/// The data folder (projects/ is inside it), where preferences and the Google token live.
+fn data_root(store: Option<&Store>) -> Option<std::path::PathBuf> {
+    store.map(|s| s.root().parent().unwrap_or(s.root()).to_path_buf())
+}
+
 fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
     let store = s.store.as_ref();
     // ---------------------------------------------------------- no project needed
@@ -396,10 +411,25 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             return Ok(json!({ "path": path, "name": "Clipboard", "origin": "(clipboard)" }));
         }
         "recon_service" => return crate::recon::manifest(&a.url),
+        // Google Sheets and Drive (google.rs); the token lives in the data folder
+        "google_status" | "google_sign_in" | "google_sign_out" | "google_sheets" => {
+            let root = data_root(store).ok_or("Google Drive needs a data folder")?;
+            return match cmd {
+                "google_status" => Ok(crate::google::status(&root)),
+                "google_sign_in" => crate::google::sign_in(&root),
+                "google_sign_out" => crate::google::sign_out(&root),
+                _ => crate::google::list_sheets(&root, &a.text),
+            };
+        }
         // `method`: entity, type or property; `text`: what was typed
         "recon_suggest" => return crate::recon::suggest(&a.url, &a.method, &a.text),
         "fetch_url" => {
-            let (path, name) = import::download(&import::staging_dir(store.map(|s| s.root())), &a.url)?;
+            let staging = import::staging_dir(store.map(|s| s.root()));
+            // a Google Sheets link downloads the spreadsheet (every sheet) rather than its web page
+            let (path, name) = match crate::google::sheet_id(&a.url) {
+                Some((id, _)) => crate::google::download(data_root(store).as_deref(), &staging, &id)?,
+                None => import::download(&staging, &a.url)?,
+            };
             return Ok(json!({ "path": path, "name": name, "origin": a.url.trim() }));
         }
         "preview_import" => {
@@ -665,6 +695,20 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             } else {
                 crate::export::export_file(p.table(), &rows, format, &params, &p.name, Path::new(&a.path))?;
                 json!(rows.len())
+            }
+        }
+        "google_export_sheet" | "google_upload_project" => {
+            let root = data_root(store).ok_or("Google Drive needs a data folder")?;
+            if cmd == "google_export_sheet" {
+                let rows = p.rows(&a.engine)?;
+                let bytes = crate::export::export(p.table(), &rows, "xlsx", &json!({}), &p.name)?;
+                crate::google::upload(&root, &p.name, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", &bytes, true)?
+            } else {
+                let dir = tempfile::tempdir().map_err(err)?;
+                let path = dir.path().join("project.openrefine.tar.gz");
+                crate::orproject::write(p, &path)?;
+                let bytes = std::fs::read(&path).map_err(err)?;
+                crate::google::upload(&root, &format!("{}.openrefine.tar.gz", p.name), "application/gzip", &bytes, false)?
             }
         }
         "export_project" | "export_original_project" => {

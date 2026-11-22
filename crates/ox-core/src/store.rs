@@ -227,6 +227,8 @@ impl Store {
     pub fn open(root: impl Into<PathBuf>) -> Result<Store> {
         let root = root.into();
         let budget = crate::storage::from_env(&root.join(".spill"))?;
+        // the app, `ox serve` and `ox mcp` all open their store here
+        crate::extensions::load(&crate::extensions::folders(&root));
         Self::open_with_budget(root, budget)
     }
 

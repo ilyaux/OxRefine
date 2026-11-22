@@ -789,7 +789,7 @@
       "priority": "P2",
       "size": "L",
       "title": "Python and Clojure expressions",
-      "detail": "Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). Not implemented: the current compiler explicitly rejects these language prefixes.",
+      "detail": "Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). Python runs in embedded RustPython with a Python 2 compatibility layer, Clojure in OxRefine's own interpreter; tests/langs pins 337 expressions to OpenRefine 3.10.1.",
       "ref": "JythonEvaluable, ClojureEvaluable"
     },
     {
@@ -1449,7 +1449,7 @@
       "priority": "P2",
       "size": "L",
       "title": "Google Sheets and Drive",
-      "detail": "OpenRefine's gdata extension: import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in.",
+      "detail": "OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app).",
       "ref": "extensions/gdata"
     },
     {
@@ -1460,7 +1460,7 @@
       "priority": "P2",
       "size": "L",
       "title": "Extensions",
-      "detail": "A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules); a documented API and one example extension.",
+      "detail": "A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules): Python extensions in <data>/extensions, a documented API (docs/src/extensions.md) and one example extension (docs/extensions/text-tools).",
       "ref": "Butterfly modules, ClientSideResourceManager"
     },
     {

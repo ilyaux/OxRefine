@@ -184,6 +184,7 @@ function app() {
       if (name === "@/fileDrop") return helpers
       if (name === "@/ProcessMemory") return { useProcessMemory: () => null }
       if (name === "@/updates") return { checkForUpdates() {} }
+      if (name === "@/extensions") return { useExtensions: () => null, items: () => [], listenExtensions() {}, loadExtensions: async () => ({ folders: [], extensions: [] }) }
       if (name === "@/components/ui/toast") return { Toaster: "Toaster", toast: { add() {} } }
       if (name === "@/lib/utils") return { cn: (...values) => values.join(" ") }
       if (name === "../package.json") return { default: { version: "test" } }

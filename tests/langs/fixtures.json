@@ -1,0 +1,3328 @@
+{
+ "openrefine": "3.10.1",
+ "jython": "2.7.4",
+ "clojure": "1.12.3",
+ "generated": "2026-11-18",
+ "columns": [
+  "v",
+  "w"
+ ],
+ "inputs": [
+  [
+   " hello world ",
+   "x"
+  ],
+  [
+   "3",
+   "4"
+  ],
+  [
+   "",
+   "w"
+  ],
+  [
+   "café Ünïcödé",
+   "7"
+  ],
+  [
+   "a,b,,c",
+   ""
+  ]
+ ],
+ "cases": [
+  {
+   "lang": "jython",
+   "expr": "return value",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    null,
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.upper()",
+   "rows": "all",
+   "results": [
+    " HELLO WORLD ",
+    "3",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'upper'"
+    },
+    "CAFÉ ÜNÏCÖDÉ",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.strip().title()",
+   "rows": "all",
+   "results": [
+    "Hello World",
+    "3",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'strip'"
+    },
+    "Café Ünïcödé",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value[::-1]",
+   "rows": "all",
+   "results": [
+    " dlrow olleh ",
+    "3",
+    {
+     "message": "TypeError: 'NoneType' object is unsubscriptable"
+    },
+    "édöcïnÜ éfac",
+    "c,,b,a"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return len(value)",
+   "rows": "all",
+   "results": [
+    "13",
+    "1",
+    {
+     "message": "TypeError: object of type 'NoneType' has no len()"
+    },
+    "12",
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.split(',')",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"3\" ]",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'split'"
+    },
+    "[ \"café Ünïcödé\" ]",
+    "[ \"a\", \"b\", \"\", \"c\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value is None",
+   "rows": "all",
+   "results": [
+    "0",
+    "0",
+    "1",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return type(value).__name__",
+   "rows": "all",
+   "results": [
+    "unicode",
+    "unicode",
+    "NoneType",
+    "unicode",
+    "unicode"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return str(value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    "None",
+    {
+     "message": "UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 3: ordinal not in range(128)"
+    },
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return unicode(value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    "None",
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.encode('utf-8')",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'encode'"
+    },
+    "cafÃ© ÃnÃ¯cÃ¶dÃ©",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return len(value.encode('utf-8'))",
+   "rows": "all",
+   "results": [
+    "13",
+    "1",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'encode'"
+    },
+    "17",
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value + '!'",
+   "rows": "all",
+   "results": [
+    " hello world !",
+    "3!",
+    {
+     "message": "TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'"
+    },
+    "café Ünïcödé!",
+    "a,b,,c!"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return '%s|%d' % (value, rowIndex)",
+   "rows": "all",
+   "results": [
+    " hello world |0",
+    "3|1",
+    "None|2",
+    "café Ünïcödé|3",
+    "a,b,,c|4"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return rowIndex",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cells['w']['value']",
+   "rows": "all",
+   "results": [
+    "x",
+    "4",
+    "w",
+    "7",
+    {
+     "message": "KeyError: 'w'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cells['w'].value",
+   "rows": "all",
+   "results": [
+    "x",
+    "4",
+    "w",
+    "7",
+    {
+     "message": "KeyError: 'w'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cells['w']",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    {
+     "message": "KeyError: 'w'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cells['nope']",
+   "rows": "all",
+   "results": [
+    {
+     "message": "KeyError: 'nope'"
+    },
+    {
+     "message": "KeyError: 'nope'"
+    },
+    {
+     "message": "KeyError: 'nope'"
+    },
+    {
+     "message": "KeyError: 'nope'"
+    },
+    {
+     "message": "KeyError: 'nope'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cell.value",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    {
+     "message": "java.lang.NullPointerException: java.lang.NullPointerException"
+    },
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cell['value']",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    {
+     "message": "java.lang.NullPointerException: java.lang.NullPointerException"
+    },
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return cell.recon",
+   "rows": "all",
+   "results": [
+    {
+     "message": "AttributeError: 'com.google.refine.jython.JythonHasFieldsWrapper' object has no attribute 'recon'"
+    },
+    {
+     "message": "AttributeError: 'com.google.refine.jython.JythonHasFieldsWrapper' object has no attribute 'recon'"
+    },
+    {
+     "message": "java.lang.NullPointerException: java.lang.NullPointerException"
+    },
+    {
+     "message": "AttributeError: 'com.google.refine.jython.JythonHasFieldsWrapper' object has no attribute 'recon'"
+    },
+    {
+     "message": "AttributeError: 'com.google.refine.jython.JythonHasFieldsWrapper' object has no attribute 'recon'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return row['index']",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return row.starred",
+   "rows": "all",
+   "results": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return row['cells']['w'].value",
+   "rows": "all",
+   "results": [
+    "x",
+    "4",
+    "w",
+    "7",
+    {
+     "message": "KeyError: 'w'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value1",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value2",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return int(value) * 2",
+   "rows": "all",
+   "results": [
+    {
+     "message": "ValueError: invalid literal for int() with base 10: ' hello world '"
+    },
+    "6",
+    {
+     "message": "TypeError: int() argument must be a string or a number, not 'None'"
+    },
+    {
+     "message": "ValueError: invalid literal for int() with base 10: 'café Ünïcödé'"
+    },
+    {
+     "message": "ValueError: invalid literal for int() with base 10: 'a,b,,c'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return float(value)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "ValueError: invalid literal for float: hello world"
+    },
+    "3",
+    {
+     "message": "TypeError: float() argument must be a string or a number"
+    },
+    {
+     "message": "ValueError: invalid literal for float: café Ünïcödé"
+    },
+    {
+     "message": "ValueError: invalid literal for float: a,b,,c"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.isdigit()",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'isdigit'"
+    },
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [c for c in value if c.isalpha()]",
+   "rows": "all",
+   "results": [
+    "[ \"h\", \"e\", \"l\", \"l\", \"o\", \"w\", \"o\", \"r\", \"l\", \"d\" ]",
+    "[  ]",
+    {
+     "message": "TypeError: 'NoneType' object is not iterable"
+    },
+    "[ \"c\", \"a\", \"f\", \"é\", \"Ü\", \"n\", \"ï\", \"c\", \"ö\", \"d\", \"é\" ]",
+    "[ \"a\", \"b\", \"c\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return ''.join(sorted(value))",
+   "rows": "all",
+   "results": [
+    "   dehllloorw",
+    "3",
+    {
+     "message": "TypeError: 'NoneType' object is not iterable"
+    },
+    " accdfnÜééïö",
+    ",,,abc"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.count('l')",
+   "rows": "all",
+   "results": [
+    "3",
+    "0",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'count'"
+    },
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.find('o')",
+   "rows": "all",
+   "results": [
+    "5",
+    "-1",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'find'"
+    },
+    "-1",
+    "-1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.replace('o', '0')",
+   "rows": "all",
+   "results": [
+    " hell0 w0rld ",
+    "3",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'replace'"
+    },
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.startswith(' ')",
+   "rows": "all",
+   "results": [
+    "1",
+    "0",
+    {
+     "message": "AttributeError: 'NoneType' object has no attribute 'startswith'"
+    },
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value[1:4]",
+   "rows": "all",
+   "results": [
+    "hel",
+    "",
+    {
+     "message": "TypeError: 'NoneType' object is unsubscriptable"
+    },
+    "afé",
+    ",b,"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value[-1]",
+   "rows": "all",
+   "results": [
+    " ",
+    "3",
+    {
+     "message": "TypeError: 'NoneType' object is unsubscriptable"
+    },
+    "é",
+    "c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import re\nreturn re.sub(r'[aeiou]', '_', value)",
+   "rows": "all",
+   "results": [
+    " h_ll_ w_rld ",
+    "3",
+    {
+     "message": "TypeError: expected string or buffer, but got <type 'NoneType'>"
+    },
+    "c_fé Ünïcödé",
+    "_,b,,c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import re\nreturn re.findall(r'\\w+', value)",
+   "rows": "all",
+   "results": [
+    "[ \"hello\", \"world\" ]",
+    "[ \"3\" ]",
+    {
+     "message": "TypeError: expected string or buffer, but got <type 'NoneType'>"
+    },
+    "[ \"caf\", \"n\", \"c\", \"d\" ]",
+    "[ \"a\", \"b\", \"c\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import re\nm = re.search(r'(\\d+)', value)\nreturn m.group(1) if m else 'none'",
+   "rows": "all",
+   "results": [
+    "none",
+    "3",
+    {
+     "message": "TypeError: expected string or buffer, but got <type 'NoneType'>"
+    },
+    "none",
+    "none"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "if value:\n  return 'yes'\nelse:\n  return 'no'",
+   "rows": "all",
+   "results": [
+    "yes",
+    "yes",
+    "no",
+    "yes",
+    "yes"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "x = 0\nfor c in value:\n  x += 1\nreturn x",
+   "rows": "all",
+   "results": [
+    "13",
+    "1",
+    {
+     "message": "TypeError: 'NoneType' object is not iterable"
+    },
+    "12",
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "d = {}\nfor c in value:\n  d[c] = d.get(c, 0) + 1\nreturn d.get('l', 0)",
+   "rows": "all",
+   "results": [
+    "3",
+    "0",
+    {
+     "message": "TypeError: 'NoneType' object is not iterable"
+    },
+    "0",
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return value.title() if len(value) > 3 else value",
+   "rows": "all",
+   "results": [
+    " Hello World ",
+    "3",
+    {
+     "message": "TypeError: object of type 'NoneType' has no len()"
+    },
+    "Café Ünïcödé",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1 + 1",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 5 / 2",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return -7 / 2",
+   "rows": "first",
+   "results": [
+    "-4"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 5.0 / 2",
+   "rows": "first",
+   "results": [
+    "2.5"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 7 // 2",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 7 % 3",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return -7 % 3",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 2 ** 10",
+   "rows": "first",
+   "results": [
+    "1024"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 2 ** 100",
+   "rows": "first",
+   "results": [
+    {
+     "message": "OverflowError: long int too large to convert"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 10 ** 20",
+   "rows": "first",
+   "results": [
+    {
+     "message": "OverflowError: long int too large to convert"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1.5",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1e20",
+   "rows": "first",
+   "results": [
+    "1.0E20"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 0.1 + 0.2",
+   "rows": "first",
+   "results": [
+    "0.30000000000000004"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1.0",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 3 == 3.0",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return True",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return False",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return None",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'abc'",
+   "rows": "first",
+   "results": [
+    "abc"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return u'\\u00e9'",
+   "rows": "first",
+   "results": [
+    "é"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'é'",
+   "rows": "first",
+   "results": [
+    "é"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [1, 2, 'a']",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, \"a\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [1, [2, 3]]",
+   "rows": "first",
+   "results": [
+    "[ 1, [ 2, 3 ] ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return []",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return (1, 2)",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return {'a': 1}",
+   "rows": "first",
+   "results": [
+    "{'a': 1}"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return set([1])",
+   "rows": "first",
+   "results": [
+    "set([1])"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return range(3)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return xrange(3)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return map(lambda x: x * 2, [1, 2])",
+   "rows": "first",
+   "results": [
+    "[ 2, 4 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return filter(None, [0, 1, 2])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return zip([1, 2], ['a', 'b'])",
+   "rows": "first",
+   "results": [
+    "[ [ 1, \"a\" ], [ 2, \"b\" ] ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return dict(a=1).has_key('a')",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return round(2.5)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return round(2.675, 2)",
+   "rows": "first",
+   "results": [
+    "2.67"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return int('12')",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return int(2.9)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return long(5)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return abs(-3)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return max(1, 5, 3)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return min([4, 2])",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return sum([1, 2, 3])",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return sorted([3, 1, 2])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return list(reversed([1, 2]))",
+   "rows": "first",
+   "results": [
+    "[ 2, 1 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return ','.join(['a', 'b'])",
+   "rows": "first",
+   "results": [
+    "a,b"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'a-b-c'.split('-', 1)",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b-c\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'x'.center(5, '*')",
+   "rows": "first",
+   "results": [
+    "**x**"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'ab'.zfill(5)",
+   "rows": "first",
+   "results": [
+    "000ab"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return '%.2f' % 3.14159",
+   "rows": "first",
+   "results": [
+    "3.14"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return '{0}-{1}'.format('a', 2)",
+   "rows": "first",
+   "results": [
+    "a-2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return '%5s|' % 'ab'",
+   "rows": "first",
+   "results": [
+    "   ab|"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return chr(65)",
+   "rows": "first",
+   "results": [
+    "A"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return ord('A')",
+   "rows": "first",
+   "results": [
+    "65"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return unichr(233)",
+   "rows": "first",
+   "results": [
+    "é"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return hex(255)",
+   "rows": "first",
+   "results": [
+    "0xff"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return bin(5)",
+   "rows": "first",
+   "results": [
+    "0b101"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return isinstance('a', basestring)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'a' < 'b'",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [1, 2] == [1, 2]",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return len({'a': 1, 'b': 2})",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return {'b': 1, 'a': 2}.keys()",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return sorted({'b': 1, 'a': 2}.items())",
+   "rows": "first",
+   "results": [
+    "[ [ \"a\", 2 ], [ \"b\", 1 ] ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1 if True else 2",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return not None",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 'abc'[5:]",
+   "rows": "first",
+   "results": [
+    ""
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1 / 0",
+   "rows": "first",
+   "results": [
+    {
+     "message": "ZeroDivisionError: integer division or modulo by zero"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1.0 / 0",
+   "rows": "first",
+   "results": [
+    {
+     "message": "ZeroDivisionError: float division"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return undefined_name",
+   "rows": "first",
+   "results": [
+    {
+     "message": "NameError: global name 'undefined_name' is not defined"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return int('x')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "ValueError: invalid literal for int() with base 10: 'x'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [1][3]",
+   "rows": "first",
+   "results": [
+    {
+     "message": "IndexError: index out of range: 3"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return {}['k']",
+   "rows": "first",
+   "results": [
+    {
+     "message": "KeyError: 'k'"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "raise ValueError('boom')",
+   "rows": "first",
+   "results": [
+    {
+     "message": "ValueError: boom"
+    }
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return (",
+   "rows": "first",
+   "parseError": "Syntax error"
+  },
+  {
+   "lang": "jython",
+   "expr": "print 'hello'\nreturn 1",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return `5`",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return 1 <> 2",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import math\nreturn math.sqrt(16)",
+   "rows": "first",
+   "results": [
+    "4"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import math\nreturn math.pi",
+   "rows": "first",
+   "results": [
+    "3.141592653589793"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import math\nreturn math.floor(2.5)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import json\nreturn json.dumps({'a': [1, 2]})",
+   "rows": "first",
+   "results": [
+    "{\"a\": [1, 2]}"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import json\nreturn json.loads('{\"a\": 1}')['a']",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import datetime\nreturn datetime.datetime(2020, 1, 2, 3, 4, 5)",
+   "rows": "first",
+   "results": [
+    "[date 2020-01-02T03:04:05Z]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import datetime\nreturn datetime.date(2020, 1, 2)",
+   "rows": "first",
+   "results": [
+    "datetime.date(2020, 1, 2)"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import string\nreturn string.upper('abc')",
+   "rows": "first",
+   "results": [
+    "ABC"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import string\nreturn string.ascii_lowercase",
+   "rows": "first",
+   "results": [
+    "abcdefghijklmnopqrstuvwxyz"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import hashlib\nreturn hashlib.md5('abc').hexdigest()",
+   "rows": "first",
+   "results": [
+    "900150983cd24fb0d6963f7d28e17f72"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import base64\nreturn base64.b64encode('hello')",
+   "rows": "first",
+   "results": [
+    "aGVsbG8="
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "import urllib\nreturn urllib.quote('a b&c')",
+   "rows": "first",
+   "results": [
+    "a%20b%26c"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "def f(x):\n  return x * 3\nreturn f(2)",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "class A:\n  pass\nreturn A.__name__",
+   "rows": "first",
+   "results": [
+    "A"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "try:\n  1 / 0\nexcept ZeroDivisionError, e:\n  return 'caught'",
+   "rows": "first",
+   "results": [
+    "caught"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return [x * x for x in range(4)]",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 4, 9 ]"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return {k: 1 for k in 'ab'}",
+   "rows": "first",
+   "results": [
+    "{'a': 1, 'b': 1}"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return reduce(lambda a, b: a + b, [1, 2, 3])",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "lang": "jython",
+   "expr": "return '\\t'.strip() == ''",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "value",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    null,
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.toUpperCase value)",
+   "rows": "all",
+   "results": [
+    " HELLO WORLD ",
+    "3",
+    {
+     "message": null
+    },
+    "CAFÉ ÜNÏCÖDÉ",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/upper-case value)",
+   "rows": "all",
+   "results": [
+    " HELLO WORLD ",
+    "3",
+    {
+     "message": null
+    },
+    "CAFÉ ÜNÏCÖDÉ",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/trim value)",
+   "rows": "all",
+   "results": [
+    "hello world",
+    "3",
+    {
+     "message": null
+    },
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/capitalize value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    {
+     "message": null
+    },
+    "Café ünïcödé",
+    "A,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/reverse value)",
+   "rows": "all",
+   "results": [
+    " dlrow olleh ",
+    "3",
+    {
+     "message": null
+    },
+    "édöcïnÜ éfac",
+    "c,,b,a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/replace value \"o\" \"0\")",
+   "rows": "all",
+   "results": [
+    " hell0 w0rld ",
+    "3",
+    {
+     "message": null
+    },
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/replace value #\"[aeiou]\" \"_\")",
+   "rows": "all",
+   "results": [
+    " h_ll_ w_rld ",
+    "3",
+    {
+     "message": null
+    },
+    "c_fé Ünïcödé",
+    "_,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/split value #\",\")",
+   "rows": "all",
+   "results": [
+    "[ \" hello world \" ]",
+    "[ \"3\" ]",
+    {
+     "message": null
+    },
+    "[ \"café Ünïcödé\" ]",
+    "[ \"a\", \"b\", \"\", \"c\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/blank? value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/includes? value \"l\")",
+   "rows": "all",
+   "results": [
+    "true",
+    "false",
+    {
+     "message": null
+    },
+    "false",
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str value \"!\")",
+   "rows": "all",
+   "results": [
+    " hello world !",
+    "3!",
+    "!",
+    "café Ünïcödé!",
+    "a,b,,c!"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    "",
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(count value)",
+   "rows": "all",
+   "results": [
+    "13",
+    "1",
+    "0",
+    "12",
+    "6"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(subs value 0 2)",
+   "rows": "all",
+   "results": [
+    " h",
+    {
+     "message": "begin 0, end 2, length 1"
+    },
+    {
+     "message": null
+    },
+    "ca",
+    "a,"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.length value)",
+   "rows": "all",
+   "results": [
+    "13",
+    "1",
+    {
+     "message": null
+    },
+    "12",
+    "6"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.substring value 1)",
+   "rows": "all",
+   "results": [
+    "hello world ",
+    "",
+    {
+     "message": null
+    },
+    "afé Ünïcödé",
+    ",b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.indexOf value \"o\")",
+   "rows": "all",
+   "results": [
+    "5",
+    "-1",
+    {
+     "message": null
+    },
+    "-1",
+    "-1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.contains value \"l\")",
+   "rows": "all",
+   "results": [
+    "true",
+    "false",
+    {
+     "message": null
+    },
+    "false",
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(nil? value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(empty? value)",
+   "rows": "all",
+   "results": [
+    "false",
+    "false",
+    "true",
+    "false",
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(if (empty? value) \"e\" \"n\")",
+   "rows": "all",
+   "results": [
+    "n",
+    "n",
+    "e",
+    "n",
+    "n"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(when (> (count value) 3) value)",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    null,
+    null,
+    "café Ünïcödé",
+    "a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(apply str (reverse value))",
+   "rows": "all",
+   "results": [
+    " dlrow olleh ",
+    "3",
+    "",
+    "édöcïnÜ éfac",
+    "c,,b,a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(first value)",
+   "rows": "all",
+   "results": [
+    " ",
+    "3",
+    null,
+    "c",
+    "a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(seq value)",
+   "rows": "all",
+   "results": [
+    "[  , h, e, l, l, o,  , w, o, r, l, d,   ]",
+    "[ 3 ]",
+    null,
+    "[ c, a, f, é,  , Ü, n, ï, c, ö, d, é ]",
+    "[ a, ,, b, ,, ,, c ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(vec value)",
+   "rows": "all",
+   "results": [
+    "[  , h, e, l, l, o,  , w, o, r, l, d,   ]",
+    "[ 3 ]",
+    "[  ]",
+    "[ c, a, f, é,  , Ü, n, ï, c, ö, d, é ]",
+    "[ a, ,, b, ,, ,, c ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(re-find #\"\\d+\" value)",
+   "rows": "all",
+   "results": [
+    null,
+    "3",
+    {
+     "message": null
+    },
+    null,
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(re-seq #\"\\w+\" value)",
+   "rows": "all",
+   "results": [
+    "[ \"hello\", \"world\" ]",
+    "[ \"3\" ]",
+    {
+     "message": null
+    },
+    "[ \"caf\", \"n\", \"c\", \"d\" ]",
+    "[ \"a\", \"b\", \"c\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(re-matches #\"\\d+\" value)",
+   "rows": "all",
+   "results": [
+    null,
+    "3",
+    {
+     "message": null
+    },
+    null,
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "rowIndex",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(inc rowIndex)",
+   "rows": "all",
+   "results": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(* 2 rowIndex)",
+   "rows": "all",
+   "results": [
+    "0",
+    "2",
+    "4",
+    "6",
+    "8"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Integer/parseInt value)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "For input string: \" hello world \""
+    },
+    "3",
+    {
+     "message": "null"
+    },
+    {
+     "message": "For input string: \"café Ünïcödé\""
+    },
+    {
+     "message": "For input string: \"a,b,,c\""
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Long/parseLong value)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "For input string: \" hello world \""
+    },
+    "3",
+    {
+     "message": "null"
+    },
+    {
+     "message": "For input string: \"café Ünïcödé\""
+    },
+    {
+     "message": "For input string: \"a,b,,c\""
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Double/parseDouble value)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "For input string: \"hello world\""
+    },
+    "3",
+    {
+     "message": null
+    },
+    {
+     "message": "For input string: \"café Ünïcödé\""
+    },
+    {
+     "message": "For input string: \"a,b,,c\""
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.value cell)",
+   "rows": "all",
+   "results": [
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": null
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "cell",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    null,
+    "[object Cell]",
+    "[object Cell]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str (.-value cell))",
+   "rows": "all",
+   "results": [
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": null
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.getField cells \"w\" nil)",
+   "rows": "all",
+   "results": [
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    "[object Cell]",
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.value (.getField cells \"w\" nil))",
+   "rows": "all",
+   "results": [
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": "No matching field found: value for class com.google.refine.expr.WrappedCell"
+    },
+    {
+     "message": null
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.getField row \"index\" nil)",
+   "rows": "all",
+   "results": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "value1",
+   "rows": "all",
+   "results": [
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(-> value clojure.string/trim clojure.string/upper-case)",
+   "rows": "all",
+   "results": [
+    "HELLO WORLD",
+    "3",
+    {
+     "message": null
+    },
+    "CAFÉ ÜNÏCÖDÉ",
+    "A,B,,C"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(->> value (filter #(Character/isLetter %)) (apply str))",
+   "rows": "all",
+   "results": [
+    "helloworld",
+    "",
+    "",
+    "caféÜnïcödé",
+    "abc"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(let [n (count value)] (* n n))",
+   "rows": "all",
+   "results": [
+    "169",
+    "1",
+    "0",
+    "144",
+    "36"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(cond (= value \"3\") :three (nil? value) :none :else :other)",
+   "rows": "all",
+   "results": [
+    ":other",
+    ":three",
+    ":none",
+    ":other",
+    ":other"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(format \"%s/%d\" value rowIndex)",
+   "rows": "all",
+   "results": [
+    " hello world /0",
+    "3/1",
+    "null/2",
+    "café Ünïcödé/3",
+    "a,b,,c/4"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(keyword value)",
+   "rows": "all",
+   "results": [
+    ": hello world ",
+    ":3",
+    null,
+    ":café Ünïcödé",
+    ":a,b,,c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/join \"-\" (clojure.string/split value #\",\"))",
+   "rows": "all",
+   "results": [
+    " hello world ",
+    "3",
+    {
+     "message": null
+    },
+    "café Ünïcödé",
+    "a-b--c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(+ 1 2)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(- 10 3 2)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(* 1.5 2)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(/ 4 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(/ 1 2)",
+   "rows": "first",
+   "results": [
+    "1/2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(/ 1.0 2)",
+   "rows": "first",
+   "results": [
+    "0.5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(/ 1 0)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "Divide by zero"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(/ 1.0 0)",
+   "rows": "first",
+   "results": [
+    "Infinity"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(quot 7 2)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(rem -7 2)",
+   "rows": "first",
+   "results": [
+    "-1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(mod -7 2)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(inc 1)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(dec 1.5)",
+   "rows": "first",
+   "results": [
+    "0.5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(max 1 5 3)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(min 4 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(* 1000000000000 1000000000000)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "long overflow"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(*' 1000000000000 1000000000000)",
+   "rows": "first",
+   "results": [
+    "1000000000000000000000000"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(int 2.7)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(long 2.5)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(double 1)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Math/sqrt 16)",
+   "rows": "first",
+   "results": [
+    "4"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Math/round 2.5)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Math/abs -3)",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "Math/PI",
+   "rows": "first",
+   "results": [
+    "3.141592653589793"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "1",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "1.5",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "1e20",
+   "rows": "first",
+   "results": [
+    "1.0E20"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "0.1",
+   "rows": "first",
+   "results": [
+    "0.1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(+ 0.1 0.2)",
+   "rows": "first",
+   "results": [
+    "0.30000000000000004"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "1/3",
+   "rows": "first",
+   "results": [
+    "1/3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "22/7",
+   "rows": "first",
+   "results": [
+    "22/7"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "3N",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "1.5M",
+   "rows": "first",
+   "results": [
+    "1.5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "true",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "false",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "nil",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "\"abc\"",
+   "rows": "first",
+   "results": [
+    "abc"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": ":kw",
+   "rows": "first",
+   "results": [
+    ":kw"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": ":a/b",
+   "rows": "first",
+   "results": [
+    ":a/b"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "'sym",
+   "rows": "first",
+   "results": [
+    "sym"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "\\c",
+   "rows": "first",
+   "results": [
+    "c"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "[1 2 3]",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "[1 [2 \"a\"]]",
+   "rows": "first",
+   "results": [
+    "[ 1, [ 2, \"a\" ] ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "[]",
+   "rows": "first",
+   "results": [
+    "[  ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "'(1 2)",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "{:a 1}",
+   "rows": "first",
+   "results": [
+    "{:a 1}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "{\"a\" 1}",
+   "rows": "first",
+   "results": [
+    "{\"a\" 1}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "#{1}",
+   "rows": "first",
+   "results": [
+    "#{1}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(range 3)",
+   "rows": "first",
+   "results": [
+    "[ 0, 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(map inc [1 2])",
+   "rows": "first",
+   "results": [
+    "[ 2, 3 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(filter odd? [1 2 3])",
+   "rows": "first",
+   "results": [
+    "[ 1, 3 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(reduce + [1 2 3])",
+   "rows": "first",
+   "results": [
+    "6"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(apply + [1 2])",
+   "rows": "first",
+   "results": [
+    "3"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(conj [1] 2)",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(cons 0 [1])",
+   "rows": "first",
+   "results": [
+    "[ 0, 1 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(concat [1] [2])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(into [] '(1 2))",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(assoc {} :a 1)",
+   "rows": "first",
+   "results": [
+    "{:a 1}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(get {:a 1} :a)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(:a {:a 1})",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(get [1 2] 5)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(nth [1 2] 1)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(nth [1 2] 5)",
+   "rows": "first",
+   "results": [
+    {
+     "message": null
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(first [])",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(rest [1 2])",
+   "rows": "first",
+   "results": [
+    "[ 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(last [1 2])",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(take 2 [1 2 3])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(drop 1 [1 2 3])",
+   "rows": "first",
+   "results": [
+    "[ 2, 3 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(sort [3 1 2])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2, 3 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(reverse [1 2])",
+   "rows": "first",
+   "results": [
+    "[ 2, 1 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(distinct [1 1 2])",
+   "rows": "first",
+   "results": [
+    "[ 1, 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(frequencies \"aab\")",
+   "rows": "first",
+   "results": [
+    "{\\a 2, \\b 1}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(group-by odd? [1 2 3])",
+   "rows": "first",
+   "results": [
+    "{true [1 3], false [2]}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(zipmap [:a :b] [1 2])",
+   "rows": "first",
+   "results": [
+    "{:a 1, :b 2}"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(keys {:a 1})",
+   "rows": "first",
+   "results": [
+    "[ :a ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(vals {:a 1})",
+   "rows": "first",
+   "results": [
+    "[ 1 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(count {:a 1 :b 2})",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str 1 nil \"a\" :k)",
+   "rows": "first",
+   "results": [
+    "1a:k"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str nil)",
+   "rows": "first",
+   "results": [
+    ""
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str 1.0)",
+   "rows": "first",
+   "results": [
+    "1.0"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(str [1 2])",
+   "rows": "first",
+   "results": [
+    "[1 2]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(pr-str \"a\")",
+   "rows": "first",
+   "results": [
+    "\"a\""
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(name :a)",
+   "rows": "first",
+   "results": [
+    "a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(keyword \"a\")",
+   "rows": "first",
+   "results": [
+    ":a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(symbol \"s\")",
+   "rows": "first",
+   "results": [
+    "s"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(= 1 1.0)",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(== 1 1.0)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(= [1 2] '(1 2))",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(not nil)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(and 1 nil)",
+   "rows": "first",
+   "results": [
+    null
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(or nil 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(if nil 1 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(do 1 2)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(let [x 2 y 3] (+ x y))",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "((fn [x] (* x x)) 3)",
+   "rows": "first",
+   "results": [
+    "9"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(#(+ % 1) 1)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(letfn [(f [x] (* 2 x))] (f 4))",
+   "rows": "first",
+   "results": [
+    "8"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(loop [i 0 acc 1] (if (< i 3) (recur (inc i) (* acc 2)) acc))",
+   "rows": "first",
+   "results": [
+    "8"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(case 2 1 :one 2 :two :other)",
+   "rows": "first",
+   "results": [
+    ":two"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(if-let [x nil] x :none)",
+   "rows": "first",
+   "results": [
+    ":none"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(when-not false 1)",
+   "rows": "first",
+   "results": [
+    "1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(some even? [1 2])",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(every? odd? [1 3])",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(range 1 10 3)",
+   "rows": "first",
+   "results": [
+    "[ 1, 4, 7 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(repeat 2 \"a\")",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"a\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(interpose \",\" [1 2])",
+   "rows": "first",
+   "results": [
+    "[ 1, \",\", 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(partition 2 [1 2 3 4])",
+   "rows": "first",
+   "results": [
+    "[ [ 1, 2 ], [ 3, 4 ] ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(mapv inc [1])",
+   "rows": "first",
+   "results": [
+    "[ 2 ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/join [1 2])",
+   "rows": "first",
+   "results": [
+    "12"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/lower-case \"AB\")",
+   "rows": "first",
+   "results": [
+    "ab"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/starts-with? \"abc\" \"a\")",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/ends-with? \"abc\" \"c\")",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/split-lines \"a\\nb\")",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/triml \"  a \")",
+   "rows": "first",
+   "results": [
+    "a "
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/trimr \"  a \")",
+   "rows": "first",
+   "results": [
+    "  a"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(clojure.string/index-of \"abc\" \"c\")",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(re-pattern \"a+\")",
+   "rows": "first",
+   "results": [
+    "a+"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(re-find #\"(a)(b)\" \"ab\")",
+   "rows": "first",
+   "results": [
+    "[ \"ab\", \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.toUpperCase \"abc\")",
+   "rows": "first",
+   "results": [
+    "ABC"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.split \"a,b\" \",\")",
+   "rows": "first",
+   "results": [
+    "[ \"a\", \"b\" ]"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(String/valueOf 5)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Integer/parseInt \"x\")",
+   "rows": "first",
+   "results": [
+    {
+     "message": "For input string: \"x\""
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(throw (Exception. \"boom\"))",
+   "rows": "first",
+   "results": [
+    {
+     "message": "boom"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(undefined-fn 1)",
+   "rows": "first",
+   "parseError": "Syntax error compiling at (1:51)."
+  },
+  {
+   "lang": "clojure",
+   "expr": "undefined-sym",
+   "rows": "first",
+   "parseError": "Syntax error compiling at (1:1)."
+  },
+  {
+   "lang": "clojure",
+   "expr": "(+ 1",
+   "rows": "first",
+   "parseError": "Syntax error reading source at (1:1)."
+  },
+  {
+   "lang": "clojure",
+   "expr": "(+ 1 \"a\")",
+   "rows": "first",
+   "results": [
+    {
+     "message": "class java.lang.String cannot be cast to class java.lang.Number (java.lang.String and java.lang.Number are in module java.base of loader 'bootstrap')"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(nth [] 0)",
+   "rows": "first",
+   "results": [
+    {
+     "message": null
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(.toUpperCase nil)",
+   "rows": "first",
+   "results": [
+    {
+     "message": null
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Integer. 5)",
+   "rows": "first",
+   "results": [
+    "5"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(java.util.Date. 0)",
+   "rows": "first",
+   "results": [
+    "Thu Jan 01 00:00:00 UTC 1970"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(type 1)",
+   "rows": "first",
+   "results": [
+    "class java.lang.Long"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(class \"a\")",
+   "rows": "first",
+   "results": [
+    "class java.lang.String"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(instance? String \"a\")",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(number? 1)",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(string? \"a\")",
+   "rows": "first",
+   "results": [
+    "true"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(inc Long/MAX_VALUE)",
+   "rows": "first",
+   "results": [
+    {
+     "message": "long overflow"
+    }
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(unchecked-inc Long/MAX_VALUE)",
+   "rows": "first",
+   "results": [
+    "-9223372036854775808"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(bit-and 6 3)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(Long/toBinaryString 5)",
+   "rows": "first",
+   "results": [
+    "101"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(char 65)",
+   "rows": "first",
+   "results": [
+    "A"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(int \\A)",
+   "rows": "first",
+   "results": [
+    "65"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(boolean nil)",
+   "rows": "first",
+   "results": [
+    "false"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(compare 1 2)",
+   "rows": "first",
+   "results": [
+    "-1"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(hash \"a\")",
+   "rows": "first",
+   "results": [
+    "1455541201"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(def x 1)",
+   "rows": "first",
+   "results": [
+    "#'clojure.core/x"
+   ]
+  },
+  {
+   "lang": "clojure",
+   "expr": "(do (def y 2) y)",
+   "rows": "first",
+   "results": [
+    "2"
+   ]
+  }
+ ]
+}

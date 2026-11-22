@@ -14,6 +14,7 @@ import {
 import { bracketMatching, HighlightStyle, StreamLanguage, syntaxHighlighting } from "@codemirror/language"
 import { tags } from "@lezer/highlight"
 import docs from "@/grel-docs.json"
+import { items, listenExtensions } from "@/extensions"
 
 const VARIABLES: [string, string][] = [
   ["value", "The cell's value"],
@@ -105,6 +106,12 @@ const FUNCTIONS: Completion[] = [
   ...Object.entries(docs.controls as Record<string, Doc>).map(([n, d]) => entry(n, d, "keyword")),
 ]
 
+// GREL functions from installed extensions, filled in once the engine says what is installed
+let extensionFunctions: Completion[] = []
+listenExtensions((e) => {
+  extensionFunctions = items(e, "function").map((f) => ({ label: f.id, type: "function", detail: `${f.owner} extension`, info: f.description, apply: `${f.id}(` }))
+})
+
 function source(columns: string[]) {
   const vars: Completion[] = [
     ...VARIABLES.map(([label, info]) => ({ label, type: "variable", info, boost: 2 })),
@@ -114,7 +121,7 @@ function source(columns: string[]) {
     const word = ctx.matchBefore(/[\w$]*/)
     if (!word || (word.from === word.to && !ctx.explicit)) return null
     const afterDot = ctx.state.sliceDoc(word.from - 1, word.from) === "."
-    return { from: word.from, options: afterDot ? FUNCTIONS : [...vars, ...FUNCTIONS], validFor: /^\w*$/ }
+    return { from: word.from, options: afterDot ? [...FUNCTIONS, ...extensionFunctions] : [...vars, ...FUNCTIONS, ...extensionFunctions], validFor: /^\w*$/ }
   }
 }
 
@@ -127,7 +134,9 @@ export function ExpressionEditor({
   invalid,
   autoFocus,
   placeholder,
+  language = "grel",
 }: {
+  language?: "grel" | "jython" | "clojure"
   id?: string
   value: string
   onChange: (v: string) => void
@@ -151,13 +160,12 @@ export function ExpressionEditor({
           history(),
           closeBrackets(),
           bracketMatching(),
-          grel,
-          syntaxHighlighting(highlight),
+          // GREL gets highlighting and function suggestions; Python and Clojure are plain text
+          ...(language === "grel" ? [grel, syntaxHighlighting(highlight), autocompletion({ override: [source(columns)], icons: false })] : []),
           theme,
-          autocompletion({ override: [source(columns)], icons: false }),
-          cmPlaceholder(placeholder ?? "value"),
+          cmPlaceholder(placeholder ?? (language === "jython" ? "return value" : "value")),
           EditorView.lineWrapping,
-          EditorView.contentAttributes.of({ "aria-label": "GREL expression", ...(id ? { id } : {}) }),
+          EditorView.contentAttributes.of({ "aria-label": `${{ grel: "GREL", jython: "Python", clojure: "Clojure" }[language]} expression`, ...(id ? { id } : {}) }),
           keymap.of([
             { key: "Mod-Enter", run: () => (latest.current.onSubmit?.(), true) },
             ...closeBracketsKeymap,

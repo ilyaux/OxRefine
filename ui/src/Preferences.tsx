@@ -12,6 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { forgetExpressions, recentExpressions } from "@/ExpressionEditor"
 import { loadServices, saveServices } from "@/ReconcileDialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { loadExtensions, useExtensions } from "@/extensions"
 
 type Prefs = Record<string, unknown>
 const FACET_LIMIT = "ui.browsing.listFacet.limit"
@@ -30,7 +33,7 @@ export function Preferences({ onClose, onError, onChanged }: { onClose: () => vo
   }
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[90svh] overflow-y-auto sm:max-w-2xl">
+      <DialogContent className="max-h-[90svh] overflow-x-hidden overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Preferences</DialogTitle>
           <DialogDescription>Changes apply right away.</DialogDescription>
@@ -40,6 +43,7 @@ export function Preferences({ onClose, onError, onChanged }: { onClose: () => vo
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="recon">Reconciliation</TabsTrigger>
             <TabsTrigger value="expressions">Expressions</TabsTrigger>
+            <TabsTrigger value="extensions">Extensions</TabsTrigger>
             <TabsTrigger value="all">All preferences</TabsTrigger>
           </TabsList>
           <TabsContent value="general">
@@ -51,6 +55,9 @@ export function Preferences({ onClose, onError, onChanged }: { onClose: () => vo
           </TabsContent>
           <TabsContent value="expressions">
             <Expressions />
+          </TabsContent>
+          <TabsContent value="extensions">
+            <Extensions onError={onError} />
           </TabsContent>
           <TabsContent value="all">
             <AllPrefs prefs={prefs} set={set} />
@@ -246,6 +253,63 @@ function AllPrefs({ prefs, set }: { prefs: Prefs | null; set: (name: string, val
           </Button>
         </Field>
       </form>
+    </FieldGroup>
+  )
+}
+
+/** Installed extensions (crates/ox-core/src/extensions.rs): what each provides, or why it failed. */
+function Extensions({ onError }: { onError: (e: unknown) => void }) {
+  const list = useExtensions()
+  const [busy, setBusy] = useState(false)
+  const kinds: Record<string, string> = { function: "GREL function", importer: "Importer", exporter: "Exporter", operation: "Operation" }
+  return (
+    <FieldGroup>
+      <FieldDescription>
+        An extension is a folder with a <code>main.py</code> that adds GREL functions, importers, exporters and operations. Put it in{" "}
+        {list?.folders.length ? <code className="break-all">{list.folders[0]}</code> : "the extensions folder"}, then reload. Extensions run with the same rights as OxRefine:
+        install only ones you trust.
+      </FieldDescription>
+      <div>
+        <Button variant="outline" disabled={busy} onClick={() => (setBusy(true), loadExtensions(true).catch(onError).finally(() => setBusy(false)))}>
+          Reload extensions
+        </Button>
+      </div>
+      {list && list.extensions.length === 0 && (
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>No extensions installed</EmptyTitle>
+            <EmptyDescription>docs/extensions/text-tools in the OxRefine repository is an example to copy.</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
+      {list?.extensions.map((e) =>
+        e.error ? (
+          <Alert key={e.path} variant="destructive">
+            <AlertTitle>{e.name} didn't load</AlertTitle>
+            <AlertDescription className="break-all">{e.error}</AlertDescription>
+          </Alert>
+        ) : (
+          <FieldSet key={e.path}>
+            <FieldLegend variant="label">
+              {e.name} {e.version && <span className="font-mono text-xs text-muted-foreground">{e.version}</span>}
+            </FieldLegend>
+            {e.description && <FieldDescription className="break-words">{e.description}</FieldDescription>}
+            <Table className="table-fixed">
+              <TableBody>
+                {e.items.map((i) => (
+                  <TableRow key={`${i.kind}:${i.id}`}>
+                    <TableCell className="w-32 align-top">
+                      <Badge variant="secondary">{kinds[i.kind] ?? i.kind}</Badge>
+                    </TableCell>
+                    <TableCell className="w-44 align-top font-mono text-xs break-all whitespace-normal">{i.kind === "function" ? `${i.id}(${typeof i.params === "string" ? i.params : ""})` : i.id}</TableCell>
+                    <TableCell className="align-top text-muted-foreground whitespace-normal">{i.label ?? i.description}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </FieldSet>
+        ),
+      )}
     </FieldGroup>
   )
 }

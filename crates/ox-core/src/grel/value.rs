@@ -24,6 +24,8 @@ pub enum Value {
     Re(Box<regex::Regex>),
     /// cell.recon and what hangs off it (candidates, features).
     Recon(Box<crate::recon::View>),
+    /// Any other object a Python or Clojure expression returns, shown by its Java toString().
+    Java(String),
     Error(String),
 }
 
@@ -126,6 +128,7 @@ impl Value {
             Obj(c, _) => c.java(),
             Recon(r) => r.type_name(),
             Re(_) => "regex",
+            Java(_) => "object",
             Error(_) => "error",
         }
     }
@@ -158,6 +161,7 @@ impl Value {
             Obj(_, f) => format!("{{{}}}", f.iter().map(|(k, v)| format!("{k}={}", v.to_java_string())).collect::<Vec<_>>().join(", ")),
             Re(r) => r.as_str().to_string(),
             Recon(r) => r.to_java_string(),
+            Java(s) => s.clone(),
             Error(e) => e.clone(),
         }
     }
@@ -182,7 +186,7 @@ pub fn fmt_date(d: &NaiveDateTime) -> String {
 
 /// Preview/grid rendering of a Double: whole values print as the Long they cast to.
 pub fn render_num(n: f64) -> String {
-    if n.is_finite() && n == n.trunc() {
+    if n.is_finite() && n == n.trunc() && n.abs() < 9.223372036854776e18 {
         (n as i64).to_string()
     } else {
         java_double(n)
@@ -232,6 +236,7 @@ pub fn json_pretty(v: &Value, depth: usize) -> String {
         Obj(c, _) => format!("[object {}]", c.shown()),
         Re(r) => json_str(r.as_str()),
         Recon(r) => json_str(&r.to_java_string()),
+        Java(s) => s.clone(),
         Error(e) => json_str(e),
     }
 }
@@ -271,7 +276,7 @@ impl PartialEq for Value {
             (Bool(a), Bool(b)) => a == b,
             (Int(a), Int(b)) => a == b,
             (Num(a), Num(b)) => a.to_bits() == b.to_bits(),
-            (Str(a), Str(b)) | (Error(a), Error(b)) => a == b,
+            (Str(a), Str(b)) | (Error(a), Error(b)) | (Java(a), Java(b)) => a == b,
             (Date(a), Date(b)) => a == b,
             (Array(a), Array(b)) => a == b,
             (Json(a), Json(b)) => a == b,
@@ -292,7 +297,7 @@ impl Hash for Value {
             Bool(b) => b.hash(h),
             Int(i) => i.hash(h),
             Num(n) => n.to_bits().hash(h),
-            Str(s) | Error(s) => s.hash(h),
+            Str(s) | Error(s) | Java(s) => s.hash(h),
             Date(d) => d.hash(h),
             Array(a) => a.hash(h),
             Json(j) => j.to_string().hash(h),

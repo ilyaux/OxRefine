@@ -171,6 +171,11 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
 pub fn import(path: &Path, format: Option<&str>, o: &ImportOptions) -> Result<Table> {
     crate::jobs::progress("Inspecting input", 0);
     crate::jobs::tick(0)?;
+    // an extension's importer: named as ext:<id>, or picked by the file's extension
+    let by_extension = format.is_none().then(|| crate::extensions::importer_for(path)).flatten();
+    if let Some(id) = format.and_then(|f| f.strip_prefix("ext:")).or(by_extension.as_ref().and_then(|(f, _)| f.strip_prefix("ext:"))) {
+        return crate::extensions::import(id, path, o);
+    }
     let u = crate::unpack::unpack(path)?;
     if !u.several() && u.files[0].1 == path && !o.include_file_sources {
         return import_file(path, format_for(path, format), o);
@@ -302,6 +307,9 @@ pub fn inspect(path: &Path) -> Result<serde_json::Value> {
 
 fn inspect_file(path: &Path) -> Result<serde_json::Value> {
     use serde_json::json;
+    if let Some((format, label)) = crate::extensions::importer_for(path) {
+        return Ok(json!({ "format": format, "label": label, "options": { "encoding": "UTF-8", "limit": -1 } }));
+    }
     let mut f = format_for(path, None);
     let lines = json!({ "ignoreLines": -1, "headerLines": 1, "skipDataLines": 0, "limit": -1, "storeBlankRows": true, "storeBlankCellsAsNulls": true });
     let merge = |extra: serde_json::Value| {

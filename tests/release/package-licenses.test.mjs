@@ -18,7 +18,7 @@ test("CLI and desktop inventories share every listed embedded license and credit
   const destinations = Object.values(resources)
   for (const required of ["LICENSE", "NOTICE", "licenses/commons-codec/LICENSE.txt", "licenses/language-detector/LICENSE.txt",
     "licenses/language-detector/CREDITS.md", "licenses/language-detector/UPSTREAM-README.md", "licenses/marc8/README.md",
-    "licenses/OpenRefine-3.10.1.txt", "licenses/parse_wiki_text-0.1.5.txt", "licenses/geist/LICENSE", "licenses/geist-mono/LICENSE"]) {
+    "licenses/OpenRefine-3.10.1.txt", "licenses/parse_wiki_text-0.1.5.txt", "licenses/RustPython-0.5.0.txt", "licenses/python-stdlib-PSF-LICENSE.txt", "licenses/geist/LICENSE", "licenses/geist-mono/LICENSE"]) {
     assert.ok(destinations.includes(required), `${required} is missing from the package inventory`)
   }
   const work = mkdtempSync(join(temporaryRoot, "ox-license-package-"))

@@ -58,14 +58,21 @@ OxRefine preserves empty text separately from SQL NULL and encodes binary values
 
 Passwords are not stored with saved connection settings. Queries run in read-only transactions with bounded result sizes and timeouts. The SELECT guard is conservative, not a general sandbox for privileged or custom database functions; use a read-only database account.
 
+### Python and Clojure expressions
+
+OpenRefine runs `jython:` expressions in Jython 2.7 and `clojure:` ones in Clojure 1.12. OxRefine runs Python in an embedded Python 3 with Python 2 compatibility, and Clojure in its own interpreter. 334 of 337 reference expressions give OpenRefine's result. The rest, and what each interpreter leaves out, are in [Python and Clojure](transforming.md#python-and-clojure) and `tests/langs/known_failures.txt`.
+
+### Google Sheets
+
+OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and exports like it did, but signing in needs an OAuth client you register yourself ([how](importing.md#google-sheets-and-drive)). Shared sheets import without one.
+
 ## Not in OxRefine yet
 
-- **Import:** RDF (N-Triples, Turtle, RDF/XML, JSON-LD), Google Sheets
+- **Import:** RDF (N-Triples, Turtle, RDF/XML, JSON-LD)
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Expressions:** Python (Jython) and Clojure; `wikibaseIssues()`
-- **Export:** Google Sheets
-- **Extensions:** Wikibase schemas and uploads, Commons-specific GREL functions, OpenRefine's extension modules
+- **Expressions:** `wikibaseIssues()`
+- **Extensions:** Wikibase schemas and uploads, Commons-specific GREL functions, OpenRefine's Java extension modules (OxRefine has [its own](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 

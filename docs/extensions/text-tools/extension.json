@@ -1,0 +1,5 @@
+{
+  "name": "text-tools",
+  "version": "1.0.0",
+  "description": "Example extension: slugify() and wordCount() for GREL, an INI importer, a Markdown exporter and a Number the rows operation."
+}

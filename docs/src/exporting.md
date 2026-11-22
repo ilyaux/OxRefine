@@ -14,6 +14,10 @@
 | **SQL** | `CREATE TABLE` and `INSERT` statements |
 | **OpenRefine project** | The whole project with its history, which OpenRefine opens; see [Moving projects and recipes](moving-over.md) |
 | **Recipe JSON** | The project's steps as an OpenRefine recipe; **Recipe** in the top bar picks steps and copies the JSON |
+| **Google Sheets** | The matching rows as a new spreadsheet in your Google Drive, which opens when it's ready ([sign-in](importing.md#google-sheets-and-drive)) |
+| **Google Drive** | The project as an OpenRefine archive in your Google Drive |
+
+Formats from installed [extensions](extensions.md) follow these in the list.
 
 The SQL exporter differs from OpenRefine 3.10 on purpose. OpenRefine leaves numbers and nulls out of `INSERT` rows, which shifts the columns, while OxRefine writes them so the dump loads. See [compatibility checks](compatibility.md) for format coverage, and the encoding policy below for another deliberate difference.
 

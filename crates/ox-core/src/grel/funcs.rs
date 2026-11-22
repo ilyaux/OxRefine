@@ -846,6 +846,7 @@ pub fn call(name: &str, a: &[Value]) -> Value {
         // evaluated in eval.rs, where the row and the session's projects are at hand
         "facetCount" => fail!("facetCount needs a project"),
         "cross" => fail!("cross needs the projects of this session"),
+        _ if crate::extensions::has_function(name) => crate::extensions::call_function(name, a),
         _ => fail!("Unknown function {name}"),
     }
 }

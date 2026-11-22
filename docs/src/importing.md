@@ -6,6 +6,8 @@
 - **A folder or an archive:** zip, tar, gzip and bzip2 archives (`.tar.gz`, `.tar.bz2`), or a folder of files. Choose which files to import. Optional columns record the file and archive each row came from.
 - **The clipboard:** **Paste from clipboard** on the home screen (or **Import → Paste data…** in a project) takes rows copied from a spreadsheet, CSV text, or plain lines.
 - **A web address:** **From a web address** (or **Import → Web address…**) downloads the file and opens the same preview.
+- **Google Sheets:** **Google Sheets** on the home screen imports a spreadsheet by its link, every sheet through the Excel preview. A sheet shared with anyone who has the link needs no sign-in. After you sign in, the same view lists your Drive's spreadsheets and imports private ones; see [Google Sheets and Drive](#google-sheets-and-drive). A Google Sheets link pasted into **From a web address** works too.
+- **An extension's importer:** files with an extension an installed [extension](extensions.md) registered open with its importer.
 - **Wikimedia Commons:** **Wikimedia Commons** on Home or in the Import menu loads filenames from categories, with optional file-page wikitext. See the Commons workflow below.
 - **An OpenRefine project:** see [Moving projects and recipes](moving-over.md).
 
@@ -90,6 +92,14 @@ Use **Stop loading**, **Cancel** or the matching job in Jobs to stop a fetch. Ca
 The UI accepts up to 20 category roots, depth 10 and 10,000 unique files. The importer also bounds visited categories, request count, response sizes and estimated metadata size; reaching a limit or an API error fails the load rather than creating a partial project. It follows continuation responses, waits for bounded rate-limit backoff and visits subcategories depth first. Overlapping categories produce one row per file, and visited-category tracking prevents repeated cyclic traversal. This deduplication is an intentional difference from CommonsExtension. Long wikitext is shortened only in the labelled preview; the created project retains the full retrieved text.
 
 The JSON API exposes `commons_prepare` with `params.categories` (`[{"name":"Category:OpenRefine","depth":0}]`), `params.includeWikitext` and a unique `params.requestId`. Use the returned snapshot `id` with `commons_preview` (`start`, `limit` up to 100) or `commons_create` (`name`). Snapshots preserve reconciliation metadata through project creation, saving and reopening.
+
+## Google Sheets and Drive
+
+This is what OpenRefine's gdata extension did; OpenRefine 3.10.1 no longer bundles it. Without signing in, OxRefine downloads a shared sheet through its public export link. Signing in uses Google's OAuth for desktop apps. The sign-in opens in your browser and returns to OxRefine on a local address. OxRefine keeps the refresh token in `google-token.json` in the data folder, and **Sign out** revokes it.
+
+Google issues OAuth clients to whoever registers an app, so OxRefine can't ship one. To sign in, create an OAuth client of type **Desktop app** in Google Cloud Console, with the Drive API enabled. Set its id and secret as `google.clientId` and `google.clientSecret` in **Preferences → All preferences**, or as `OXREFINE_GOOGLE_CLIENT_ID` and `OXREFINE_GOOGLE_CLIENT_SECRET`. OxRefine asks for `drive.readonly` (to list and read your sheets) and `drive.file` (to create the files it exports).
+
+Once signed in, **Export → Google Sheets** sends the matching rows to a new spreadsheet, and **Export → Google Drive** uploads the project as an OpenRefine archive.
 
 ## Big files
 

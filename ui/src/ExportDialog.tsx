@@ -5,6 +5,7 @@ import { FullView, Metric, Spacer, StripAction, SummaryStrip } from "@/component
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import { items, useExtensions } from "@/extensions"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 type ColumnOptions = { name: string; dateSettings: { format: string; custom: string; omitTime: boolean; useLocalTimeZone: boolean }; reconSettings: { output: string; blankUnmatchedCells: boolean; linkToEntityPages: boolean } }
@@ -28,7 +29,7 @@ export type ExportFormat = "*sv" | "template" | "sql"
 export const EXTENSION: Record<ExportFormat, string> = { "*sv": "csv", template: "txt", sql: "sql" }
 
 /** Everything the Export view offers: the engine's row formats, then the whole project and its recipe. */
-export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe"
+export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe" | "google-sheet" | "google-drive" | `ext:${string}`
 const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] = [
   { id: "csv", label: "CSV", ext: "csv", text: true },
   { id: "tsv", label: "TSV", ext: "tsv", text: true },
@@ -41,6 +42,8 @@ const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] =
   { id: "sql", label: "SQL", ext: "sql", text: true },
   { id: "project", label: "OpenRefine project", ext: "tar.gz", text: false },
   { id: "recipe", label: "Recipe JSON", ext: "json", text: false },
+  { id: "google-sheet", label: "Google Sheets", ext: "gsheet", text: false },
+  { id: "google-drive", label: "Google Drive", ext: "tar.gz", text: false },
 ]
 const ENCODINGS = ["UTF-8", "UTF-16LE", "UTF-16BE", "windows-1251", "windows-1252", "ISO-8859-1", "US-ASCII"]
 
@@ -56,6 +59,8 @@ const HINTS: Partial<Record<ExportKind, string>> = {
   sql: "CREATE TABLE and INSERT statements for the matching rows. Blank cells become NULL.",
   project: "The whole project with its undo history, as an OpenRefine archive; OpenRefine opens it with OxRefine's steps.",
   recipe: "The steps so far as OpenRefine-compatible JSON, for Undo/Redo → Apply in OpenRefine or for ox apply. History → Extract picks steps.",
+  "google-sheet": "The matching rows as a new Google Sheet in your Drive; it opens when the upload is done. Sign in from New project → Google Sheets first.",
+  "google-drive": "The whole project as an OpenRefine archive, uploaded to your Google Drive. Sign in from New project → Google Sheets first.",
 }
 
 /** OpenRefine's default template: one JSON object per row. */
@@ -139,7 +144,12 @@ export function ExportDialog({
     }, (error) => live && setPresetError(String(error.message ?? error)))
     return () => { live = false }
   }, [])
-  const spec = FORMATS.find((f) => f.id === format)!
+  // exporters from installed extensions follow the built-in formats
+  const extensions = useExtensions()
+  const exporters = items(extensions, "exporter")
+  const formats = [...FORMATS, ...exporters.map((e) => ({ id: `ext:${e.id}` as ExportKind, label: e.label ?? e.id, ext: e.extension ?? "txt", text: (e.mime ?? "text/plain").startsWith("text/") }))]
+  const hint = (f: ExportKind) => HINTS[f] ?? (f.startsWith("ext:") ? `From the ${exporters.find((e) => `ext:${e.id}` === f)?.owner ?? ""} extension.` : undefined)
+  const spec = formats.find((f) => f.id === format) ?? FORMATS[0]
   const tabular = format === "csv" || format === "tsv" || format === "*sv"
   const custom = CUSTOM_FORMATS.includes(format)
   const workbook = ["xlsx", "xls", "ods"].includes(format)
@@ -165,7 +175,7 @@ export function ExportDialog({
   const [preview, setPreview] = useState<{ key?: string; engine?: Engine; text?: string; error?: string }>({})
   useEffect(() => {
     const [f, p] = JSON.parse(key) as [ExportKind, object]
-    if (!FORMATS.find((x) => x.id === f)?.text) return
+    if (!formats.find((x) => x.id === f)?.text) return
     let live = true
     call<string>("export", { format: f, params: p, engine, limit: 10 }).then(
       ({ data }) => live && setPreview({ key, engine, text: data }),
@@ -174,11 +184,12 @@ export function ExportDialog({
     return () => {
       live = false
     }
-  }, [key, engine])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, engine, exporters.length])
   const shown = preview.key === requested && preview.engine === engine ? preview : {}
 
   const blocked = ((custom || format === "sql") && !ordered.length) || ((tabular || format === "html") && (shown.text === undefined || !!shown.error))
-  const file = `${name.replace(/\.[^.]+$/, "")}.${format === "project" ? "openrefine.tar.gz" : spec.ext}`
+  const file = format.startsWith("google-") ? `to ${spec.label}` : `${name.replace(/\.[^.]+$/, "")}.${format === "project" ? "openrefine.tar.gz" : spec.ext}`
   const save = () => !blocked && onExport(format, spec.ext, params)
   const check = (label: string, on: boolean, set: (v: boolean) => void) => (
     <label key={label} className="flex cursor-pointer items-center gap-2.5 py-1">
@@ -228,7 +239,7 @@ export function ExportDialog({
         <div className="flex min-h-0 flex-1">
           <nav aria-label="Formats" className="w-60 shrink-0 overflow-y-auto border-r py-2">
             <ul role="listbox" aria-label="Format">
-              {FORMATS.map((f) => (
+              {formats.map((f) => (
                 <li key={f.id} role="option" aria-selected={format === f.id}>
                   <button
                     type="button"
@@ -246,7 +257,7 @@ export function ExportDialog({
             </ul>
           </nav>
           <div className="flex w-70 shrink-0 flex-col gap-4 overflow-y-auto border-r p-4">
-            <p className="text-xs text-muted-foreground">{HINTS[format]}</p>
+            <p className="text-xs text-muted-foreground">{hint(format)}</p>
             {custom && <fieldset className="flex flex-col gap-2 border-b pb-3">
               <legend className="mb-2 text-[11.5px] text-muted-foreground">Export preset</legend>
               <select aria-label="Load export preset" className="h-8 border border-input bg-background px-2 text-xs" value="" disabled={!presets?.length || presetBusy} onChange={(e) => { const p = presets?.find((p) => p.name === e.target.value); if (p) applyPreset(p) }}>
@@ -371,7 +382,7 @@ export function ExportDialog({
             </div>
             <div className="min-h-0 flex-1 overflow-auto p-5">
               {!spec.text ? (
-                <p className="text-muted-foreground">{HINTS[format]}</p>
+                <p className="text-muted-foreground">{hint(format)}</p>
               ) : shown.error ? (
                 <p role="alert" className="text-destructive">
                   {shown.error}

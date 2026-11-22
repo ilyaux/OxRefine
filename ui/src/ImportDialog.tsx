@@ -7,11 +7,14 @@ import { cn } from "@/lib/utils"
 import { FixedWidthRuler } from "@/FixedWidthRuler"
 import { JsonPathPicker, type JsonPaths } from "@/JsonPathPicker"
 
-type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml" | "marc" | "wikitext" | "pcaxis"
+/** Built-in formats, or `ext:<id>` for an importer from an installed extension. */
+type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml" | "marc" | "wikitext" | "pcaxis" | `ext:${string}`
 /** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
  * for XML, the element paths a record can be. */
 type Info = {
   format: Format
+  /** an extension importer's name */
+  label?: string
   sheets?: string[]
   separator?: string
   options: Options
@@ -32,7 +35,7 @@ const SEPARATORS: [string, string, string][] = [[",", ",", "Comma"], ["\t", "\\t
 
 const baseName = (p: string) => p.split(/[\\/]/).pop() ?? p
 const TEXT: [Format, string, string][] = [["csv", "CSV / TSV", "csv tsv"], ["fixed-width", "Fixed-width", "txt"], ["lines", "Lines", "txt"], ["wikitext", "Wikitext tables", "wiki"], ["pcaxis", "PC-Axis", "px"]]
-const NAMES: Record<Format, string> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML", marc: "MARC", wikitext: "Wikitext tables", pcaxis: "PC-Axis" }
+const NAMES: Partial<Record<Format, string>> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML", marc: "MARC", wikitext: "Wikitext tables", pcaxis: "PC-Axis" }
 const size = (n: number) => (n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : n >= 1e3 ? `${(n / 1e3).toFixed(0)} KB` : `${n} B`)
 const webAddress = (value: unknown) => {
   try { const u = new URL(String(value)); return ["http:", "https:"].includes(u.protocol) && !u.username && !u.password } catch { return false }
@@ -218,10 +221,10 @@ export function ImportDialog({
   const file = baseName(path)
   const detected = info
     ? [
-        NAMES[format] ?? format,
+        NAMES[format] ?? info.label ?? format,
         ...(encoded ? [String(options.encoding ?? "UTF-8")] : []),
         ...(format === "csv" ? [`“${sep === "\t" ? "\\t" : sep}”`] : []),
-        ...(!tree && format !== "pcaxis" && Number(options.headerLines) > 0 ? ["header"] : []),
+        ...(!tree && format !== "pcaxis" && !format.startsWith("ext:") && Number(options.headerLines) > 0 ? ["header"] : []),
       ].join(" · ")
     : "…"
   return (
@@ -305,7 +308,7 @@ export function ImportDialog({
               info && (
                 <>
                   <RailLabel>Read as</RailLabel>
-                  <div className="px-4 py-1.5">{NAMES[info.format] ?? info.format}</div>
+                  <div className="px-4 py-1.5">{NAMES[info.format] ?? info.label ?? info.format}</div>
                 </>
               )
             )}
@@ -478,7 +481,8 @@ export function ImportDialog({
               </label>
             )}
             {format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
-            {info && !tree && format !== "pcaxis" && (
+            {/* an extension's importer reads the whole file itself */}
+            {info && !tree && format !== "pcaxis" && !format.startsWith("ext:") && (
               <>
                 {num("headerLines", "Header lines", "0 names the columns Column 1, Column 2…")}
                 {num("ignoreLines", "Skip first lines")}

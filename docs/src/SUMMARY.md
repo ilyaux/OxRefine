@@ -23,6 +23,7 @@
 - [Exporting](exporting.md)
 - [Command line and server](command-line.md)
 - [Connecting an assistant with MCP](mcp.md)
+- [Extensions](extensions.md)
 
 # Reference
 

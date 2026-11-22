@@ -35,6 +35,7 @@ function dialog(format = "csv", initialPreferences = {}, columns = ["name", "cit
       if (name === "lucide-react") return { ChevronUpIcon:"chevron-up",ChevronDownIcon:"chevron-down" }
       if (name === "@/Dialogs") return { useDebounced(value) { requested = value; return debounced ??= value } }
       if (name === "@/lib/utils") return { cn: (...parts) => parts.join(" ") }
+      if (name === "@/extensions") return { useExtensions: () => null, items: () => [], listenExtensions() {}, loadExtensions: async () => ({ folders: [], extensions: [] }) }
       if (name === "@/components/ui/input") return { Input: "input" }
       if (name === "@/components/ui/textarea") return { Textarea: "textarea" }
       if (name === "@/components/instrument") return { FullView: "full-view", Metric: "metric", Spacer: "spacer", StripAction: "strip-action", SummaryStrip: "summary-strip" }

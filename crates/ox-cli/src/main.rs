@@ -41,6 +41,12 @@ fn run_scoped() -> Result<(), String> {
 }
 
 fn apply(recipe: &str, input: &str, out: &str) -> Result<(), String> {
+    // recipes may use functions and operations from installed extensions
+    for e in ox_core::extensions::load(&ox_core::extensions::folders(&Store::default_root())) {
+        if let Some(error) = e.error {
+            eprintln!("warning: extension {} didn't load: {error}", e.name);
+        }
+    }
     let value = serde_json::from_str(&std::fs::read_to_string(recipe).map_err(|e| format!("{recipe}: {e}"))?)
         .map_err(|e| format!("{recipe}: {e}"))?;
     let ops = parse_recipe(value).map_err(|e| format!("{recipe}: {e}"))?;
@@ -247,6 +253,8 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 }
             };
             req.respond(response).ok();
+            // this thread ends here: free its Python interpreter while RustPython can still be torn down
+            ox_core::grel::release_thread();
         });
     }
     Ok(())
