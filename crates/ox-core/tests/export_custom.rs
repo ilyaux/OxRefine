@@ -3,7 +3,7 @@ use calamine::{Data,Reader};
 use ox_core::{dispatch,export::{export,export_file},grel::dates,recon::{candidate_from_json,Judgment,Recon,ReconCol},store::Store,table::{Column,Table},Project,Session};
 use serde_json::{json,Value as J};
 use std::{io::Cursor,path::PathBuf,sync::Arc};
-fn dir() -> PathBuf {let p=std::env::temp_dir().join(format!("ox-custom-{}-{}",std::process::id(),std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));std::fs::create_dir(&p).unwrap();p}
+fn dir() -> PathBuf {let p=std::env::temp_dir().join(format!("ox-custom-{}-{}-{}",std::process::id(),std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos(),UNIQUE.fetch_add(1,std::sync::atomic::Ordering::Relaxed)));std::fs::create_dir(&p).unwrap();p}
 fn fixture()->J {serde_json::from_str(include_str!("../../../tests/export/custom-fixtures.json")).unwrap()}
 fn table(f:&J)->Table {
     let path=dir().join("data.csv");std::fs::write(&path,f["corpus"].as_str().unwrap()).unwrap();let mut p=Project::open(&path).unwrap();
@@ -78,3 +78,6 @@ fn invalid_custom_settings_are_rejected_before_any_output_file_is_touched(){
     assert!(got.contains(&expected));
 }
 use chrono::TimeZone;
+
+/// Parallel tests can read the same clock value (coarse timers on Windows and macOS); the counter keeps paths apart.
+static UNIQUE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);

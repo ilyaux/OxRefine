@@ -2,6 +2,9 @@ use ox_core::{dispatch, import, store::Store, table::Table, Project, Session};
 use serde_json::json;
 use std::{path::PathBuf, time::{SystemTime, UNIX_EPOCH}};
 
+/// Parallel tests can read the same clock value (coarse timers on Windows and macOS); the counter keeps paths apart.
+static UNIQUE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 struct Work(PathBuf);
 impl Drop for Work { fn drop(&mut self) { let _ = std::fs::remove_dir_all(&self.0); } }
 
@@ -18,7 +21,7 @@ fn same_cells(expected: &Table, actual: &Table) {
 
 #[test]
 fn preview_caps_respect_user_limits_and_format_specific_zero_semantics() {
-    let work = Work(std::env::temp_dir().join(format!("ox-preview-limits-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos())));
+    let work = Work(std::env::temp_dir().join(format!("ox-preview-limits-{}-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(), UNIQUE.fetch_add(1, std::sync::atomic::Ordering::Relaxed))));
     std::fs::create_dir(&work.0).unwrap();
     for (file, format, text) in [
         ("data.csv", "csv", "name\nA\nB\nC\n"),
@@ -39,7 +42,7 @@ fn preview_caps_respect_user_limits_and_format_specific_zero_semantics() {
 
 #[test]
 fn new_import_formats_preview_without_saving_and_reopen_with_source_options() {
-    let work = Work(std::env::temp_dir().join(format!("ox-new-formats-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos())));
+    let work = Work(std::env::temp_dir().join(format!("ox-new-formats-{}-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(), UNIQUE.fetch_add(1, std::sync::atomic::Ordering::Relaxed))));
     std::fs::create_dir(&work.0).unwrap();
     let wiki = work.0.join("tables.wiki");
     std::fs::write(&wiki, "{|\n! Name !! Value\n|-\n| Alpha || 42\n|}\n\n{|\n! Other\n|-\n| Second\n|}\n").unwrap();

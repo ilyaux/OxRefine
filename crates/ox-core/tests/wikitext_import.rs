@@ -2,10 +2,13 @@ use ox_core::{grel::Value, import::{import, wikitext_tables, ImportOptions}, tab
 use serde_json::{json, Value as J};
 use std::{io::{BufRead, BufReader, Read, Write}, net::{TcpListener, TcpStream}, path::PathBuf, sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}}, thread, time::{Duration, SystemTime, UNIX_EPOCH}};
 
+/// Parallel tests can read the same clock value (coarse timers on Windows and macOS); the counter keeps paths apart.
+static UNIQUE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 struct Temp(PathBuf);
 impl Temp {
     fn new() -> Self {
-        let path = std::env::temp_dir().join(format!("ox-wikitext-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos()));
+        let path = std::env::temp_dir().join(format!("ox-wikitext-{}-{}-{}", std::process::id(), SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_nanos(), UNIQUE.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
         std::fs::create_dir(&path).unwrap();
         Self(path)
     }

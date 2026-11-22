@@ -2,10 +2,13 @@ use ox_core::{grel::Value, import::{import, inspect, json_paths, ImportOptions}}
 use serde_json::{json, Value as J};
 use std::{fs, path::PathBuf};
 
+/// Parallel tests can read the same clock value (coarse timers on Windows and macOS); the counter keeps paths apart.
+static UNIQUE: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
 struct Source(PathBuf);
 impl Source {
     fn new(bytes: &[u8], suffix: &str) -> Self {
-        let path = std::env::temp_dir().join(format!("oxrefine-json-test-{}-{}.{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos(), suffix));
+        let path = std::env::temp_dir().join(format!("oxrefine-json-test-{}-{}-{}.{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos(), UNIQUE.fetch_add(1, std::sync::atomic::Ordering::Relaxed), suffix));
         fs::write(&path, bytes).unwrap(); Self(path)
     }
 }
