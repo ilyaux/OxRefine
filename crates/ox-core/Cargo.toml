@@ -23,7 +23,8 @@ regex = "1"
 rphonetic = "4"
 rust_xlsxwriter = { version = "0.94", default-features = false }
 rustc-hash = "2"
-# Python expressions. malachite-bigint (0.9.2) and mt19937 (3.1.0) are pinned in Cargo.lock: newer ones break rustpython-stdlib 0.5.0.
+# Python expressions. Cargo.lock pins malachite-bigint 0.9.2, mt19937 3.1.0 and libc 0.2.186: newer ones break
+# rustpython 0.5.0 (libc 0.2.187+ makes POSIX_SPAWN_* a c_short on Linux).
 rustpython-pylib = { version = "=0.5.0", features = ["freeze-stdlib"] }
 rustpython-stdlib = "=0.5.0"
 rustpython-vm = { version = "=0.5.0", features = ["freeze-stdlib"] }
