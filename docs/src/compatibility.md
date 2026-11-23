@@ -28,6 +28,8 @@ Each suite in the repository's `tests/<suite>/` folder has three files:
 
 The additional customized-facet, JSON-path and export-encoding fixtures record the official 3.10.1 release archive's SHA-256 and the hashes of the relevant JAR files. They also retain the version actually reported by its API: the checksum-verified Windows release reports `3.10-SNAPSHOT [TRUNK]`. Its release identity is verified from the artifact hashes rather than inferred from that string. These extra suites do not change the fixture total in the table above.
 
+`tests/rdf` runs Turtle, N3, N-Triples, RDF/XML and JSON-LD files through OpenRefine's RDF importer. OpenRefine orders those tables by Apache Jena's hash tables and names blank nodes randomly, so the suite compares each subject's values, the columns and the number of rows and records, not their order. It is also outside the total.
+
 The additional custom-export corpus in `tests/export/custom-fixtures.json` compares ordered columns, headers, reconciliation output and workbook cell values with the official release. Requested date formatting and preserving the time of day in ODS have explicit [documented differences](differences.md#custom-export-date-settings). These fixtures are separate from the totals above.
 
 `tests/detect_language/` adds 113 real GREL outputs covering all 70 language profiles, short/noisy text, Unicode filtering and input boundaries. It also pins the reference's UTF-16 normalization output and seeded random-number results. The original two language-detection cases now pass in the GREL total above; the expanded corpus is counted separately.

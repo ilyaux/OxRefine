@@ -1,0 +1,17 @@
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+ex:lit ex:int 42 ;
+  ex:neg -7 ;
+  ex:decimal 4.20 ;
+  ex:double 1.5e3 ;
+  ex:bool true ;
+  ex:empty "" ;
+  ex:string "plain"^^xsd:string ;
+  ex:date "2024-01-31"^^xsd:date ;
+  ex:custom "x1"^^ex:code ;
+  ex:lang "Colour"@EN-gb ;
+  ex:escapes "tab\there \"quoted\" café \U0001F600" ;
+  ex:long """first line
+second line""" ;
+  ex:single 'single quoted' ;
+  ex:padded "007"^^xsd:integer .

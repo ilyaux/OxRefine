@@ -57,6 +57,12 @@ the exact source revision and hashes. The extension sources are fetched only
 for regeneration and are not bundled with OxRefine. These synthetic cases check
 cell/reconciliation mapping, not live Wikimedia Commons responses.
 
+RDF import uses Oxigraph's parsers (oxrdfio, oxttl, oxrdfxml, oxjsonld, oxrdf, oxiri and
+oxilangtag) by Thomas Pellissier Tanon and the Oxigraph contributors, under the MIT
+or Apache-2.0 license (https://github.com/oxigraph/oxigraph/blob/main/LICENSE-MIT).
+The package checksums are recorded in Cargo.lock. RDF import results are checked
+against OpenRefine 3.10.1, which reads RDF with Apache Jena (tests/rdf).
+
 Wikitext parsing uses parse_wiki_text 0.1.5 by Fredrik Portström (copyright 2019),
 under the permissive license in that crate's LICENSE file:
 https://docs.rs/crate/parse_wiki_text/0.1.5/source/LICENSE

@@ -1,0 +1,1009 @@
+{
+ "openrefine": "3.10-SNAPSHOT",
+ "generator": "tests/rdf/gen.mjs",
+ "cases": [
+  {
+   "name": "turtle",
+   "file": "basic.ttl",
+   "format": "text/rdf/ttl",
+   "columns": [
+    "subject",
+    "http://example.org/note",
+    "http://example.org/age",
+    "http://xmlns.com/foaf/0.1/knows",
+    "http://xmlns.com/foaf/0.1/name"
+   ],
+   "rows": [
+    [
+     {
+      "v": "http://example.org/bob"
+     },
+     {
+      "v": "hi@en"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "http://example.org/carol"
+     },
+     {
+      "v": "Bob"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/alice"
+     },
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/alice"
+     },
+     null,
+     {
+      "v": "7^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     null,
+     {
+      "v": "Alice"
+     }
+    ],
+    [
+     {
+      "v": "f08dd1accc9f64facb441bb586ab6967"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "Anon"
+     }
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  },
+  {
+   "name": "turtle-as-n3",
+   "file": "basic.ttl",
+   "format": "text/rdf/n3",
+   "columns": [
+    "subject",
+    "http://xmlns.com/foaf/0.1/name",
+    "http://example.org/note",
+    "http://example.org/age",
+    "http://xmlns.com/foaf/0.1/knows"
+   ],
+   "rows": [
+    [
+     {
+      "v": "10b736ce5dd661ece9b2d60a8c2cf346"
+     },
+     {
+      "v": "Anon"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/bob"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "hi@en"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "http://example.org/carol"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/alice"
+     }
+    ],
+    [
+     {
+      "v": "http://example.org/alice"
+     },
+     {
+      "v": "Alice"
+     },
+     null,
+     {
+      "v": "7^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     null
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  },
+  {
+   "name": "turtle-literals",
+   "file": "literals.ttl",
+   "format": "text/rdf/ttl",
+   "columns": [
+    "subject",
+    "http://example.org/int",
+    "http://example.org/custom",
+    "http://example.org/padded",
+    "http://example.org/string",
+    "http://example.org/date",
+    "http://example.org/long",
+    "http://example.org/double",
+    "http://example.org/empty",
+    "http://example.org/lang",
+    "http://example.org/escapes",
+    "http://example.org/neg",
+    "http://example.org/bool",
+    "http://example.org/decimal",
+    "http://example.org/single"
+   ],
+   "rows": [
+    [
+     {
+      "v": "http://example.org/lit"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "x1^^http://example.org/code"
+     },
+     {
+      "v": "007^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "plain"
+     },
+     {
+      "v": "2024-01-31^^http://www.w3.org/2001/XMLSchema#date"
+     },
+     {
+      "v": "first line\nsecond line"
+     },
+     {
+      "v": "1.5e3^^http://www.w3.org/2001/XMLSchema#double"
+     },
+     {
+      "v": ""
+     },
+     {
+      "v": "Colour@EN-gb"
+     },
+     {
+      "v": "tab\there \\\"quoted\\\" café 😀"
+     },
+     {
+      "v": "-7^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "true^^http://www.w3.org/2001/XMLSchema#boolean"
+     },
+     {
+      "v": "4.20^^http://www.w3.org/2001/XMLSchema#decimal"
+     },
+     {
+      "v": "single quoted"
+     }
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": false
+  },
+  {
+   "name": "turtle-structure",
+   "file": "structure.ttl",
+   "format": "text/rdf/ttl",
+   "columns": [
+    "subject",
+    "http://example.org/p10",
+    "http://xmlns.com/foaf/0.1/name",
+    "http://example.org/p9",
+    "http://example.org/tag",
+    "http://xmlns.com/foaf/0.1/account",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "http://example.org/p4",
+    "http://example.org/p8",
+    "http://example.org/p2",
+    "http://example.org/list",
+    "http://example.org/p1",
+    "http://example.org/p3",
+    "http://example.org/p6",
+    "http://example.org/p5",
+    "http://example.org/p7",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    "http://example.org/points",
+    "http://example.org/site",
+    "http://xmlns.com/foaf/0.1/accountName",
+    "http://example.org/seeAlso"
+   ],
+   "rows": [
+    [
+     {
+      "v": "http://example.org/base/#me"
+     },
+     {
+      "v": "10^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "Me"
+     },
+     {
+      "v": "9^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "three"
+     },
+     {
+      "v": "6dd851a2c8becba1d2a5849edfd10f8c"
+     },
+     {
+      "v": "http://xmlns.com/foaf/0.1/Person"
+     },
+     {
+      "v": "4^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "8^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "2^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "88e856610c3f6cc0575ff71a8f30b115"
+     },
+     {
+      "v": "1^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "3^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "6^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "5^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "7^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "one"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "two"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "5f39d262acf590bd7779cff4ba461882"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+     },
+     {
+      "v": "b"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/onlyObject"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/base/#me"
+     },
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "6dd851a2c8becba1d2a5849edfd10f8c"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/base/site"
+     },
+     {
+      "v": "me1"
+     },
+     null
+    ],
+    [
+     {
+      "v": "88e856610c3f6cc0575ff71a8f30b115"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "5f39d262acf590bd7779cff4ba461882"
+     },
+     {
+      "v": "a"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/base/relative/path"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/up"
+     }
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  },
+  {
+   "name": "turtle-relative-without-base",
+   "file": "nobase.ttl",
+   "format": "text/rdf/ttl",
+   "columns": [
+    "subject",
+    "http://example.org/links"
+   ],
+   "rows": [
+    [
+     {
+      "v": "<base>/thing"
+     },
+     {
+      "v": "<base>/#frag"
+     }
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": false
+  },
+  {
+   "name": "turtle-empty",
+   "file": "empty.ttl",
+   "format": "text/rdf/ttl",
+   "columns": [
+    "subject"
+   ],
+   "rows": [],
+   "keyCellIndex": 0,
+   "hasRecords": false
+  },
+  {
+   "name": "turtle-broken",
+   "file": "broken.ttl",
+   "format": "text/rdf/ttl",
+   "malformed": true,
+   "error": {
+    "models": {
+     "message": "Failed to find project id #<project> - may be corrupt",
+     "status": "error"
+    }
+   }
+  },
+  {
+   "name": "n-triples",
+   "file": "basic.nt",
+   "format": "text/rdf/nt",
+   "columns": [
+    "subject",
+    "http://xmlns.com/foaf/0.1/name",
+    "http://example.org/age",
+    "http://xmlns.com/foaf/0.1/knows"
+   ],
+   "rows": [
+    [
+     {
+      "v": "b237efbd78a809226c4cf0a54c291927"
+     },
+     {
+      "v": "Friend été\n2@fr"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/bob"
+     },
+     {
+      "v": "Bob"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "b237efbd78a809226c4cf0a54c291927"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/alice"
+     }
+    ],
+    [
+     {
+      "v": "http://example.org/alice"
+     },
+     {
+      "v": "Alice"
+     },
+     null,
+     null
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  },
+  {
+   "name": "rdf-xml",
+   "file": "people.rdf",
+   "format": "text/rdf/xml",
+   "columns": [
+    "subject",
+    "http://xmlns.com/foaf/0.1/name",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#_2",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#_1",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "http://example.org/pet",
+    "http://example.org/address",
+    "http://xmlns.com/foaf/0.1/knows",
+    "http://example.org/age",
+    "http://xmlns.com/foaf/0.1/nick",
+    "http://example.org/markup",
+    "http://example.org/items",
+    "http://example.org/city",
+    "http://example.org/species"
+   ],
+   "rows": [
+    [
+     {
+      "v": "58f198f9-92d7-4be2-bde9-63903aaf7332"
+     },
+     {
+      "v": "Friend"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "35100c18-a451-4786-b9b4-c075d39b249c"
+     },
+     null,
+     {
+      "v": "second"
+     },
+     {
+      "v": "first"
+     },
+     {
+      "v": "http://www.w3.org/1999/02/22-rdf-syntax-ns#Bag"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/people/bob"
+     },
+     {
+      "v": "Bob"
+     },
+     null,
+     null,
+     {
+      "v": "http://xmlns.com/foaf/0.1/Person"
+     },
+     {
+      "v": "http://example.org/pets/rex"
+     },
+     {
+      "v": "ee2af648-098e-48b5-99db-c159ae7392e5"
+     },
+     {
+      "v": "58f198f9-92d7-4be2-bde9-63903aaf7332"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "Bobby@en"
+     },
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/people/alice"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/people/#alice-frag"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "<b>bold</b> text^^http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"
+     },
+     {
+      "v": "35100c18-a451-4786-b9b4-c075d39b249c"
+     },
+     null,
+     null
+    ],
+    [
+     {
+      "v": "ee2af648-098e-48b5-99db-c159ae7392e5"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "Oslo"
+     },
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/pets/rex"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "dog"
+     }
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  },
+  {
+   "name": "json-ld",
+   "file": "people.jsonld",
+   "format": "text/rdf/ld+json",
+   "columns": [
+    "subject",
+    "http://xmlns.com/foaf/0.1/name",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    "http://example.org/city",
+    "http://xmlns.com/foaf/0.1/knows",
+    "http://example.org/active",
+    "http://example.org/address",
+    "http://example.org/count",
+    "http://example.org/age",
+    "http://example.org/note",
+    "http://example.org/tags",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    "http://example.org/height"
+   ],
+   "rows": [
+    [
+     {
+      "v": "http://example.org/alice"
+     },
+     {
+      "v": "Ali"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     null,
+     {
+      "v": "Alice"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "fe9b7b2d4c44c7ed5845aac54c4094af"
+     },
+     null,
+     {
+      "v": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+     },
+     {
+      "v": "y"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "bff79a1501876fb0bf27cc1321f69cdc"
+     },
+     null,
+     {
+      "v": "fe9b7b2d4c44c7ed5845aac54c4094af"
+     },
+     {
+      "v": "x"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "5b7d9472d316c19ac4d13c75fdb636a0"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "Oslo"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ],
+    [
+     {
+      "v": "http://example.org/bob"
+     },
+     {
+      "v": "Bob"
+     },
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/carol"
+     },
+     {
+      "v": "true^^http://www.w3.org/2001/XMLSchema#boolean"
+     },
+     {
+      "v": "5b7d9472d316c19ac4d13c75fdb636a0"
+     },
+     {
+      "v": "3^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "42^^http://www.w3.org/2001/XMLSchema#integer"
+     },
+     {
+      "v": "hi@en"
+     },
+     {
+      "v": "bff79a1501876fb0bf27cc1321f69cdc"
+     },
+     {
+      "v": "http://xmlns.com/foaf/0.1/Person"
+     },
+     {
+      "v": "1.82E0^^http://www.w3.org/2001/XMLSchema#double"
+     }
+    ],
+    [
+     null,
+     null,
+     null,
+     null,
+     null,
+     {
+      "v": "http://example.org/alice"
+     },
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null
+    ]
+   ],
+   "keyCellIndex": 0,
+   "hasRecords": true
+  }
+ ],
+ "wizard": [
+  {
+   "file": "basic.ttl",
+   "format": "text/rdf/ttl",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII"
+   },
+   "columns": 5,
+   "rows": 4
+  },
+  {
+   "file": "basic.nt",
+   "format": "text/rdf/nt",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "UTF-8"
+   },
+   "columns": 4,
+   "rows": 4
+  },
+  {
+   "file": "people.rdf",
+   "format": "text/rdf/xml",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII"
+   },
+   "columns": 14,
+   "rows": 7
+  },
+  {
+   "file": "people.jsonld",
+   "format": "text/rdf/ld+json",
+   "options": {
+    "includeFileSources": false,
+    "includeArchiveFileName": false,
+    "encoding": "US-ASCII"
+   },
+   "columns": 14,
+   "rows": 7
+  }
+ ]
+}

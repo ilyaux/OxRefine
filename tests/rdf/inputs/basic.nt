@@ -1,0 +1,9 @@
+<http://example.org/bob> <http://xmlns.com/foaf/0.1/name> "Bob" .
+<http://example.org/bob> <http://xmlns.com/foaf/0.1/knows> <http://example.org/alice> .
+<http://example.org/bob> <http://xmlns.com/foaf/0.1/knows> _:friend .
+_:friend <http://xmlns.com/foaf/0.1/name> "Friend été\n2"@fr .
+<http://example.org/bob> <http://example.org/age> "42"^^<http://www.w3.org/2001/XMLSchema#integer> .
+# a comment line
+
+<http://example.org/alice> <http://xmlns.com/foaf/0.1/name> "Alice" .
+<http://example.org/bob> <http://xmlns.com/foaf/0.1/name> "Bob" .

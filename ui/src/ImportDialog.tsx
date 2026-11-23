@@ -8,7 +8,7 @@ import { FixedWidthRuler } from "@/FixedWidthRuler"
 import { JsonPathPicker, type JsonPaths } from "@/JsonPathPicker"
 
 /** Built-in formats, or `ext:<id>` for an importer from an installed extension. */
-type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml" | "marc" | "wikitext" | "pcaxis" | `ext:${string}`
+type Format = "csv" | "lines" | "fixed-width" | "excel" | "ods" | "json" | "jsonlines" | "xml" | "marc" | "wikitext" | "pcaxis" | "rdf-turtle" | "rdf-ntriples" | "rdf-n3" | "rdf-xml" | "json-ld" | `ext:${string}`
 /** The guessed format and OpenRefine's wizard defaults for it; for an archive or folder, its files;
  * for XML, the element paths a record can be. */
 type Info = {
@@ -35,7 +35,8 @@ const SEPARATORS: [string, string, string][] = [[",", ",", "Comma"], ["\t", "\\t
 
 const baseName = (p: string) => p.split(/[\\/]/).pop() ?? p
 const TEXT: [Format, string, string][] = [["csv", "CSV / TSV", "csv tsv"], ["fixed-width", "Fixed-width", "txt"], ["lines", "Lines", "txt"], ["wikitext", "Wikitext tables", "wiki"], ["pcaxis", "PC-Axis", "px"]]
-const NAMES: Partial<Record<Format, string>> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML", marc: "MARC", wikitext: "Wikitext tables", pcaxis: "PC-Axis" }
+const RDF: [Format, string, string][] = [["rdf-turtle", "Turtle", "ttl"], ["rdf-ntriples", "N-Triples", "nt"], ["rdf-n3", "N3", "n3"], ["rdf-xml", "RDF/XML", "rdf"], ["json-ld", "JSON-LD", "jsonld"]]
+const NAMES: Partial<Record<Format, string>> = { csv: "CSV", lines: "Lines", "fixed-width": "Fixed-width", excel: "Excel", ods: "OpenDocument", json: "JSON", jsonlines: "JSON lines", xml: "XML", marc: "MARC", wikitext: "Wikitext tables", pcaxis: "PC-Axis", ...Object.fromEntries(RDF.map(([f, l]) => [f, l])) }
 const size = (n: number) => (n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : n >= 1e3 ? `${(n / 1e3).toFixed(0)} KB` : `${n} B`)
 const webAddress = (value: unknown) => {
   try { const u = new URL(String(value)); return ["http:", "https:"].includes(u.protocol) && !u.username && !u.password } catch { return false }
@@ -203,7 +204,9 @@ export function ImportDialog({
   const sep = String(options.separator ?? ",")
   // JSON, XML and converted MARC: records from a tree, not lines.
   const tree = format === "json" || format === "jsonlines" || format === "xml" || format === "marc"
-  const encoded = TEXT.some(([f]) => f === format) || isJson
+  // RDF: OpenRefine's importer has only an encoding; each subject becomes a record
+  const rdf = RDF.some(([f]) => f === format)
+  const encoded = TEXT.some(([f]) => f === format) || isJson || rdf
   const sheets = (options.sheets as { fileNameAndSheetIndex: string; selected: boolean; name: string }[]) ?? []
 
   const create = async () => {
@@ -224,7 +227,7 @@ export function ImportDialog({
         NAMES[format] ?? info.label ?? format,
         ...(encoded ? [String(options.encoding ?? "UTF-8")] : []),
         ...(format === "csv" ? [`“${sep === "\t" ? "\\t" : sep}”`] : []),
-        ...(!tree && format !== "pcaxis" && !format.startsWith("ext:") && Number(options.headerLines) > 0 ? ["header"] : []),
+        ...(!tree && !rdf && format !== "pcaxis" && !format.startsWith("ext:") && Number(options.headerLines) > 0 ? ["header"] : []),
       ].join(" · ")
     : "…"
   return (
@@ -286,6 +289,13 @@ export function ImportDialog({
                 <RailLabel>Read the text as</RailLabel>
                 <div role="radiogroup" aria-label="Read the text as">
                   {TEXT.map(([v, l, h]) => radio(v, format === v, l, h, () => pickTextFormat(v)))}
+                </div>
+              </>
+            ) : RDF.some(([f]) => f === info?.format) ? (
+              <>
+                <RailLabel>Read the RDF as</RailLabel>
+                <div role="radiogroup" aria-label="Read the RDF as">
+                  {RDF.map(([v, l, h]) => radio(v, format === v, l, h, () => setFormat(v)))}
                 </div>
               </>
             ) : info && (info.format === "json" || info.format === "jsonlines") ? (
@@ -482,7 +492,7 @@ export function ImportDialog({
             )}
             {format === "lines" && num("linesPerRow", "Lines per row", "Each group of this many lines becomes one row.")}
             {/* an extension's importer reads the whole file itself */}
-            {info && !tree && format !== "pcaxis" && !format.startsWith("ext:") && (
+            {info && !tree && !rdf && format !== "pcaxis" && !format.startsWith("ext:") && (
               <>
                 {num("headerLines", "Header lines", "0 names the columns Column 1, Column 2…")}
                 {num("ignoreLines", "Skip first lines")}
@@ -490,8 +500,8 @@ export function ImportDialog({
               </>
             )}
             {info && format === "pcaxis" && num("skipDataLines", "Skip data rows")}
-            {info && num("limit", format === "marc" ? "Load at most records" : "Load at most rows", format === "marc" ? "One record can expand into several rows." : undefined)}
-            {info && format !== "pcaxis" && (
+            {info && !rdf && num("limit", format === "marc" ? "Load at most records" : "Load at most rows", format === "marc" ? "One record can expand into several rows." : undefined)}
+            {info && format !== "pcaxis" && !rdf && (
               <>
                 <div className="mt-2 border-t" />
                 <div className="pt-2" />

@@ -2,7 +2,7 @@
 
 ## Sources
 
-- **A file:** CSV and TSV (any separator), fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, MARC (`.mrc`, `.marc`), wikitext tables (`.wiki`, `.wikitext`), PC-Axis (`.px`), or plain lines.
+- **A file:** CSV and TSV (any separator), fixed-width text, Excel (`.xlsx`, `.xls`), OpenDocument (`.ods`), JSON and JSON Lines, XML, MARC (`.mrc`, `.marc`), wikitext tables (`.wiki`, `.wikitext`), PC-Axis (`.px`), RDF (Turtle `.ttl`, N3 `.n3`, N-Triples `.nt`, RDF/XML `.rdf`, JSON-LD `.jsonld`), or plain lines.
 - **A folder or an archive:** zip, tar, gzip and bzip2 archives (`.tar.gz`, `.tar.bz2`), or a folder of files. Choose which files to import. Optional columns record the file and archive each row came from.
 - **The clipboard:** **Paste from clipboard** on the home screen (or **Import → Paste data…** in a project) takes rows copied from a spreadsheet, CSV text, or plain lines.
 - **A web address:** **From a web address** (or **Import → Web address…**) downloads the file and opens the same preview.
@@ -23,6 +23,7 @@ OxRefine detects the format and opens the import view: what it detected and the 
 - **JSON, XML and MARC:** the element that holds one record, chosen from a list.
 - **Wikitext:** tables, headers, spanning cells, raw templates, references and optional link reconciliation.
 - **PC-Axis:** encoding, data rows to skip and row limit.
+- **RDF:** the syntax and the encoding.
 
 The import options follow OpenRefine's wizard. For JSON, OxRefine also suggests a record path so nested data has a useful first preview.
 
@@ -65,6 +66,10 @@ Wikitext parsing keeps the source and its table structure in memory. It accepts 
 PC-Axis uses `VALUES` labels as dimension columns, ordered by `STUB` followed by `HEADING`, and a final `value` column. The last dimension changes fastest. Missing-value markers such as `.` and `..` remain text. `CODES`, localized metadata and notes do not become extra columns. Select the character encoding if detection needs correcting; the file's `CHARSET` metadata does not override that choice.
 
 This follows OpenRefine's line-sensitive importer, rather than supporting every PC-Axis dialect. Like the reference, it can return fewer rows for short `DATA`, and cycles the dimension labels if extra values are present. A semicolon discards the rest of its line; later data lines are still read. Header and blank-cell settings are fixed by this importer, while **Skip data lines** and **Limit** remain available.
+
+### RDF
+
+An RDF file becomes one row per subject with a `subject` column and one column per predicate, named by its full IRI. Each subject is a record: when a predicate has several values, they continue on the record's next rows. Links to other resources show their IRI, and blank nodes show a generated id that is the same wherever the node appears. Literals show as OpenRefine shows them: the text, then `@` and the language (`hi@en`) or `^^` and the datatype (`42^^http://www.w3.org/2001/XMLSchema#integer`); plain strings have no suffix. Repeated triples count once. N3 files are read as Turtle, as in OpenRefine, and only the default graph is imported. Relative IRIs are resolved against the file's folder. A JSON-LD `@context` given by a web address is downloaded, as in OpenRefine.
 
 ## Database queries
 

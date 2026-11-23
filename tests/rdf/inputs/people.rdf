@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:ex="http://example.org/"
+         xml:base="http://example.org/people/">
+  <foaf:Person rdf:about="bob">
+    <foaf:name>Bob</foaf:name>
+    <foaf:nick xml:lang="en">Bobby</foaf:nick>
+    <ex:age rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">42</ex:age>
+    <foaf:knows rdf:resource="alice"/>
+    <foaf:knows rdf:nodeID="friend"/>
+    <ex:address rdf:parseType="Resource">
+      <ex:city>Oslo</ex:city>
+    </ex:address>
+    <ex:pet>
+      <rdf:Description rdf:about="http://example.org/pets/rex" ex:species="dog"/>
+    </ex:pet>
+  </foaf:Person>
+  <rdf:Description rdf:nodeID="friend" foaf:name="Friend"/>
+  <rdf:Description rdf:about="#alice-frag">
+    <ex:items>
+      <rdf:Bag>
+        <rdf:li>first</rdf:li>
+        <rdf:li>second</rdf:li>
+      </rdf:Bag>
+    </ex:items>
+    <ex:markup rdf:parseType="Literal"><b>bold</b> text</ex:markup>
+  </rdf:Description>
+</rdf:RDF>

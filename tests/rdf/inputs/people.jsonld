@@ -1,0 +1,26 @@
+{
+  "@context": {
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "ex": "http://example.org/",
+    "name": "foaf:name",
+    "knows": { "@id": "foaf:knows", "@type": "@id" },
+    "age": { "@id": "ex:age", "@type": "http://www.w3.org/2001/XMLSchema#integer" },
+    "tags": { "@id": "ex:tags", "@container": "@list" }
+  },
+  "@graph": [
+    {
+      "@id": "ex:bob",
+      "@type": "foaf:Person",
+      "name": "Bob",
+      "knows": ["ex:alice", "ex:carol"],
+      "age": "42",
+      "ex:height": 1.82,
+      "ex:count": 3,
+      "ex:active": true,
+      "ex:note": { "@value": "hi", "@language": "en" },
+      "tags": ["x", "y"],
+      "ex:address": { "ex:city": "Oslo" }
+    },
+    { "@id": "ex:alice", "name": ["Alice", "Ali"] }
+  ]
+}

@@ -1,0 +1,12 @@
+@prefix ex: <http://example.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@base <http://example.org/base/> .
+<#me> a foaf:Person ;
+  foaf:name "Me" ;
+  foaf:account [ foaf:accountName "me1" ; ex:site <site> ] ;
+  ex:list ( "a" "b" ) ;
+  ex:tag "one", "two", "three", "two" ;
+  ex:p1 1 ; ex:p2 2 ; ex:p3 3 ; ex:p4 4 ; ex:p5 5 ; ex:p6 6 ; ex:p7 7 ; ex:p8 8 ; ex:p9 9 ; ex:p10 10 .
+<#me> foaf:name "Me" .
+ex:onlyObject ex:points <#me> .
+<relative/path> ex:seeAlso <../up> .

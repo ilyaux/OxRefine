@@ -20,6 +20,8 @@ mod pcaxis;
 mod marc;
 #[path = "import_wikitext.rs"]
 mod wikitext;
+#[path = "import_rdf.rs"]
+mod rdf;
 
 /// OpenRefine's importer options (same JSON names), with its defaults.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -133,6 +135,16 @@ pub enum Format {
     Marc,
     #[serde(rename = "fixed-width")]
     FixedWidth,
+    #[serde(rename = "rdf-ntriples")]
+    RdfNTriples,
+    #[serde(rename = "rdf-n3")]
+    RdfN3,
+    #[serde(rename = "rdf-turtle")]
+    RdfTurtle,
+    #[serde(rename = "rdf-xml")]
+    RdfXml,
+    #[serde(rename = "json-ld")]
+    JsonLd,
 }
 
 /// OpenRefine format ids, or our own short names; None picks by file extension.
@@ -149,6 +161,7 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "text/wiki" | "wikitext" | "wiki" => return Format::Wikitext,
         "text/marc" | "marc" | "mrc" => return Format::Marc,
         "text/line-based/fixed-width" | "fixed-width" => return Format::FixedWidth,
+        "text/rdf/nt" | "rdf-ntriples" | "text/rdf/n3" | "rdf-n3" | "text/rdf/ttl" | "rdf-turtle" | "text/rdf/xml" | "rdf-xml" | "text/rdf/ld+json" | "json-ld" => return rdf::format(format.unwrap_or("")).unwrap(),
         _ => {}
     }
     let ext = path.extension().map(|e| e.to_string_lossy().to_ascii_lowercase()).unwrap_or_default();
@@ -161,7 +174,8 @@ pub fn format_for(path: &Path, format: Option<&str>) -> Format {
         "px" => Format::PcAxis,
         "wiki" | "wikitext" => Format::Wikitext,
         "mrc" | "marc" => Format::Marc,
-        _ => Format::Csv,
+        // OpenRefine's RDF extensions: .nt .ntriples .n3 .ttl .rdf .jsonld
+        ext => rdf::format(ext).unwrap_or(Format::Csv),
     }
 }
 
@@ -201,6 +215,7 @@ fn import_file(path: &Path, f: Format, o: &ImportOptions) -> Result<Table> {
         Format::Json | Format::JsonLines => import_json(path, f == Format::JsonLines, o),
         Format::Xml => import_xml(path, o),
         Format::PcAxis => pcaxis::read(path, o),
+        Format::RdfNTriples | Format::RdfN3 | Format::RdfTurtle | Format::RdfXml | Format::JsonLd => rdf::read(path, f, o),
         Format::Wikitext => wikitext::read(path, o),
         Format::Marc => {
             let xml = marc::xml(path, o)?;
@@ -357,6 +372,7 @@ fn inspect_file(path: &Path) -> Result<serde_json::Value> {
         }
         Format::FixedWidth => merge(json!({ "headerLines": 0, "columnWidths": [], "encoding": encoding, "guessCellValueTypes": false })),
         Format::PcAxis => json!({ "encoding": encoding, "skipDataLines": 0, "limit": -1 }),
+        Format::RdfNTriples | Format::RdfN3 | Format::RdfTurtle | Format::RdfXml | Format::JsonLd => json!({ "encoding": encoding }),
         Format::Wikitext => {
             let meta = wikitext::inspect(path, &ImportOptions { encoding: encoding.into(), ..Default::default() })?;
             out["tables"] = meta["tables"].clone();
@@ -438,6 +454,11 @@ pub fn download(dir: &Path, url: &str) -> Result<(std::path::PathBuf, String)> {
         "application/vnd.ms-excel" => ".xls",
         "application/vnd.oasis.opendocument.spreadsheet" => ".ods",
         "text/xml" | "application/xml" | "application/rss+xml" | "application/atom+xml" => ".xml",
+        "text/turtle" => ".ttl",
+        "application/n-triples" => ".nt",
+        "text/n3" | "text/rdf+n3" => ".n3",
+        "application/rdf+xml" => ".rdf",
+        "application/ld+json" => ".jsonld",
         "application/marc" => ".mrc",
         "application/zip" | "application/x-zip-compressed" => ".zip",
         "application/gzip" | "application/x-gzip" => ".gz",

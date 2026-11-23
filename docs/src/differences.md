@@ -62,13 +62,16 @@ Passwords are not stored with saved connection settings. Queries run in read-onl
 
 OpenRefine runs `jython:` expressions in Jython 2.7 and `clojure:` ones in Clojure 1.12. OxRefine runs Python in an embedded Python 3 with Python 2 compatibility, and Clojure in its own interpreter. 334 of 337 reference expressions give OpenRefine's result. The rest, and what each interpreter leaves out, are in [Python and Clojure](transforming.md#python-and-clojure) and `tests/langs/known_failures.txt`.
 
+### RDF import
+
+OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates in that graph's internal hash order, which changes with the file and even between N3 and Turtle for the same text. OxRefine keeps the order of the file. Jena names blank nodes with random ids, different on every import; OxRefine generates stable ones. OpenRefine resolves relative IRIs against its own working folder, OxRefine against the file's folder. `tests/rdf` compares the records, values and columns with OpenRefine 3.10.1, outside the 2,473-check total.
+
 ### Google Sheets
 
 OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and exports like it did, but signing in needs an OAuth client you register yourself ([how](importing.md#google-sheets-and-drive)). Shared sheets import without one.
 
 ## Not in OxRefine yet
 
-- **Import:** RDF (N-Triples, Turtle, RDF/XML, JSON-LD)
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
 - **Expressions:** `wikibaseIssues()`

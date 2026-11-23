@@ -13,9 +13,9 @@ Current release: [**v0.7.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 | v0.1 | 10 | 10 | 0 | 0 | 0 |
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
 | v0.5 | 50 | 46 | 1 | 1 | 2 |
-| v1.0 | 13 | 12 | 0 | 1 | 0 |
-| later | 15 | 6 | 3 | 3 | 3 |
-| **Total** | **134** | **119** | **4** | **6** | **5** |
+| v1.0 | 13 | 12 | 1 | 0 | 0 |
+| later | 15 | 6 | 4 | 3 | 2 |
+| **Total** | **134** | **119** | **6** | **5** | **4** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -61,7 +61,7 @@ OpenRefine's data model: typed cells, records, persistent projects. **10 of 10 d
 
 Every format OpenRefine imports, with its options and preview. **13 of 14 done.**
 
-- [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** — OpenRefine's RDF importers: one row per subject, one column per predicate, multiple values as record rows. Formats: RDF/N3, N-Triples, Turtle, RDF/XML, JSON-LD. Fixtures from OpenRefine. <sub>later · P2 · L · OpenRefine: RdfTripleImporter, RdfXmlTripleImporter, RdfJsonldTripleImporter</sub>
+- [ ] **RDF (N-Triples, N3, Turtle, RDF/XML, JSON-LD)** (review) — OpenRefine's RDF importers: one row per subject, one column per predicate, multiple values as record rows. Formats: RDF/N3, N-Triples, Turtle, RDF/XML, JSON-LD. Fixtures from OpenRefine. <sub>later · P2 · L · OpenRefine: RdfTripleImporter, RdfXmlTripleImporter, RdfJsonldTripleImporter</sub>
 
 <details><summary>13 done</summary>
 
@@ -274,7 +274,7 @@ OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 9 done.**
 - [ ] **Wikibase schema and upload** — Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. <sub>later · P2 · L · OpenRefine: extensions/wikibase</sub>
 - [ ] **Google Sheets and Drive** (review) — OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app). <sub>later · P2 · L · OpenRefine: extensions/gdata</sub>
 - [ ] **Extensions** (review) — A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules): Python extensions in <data>/extensions, a documented API (docs/src/extensions.md) and one example extension (docs/extensions/text-tools). <sub>later · P2 · L · OpenRefine: Butterfly modules, ClientSideResourceManager</sub>
-- [ ] **MCP without ox serve, over HTTP and with more tools** *(in progress)* — `ox mcp` starts its own host when no server runs for its data folder, and finds a running `ox serve` for that folder without --url; one data folder has one host. `ox serve` answers MCP Streamable HTTP at /mcp. New tools: rename and delete projects, import from a web address or pasted text, preview a file import, guess reconciliation types, list GREL functions and installed extensions; Python and Clojure in expression previews. <sub>v1.0 · P1 · L · OpenRefine: ox-cli/src/mcp.rs, ox-cli/src/main.rs; modelcontextprotocol.io Streamable HTTP</sub>
+- [ ] **MCP without ox serve, over HTTP and with more tools** (review) — `ox mcp` starts its own host when no server runs for its data folder, and finds a running `ox serve` for that folder without --url; one data folder has one host. `ox serve` answers MCP Streamable HTTP at /mcp. New tools: rename and delete projects, import from a web address or pasted text, preview a file import, guess reconciliation types, list GREL functions and installed extensions; Python and Clojure in expression previews. <sub>v1.0 · P1 · L · OpenRefine: ox-cli/src/mcp.rs, ox-cli/src/main.rs; modelcontextprotocol.io Streamable HTTP</sub>
 - [ ] **Investigate database working tables shared with SQL tools** — Study Carlo's proposal for a separate database working table used by OxRefine and SQL tools while leaving source tables untouched. Define external-edit detection, transactions, conflict handling and the effect on undo/redo; produce a design and a bounded feasibility experiment before committing to implementation. <sub>later · P2 · M · OpenRefine: extensions/database; Carlo's forum feedback</sub>
 
 <details><summary>4 done</summary>

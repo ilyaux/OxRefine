@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+ex:bob foaf:name "Bob" ; foaf:knows ex:alice, ex:carol ; ex:age 42 ; ex:note "hi"@en .
+ex:alice foaf:name "Alice" ; ex:age "7"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:b1 foaf:name "Anon" .
