@@ -133,7 +133,8 @@ fn commons_uploads_send_what_openrefine_sends() {
     }
     let folder = dir.path().to_str().unwrap().to_string();
     let csv = dir.path().join("media.csv");
-    std::fs::write(&csv, f["csv"].as_str().unwrap().replace("{FILES}", &folder)).unwrap();
+    // recorded on Windows: the folder and a backslash
+    std::fs::write(&csv, f["csv"].as_str().unwrap().replace("{FILES}\\", &format!("{folder}{}", std::path::MAIN_SEPARATOR))).unwrap();
     let mut p = Project::new("media", import(&csv, Some("csv"), &ImportOptions::default()).unwrap());
     let (commons, wikidata) = ("https://commons.wikimedia.org/entity/", "http://www.wikidata.org/entity/");
     let only = |column: &str, value: &str| json!({ "mode": "row-based", "facets": [{ "type": "list", "name": column, "columnName": column, "expression": "value", "omitBlank": false, "omitError": false, "selection": [{ "v": { "v": value, "l": value } }], "selectBlank": false, "selectError": false, "invert": false }] });
