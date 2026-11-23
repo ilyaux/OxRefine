@@ -14,8 +14,8 @@ Current release: [**v0.7.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
 | v0.5 | 50 | 46 | 1 | 1 | 2 |
 | v1.0 | 13 | 12 | 1 | 0 | 0 |
-| later | 16 | 6 | 6 | 3 | 1 |
-| **Total** | **135** | **119** | **8** | **5** | **3** |
+| later | 16 | 6 | 8 | 1 | 1 |
+| **Total** | **135** | **119** | **10** | **3** | **3** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -147,7 +147,7 @@ The full expression language: ~130 functions, controls, errors and coercion. **1
 
 Every facet type, including customized and expression facets. **5 of 6 done.**
 
-- [ ] **Scatterplot facet** *(in progress)* — Facet → Scatterplot matrix of numeric columns, then a scatterplot facet on a pair: linear/log scales, rotation, dot size, rectangle selection that filters rows; facet JSON (scatterplot, from_x/to_x/from_y/to_y) as in OpenRefine. <sub>later · P2 · M · OpenRefine: ScatterplotFacet, GetScatterplotCommand</sub>
+- [ ] **Scatterplot facet** (review) — Facet → Scatterplot matrix of numeric columns, then a scatterplot facet on a pair: linear/log scales, rotation, dot size, rectangle selection that filters rows; facet JSON (scatterplot, from_x/to_x/from_y/to_y) as in OpenRefine. <sub>later · P2 · M · OpenRefine: ScatterplotFacet, GetScatterplotCommand</sub>
 
 <details><summary>5 done</summary>
 
@@ -163,7 +163,7 @@ Every facet type, including customized and expression facets. **5 of 6 done.**
 
 All key-collision keyers and nearest-neighbour methods. **4 of 5 done.**
 
-- [ ] **Custom clustering functions** *(in progress)* — OpenRefine 3.8+ lets users add key-collision keyers and kNN distances written in GREL/Python, saved in preferences and listed in the cluster dialog. <sub>later · P2 · M · OpenRefine: ClusteringFunctionsCommand, preferences: ui.clustering.customKeyingFunctions</sub>
+- [ ] **Custom clustering functions** (review) — OpenRefine 3.8+ lets users add key-collision keyers and kNN distances written in GREL/Python, saved in preferences and listed in the cluster dialog. <sub>later · P2 · M · OpenRefine: ClusteringFunctionsCommand, preferences: ui.clustering.customKeyingFunctions</sub>
 
 <details><summary>4 done</summary>
 
