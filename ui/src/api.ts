@@ -161,7 +161,8 @@ function superseded(): Error {
 
 /** Browser (`ox serve`): send a file from this computer to the server, staged for the import wizard. */
 export async function upload(file: File): Promise<{ path: string; name: string }> {
-  const r = await fetch("/upload", { method: "POST", headers: { ...auth, "X-File-Name": encodeURIComponent(file.name) }, body: file })
+  // relative to the page, so a reverse proxy can serve the app under a sub-path
+  const r = await fetch("upload", { method: "POST", headers: { ...auth, "X-File-Name": encodeURIComponent(file.name) }, body: file })
   const j = await r.json()
   if (!r.ok) throw new Error(String(j))
   return j.data
@@ -169,12 +170,12 @@ export async function upload(file: File): Promise<{ path: string; name: string }
 
 /** Browser: write a file with `write(path)` on the server, then download it to this computer. */
 export async function saveToBrowser(name: string, write: (path: string) => Promise<void>) {
-  const r = await fetch("/stage", { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ name }) })
+  const r = await fetch("stage", { method: "POST", headers: { ...auth, "Content-Type": "application/json" }, body: JSON.stringify({ name }) })
   const j = await r.json()
   if (!r.ok) throw new Error(String(j))
   await write(j.data.path)
   const a = document.createElement("a")
-  a.href = `/download?path=${encodeURIComponent(j.data.path)}${token ? `&token=${encodeURIComponent(token)}` : ""}`
+  a.href = `download?path=${encodeURIComponent(j.data.path)}${token ? `&token=${encodeURIComponent(token)}` : ""}`
   a.download = name
   a.click()
 }
@@ -219,7 +220,7 @@ async function send<T>(cmd: string, args: object): Promise<{ data: T; ms: number
   const contextHeaders: Record<string, string> = { "X-Ox-Session": browserSession }
   if (target !== undefined) contextHeaders["X-Ox-Project"] = target ?? "none"
   if (revision) contextHeaders["X-Ox-Revision"] = revision
-  const r = await fetch(`/api/${cmd}`, {
+  const r = await fetch(`api/${cmd}`, {
     method: "POST",
     headers: { ...auth, ...contextHeaders, "Content-Type": "application/json" },
     body: JSON.stringify(args),

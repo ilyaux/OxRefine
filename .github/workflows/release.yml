@@ -130,6 +130,9 @@ jobs:
       - name: Run the static build on Alpine and Alma Linux 8
         if: endsWith(matrix.target, '-musl')
         run: bash tools/smoke-static.sh target/${{ matrix.target }}/release/ox
+      - name: ox serve behind a reverse proxy at a sub-path
+        if: endsWith(matrix.target, '-musl')
+        run: node tools/proxy-check.mjs target/${{ matrix.target }}/release/ox
       - name: Package and attach to the release
         shell: bash
         env:

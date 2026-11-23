@@ -39,6 +39,16 @@ fn run() -> Result<(), String> {
 
 fn run_scoped() -> Result<(), String> {
     let args: Vec<String> = std::env::args().skip(1).collect();
+    // the usual flags service scripts and package managers expect: help and version on stdout, exit 0
+    if args.iter().any(|a| a == "--help" || a == "-h") || args.first().is_some_and(|a| a == "help") {
+        let extra = "  ox --version                                          print the version\n  ox --help                                             print this help";
+        println!("ox {} (OxRefine)\n\n{USAGE}\n{extra}", env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
+    if matches!(args.first().map(String::as_str), Some("--version" | "-V" | "version")) {
+        println!("ox {}", env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
     match args.iter().map(String::as_str).collect::<Vec<_>>().as_slice() {
         ["apply", recipe, input, "-o", out] => apply(recipe, input, out),
         ["serve", rest @ ..] => serve(rest),

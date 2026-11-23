@@ -5,6 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OxRefine</title>
+    <script>
+      // Behind a reverse proxy at a sub-path, /refine must become /refine/ so relative URLs stay inside it.
+      if (!location.pathname.endsWith("/") && !/\.[^/]*$/.test(location.pathname)) location.replace(location.pathname + "/" + location.search + location.hash)
+    </script>
   </head>
   <body>
     <div id="root"></div>

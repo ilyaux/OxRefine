@@ -1,6 +1,6 @@
 # Command line and server
 
-The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). The commands below run recipes and host the browser app; [`ox mcp`](mcp.md) connects an assistant to a running local server.
+The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). The commands below run recipes and host the browser app; [`ox mcp`](mcp.md) connects an assistant to a running local server. `ox --help` lists the commands and `ox --version` prints the version.
 
 ## `ox apply`: recipes in scripts
 
@@ -40,6 +40,38 @@ ox serve --host 0.0.0.0 --data /srv/oxrefine
 - **Access token:** when OxRefine listens beyond your own machine, it requires one. It prints a link that includes the token; share the link with the people who should have access. Add `--token <secret>` to choose the token yourself.
 - **Files from your computer:** in the browser, files are uploaded to the server, and exports download back to you.
 - **Security:** anyone with the link can read and write files as the user OxRefine runs as. Keep the token private and run OxRefine under a user with limited rights.
+
+### Behind a reverse proxy
+
+To serve OxRefine over HTTPS, or under a path of an existing site such as `https://intranet.example.com/refine/`, let OxRefine listen on this machine only and put a reverse proxy in front. The app uses relative addresses, so any path works.
+
+```bash
+ox serve --host 127.0.0.1 --port 3333 --data /srv/oxrefine
+```
+
+Apache httpd:
+
+```apache
+RedirectMatch ^/refine$ /refine/
+ProxyPass        /refine/ http://127.0.0.1:3333/ timeout=600
+ProxyPassReverse /refine/ http://127.0.0.1:3333/
+```
+
+nginx:
+
+```nginx
+location = /refine { return 301 /refine/; }
+location /refine/ {
+    proxy_pass http://127.0.0.1:3333/;
+    proxy_read_timeout 600s;
+    client_max_body_size 0;
+}
+```
+
+- **Trailing slashes:** map `/refine/` to `http://127.0.0.1:3333/`, both with a slash. If someone opens `/refine` without one, the page itself moves to `/refine/`.
+- **Timeouts:** imports and long operations hold a request open while they run, so give the proxy a timeout of minutes, not seconds. Uploads can be large: don't cap the request body size below your biggest file.
+- **Host header:** without a token, OxRefine only answers requests addressed to `127.0.0.1:PORT` or `localhost:PORT`, to block DNS rebinding. Apache (`ProxyPreserveHost Off`, the default) and nginx (`proxy_pass` sets `Host` to the upstream) already send that. If your proxy keeps the visitor's host name, start OxRefine with `--token <secret>` instead and open `https://intranet.example.com/refine/?token=<secret>`.
+- **Access:** the proxy decides who reaches OxRefine. Anyone who gets through can read and write files as the user OxRefine runs as, so put the proxy's own authentication in front, or use the token.
 
 ### Browser sessions and handing work over
 

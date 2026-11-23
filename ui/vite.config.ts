@@ -10,6 +10,8 @@ export default defineConfig({
       "@": resolve(import.meta.dirname, "./src"),
     },
   },
+  // relative URLs, so `ox serve` also works behind a reverse proxy at a sub-path (https://host/refine/)
+  base: "./",
   clearScreen: false,
   server: {
     port: 5173,
