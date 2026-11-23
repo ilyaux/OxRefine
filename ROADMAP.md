@@ -2,7 +2,7 @@
 
 Full OpenRefine parity, in Rust.
 
-Current release: [**v0.6.0**](https://github.com/ilyaux/OxRefine/releases/tag/v0.6.0), published 2026-11-14.
+Current release: [**v0.7.0**](https://github.com/ilyaux/OxRefine/releases/tag/v0.7.0), published 2026-11-23.
 
 <img src="docs/readme/roadmap.svg" width="100%" alt="Progress by phase: tasks done, in review, in progress and planned.">
 
@@ -14,8 +14,8 @@ Current release: [**v0.6.0**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
 | v0.5 | 50 | 46 | 1 | 1 | 2 |
 | v1.0 | 12 | 12 | 0 | 0 | 0 |
-| later | 15 | 6 | 0 | 6 | 3 |
-| **Total** | **133** | **119** | **1** | **8** | **5** |
+| later | 15 | 6 | 3 | 3 | 3 |
+| **Total** | **133** | **119** | **4** | **5** | **5** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -123,7 +123,7 @@ All 37 OpenRefine operations, same JSON, same results. **11 of 11 done.**
 
 The full expression language: ~130 functions, controls, errors and coercion. **13 of 14 done.**
 
-- [ ] **Python and Clojure expressions** *(in progress)* — Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). Python runs in embedded RustPython with a Python 2 compatibility layer, Clojure in OxRefine's own interpreter; tests/langs pins 337 expressions to OpenRefine 3.10.1. <sub>later · P2 · L · OpenRefine: JythonEvaluable, ClojureEvaluable</sub>
+- [ ] **Python and Clojure expressions** (review) — Expressions in Jython (Python 2.7 semantics) and Clojure with value, cell, cells, row, rowIndex bound as in OpenRefine; selectable in the expression editor and recipes ('jython:', 'clojure:' prefixes). Python runs in embedded RustPython with a Python 2 compatibility layer, Clojure in OxRefine's own interpreter; tests/langs pins 337 expressions to OpenRefine 3.10.1. <sub>later · P2 · L · OpenRefine: JythonEvaluable, ClojureEvaluable</sub>
 
 <details><summary>13 done</summary>
 
@@ -272,8 +272,8 @@ Installers, docs and a public launch. **5 of 9 done.**
 OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 8 done.**
 
 - [ ] **Wikibase schema and upload** — Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. <sub>later · P2 · L · OpenRefine: extensions/wikibase</sub>
-- [ ] **Google Sheets and Drive** *(in progress)* — OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app). <sub>later · P2 · L · OpenRefine: extensions/gdata</sub>
-- [ ] **Extensions** *(in progress)* — A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules): Python extensions in <data>/extensions, a documented API (docs/src/extensions.md) and one example extension (docs/extensions/text-tools). <sub>later · P2 · L · OpenRefine: Butterfly modules, ClientSideResourceManager</sub>
+- [ ] **Google Sheets and Drive** (review) — OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app). <sub>later · P2 · L · OpenRefine: extensions/gdata</sub>
+- [ ] **Extensions** (review) — A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules): Python extensions in <data>/extensions, a documented API (docs/src/extensions.md) and one example extension (docs/extensions/text-tools). <sub>later · P2 · L · OpenRefine: Butterfly modules, ClientSideResourceManager</sub>
 - [ ] **Investigate database working tables shared with SQL tools** — Study Carlo's proposal for a separate database working table used by OxRefine and SQL tools while leaving source tables untouched. Define external-edit detection, transactions, conflict handling and the effect on undo/redo; produce a design and a bounded feasibility experiment before committing to implementation. <sub>later · P2 · M · OpenRefine: extensions/database; Carlo's forum feedback</sub>
 
 <details><summary>4 done</summary>

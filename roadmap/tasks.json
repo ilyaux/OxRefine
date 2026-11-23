@@ -1,8 +1,8 @@
 {
   "currentRelease": {
-    "tag": "v0.6.0",
-    "url": "https://github.com/ilyaux/OxRefine/releases/tag/v0.6.0",
-    "published": "2026-11-14"
+    "tag": "v0.7.0",
+    "url": "https://github.com/ilyaux/OxRefine/releases/tag/v0.7.0",
+    "published": "2026-11-23"
   },
   "phases": [
     {
@@ -785,7 +785,7 @@
       "id": "grel-other-langs",
       "phase": "p5",
       "milestone": "later",
-      "status": "doing",
+      "status": "review",
       "priority": "P2",
       "size": "L",
       "title": "Python and Clojure expressions",
@@ -1445,7 +1445,7 @@
       "id": "ext-gdata",
       "phase": "p13",
       "milestone": "later",
-      "status": "doing",
+      "status": "review",
       "priority": "P2",
       "size": "L",
       "title": "Google Sheets and Drive",
@@ -1456,7 +1456,7 @@
       "id": "ext-plugins",
       "phase": "p13",
       "milestone": "later",
-      "status": "doing",
+      "status": "review",
       "priority": "P2",
       "size": "L",
       "title": "Extensions",
