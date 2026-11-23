@@ -1,7 +1,7 @@
 //! Real stdio clients attach to the same authoritative HTTP project cache as the browser.
 use serde_json::{json, Value};
 use std::{
-    io::{BufRead, BufReader, Write}, net::TcpListener, path::{Path, PathBuf},
+    io::{BufRead, BufReader, Write}, path::{Path, PathBuf},
     process::{Child, ChildStdin, Command, Stdio}, sync::{atomic::{AtomicU64, Ordering}, mpsc, Mutex},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -19,18 +19,22 @@ impl Server {
         static START: Mutex<()> = Mutex::new(());
         static NEXT: AtomicU64 = AtomicU64::new(0);
         let _start = START.lock().unwrap_or_else(|e| e.into_inner());
-        let socket = TcpListener::bind("127.0.0.1:0").unwrap();
-        let port = socket.local_addr().unwrap().port(); drop(socket);
         let token = format!("mcp-test-{}-{}", std::process::id(), NEXT.fetch_add(1, Ordering::Relaxed));
         let data = root.join("store");
-        let child = Command::new(env!("CARGO_BIN_EXE_ox")).args(["serve", "--port", &port.to_string(), "--token", &token, "--data"])
-            .arg(&data).stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null()).spawn().unwrap();
-        let mut server = Self { child, url: format!("http://127.0.0.1:{port}"), token, data };
+        // the server picks a free port itself and says where it listens in host.json: no port race with other tests
+        let log = root.join("serve.log");
+        let child = Command::new(env!("CARGO_BIN_EXE_ox")).args(["serve", "--port", "0", "--token", &token, "--data"])
+            .arg(&data).stdin(Stdio::null()).stdout(Stdio::null()).stderr(std::fs::File::create(&log).unwrap()).spawn().unwrap();
+        let mut server = Self { child, url: String::new(), token, data };
         let until = Instant::now() + Duration::from_secs(20);
         loop {
-            assert!(server.child.try_wait().unwrap().is_none(), "owned HTTP child exited");
-            if let Ok((200, value)) = server.try_request("test-ready", None, "server_info", json!({})) {
-                if value["data"]["dataRoot"].as_str().is_some_and(|s| Path::new(s) == server.data.canonicalize().unwrap()) { break; }
+            assert!(server.child.try_wait().unwrap().is_none(), "owned HTTP child exited: {}", std::fs::read_to_string(&log).unwrap_or_default());
+            let advertised = std::fs::read(server.data.join("host.json")).ok().and_then(|b| serde_json::from_slice::<Value>(&b).ok());
+            if let Some(url) = advertised.as_ref().and_then(|v| v["url"].as_str()) { server.url = url.to_string(); }
+            if !server.url.is_empty() {
+                if let Ok((200, value)) = server.try_request("test-ready", None, "server_info", json!({})) {
+                    if value["data"]["dataRoot"].as_str().is_some_and(|s| Path::new(s) == server.data.canonicalize().unwrap()) { break; }
+                }
             }
             assert!(Instant::now() < until, "owned HTTP child did not become ready");
             std::thread::sleep(Duration::from_millis(20));
