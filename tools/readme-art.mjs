@@ -32,6 +32,7 @@ const COMPAT = [
   ["Clustering and phonetic()", 1152, 1159],
   ["Reconciliation", 49, 49],
   ["OpenRefine project archives", 137, 137],
+  ["Python and Clojure expressions", 334, 337],
 ]
 
 const STEPS = ["import", "facet", "cluster", "recipe", "export"]

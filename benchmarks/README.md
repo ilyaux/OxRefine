@@ -113,6 +113,8 @@ cargo build --release --locked -p ox-cli
 node benchmarks/check.mjs --base path/to/base/ox.exe --runs 3 250000 1000000
 ```
 
+0.7.0 adds an embedded Python; CI's comparison of the 0.7.0 code with the last 0.6.0 build (same runner, people workflow) found the same step times and about 4 MB more peak memory: 54 against 50 MB at 250k rows, 149 against 145 MB at 1M. Python and Clojure expressions run per row, about 50 µs a row for Python.
+
 The 0.6.0 checks against the official 0.5.3 binary:
 
 | Check | Result |

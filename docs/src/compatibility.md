@@ -14,6 +14,7 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 | Clustering and GREL `phonetic()` | 1,152 / 1,159 |
 | Reconciliation | 49 / 49 |
 | OpenRefine project archives, read, replayed and written back, metadata included | 137 / 137 |
+| Python (Jython) and Clojure expressions | 334 / 337 |
 
 ## How a suite works
 

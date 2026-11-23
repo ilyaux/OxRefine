@@ -17,7 +17,7 @@ self-hosted, open source, Trifacta alternative, Talend alternative
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-111113">
   <img alt="Engine: Rust" src="https://img.shields.io/badge/engine-Rust-B7410E">
   <img alt="Desktop: Tauri 2" src="https://img.shields.io/badge/desktop-Tauri%202-24C8DB">
-  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2124%20of%202136%20checks-brightgreen">
+  <img alt="Checks matching OpenRefine 3.10.1" src="https://img.shields.io/badge/matches%20OpenRefine%203.10.1-2458%20of%202473%20checks-brightgreen">
 </p>
 
 <p align="center">
@@ -42,7 +42,7 @@ OxRefine is a free, open-source **OpenRefine alternative** for data cleaning and
 |  |  |
 |---|---|
 | **About 20× faster, 12–22× less memory** | A million-row workflow takes 0.66 s instead of 15.0 s. At 2 million rows OpenRefine runs out of its 1,400 MB heap; OxRefine needs 220 MiB. |
-| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,124 of 2,136 checks match, and each known difference is written down with its reason. |
+| **The same results** | Behaviour is pinned to fixtures generated from a real OpenRefine 3.10.1: 2,458 of 2,473 checks match, and each known difference is written down with its reason. |
 | **Your work moves both ways** | OpenRefine recipes (*Undo/Redo → Extract / Apply*) run unchanged, and whole OpenRefine projects open with their undo history. OxRefine writes projects that OpenRefine opens with every step intact. |
 | **Desktop, browser, server, command line or AI assistant** | A native desktop app, a browser app (`ox serve`, like OpenRefine), a server or Docker container behind an access token, headless with `ox apply`, or your AI assistant through `ox mcp`. |
 
@@ -119,7 +119,7 @@ Tables bigger than memory: set `OXREFINE_CODE_BUDGET_MIB` and the row codes spil
 
 Each area is checked against fixtures produced by running the same cases through OpenRefine 3.10.1. Every difference that remains is listed, with its reason, in a `known_failures.txt` next to the fixtures.
 
-<img src="docs/readme/compat.svg" width="100%" alt="2,124 of 2,136 checks match OpenRefine 3.10.1, by suite.">
+<img src="docs/readme/compat.svg" width="100%" alt="2,458 of 2,473 checks match OpenRefine 3.10.1, by suite.">
 
 <details>
 <summary>What each suite covers</summary>
@@ -136,6 +136,7 @@ Each area is checked against fixtures produced by running the same cases through
 | Clustering and GREL `phonetic()`: 6 keyers, Levenshtein and PPM kNN, 9 encoders × 127 values | 1,152 / 1,159 |
 | Reconciliation: reconciling, judging, the operations on matches, data extension | 49 / 49 |
 | OpenRefine project archives opened with their full history and written back, metadata included | 137 / 137 |
+| Python (Jython) and Clojure expressions, every value type and the `cell`/`cells`/`row` objects | 334 / 337 |
 
 </details>
 
