@@ -19,9 +19,16 @@ const USAGE: &str = "usage:
                                                         also be set in OXREFINE_TOKEN. Logs go to stderr";
 
 fn main() {
-    if let Err(e) = run() {
-        eprintln!("error: {e}");
-        std::process::exit(1);
+    // Work on a thread with a stack of known size. The embedded Python measures how much stack it
+    // has left, and under musl (the static Linux build) the main thread's size isn't reported
+    // correctly, which made every Python expression fail with RecursionError.
+    let worker = std::thread::Builder::new().name("ox".into()).stack_size(16 << 20).spawn(run);
+    match worker.map_err(|e| e.to_string()).and_then(|w| w.join().map_err(|_| "ox stopped after an internal error".to_string())) {
+        Ok(Ok(())) => {}
+        Ok(Err(e)) | Err(e) => {
+            eprintln!("error: {e}");
+            std::process::exit(1);
+        }
     }
 }
 
