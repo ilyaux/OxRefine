@@ -14,8 +14,8 @@ Current release: [**v0.7.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
 | v0.5 | 50 | 46 | 1 | 1 | 2 |
 | v1.0 | 13 | 12 | 1 | 0 | 0 |
-| later | 16 | 6 | 5 | 3 | 2 |
-| **Total** | **135** | **119** | **7** | **5** | **4** |
+| later | 16 | 6 | 6 | 3 | 1 |
+| **Total** | **135** | **119** | **8** | **5** | **3** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -271,7 +271,7 @@ Installers, docs and a public launch. **5 of 9 done.**
 
 OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 10 done.**
 
-- [ ] **Wikibase schema and upload** — Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. <sub>later · P2 · L · OpenRefine: extensions/wikibase</sub>
+- [ ] **Wikibase schema and upload** (review) — Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. <sub>later · P2 · L · OpenRefine: extensions/wikibase</sub>
 - [ ] **Google Sheets and Drive** (review) — OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app). <sub>later · P2 · L · OpenRefine: extensions/gdata</sub>
 - [ ] **Extensions** (review) — A way to add GREL functions, importers, exporters and operations without rebuilding OxRefine (OpenRefine uses Butterfly modules): Python extensions in <data>/extensions, a documented API (docs/src/extensions.md) and one example extension (docs/extensions/text-tools). <sub>later · P2 · L · OpenRefine: Butterfly modules, ClientSideResourceManager</sub>
 - [ ] **Run OpenRefine Java extension steps in an installed OpenRefine** (review) — OpenRefine extensions are Java modules OxRefine cannot load. Bridge: the project goes as an OpenRefine archive to a headless OpenRefine from the folder in Preferences (openrefine.home), the steps run there with its extensions, and the result comes back as a new project with OpenRefine history. Command palette: Run steps in OpenRefine…; test against a local OpenRefine 3.10.1 (skipped without one). <sub>later · P2 · M · OpenRefine: ox-core/src/openrefine.rs, tools/openrefine.mjs; card ext-plugins</sub>

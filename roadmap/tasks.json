@@ -1412,7 +1412,7 @@
       "id": "ext-wikibase",
       "phase": "p13",
       "milestone": "later",
-      "status": "todo",
+      "status": "review",
       "priority": "P2",
       "size": "L",
       "title": "Wikibase schema and upload",
