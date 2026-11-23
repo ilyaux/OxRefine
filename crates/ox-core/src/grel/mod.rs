@@ -45,6 +45,14 @@ impl Program {
             Lang::Clojure(src) => clojure::eval(src, value, row),
         }
     }
+    /// With `value1` and `value2` bound and no row, as a custom clustering distance runs.
+    pub fn eval_pair(&self, a: Value, b: Value) -> Value {
+        match &self.lang {
+            Lang::Grel(expr) => eval::eval(expr, &mut eval::Env::with_vars(Value::Null, &NoRow, vec![("value1".into(), a), ("value2".into(), b)])),
+            Lang::Python(src) => python::eval_with(src, Value::Null, &NoRow, Some((a, b))),
+            Lang::Clojure(src) => clojure::eval_with(src, Value::Null, &NoRow, Some((a, b))),
+        }
+    }
 }
 
 /// Compile an expression as OpenRefine stores it: `grel:` (optional), `jython:`/`python:` or `clojure:`.

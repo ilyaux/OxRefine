@@ -540,7 +540,8 @@ pub fn call(name: &str, a: &[Value]) -> Value {
             _ => fail!("detectLanguage expects a string"),
         },
         "levenshteinDistance" => match (a0, a1) {
-            (Str(x), Str(y)) => Int(text::levenshtein(x, y) as i64),
+            // SecondString's Levenstein, as OpenRefine uses it, compares lowercased text
+            (Str(x), Str(y)) => Int(text::levenshtein(&x.to_lowercase(), &y.to_lowercase()) as i64),
             _ => fail!("levenshteinDistance expects two strings"),
         },
         "diff" => match (a0, a1) {

@@ -92,3 +92,35 @@ fn clustering_matches_openrefine() {
     println!("Cluster conformance: {}/{} cases match OpenRefine 3.10.1 ({} known failures)", total - failing.len(), total, failing.len());
     assert!(report.is_empty(), "\n{}\n", report.join("\n"));
 }
+
+/// tests/cluster/custom-fixtures.json: custom clustering functions (user-defined keying and distance
+/// expressions in GREL, Python and Clojure) find the clusters OpenRefine 3.10.1 finds.
+#[test]
+fn custom_clustering_matches_openrefine() {
+    let root = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/cluster/");
+    let fx: J = serde_json::from_str(&std::fs::read_to_string(format!("{root}custom-fixtures.json")).unwrap()).unwrap();
+    let values: J = serde_json::from_str(&std::fs::read_to_string(format!("{root}fixtures.json")).unwrap()).unwrap();
+    let mut counts: HashMap<&str, u32> = HashMap::new();
+    for v in values["values"].as_array().unwrap().iter().filter_map(J::as_str) {
+        *counts.entry(v).or_default() += 1;
+    }
+    let vc: Vec<(&str, u32)> = counts.into_iter().collect();
+    let mut wrong = vec![];
+    for case in fx["clusters"].as_array().unwrap() {
+        let c = &case["clusterer"];
+        let p = &c["params"];
+        let got = ox_core::cluster::custom(&vc, p["expression"].as_str().unwrap(), c["type"] == "knn", p["radius"].as_f64().unwrap_or(1.0), p["blocking-ngram-size"].as_u64().unwrap_or(6) as usize);
+        let ok = match (&case["clusters"], got) {
+            (J::Array(want), Ok(got)) => {
+                let want: Vec<Vec<(String, u64)>> = want.iter().map(|c| c.as_array().unwrap().iter().map(|e| (e[0].as_str().unwrap().to_string(), e[1].as_u64().unwrap())).collect()).collect();
+                let got: Vec<Vec<(String, u64)>> = got.iter().map(|c| c.iter().map(|(v, n)| (v.to_string(), *n as u64)).collect()).collect();
+                as_set(&want) == as_set(&got)
+            }
+            (want, got) => !want.is_array() && got.is_err(),
+        };
+        if !ok {
+            wrong.push(format!("{} {p}", c["function"]));
+        }
+    }
+    assert!(wrong.is_empty(), "differ from OpenRefine: {wrong:#?}");
+}

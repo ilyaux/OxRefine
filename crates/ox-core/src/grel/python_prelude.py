@@ -193,8 +193,9 @@ def _value(v):
     return v
 
 
-def __ox_call__(fn, value, current, columns, cells, index, starred, flagged):
-    """Call a compiled expression; `cells` is [(value, recon)] by column, or None when unused."""
+def __ox_call__(fn, value, current, columns, cells, index, starred, flagged, value1=None, value2=None):
+    """Call a compiled expression; `cells` is [(value, recon)] by column, or None when unused;
+    value1 and value2 are the pair a custom clustering distance compares."""
     try:
         value = _value(value)
         cell = _Fields("Cell", None) if current is None else _cell(value, current[1])
@@ -206,7 +207,7 @@ def __ox_call__(fn, value, current, columns, cells, index, starred, flagged):
             by_name = dict((n, _cell(_value(c[0]), c[1])) for n, c in zip(columns, cells))
             tuple_ = _Fields("CellTuple", by_name.get)
             row = _Fields("Row", {"index": index, "starred": starred, "flagged": flagged, "cells": tuple_}.get)
-        return __ox_unwrap__(fn(value, cell, tuple_, row, index, None, None))
+        return __ox_unwrap__(fn(value, cell, tuple_, row, index, _value(value1), _value(value2)))
     except _builtins.BaseException as e:
         message = str(e)
         if isinstance(e, KeyError) and e.args:

@@ -17,6 +17,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { ExpressionEditor, recentExpressions, rememberExpression } from "@/ExpressionEditor"
+import { PencilIcon, Trash2Icon } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { CellButton, FullView, Metric, RailLabel, Spacer, StripAction, SummaryStrip, Tag } from "@/components/instrument"
 import docs from "@/grel-docs.json"
@@ -491,6 +492,15 @@ const KEYERS: [string, string][] = [
   ["beider-morse", "Beider-Morse"],
 ]
 
+/** A custom clustering function as OpenRefine keeps it in its preferences. */
+type ClusterFunction = { name: string; expressionLang: string; expression: string }
+const CUSTOM = { binning: "ui.clustering.customKeyingFunctions", knn: "ui.clustering.customDistanceFunctions" } as const
+const functionsOf = (v: unknown): ClusterFunction[] => {
+  // OpenRefine stores the list as JSON text
+  const list = typeof v === "string" ? (() => { try { return JSON.parse(v) } catch { return [] } })() : v
+  return Array.isArray(list) ? list.filter((f) => f && typeof f.name === "string" && typeof f.expression === "string") : []
+}
+
 export function ClusterDialog({
   column,
   engine,
@@ -516,7 +526,36 @@ export function ClusterDialog({
   const [ms, setMs] = useState(0)
   const [tick, setTick] = useState(0)
   const [filters, setFilters] = useState<Partial<Record<Stat, [number, number]>>>({})
-  const method = kind === "binning" ? keyer : distance
+  // custom keying and distance functions (OpenRefine 3.8+), kept in the preferences
+  const [custom, setCustom] = useState<Record<"binning" | "knn", ClusterFunction[]>>({ binning: [], knn: [] })
+  const [draft, setDraft] = useState<{ index: number; name: string; lang: Lang; expression: string } | null>(null)
+  useEffect(() => {
+    call<Record<string, unknown>>("preferences", {}, { quiet: true }).then(
+      ({ data }) => setCustom({ binning: functionsOf(data[CUSTOM.binning]), knn: functionsOf(data[CUSTOM.knn]) }),
+      () => {},
+    )
+  }, [])
+  const choice = kind === "binning" ? keyer : distance
+  const own = choice.startsWith("custom:") ? custom[kind][Number(choice.slice(7))] : undefined
+  const method = own ? (kind === "binning" ? "UserDefinedKeyer" : "UserDefinedDistance") : choice
+  const expression = own ? `${own.expressionLang}:${own.expression}` : ""
+  const saveFunctions = async (list: ClusterFunction[]) => {
+    await call("set_preference", { name: CUSTOM[kind], value: list })
+    setCustom((c) => ({ ...c, [kind]: list }))
+  }
+  const saveDraft = async () => {
+    if (!draft || !draft.name.trim() || !draft.expression.trim()) return
+    const [, lang = draft.lang, body = draft.expression] = draft.expression.trim().match(/^(grel|jython|python|clojure):([\s\S]*)$/) ?? []
+    const fn = { name: draft.name.trim(), expressionLang: lang === "python" ? "jython" : lang, expression: body.trim() }
+    const list = draft.index < 0 ? [...custom[kind], fn] : custom[kind].map((f, i) => (i === draft.index ? fn : f))
+    await saveFunctions(list)
+    ;(kind === "binning" ? setKeyer : setDistance)(`custom:${draft.index < 0 ? list.length - 1 : draft.index}`)
+    setDraft(null)
+  }
+  const removeFunction = async (i: number) => {
+    await saveFunctions(custom[kind].filter((_, j) => j !== i))
+    ;(kind === "binning" ? setKeyer : setDistance)(kind === "binning" ? "fingerprint" : "levenshtein")
+  }
   const stats = useMemo(() => (clusters ?? []).map(statsOf), [clusters])
   // the clusters the filters let through, by index into `clusters`
   const visible = useMemo(
@@ -530,7 +569,8 @@ export function ClusterDialog({
         columnName: column,
         timestamp: new Date().toISOString(),
         clusterMethod: kind,
-        ...(kind === "binning" ? { keyingFunction: keyer, ...(keyer === "ngram-fingerprint" ? { ngramSize: ngram } : {}) } : { function: distance, radius, blockingNgramSize: block }),
+        ...(kind === "binning" ? { keyingFunction: method, ...(keyer === "ngram-fingerprint" ? { ngramSize: ngram } : {}) } : { function: method, radius, blockingNgramSize: block }),
+        ...(own ? { expression } : {}),
         clusters: visible.map((i) => clusters![i].map(([v, c]) => ({ v, c }))),
       },
       null,
@@ -549,7 +589,7 @@ export function ClusterDialog({
     setClusters(null)
     setFilters({})
     setError("")
-    call<Cluster[]>("cluster", { engine, column, method, n: ngram, radius, block }).then(
+    call<Cluster[]>("cluster", { engine, column, method, expression, n: ngram, radius, block }).then(
       ({ data, ms }) => {
         if (!live) return
         setClusters(data)
@@ -561,7 +601,7 @@ export function ClusterDialog({
     return () => {
       live = false
     }
-  }, [method, ngram, radius, block, column, engine, tick])
+  }, [method, expression, ngram, radius, block, column, engine, tick])
 
   const set = (i: number, p: Partial<{ merge: boolean; to: string }>) =>
     setPicks((all) => all.map((x, j) => (j === i ? { ...x, ...p } : x)))
@@ -642,6 +682,17 @@ export function ClusterDialog({
                 <RailLabel>Keying function</RailLabel>
                 <div role="radiogroup" aria-label="Keying function">
                   {KEYERS.map(([v, label]) => radio("cl-keyer", v, keyer, label, setKeyer))}
+                  {custom[kind].map((f, i) => (
+                    <div key={`custom:${i}`} className="group flex items-center pr-2">
+                      <div className="min-w-0 flex-1">{radio("cl-keyer", `custom:${i}`, keyer, f.name, setKeyer)}</div>
+                      <Button variant="ghost" size="icon-xs" aria-label={`Edit ${f.name}`} onClick={() => setDraft({ index: i, name: f.name, lang: (f.expressionLang === "python" ? "jython" : f.expressionLang) as Lang, expression: f.expression })}>
+                        <PencilIcon />
+                      </Button>
+                      <Button variant="ghost" size="icon-xs" aria-label={`Remove ${f.name}`} onClick={() => removeFunction(i)}>
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
                 {keyer === "ngram-fingerprint" && (
                   <label className="flex items-center gap-2 px-3.5 pt-2">
@@ -656,6 +707,17 @@ export function ClusterDialog({
                 <div role="radiogroup" aria-label="Distance">
                   {radio("cl-distance", "levenshtein", distance, "Levenshtein", setDistance)}
                   {radio("cl-distance", "ppm", distance, "PPM", setDistance)}
+                  {custom[kind].map((f, i) => (
+                    <div key={`custom:${i}`} className="group flex items-center pr-2">
+                      <div className="min-w-0 flex-1">{radio("cl-distance", `custom:${i}`, distance, f.name, setDistance)}</div>
+                      <Button variant="ghost" size="icon-xs" aria-label={`Edit ${f.name}`} onClick={() => setDraft({ index: i, name: f.name, lang: (f.expressionLang === "python" ? "jython" : f.expressionLang) as Lang, expression: f.expression })}>
+                        <PencilIcon />
+                      </Button>
+                      <Button variant="ghost" size="icon-xs" aria-label={`Remove ${f.name}`} onClick={() => removeFunction(i)}>
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
                 <label className="flex items-center gap-2 px-3.5 pt-2">
                   <span className="flex-1">Radius</span>
@@ -666,6 +728,41 @@ export function ClusterDialog({
                   <Input type="number" min={1} value={block} onChange={(e) => setBlock(Math.max(1, Number(e.target.value) || 1))} className="h-7 w-16 text-right font-mono" />
                 </label>
               </>
+            )}
+            {draft ? (
+              <form
+                aria-label={draft.index < 0 ? "New function" : "Edit function"}
+                className="mt-2 flex flex-col gap-2 px-3.5"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  saveDraft()
+                }}
+              >
+                <Input aria-label="Function name" placeholder="Name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} className="h-7" autoFocus />
+                <ToggleGroup aria-label="Expression language" variant="outline" size="sm" value={[draft.lang]} onValueChange={(v) => v[0] && setDraft({ ...draft, lang: v[0] as Lang })}>
+                  {LANGS.map((l) => (
+                    <ToggleGroupItem key={l.id} value={l.id}>
+                      {l.label}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+                <ExpressionEditor key={draft.lang} language={draft.lang} value={draft.expression} onChange={(expression) => setDraft({ ...draft, expression })} onSubmit={saveDraft} />
+                <p className="text-xs text-muted-foreground">{kind === "binning" ? "The key of each value (value)." : "The distance between value1 and value2, a number."}</p>
+                <div className="flex gap-1.5">
+                  <Button type="submit" size="sm" disabled={!draft.name.trim() || !draft.expression.trim()}>
+                    Save
+                  </Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setDraft(null)}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <div className="px-2 pt-1">
+                <Button variant="ghost" size="sm" onClick={() => setDraft({ index: -1, name: "", lang: "grel", expression: kind === "binning" ? "value" : "levenshteinDistance(value1, value2)" })}>
+                  Add {kind === "binning" ? "keying" : "distance"} function…
+                </Button>
+              </div>
             )}
             {clusters && clusters.length > 1 && (
               <>

@@ -66,7 +66,26 @@ export type TextFacet = {
   caseSensitive: boolean
   invert: boolean
 }
-export type Facet = ListFacet | TextFacet | RangeFacet | TimeFacet
+/** OpenRefine's scatterplot facet: rows whose (x, y) lies in a rectangle of the plot, as fractions of its side (y upwards). */
+export type ScatterFacet = {
+  type: "scatterplot"
+  name: string
+  cx: string
+  cy: string
+  /** the plot's side in pixels */
+  l: number
+  ex: string
+  ey: string
+  dot: number
+  dim_x: string
+  dim_y: string
+  r: string
+  from_x: number
+  to_x: number
+  from_y: number
+  to_y: number
+}
+export type Facet = ListFacet | TextFacet | RangeFacet | TimeFacet | ScatterFacet
 export type Engine = { facets: Facet[]; mode: "row-based" | "record-based" }
 /** Choices as [text, count, typed value], plus blank and error counts. */
 /** `tooMany`: more choices than the facet choice limit (`limit`), so none are listed, as in OpenRefine. */
@@ -95,7 +114,9 @@ export type TimeData = {
   errorCount: number
   baseTimeCount: number
 }
-export type FacetData = ListData | RangeData | TimeData | null
+/** A scatterplot's pixels (x, y pairs from 0 to l, y upwards): of the rows the other facets let through, and of every row. */
+export type ScatterData = { l: number; min_x: number; max_x: number; min_y: number; max_y: number; points: number[]; all: number[]; error?: string }
+export type FacetData = ListData | RangeData | TimeData | ScatterData | null
 
 export const listFacet = (column: string, expression = "value"): ListFacet => ({
   type: "list", name: column, columnName: column, expression, selection: [], selectBlank: false, selectError: false, invert: false,
@@ -110,6 +131,13 @@ export const timeFacet = (column: string, expression = "value"): TimeFacet => ({
   type: "timerange", name: column, columnName: column, expression, from: -Number.MAX_VALUE, to: Number.MAX_VALUE,
   selectTime: true, selectNonTime: true, selectBlank: true, selectError: true,
 })
+/** A scatterplot facet on two columns, selecting nothing yet; drawn linear and unrotated, as OpenRefine filters. */
+export const scatterFacet = (cx: string, cy: string, dot = 0.8): ScatterFacet => ({
+  type: "scatterplot", name: `${cx} (x) vs. ${cy} (y)`, cx, cy, l: 150, ex: "value", ey: "value", dot,
+  dim_x: "lin", dim_y: "lin", r: "none", from_x: 0, to_x: 1, from_y: 0, to_y: 1,
+})
+/** The columns a facet reads. */
+export const facetColumns = (f: Facet) => (f.type === "scatterplot" ? [f.cx, f.cy] : [f.columnName])
 export type Op = { op: string } & Record<string, unknown>
 
 export const isTauri = "__TAURI_INTERNALS__" in window

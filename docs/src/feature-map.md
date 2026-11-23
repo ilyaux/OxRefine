@@ -37,7 +37,7 @@ OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows,
 | Facet → Text facet / Numeric facet / Timeline facet | Same names |
 | Facet → Custom text facet… / Custom numeric facet… | Same names |
 | Facet → Customized facets → word, duplicates, text length, Unicode, blank, error, star, flag | **Customized facets**, same entries |
-| Facet → Scatterplot facet | Not yet |
+| Facet → Scatterplot facet | **Scatterplot facet…**, linear axes only (see [differences](differences.md#scatterplot-facets)) |
 | Text filter | **Text filter** |
 | Reconcile → Facets | **Reconcile → Facets** |
 
@@ -51,7 +51,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Common transforms | **Common transforms**: trim, collapse whitespace, case, to number, date, text or blank |
 | Fill down / Blank down | Same names |
 | Split multi-valued cells… / Join multi-valued cells… | Same names |
-| Cluster and edit… | **Cluster and edit…** |
+| Cluster and edit… | **Cluster and edit…**, with your own keying and distance functions |
 | Edit one cell | Click the cell and press Enter (or double-click it, or use the pencil); it can also change every identical cell |
 
 ## Editing columns

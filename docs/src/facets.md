@@ -4,13 +4,14 @@ Facets show what is in a column and narrow the grid to the rows you pick. Every 
 
 Use the arrow in a facet's header to collapse its controls. Its filter stays active, and expanding it restores the same choices, sort order and inputs. Removing a different facet does not move that collapsed state to another one.
 
-Numeric and timeline facets also have **Reset facet** in the header. It restores the full range and includes every value kind again, keeping the facet and its expression. It does not add a history step.
+Numeric, timeline and scatterplot facets also have **Reset facet** in the header. It restores the full range and includes every value kind again, keeping the facet and its expression. It does not add a history step.
 
 ## Kinds
 
 - **Text facet:** each distinct value with its row count, by count or by name. Click choices to include them, use *invert* to exclude them instead, and use the pencil to change a value in every row. As in OpenRefine, a facet with more than 2,000 choices lists none; **Show all** raises the limit, which you can also set in Preferences.
 - **Numeric facet:** drag across the histogram to select a range, or drag either boundary handle. The *from* / *to* boxes let you enter exact values; switches include non-numeric, blank and error cells.
 - **Timeline facet:** the same for dates, with dates in the boxes. Both histograms have focusable boundary handles: arrow keys adjust a boundary, Page Up / Page Down make larger changes, and Home / End move to the available limits. Escape or a cancelled pointer gesture leaves the previous range in place.
+- **Scatterplot facet…:** a matrix of plots, one for each pair of numeric columns (only the chosen column's pairs when there are more than eight). Pick one to add a facet on that pair, then drag a rectangle on its plot to keep the rows whose points fall inside; a click without dragging, or **Reset facet**, selects the whole plot again. Faint points are every row, coloured ones the rows the other facets let through. The axes span every row's numbers, rounded out as OpenRefine's histograms round them, so a selection keeps the same rows OpenRefine keeps.
 - **Text filter:** keeps the rows whose cell contains the text you type.
 - **Custom text facet… / Custom numeric facet…:** a facet over a GREL expression, such as `value.length()` or `cells["city"].value + ", " + value`.
 - **Customized facets:** ready-made expressions for words, duplicates, text length, Unicode character codes, blank cells, errors, stars and flags. Logarithmic numeric and text-length facets help inspect wide ranges; the **1-bounded numeric log facet** clamps numbers below 1 before taking the logarithm. **Facet by null** and **Facet by empty string** distinguish missing values from empty text.

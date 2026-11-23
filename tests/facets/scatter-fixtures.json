@@ -1,0 +1,1441 @@
+{
+ "openrefine": "3.10.1",
+ "generator": "tests/facets/scatter-gen.mjs",
+ "csv": "key,x,y,z,label\nr0,-10.0,-5,1,a\n,-8.5,2,4,b\n,-7.0,9,13,b\n,-5.5,16,28,a\nr1,-4.0,0,49,b\n,-2.5,7,76,b\n,-1.0,14,109,a\n,0.5,,148,b\nr2,2.0,5,193,b\n,3.5,12,244,a\n,5.0,-4,301,b\n,6.5,3,364,b\nr3,8.0,10,433,a\n,9.5,n/a,508,b\n,11.0,1,589,b\n,12.5,8,676,a\nr4,14.0,15,769,b\n,15.5,-1,868,b\n,17.0,6,973,a\n,18.5,13,1084,b\nr5,20.0,-3,1201,b\n,21.5,4,1324,a\n,23.0,11,1453,b\n,24.5,-5,1588,b\nr6,26.0,2,1729,a\n,27.5,9,1876,b\n,29.0,16,2029,b\n,30.5,0,2188,a\nr7,32.0,7,2353,b\n,33.5,14,2524,b\n,35.0,-2,2701,a\n,36.5,5,2884,b\nr8,38.0,12,3073,b\n,39.5,-4,3268,a\n,41.0,3,3469,b\n,42.5,10,3676,b\nr9,44.0,17,3889,a\n,45.5,1,4108,b\n,47.0,8,4333,b\n,48.5,15,4564,a\n",
+ "ops": [
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "x",
+   "expression": "grel:value.toNumber()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "y",
+   "expression": "grel:value.toNumber()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  },
+  {
+   "op": "core/text-transform",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "columnName": "z",
+   "expression": "grel:value.toNumber()",
+   "onError": "keep-original",
+   "repeat": false,
+   "repeatCount": 10
+  }
+ ],
+ "cases": [
+  {
+   "name": "no selection",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none"
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 0,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0
+   ],
+   "filtered": 1
+  },
+  {
+   "name": "full box",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0,
+      "to_x": 1,
+      "from_y": 0,
+      "to_y": 1
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 1,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 1,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+   ],
+   "filtered": 40
+  },
+  {
+   "name": "lin box",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.2,
+      "to_x": 0.6,
+      "from_y": 0.1,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.1,
+    "cy": "y",
+    "to_x": 0.6,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    17,
+    18,
+    21,
+    22
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "lin corner",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.5,
+      "to_x": 1,
+      "from_y": 0.5,
+      "to_y": 1
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.5,
+    "to_y": 1,
+    "ey": "value",
+    "from_y": 0.5,
+    "cy": "y",
+    "to_x": 1,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    22,
+    25,
+    26,
+    28,
+    29,
+    32,
+    35,
+    36,
+    38,
+    39
+   ],
+   "filtered": 10
+  },
+  {
+   "name": "edges exactly",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0,
+      "to_x": 0.5,
+      "from_y": 0,
+      "to_y": 0.5
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 0.5,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0.5,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0,
+    1,
+    4,
+    8,
+    10,
+    11,
+    14,
+    17,
+    18
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "log x",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. y (y)",
+      "cx": "z",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "log",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.3,
+      "to_x": 0.9,
+      "from_y": 0,
+      "to_y": 0.6
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.3,
+    "to_y": 0.6,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0.9,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    23,
+    24,
+    27,
+    28,
+    30,
+    31,
+    33,
+    34,
+    37
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "log both",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. x (y)",
+      "cx": "z",
+      "cy": "x",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "log",
+      "dim_y": "log",
+      "r": "none",
+      "from_x": 0.1,
+      "to_x": 0.8,
+      "from_y": 0.2,
+      "to_y": 0.9
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. x (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.1,
+    "to_y": 0.9,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "x",
+    "to_x": 0.8,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+   ],
+   "filtered": 23
+  },
+  {
+   "name": "lin z for log comparison",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. x (y)",
+      "cx": "z",
+      "cy": "x",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.1,
+      "to_x": 0.8,
+      "from_y": 0.2,
+      "to_y": 0.9
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. x (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.1,
+    "to_y": 0.9,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "x",
+    "to_x": 0.8,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+   ],
+   "filtered": 23
+  },
+  {
+   "name": "rotated clockwise",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "cw",
+      "from_x": 0.2,
+      "to_x": 0.7,
+      "from_y": 0.2,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "y",
+    "to_x": 0.7,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    18,
+    21,
+    22,
+    24,
+    25,
+    27
+   ],
+   "filtered": 11
+  },
+  {
+   "name": "rotated counter-clockwise",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "ccw",
+      "from_x": 0.2,
+      "to_x": 0.7,
+      "from_y": 0.2,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "y",
+    "to_x": 0.7,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    18,
+    21,
+    22,
+    24,
+    25,
+    27
+   ],
+   "filtered": 11
+  },
+  {
+   "name": "rotated clockwise, low corner",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "cw",
+      "from_x": 0,
+      "to_x": 0.4,
+      "from_y": 0,
+      "to_y": 0.4
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 0.4,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0.4,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0,
+    1,
+    4,
+    10,
+    11,
+    14
+   ],
+   "filtered": 6
+  },
+  {
+   "name": "expressions",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value * value",
+      "ey": "value - 3",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.25,
+      "to_x": 0.75,
+      "from_y": 0.25,
+      "to_y": 0.75
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value * value",
+    "from_x": 0.25,
+    "to_y": 0.75,
+    "ey": "value - 3",
+    "from_y": 0.25,
+    "cy": "y",
+    "to_x": 0.75,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    24,
+    25,
+    28,
+    31,
+    32,
+    34
+   ],
+   "filtered": 6
+  },
+  {
+   "name": "text expression on y",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. label (y)",
+      "cx": "x",
+      "cy": "label",
+      "l": 150,
+      "ex": "value",
+      "ey": "if(value == 'a', 1, 2)",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0,
+      "to_x": 0.5,
+      "from_y": 0,
+      "to_y": 1
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. label (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 1,
+    "ey": "if(value == 'a', 1, 2)",
+    "from_y": 0,
+    "cy": "label",
+    "to_x": 0.5,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ],
+   "filtered": 20
+  },
+  {
+   "name": "with a list facet",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.2,
+      "to_x": 0.6,
+      "from_y": 0.1,
+      "to_y": 0.7
+     },
+     {
+      "type": "list",
+      "name": "label",
+      "columnName": "label",
+      "expression": "value",
+      "omitBlank": false,
+      "omitError": false,
+      "selection": [
+       {
+        "v": {
+         "v": "a",
+         "l": "a"
+        }
+       }
+      ],
+      "selectBlank": false,
+      "selectError": false,
+      "invert": false
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.1,
+    "cy": "y",
+    "to_x": 0.6,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    12,
+    15,
+    18,
+    21
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "records",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.6,
+      "to_x": 1,
+      "from_y": 0,
+      "to_y": 0.4
+     }
+    ],
+    "mode": "record-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.6,
+    "to_y": 0.4,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 1,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39
+   ],
+   "filtered": 4
+  },
+  {
+   "name": "same column twice",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. x (y)",
+      "cx": "x",
+      "cy": "x",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.3,
+      "to_x": 0.6,
+      "from_y": 0,
+      "to_y": 1
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. x (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.3,
+    "to_y": 1,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "x",
+    "to_x": 0.6,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+   ],
+   "filtered": 12
+  },
+  {
+   "name": "log x as a number",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. y (y)",
+      "cx": "z",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": 1,
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.3,
+      "to_x": 0.9,
+      "from_y": 0,
+      "to_y": 0.6
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.3,
+    "to_y": 0.6,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0.9,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    23,
+    24,
+    27,
+    28,
+    30,
+    31,
+    33,
+    34,
+    37
+   ],
+   "filtered": 9
+  },
+  {
+   "name": "log both as numbers",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. x (y)",
+      "cx": "z",
+      "cy": "x",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": 1,
+      "dim_y": 1,
+      "r": "none",
+      "from_x": 0.1,
+      "to_x": 0.8,
+      "from_y": 0.2,
+      "to_y": 0.9
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. x (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.1,
+    "to_y": 0.9,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "x",
+    "to_x": 0.8,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+   ],
+   "filtered": 23
+  },
+  {
+   "name": "clockwise as a number",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": 1,
+      "from_x": 0.2,
+      "to_x": 0.7,
+      "from_y": 0.2,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "y",
+    "to_x": 0.7,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    18,
+    21,
+    22,
+    24,
+    25,
+    27
+   ],
+   "filtered": 11
+  },
+  {
+   "name": "counter-clockwise as a number",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": 2,
+      "from_x": 0.2,
+      "to_x": 0.7,
+      "from_y": 0.2,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "y",
+    "to_x": 0.7,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    18,
+    21,
+    22,
+    24,
+    25,
+    27
+   ],
+   "filtered": 11
+  },
+  {
+   "name": "clockwise low corner as a number",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": 1,
+      "from_x": 0,
+      "to_x": 0.4,
+      "from_y": 0,
+      "to_y": 0.4
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0,
+    "to_y": 0.4,
+    "ey": "value",
+    "from_y": 0,
+    "cy": "y",
+    "to_x": 0.4,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    0,
+    1,
+    4,
+    10,
+    11,
+    14
+   ],
+   "filtered": 6
+  },
+  {
+   "name": "counter-clockwise high corner as a number",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": 2,
+      "from_x": 0.5,
+      "to_x": 1,
+      "from_y": 0.5,
+      "to_y": 1
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.5,
+    "to_y": 1,
+    "ey": "value",
+    "from_y": 0.5,
+    "cy": "y",
+    "to_x": 1,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    22,
+    25,
+    26,
+    28,
+    29,
+    32,
+    35,
+    36,
+    38,
+    39
+   ],
+   "filtered": 10
+  },
+  {
+   "name": "log and rotation as numbers",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "z (x) vs. y (y)",
+      "cx": "z",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": 1,
+      "dim_y": "lin",
+      "r": 1,
+      "from_x": 0.1,
+      "to_x": 0.6,
+      "from_y": 0.3,
+      "to_y": 0.9
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "z (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "z",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.1,
+    "to_y": 0.9,
+    "ey": "value",
+    "from_y": 0.3,
+    "cy": "y",
+    "to_x": 0.6,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    15,
+    16,
+    18,
+    19,
+    21,
+    22,
+    24,
+    25,
+    28,
+    29
+   ],
+   "filtered": 10
+  },
+  {
+   "name": "unrotated box for comparison",
+   "engine": {
+    "facets": [
+     {
+      "type": "scatterplot",
+      "name": "x (x) vs. y (y)",
+      "cx": "x",
+      "cy": "y",
+      "l": 150,
+      "ex": "value",
+      "ey": "value",
+      "dot": 0.8,
+      "dim_x": "lin",
+      "dim_y": "lin",
+      "r": "none",
+      "from_x": 0.2,
+      "to_x": 0.7,
+      "from_y": 0.2,
+      "to_y": 0.7
+     }
+    ],
+    "mode": "row-based"
+   },
+   "facet": {
+    "name": "x (x) vs. y (y)",
+    "l": 150,
+    "color": "000000",
+    "cx": "x",
+    "dot": 0.8,
+    "ex": "value",
+    "from_x": 0.2,
+    "to_y": 0.7,
+    "ey": "value",
+    "from_y": 0.2,
+    "cy": "y",
+    "to_x": 0.7,
+    "r": 0,
+    "dim_y": 0,
+    "dim_x": 0
+   },
+   "matching": [
+    8,
+    11,
+    12,
+    14,
+    15,
+    18,
+    21,
+    22,
+    24,
+    25,
+    27
+   ],
+   "filtered": 11
+  }
+ ]
+}

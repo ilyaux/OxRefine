@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Redo2Icon, SettingsIcon, Undo2Icon } from "lucide-react"
-import { call, isProjectArchive, listFacet, onProjectConflict, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
+import { call, facetColumns, isProjectArchive, listFacet, onProjectConflict, pickFile, saveToBrowser, upload, type ImportReport, rangeFacet, timeFacet, type Engine, type Facet, type FacetData, type ListFacet, type Op, type Summary } from "@/api"
 import { AskDialog, ClusterDialog, HistoryView, SortDialog, TransposeDialog, TransformDialog } from "@/Dialogs"
+import { ScatterMatrix, selects } from "@/Scatterplot"
 import { Grid, RECON_FACETS, type ColumnAction, type SelectedCell } from "@/Grid"
 import { ExtendDialog, loadServices, ReconcileDialog } from "@/ReconcileDialog"
 import { ReconciliationValues } from "@/ReconciliationValues"
@@ -40,7 +41,7 @@ type Modal =
   | { kind: "google" }
   | { kind: "database" }
   | { kind: "drop-archive"; path: string; name?: string }
-  | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range"; column: string }
+  | { kind: "transform" | "add" | "fetch" | "cluster" | "sort" | "facet-list" | "facet-range" | "scatterplot"; column: string }
   | { kind: "transpose"; column: string; mode: "columns" | "rows" | "columnize" }
   | { kind: "reconcile" | "recon-values"; column: string }
   | { kind: "extend"; column: string }
@@ -66,6 +67,7 @@ function chip(f: Facet): string | null {
     return `${f.columnName} ${picked.length > 1 ? (f.invert ? "∉" : "∈") : f.invert ? "≠" : "="} ${shown}`
   }
   if (f.type === "text") return f.query ? `${f.columnName} ${f.invert ? "!~" : "~"} "${f.query}"` : null
+  if (f.type === "scatterplot") return selects(f) ? `${f.cx} × ${f.cy} in a rectangle` : null
   const all = f.from <= -Number.MAX_VALUE && f.to >= Number.MAX_VALUE
   const kinds = f.type === "range" ? f.selectNumeric && f.selectNonNumeric && f.selectBlank && f.selectError : f.selectTime && f.selectNonTime && f.selectBlank && f.selectError
   if (all && kinds) return null
@@ -77,6 +79,7 @@ function chip(f: Facet): string | null {
 function cleared(f: Facet): Facet {
   if (f.type === "list") return { ...f, selection: [], selectBlank: false, selectError: false }
   if (f.type === "text") return { ...f, query: "" }
+  if (f.type === "scatterplot") return { ...f, from_x: 0, to_x: 1, from_y: 0, to_y: 1 }
   if (f.type === "range") return { ...rangeFacet(f.columnName, f.expression), name: f.name }
   return { ...timeFacet(f.columnName, f.expression), name: f.name }
 }
@@ -143,7 +146,7 @@ export function App() {
       setSummary(data)
       setLastMs({ what, ms })
       // facets on columns that no longer exist would make every request fail
-      setFacets((fs) => fs.filter((f) => data.columns.includes(f.columnName)))
+      setFacets((fs) => fs.filter((f) => facetColumns(f).every((c) => data.columns.includes(c))))
     } finally { finished?.() }
   }, [cancelDrop, selectionAllowed, trackOpening])
 
@@ -483,6 +486,7 @@ export function App() {
     if (a.kind === "facet") setFacets((f) => [...f, listFacet(c)])
     else if (a.kind === "numeric-facet") setFacets((f) => [...f, rangeFacet(c)])
     else if (a.kind === "timeline-facet") setFacets((f) => [...f, timeFacet(c)])
+    else if (a.kind === "scatterplot-facet") setModal({ kind: "scatterplot", column: c })
     else if (a.kind === "preset-facet") setFacets((f) => [...f, a.facet === "list" ? listFacet(c, a.expression) : rangeFacet(c, a.expression)])
     else if (a.kind === "custom-list-facet") setModal({ kind: "facet-list", column: c })
     else if (a.kind === "custom-range-facet") setModal({ kind: "facet-range", column: c })
@@ -527,7 +531,16 @@ export function App() {
         onSubmit: async (v) => {
           if (v.trim() === c) return
           await apply({ op: "core/column-rename", oldColumnName: c, newColumnName: v.trim() })
-          setFacets((fs) => fs.map((f) => (f.columnName === c ? { ...f, name: v.trim(), columnName: v.trim() } : f)))
+          const to = v.trim()
+          setFacets((fs) =>
+            fs.map((f) =>
+              f.type === "scatterplot"
+                ? { ...f, cx: f.cx === c ? to : f.cx, cy: f.cy === c ? to : f.cy }
+                : f.columnName === c
+                  ? { ...f, name: to, columnName: to }
+                  : f,
+            ),
+          )
         },
       })
   }
@@ -734,7 +747,7 @@ export function App() {
                     <Facets
                       facets={facets}
                       data={facets.map((f) => {
-                        const j = facetData.facets.findIndex((g) => g.type === f.type && g.columnName === f.columnName && g.name === f.name && ("expression" in g ? g.expression : "") === ("expression" in f ? f.expression : ""))
+                        const j = facetData.facets.findIndex((g) => g.type === f.type && facetColumns(g).join("\u0000") === facetColumns(f).join("\u0000") && g.name === f.name && ("expression" in g ? g.expression : "") === ("expression" in f ? f.expression : ""))
                         return j < 0 ? null : facetData.data[j]
                       })}
                       columns={summary.columns}
@@ -962,6 +975,9 @@ export function App() {
           />
         )}
         {modal?.kind === "sort" && <SortDialog column={modal.column} onApply={apply} onClose={() => setModal(null)} />}
+        {modal?.kind === "scatterplot" && summary && (
+          <ScatterMatrix column={modal.column} columns={summary.columns} engine={engine} onFacet={(f) => setFacets((fs) => [...fs, f])} onClose={() => setModal(null)} />
+        )}
         {modal?.kind === "cluster" && (
           <ClusterDialog column={modal.column} engine={engine} onApply={apply} onClose={() => setModal(null)} />
         )}

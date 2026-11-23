@@ -20,6 +20,15 @@ Suggestions follow the current facets and rows/records mode. They use the defaul
 
 **Nearest neighbours** groups values within a distance of each other. **Levenshtein** counts the edits between two values, ignoring case. **PPM** compares how well the two values compress together against how well each compresses with itself, so values that share long runs of characters come out close; it is OpenRefine's own PPM distance, byte for byte. The *radius* sets how far apart values can be (PPM distances are fractions, so radii like 0.5 make sense), and the *block size* speeds up the search on large columns.
 
+## Your own functions
+
+**Add keying function…** and **Add distance function…** under the methods save a function of your own, as OpenRefine 3.8+ does. Give it a name and an expression in GREL, Python or Clojure:
+
+- a keying function turns `value` into its key, such as `value.toLowercase().replace(/\s+/, " ")`;
+- a distance function compares `value1` and `value2` and returns a number, such as `abs(value1.length() - value2.length())`. Two values are neighbours when the distance either way is within the radius.
+
+The functions are kept in the preferences under OpenRefine's names (`ui.clustering.customKeyingFunctions`, `ui.clustering.customDistanceFunctions`) and listed with the built-in ones; the pencil edits one and the bin removes it. A key that is an array never matches another value's, and a distance that fails or isn't a number keeps the pair apart, as in OpenRefine.
+
 ## Working through clusters
 
 - Each cluster lists its values with their row counts and a bar for each one's share. The most common value is suggested as the new one; click any value to use it instead.

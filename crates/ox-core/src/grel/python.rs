@@ -195,6 +195,11 @@ pub fn reads_row(source: &str) -> bool {
 }
 
 pub fn eval(source: &str, value: Value, row: &dyn Row) -> Value {
+    eval_with(source, value, row, None)
+}
+
+/// `pair` binds value1 and value2 (a custom clustering distance).
+pub fn eval_with(source: &str, value: Value, row: &dyn Row, pair: Option<(Value, Value)>) -> Value {
     with_state(|state| {
         let f = match function(state, source) {
             Ok(f) => f,
@@ -216,6 +221,7 @@ pub fn eval(source: &str, value: Value, row: &dyn Row) -> Value {
             } else {
                 (vm.ctx.none(), vm.ctx.none())
             };
+            let (value1, value2) = pair.as_ref().map_or((vm.ctx.none(), vm.ctx.none()), |(a, b)| (to_py(vm, a), to_py(vm, b)));
             let args = vec![
                 f,
                 to_py(vm, &value),
@@ -225,6 +231,8 @@ pub fn eval(source: &str, value: Value, row: &dyn Row) -> Value {
                 vm.ctx.new_int(row.index()).into(),
                 vm.ctx.new_bool(row.starred()).into(),
                 vm.ctx.new_bool(row.flagged()).into(),
+                value1,
+                value2,
             ];
             match call.call(args, vm) {
                 Ok(r) => from_py(vm, &r),

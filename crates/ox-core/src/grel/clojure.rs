@@ -730,6 +730,11 @@ pub fn reads_row(source: &str) -> bool {
 }
 
 pub fn eval(source: &str, value: Value, row: &dyn Row) -> Value {
+    eval_with(source, value, row, None)
+}
+
+/// `pair` binds value1 and value2 (a custom clustering distance).
+pub fn eval_with(source: &str, value: Value, row: &dyn Row, pair: Option<(Value, Value)>) -> Value {
     let form = match analysed(source) {
         Ok(f) => f,
         Err(e) => return Value::err(e),
@@ -751,8 +756,9 @@ pub fn eval(source: &str, value: Value, row: &dyn Row) -> Value {
     } else {
         (C::Nil, C::Nil)
     };
+    let (value1, value2) = pair.as_ref().map_or((C::Nil, C::Nil), |(a, b)| (from_value(a), from_value(b)));
     let mut env: Env = None;
-    for (n, v) in PARAMS.iter().zip([from_value(&value), cell, cells, rowv, C::Long(row.index() as i64), C::Nil, C::Nil]) {
+    for (n, v) in PARAMS.iter().zip([from_value(&value), cell, cells, rowv, C::Long(row.index() as i64), value1, value2]) {
         env = bind(&env, (*n).into(), v);
     }
     match ev(&form, &env) {

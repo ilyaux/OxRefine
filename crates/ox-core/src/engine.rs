@@ -1,5 +1,5 @@
 //! Facets and row filtering with OpenRefine's `engineConfig` JSON: list facets on any GREL expression,
-//! text facets, numeric range facets, rows and records modes, and facetCount().
+//! text facets, numeric range facets, timeline and scatterplot facets, rows and records modes, and facetCount().
 //! Behaviour is pinned to OpenRefine 3.10.1 by tests/facets_conformance.rs.
 use crate::{
     err,
@@ -98,6 +98,38 @@ pub enum Facet {
         #[serde(default = "yes")]
         select_error: bool,
     },
+    /// OpenRefine's scatterplot facet: rows whose (x, y) falls in a rectangle of the plot, given as
+    /// fractions of its side (from 0 to 1, y upwards). A missing bound is 0, as in OpenRefine.
+    #[serde(rename = "scatterplot")]
+    Scatterplot {
+        #[serde(default)]
+        name: String,
+        cx: String,
+        cy: String,
+        #[serde(default = "value")]
+        ex: String,
+        #[serde(default = "value")]
+        ey: String,
+        /// the plot's side in pixels
+        #[serde(default = "plot_side")]
+        l: u32,
+        #[serde(default)]
+        from_x: f64,
+        #[serde(default)]
+        to_x: f64,
+        #[serde(default)]
+        from_y: f64,
+        #[serde(default)]
+        to_y: f64,
+        /// how the plot is drawn (dot size, color, scale, rotation), kept as given: OpenRefine's
+        /// filter reads none of them
+        #[serde(flatten)]
+        drawing: serde_json::Map<String, J>,
+    },
+}
+
+fn plot_side() -> u32 {
+    150
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -310,6 +342,38 @@ fn range_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
     }
 }
 
+/// The one number a row's items are, if they are exactly that (a scatterplot point needs one per axis).
+fn number(items: &[Item]) -> Option<f64> {
+    match items {
+        [Item::Val { num: Some(n), .. }] if n.is_finite() => Some(*n),
+        _ => None,
+    }
+}
+
+/// A scatterplot axis: the numbers of every row, whatever the facets select, rounded out to
+/// OpenRefine's NumericBinIndex bounds. None without numbers.
+fn axis(t: &Table, ev: &Evaluated) -> Option<(f64, f64)> {
+    let (mut lo, mut hi) = (f64::INFINITY, f64::NEG_INFINITY);
+    for r in 0..t.rows {
+        for i in ev.of(t, r) {
+            if let Item::Val { num: Some(n), .. } = i {
+                if n.is_finite() {
+                    (lo, hi) = (lo.min(*n), hi.max(*n));
+                }
+            }
+        }
+    }
+    (lo <= hi).then(|| {
+        let (min, max, ..) = binning(lo, hi);
+        (min, max)
+    })
+}
+
+/// A point's position along an axis of side `l`, as OpenRefine computes it: linear, unrotated.
+fn plot_pos(n: f64, (min, max): (f64, f64), l: f64) -> f64 {
+    (n - min) * l / (max - min)
+}
+
 fn time_ok(it: &Item, from: f64, to: f64, flags: [bool; 4]) -> bool {
     let [time, non_time, blank, error] = flags;
     match it {
@@ -364,7 +428,58 @@ fn compile(t: &Table, f: &Facet, ctx: &Ctx) -> Result<Option<Pass>> {
             let flags = [*select_time, *select_non_time, *select_blank, *select_error];
             Ok(Some(Pass::from_items(t, &ev, |items| items.iter().any(|i| time_ok(i, *from, *to, flags)))))
         }
+        Facet::Scatterplot { cx, cy, ex, ey, l, from_x, to_x, from_y, to_y, .. } => {
+            // the whole plot lets every row through, even those with no point
+            if !(*from_x > 0.0 || *to_x < 1.0 || *from_y > 0.0 || *to_y < 1.0) {
+                return Ok(None);
+            }
+            let (x, y) = (Evaluated::new(t, cx, ex, Some(ctx))?, Evaluated::new(t, cy, ey, Some(ctx))?);
+            // with no numbers on an axis the facet filters nothing
+            let (Some(ax), Some(ay), l) = (axis(t, &x), axis(t, &y), *l as f64) else { return Ok(None) };
+            // OpenRefine 3.10.1 selects by linear, unrotated positions, whatever scale or rotation it draws
+            let inside = |n: f64, a: (f64, f64), from: f64, to: f64| {
+                let p = plot_pos(n, a, l);
+                p >= from * l && p <= to * l
+            };
+            Ok(Some(Pass::Row(
+                (0..t.rows)
+                    .map(|r| match (number(x.of(t, r)), number(y.of(t, r))) {
+                        (Some(px), Some(py)) => inside(px, ax, *from_x, *to_x) && inside(py, ay, *from_y, *to_y),
+                        _ => false,
+                    })
+                    .collect(),
+            )))
+        }
     }
+}
+
+/// What a scatterplot draws: the pixels (x, y upwards, from 0 to `l`) holding a point of the rows
+/// passing the other facets (`points`), and of every row (`all`), each pixel once.
+pub fn scatter(t: &Table, (cx, ex): (&str, &str), (cy, ey): (&str, &str), l: u32, rows: &[u32], ctx: &Ctx) -> Result<J> {
+    let (x, y) = (Evaluated::new(t, cx, ex, Some(ctx))?, Evaluated::new(t, cy, ey, Some(ctx))?);
+    let (Some(ax), Some(ay)) = (axis(t, &x), axis(t, &y)) else {
+        return Ok(json!({ "error": "No numbers to plot" }));
+    };
+    let lf = l as f64;
+    let pixels = |rows: &mut dyn Iterator<Item = usize>| {
+        let mut seen = HashSet::new();
+        let mut out = vec![];
+        for r in rows {
+            if let (Some(px), Some(py)) = (number(x.of(t, r)), number(y.of(t, r))) {
+                let p = (plot_pos(px, ax, lf).round() as u32, plot_pos(py, ay, lf).round() as u32);
+                if seen.insert(p) {
+                    out.extend([p.0, p.1]);
+                }
+            }
+        }
+        out
+    };
+    Ok(json!({
+        "l": l,
+        "min_x": ax.0, "max_x": ax.1, "min_y": ay.0, "max_y": ay.1,
+        "points": pixels(&mut rows.iter().map(|&r| r as usize)),
+        "all": pixels(&mut (0..t.rows)),
+    }))
 }
 
 /// Row indices passing every facet except `skip` (each facet's counts ignore the facet itself).
@@ -735,6 +850,10 @@ pub fn facet_counts(t: &Table, cfg: &EngineConfig, limit: usize) -> Result<Vec<J
                 let others = filter_with(t, cfg, Some(i), &ctx)?;
                 let ev = Evaluated::new(t, column_name, expression, Some(&ctx))?;
                 Ok(time_panel(t, &ev, &others, *from, *to))
+            }
+            Facet::Scatterplot { cx, cy, ex, ey, l, .. } => {
+                let others = filter_with(t, cfg, Some(i), &ctx)?;
+                scatter(t, (cx, ex), (cy, ey), *l, &others, &ctx)
             }
             Facet::Text { .. } => Ok(J::Null),
         })

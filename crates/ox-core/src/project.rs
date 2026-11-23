@@ -694,7 +694,18 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let vc: Vec<(&str, u32)> = vc.iter().map(|(v, c)| (v.as_str(), *c)).collect();
             // OpenRefine's defaults: n-gram size 2, radius 1, blocks of 6-character n-grams
             let (n, block) = (if a.n == 0 { 2 } else { a.n }, if a.block == 0 { 6 } else { a.block });
-            json!(cluster::cluster(&vc, &a.method, n, a.radius.unwrap_or(1.0), block)?)
+            json!(match a.method.as_str() {
+                // custom clustering functions, under OpenRefine's names
+                m @ ("UserDefinedKeyer" | "UserDefinedDistance") => cluster::custom(&vc, &a.expression, m == "UserDefinedDistance", a.radius.unwrap_or(1.0), block)?,
+                m => cluster::cluster(&vc, m, n, a.radius.unwrap_or(1.0), block)?,
+            })
+        }
+        // a scatterplot of two columns over the rows the facets select (params: cx, cy, l)
+        "scatterplot" => {
+            let rows = p.rows(&a.engine)?;
+            let side = |k: &str| a.params[k].as_str().ok_or_else(|| format!("missing {k}"));
+            let l = a.params["l"].as_u64().unwrap_or(150) as u32;
+            engine::scatter(p.table(), (side("cx")?, "value"), (side("cy")?, "value"), l, &rows, &engine::Ctx::default())?
         }
         "preview_transform" => crate::transform_preview::preview(
             p.table(), a.op.ok_or("missing op")?, a.start, a.limit, a.params["onlyChanged"].as_bool().unwrap_or(false),

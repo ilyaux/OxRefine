@@ -80,6 +80,10 @@ impl<'a> Env<'a> {
     pub fn new(value: Value, row: &'a dyn Row) -> Self {
         Env { value, row, vars: vec![] }
     }
+    /// With variables of its own (value1 and value2 of a custom clustering distance).
+    pub fn with_vars(value: Value, row: &'a dyn Row, vars: Vec<(String, Value)>) -> Self {
+        Env { value, row, vars }
+    }
 }
 
 /// A cell object; a blank cell is null, as OpenRefine has no cell there.

@@ -1,6 +1,6 @@
 {
  "openrefine": "3.10.1",
- "generated": "2026-11-12",
+ "generated": "2026-11-23",
  "columns": [
   "v",
   "w"
@@ -8880,6 +8880,20 @@
   },
   {
    "expr": "'kitten'.levenshteinDistance('kitten')",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "levenshteinDistance('John Smith', 'JOHN SMITH')",
+   "rows": "first",
+   "results": [
+    "0"
+   ]
+  },
+  {
+   "expr": "levenshteinDistance('New York', 'new york')",
    "rows": "first",
    "results": [
     "0"

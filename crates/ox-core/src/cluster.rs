@@ -228,6 +228,47 @@ pub fn knn<'a>(values: &[(&'a str, u32)], distance: &str, radius: f64, block: us
     // SecondString compares the strings lowercased
     let lower: Vec<Vec<char>> = values.iter().map(|(v, _)| v.to_lowercase().chars().collect()).collect();
     let max = if radius < 0.0 { usize::MAX } else { radius.floor() as usize };
+    // Levenshtein compares lowercased text (SecondString); PPM compares the values as they are (vicino)
+    neighbours(values, block, |a, c| if ppm { crate::ppm::distance(values[a].0, values[c].0) <= radius || radius < 0.0 } else { within(&lower[a], &lower[c], max).is_some() })
+}
+
+/// OpenRefine 3.8+'s custom clustering functions: a keying expression (`value` bound; the key is its
+/// result as Java prints it) or, with `knn`, a distance expression (`value1` and `value2` bound; a
+/// number, or text that reads as one). Two values are near when the distance either way is within
+/// `radius` (any distance when negative); a distance that fails is not near.
+pub fn custom<'a>(values: &[(&'a str, u32)], expression: &str, knn: bool, radius: f64, block: usize) -> Result<Vec<Vec<(&'a str, u32)>>> {
+    use crate::grel::{NoRow, Value};
+    let program = crate::grel::compile(expression)?;
+    if knn {
+        let near = |a: &str, b: &str| {
+            // OpenRefine refuses empty text before evaluating
+            let d = match (a.is_empty() || b.is_empty(), program.eval_pair(Value::Str(a.into()), Value::Str(b.into()))) {
+                (true, _) => None,
+                (_, Value::Int(n)) => Some(n as f64),
+                (_, Value::Num(n)) => Some(n),
+                (_, Value::Str(s)) => s.trim().parse().ok(),
+                _ => None,
+            };
+            d.is_some_and(|d| d <= radius || radius < 0.0)
+        };
+        return neighbours(values, block, |a, c| near(values[a].0, values[c].0) || near(values[c].0, values[a].0));
+    }
+    let keys = par_map(values, "Computing keys", |&(v, _)| match program.eval(Value::Str(v.into()), &NoRow) {
+        Value::Null => "null".to_string(),
+        // Java prints an array with its identity: a key no other value shares
+        Value::Array(_) => format!("\0array {v}"),
+        k => k.to_java_string(),
+    })?;
+    let mut groups: HashMap<String, Vec<(&str, u32)>> = HashMap::new();
+    for (&(v, c), k) in values.iter().zip(keys) {
+        groups.entry(k).or_default().push((v, c));
+    }
+    Ok(sorted(groups.into_values().filter(|g| g.len() > 1).collect()))
+}
+
+/// Nearest-neighbour clusters: values sharing a `block`-character n-gram are compared with `near`
+/// (indices into `values`), and each value's cluster is it plus every value near it.
+fn neighbours<'a>(values: &[(&'a str, u32)], block: usize, near: impl Fn(usize, usize) -> bool + Sync) -> Result<Vec<Vec<(&'a str, u32)>>> {
     let mut grouped: HashMap<String, Vec<u32>> = HashMap::new();
     for (i, &(v, _)) in values.iter().enumerate() {
         for g in blocks(v, block) {
@@ -243,9 +284,7 @@ pub fn knn<'a>(values: &[(&'a str, u32)], distance: &str, radius: f64, block: us
     let close = par_map(&tasks, "Comparing values", |&(k, i)| {
         let b = &blocks[k];
         let a = b[i];
-        // Levenshtein compares lowercased text (SecondString); PPM compares the values as they are (vicino)
-        let near = |c: u32| if ppm { crate::ppm::distance(values[a as usize].0, values[c as usize].0) <= radius || radius < 0.0 } else { within(&lower[a as usize], &lower[c as usize], max).is_some() };
-        b[i + 1..].iter().filter(|&&c| near(c)).map(|&c| (a, c)).collect::<Vec<_>>()
+        b[i + 1..].iter().filter(|&&c| near(a as usize, c as usize)).map(|&c| (a, c)).collect::<Vec<_>>()
     })?;
     let mut near: HashMap<u32, BTreeSet<&str>> = HashMap::new();
     for (a, b) in close.into_iter().flatten() {

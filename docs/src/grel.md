@@ -387,7 +387,7 @@ Returns the length of string s as a number, or the size of array a, meaning the 
 
 `levenshteinDistance(string s1, string s2)` → number
 
-Calculate the number of edits required to make one value match another.
+Calculate the number of edits required to make one value match another, ignoring case: `levenshteinDistance("New York", "new york")` is 0.
 
 ### ln
 

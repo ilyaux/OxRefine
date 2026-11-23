@@ -83,14 +83,16 @@ Uploads send what OpenRefine 3.10.1 sends: `tests/wikibase/upload.json` records 
 
 OxRefine evaluates a Wikibase schema and writes QuickStatements as OpenRefine 3.10.1 does (`tests/wikibase`, outside the 2,473-check total), with three exceptions where OpenRefine's output is wrong. OpenRefine writes a statement in **add** mode with QuickStatements' removal prefix (`- `), so running the file would delete it; OxRefine writes it as an addition. OpenRefine writes year -44 as `+-044`, which QuickStatements rejects; OxRefine writes `-0044`. OpenRefine fails with an internal error on a schema with media info edits, which QuickStatements can't express; OxRefine says so. Language codes are checked against the schema's Wikibase, as in OpenRefine; when it can't be reached, OxRefine accepts any well-formed code.
 
+### Scatterplot facets
+
+OpenRefine 3.10.1 draws a scatterplot on log axes or rotated when asked, but selects rows by the linear, unrotated positions whatever it draws, so a rectangle on a log or rotated plot keeps other rows than it covers. OxRefine filters exactly as OpenRefine does (`tests/facets/scatter-fixtures.json`) and draws only linear, unrotated plots, so what you select is what you get. A facet from OpenRefine with a log scale or a rotation keeps those settings and keeps the same rows.
+
 ### Google Sheets
 
 OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and exports like it did, but signing in needs an OAuth client you register yourself ([how](importing.md#google-sheets-and-drive)). Shared sheets import without one.
 
 ## Not in OxRefine yet
 
-- **Facets:** the scatterplot facet
-- **Clustering:** custom clustering functions
 - **Extensions:** a few Wikibase constraint checks (ranges, required statements), Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use

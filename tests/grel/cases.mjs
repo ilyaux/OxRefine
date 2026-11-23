@@ -132,7 +132,7 @@ export const CONSTANT = [
   "'hello world'.ngram(1)", "'hello world'.ngram(2)", "'hello'.ngramFingerprint(2)", "'one two three'.ngram(5)",
   "'Thompson'.phonetic('metaphone3')", "'Smith'.phonetic('soundex')", "'Müller'.phonetic('cologne')", "'Smith'.phonetic('doublemetaphone')",
   "'Knight'.phonetic('metaphone')", "'Tymczak'.phonetic('soundex')", "'Pfister'.phonetic('soundex')",
-  "levenshteinDistance('kitten', 'sitting')", "'kitten'.levenshteinDistance('kitten')",
+  "levenshteinDistance('kitten', 'sitting')", "'kitten'.levenshteinDistance('kitten')", "levenshteinDistance('John Smith', 'JOHN SMITH')", "levenshteinDistance('New York', 'new york')",
   "'hello'.md5()", "'hello'.sha1()", "'aGVsbG8='.decode('base64')", "'hello'.encode('base64')",
   "'a b&c=d/é'.escape('url')", "'a%20b%C3%A9'.unescape('url')", "'<a href=\"x\">&</a>'.escape('html')", "'&lt;a&gt; &amp; &eacute; &#39; &#x41;'.unescape('html')",
   "'\"x\\'\\n'.escape('javascript')", "'a,b\"c'.escape('csv')", "'<x>&'.escape('xml')",

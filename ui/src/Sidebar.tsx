@@ -1,11 +1,12 @@
 import { useEffect, useId, useState } from "react"
 import { ChevronDownIcon, FlipHorizontal2Icon, PencilIcon, RotateCcwIcon, XIcon } from "lucide-react"
-import { rangeFacet, timeFacet, type Facet, type FacetData, type ListData, type ListFacet, type RangeData, type RangeFacet, type Summary, type TextFacet, type TimeData, type TimeFacet } from "@/api"
+import { facetColumns, rangeFacet, timeFacet, type ScatterData, type Facet, type FacetData, type ListData, type ListFacet, type RangeData, type RangeFacet, type Summary, type TextFacet, type TimeData, type TimeFacet } from "@/api"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { cn, maxOf } from "@/lib/utils"
 import { HistogramRange } from "@/HistogramRange"
+import { ScatterPanel } from "@/Scatterplot"
 
 const SHOWN = 200
 const fmt = (n: number) => (Math.abs(n) >= 1e6 || (n !== 0 && Math.abs(n) < 1e-3) ? n.toExponential(2) : Number(n.toFixed(6)).toLocaleString())
@@ -106,6 +107,7 @@ function FacetSection({ facet: f, data, onChange, onRemove, onEditChoice, onLimi
   const [resetVersion, setResetVersion] = useState(0)
   const bodyId = useId()
   const reset = () => {
+    if (f.type === "scatterplot") onChange({ ...f, from_x: 0, to_x: 1, from_y: 0, to_y: 1 })
     if (f.type !== "range" && f.type !== "timerange") return
     onChange({ ...(f.type === "range" ? rangeFacet(f.columnName, f.expression) : timeFacet(f.columnName, f.expression)), name: f.name })
     setResetVersion((n) => n + 1)
@@ -117,7 +119,7 @@ function FacetSection({ facet: f, data, onChange, onRemove, onEditChoice, onLimi
           <ChevronDownIcon aria-hidden="true" className={cn("size-3 shrink-0", collapsed && "-rotate-90")} />
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="truncate font-semibold" title={f.name}>{f.name}</span>
-            {f.type !== "text" && f.expression !== "value" && f.expression !== "grel:value" && (
+            {f.type !== "text" && f.type !== "scatterplot" && f.expression !== "value" && f.expression !== "grel:value" && (
               <span className="truncate font-mono text-[11px] text-muted-foreground" title={f.expression}>
                 {f.expression.replace(/^grel:/, "")}
               </span>
@@ -143,6 +145,7 @@ function FacetSection({ facet: f, data, onChange, onRemove, onEditChoice, onLimi
         {f.type === "text" && <TextQuery facet={f} onChange={onChange} />}
         {f.type === "range" && <RangePanel facet={f} data={data as RangeData | null} onChange={onChange} />}
         {f.type === "timerange" && <TimePanel facet={f} data={data as TimeData | null} onChange={onChange} />}
+        {f.type === "scatterplot" && <ScatterPanel facet={f} data={data as ScatterData | null} onChange={onChange} />}
       </div>
     </section>
   )
@@ -150,7 +153,7 @@ function FacetSection({ facet: f, data, onChange, onRemove, onEditChoice, onLimi
 
 /** A facet's identity: type, column and expression, plus how many identical facets come before it. */
 const facetKey = (facets: Facet[], i: number) => {
-  const id = (f: Facet) => JSON.stringify([f.type, f.columnName, "expression" in f ? f.expression : ""])
+  const id = (f: Facet) => JSON.stringify([f.type, ...facetColumns(f), "expression" in f ? f.expression : ""])
   return `${id(facets[i])}:${facets.slice(0, i).filter((f) => id(f) === id(facets[i])).length}`
 }
 

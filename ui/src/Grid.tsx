@@ -179,7 +179,7 @@ export type ColumnAction =
         | "facet" | "text-filter" | "transform" | "add-column" | "cluster" | "rename" | "remove"
         | "fill-down" | "blank-down" | "mv-split" | "mv-join" | "split" | "sort" | "dedupe"
         | "move-first" | "move-left" | "move-right" | "move-last"
-        | "numeric-facet" | "timeline-facet" | "custom-list-facet" | "custom-range-facet"
+        | "numeric-facet" | "timeline-facet" | "scatterplot-facet" | "custom-list-facet" | "custom-range-facet"
         | "fetch" | "transpose-columns" | "transpose-rows" | "columnize" | "reconcile"
         | "recon-best" | "recon-new-each" | "recon-new-shared" | "recon-match-all" | "recon-discard" | "recon-clear"
         | "recon-copy" | "recon-use-ids" | "recon-add-ids" | "recon-extend"
@@ -581,6 +581,7 @@ function ColumnMenu({ column, type, onAction }: { column: string; type?: string;
           <DropdownMenuItem onClick={act("facet")}>Text facet</DropdownMenuItem>
           <DropdownMenuItem onClick={act("numeric-facet")}>Numeric facet</DropdownMenuItem>
           <DropdownMenuItem onClick={act("timeline-facet")}>Timeline facet</DropdownMenuItem>
+          <DropdownMenuItem onClick={act("scatterplot-facet")}>Scatterplot facet…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("text-filter")}>Text filter</DropdownMenuItem>
           <DropdownMenuItem onClick={act("custom-list-facet")}>Custom text facet…</DropdownMenuItem>
           <DropdownMenuItem onClick={act("custom-range-facet")}>Custom numeric facet…</DropdownMenuItem>
