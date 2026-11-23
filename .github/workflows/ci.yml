@@ -47,7 +47,8 @@ jobs:
   static:
     # one self-contained ox for Linux systems the glibc build can't start on (Alpine, RHEL/Alma 8)
     name: Static Linux build (Alpine, Alma Linux 8)
-    runs-on: ubuntu-latest
+    # the same runner as the release's static build (22.04's musl-gcc can't link static-pie)
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable

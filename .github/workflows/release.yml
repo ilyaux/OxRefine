@@ -98,8 +98,9 @@ jobs:
             target: x86_64-apple-darwin
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-          # static: runs on Alpine and on older glibc systems such as RHEL/Alma 8
-          - os: ubuntu-22.04
+          # static: runs on Alpine and on older glibc systems such as RHEL/Alma 8. Built on 24.04:
+          # 22.04's musl-gcc ignores -static-pie and links ld-musl dynamically.
+          - os: ubuntu-24.04
             target: x86_64-unknown-linux-musl
     runs-on: ${{ matrix.os }}
     steps:
