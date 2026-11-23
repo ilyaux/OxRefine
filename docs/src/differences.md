@@ -2,7 +2,7 @@
 
 ## Known differences
 
-OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,473 checks, 15 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
+OxRefine is tested against fixtures produced by a real OpenRefine 3.10.1 (see [How compatibility is checked](compatibility.md)). Of the 2,475 checks, 15 differ. Each is listed below with its reason. Some are deliberate, because OpenRefine's behaviour there looks like a bug.
 
 | Area | What differs | Why |
 |---|---|---|
@@ -16,27 +16,27 @@ The other cases in that fixture total match. They cover GREL results and errors,
 
 ### Recipe validation and partial failures
 
-The additional recipe-reuse tests expose a separate difference: OpenRefine 3.10.1 validates missing column references and unknown expression functions before running the batch. OxRefine validates the JSON operation list first, then resolves columns and expressions as each operation runs. In the tested two-step recipes, OpenRefine applies no steps, while OxRefine keeps and saves the successful first step before reporting the second step's error. The error reports how many steps remain applied; undo them to revert the partial result. These scenarios are outside the 2,473-check total above.
+The additional recipe-reuse tests expose a separate difference: OpenRefine 3.10.1 validates missing column references and unknown expression functions before running the batch. OxRefine validates the JSON operation list first, then resolves columns and expressions as each operation runs. In the tested two-step recipes, OpenRefine applies no steps, while OxRefine keeps and saves the successful first step before reporting the second step's error. The error reports how many steps remain applied; undo them to revert the partial result. These scenarios are outside the 2,475-check total above.
 
 ### Fixed-width character positions
 
-Fixed-width import and its ruler count Unicode code points. OpenRefine 3.10.1 counts Java UTF-16 code units. In the additional wizard-reference tests, padding after an emoji produces widths `[3, 4, 1]` in OpenRefine and `[2, 4, 1]` in OxRefine. ASCII and basic multilingual plane examples match. This difference is recorded separately in `tests/import/fixed-width-guesses.json`, outside the 2,473-check total above. Check the import preview before sharing widths for text containing supplementary characters.
+Fixed-width import and its ruler count Unicode code points. OpenRefine 3.10.1 counts Java UTF-16 code units. In the additional wizard-reference tests, padding after an emoji produces widths `[3, 4, 1]` in OpenRefine and `[2, 4, 1]` in OxRefine. ASCII and basic multilingual plane examples match. This difference is recorded separately in `tests/import/fixed-width-guesses.json`, outside the 2,475-check total above. Check the import preview before sharing widths for text containing supplementary characters.
 
 ### JSON Lines limits and export encoding errors
 
 Additional JSON Lines reference cases show that OpenRefine 3.10.1 can import more sequential root values than its requested record limit. OxRefine applies a global record limit and stops reading once it is reached. Its limited preview therefore does not validate malformed data after that point; a full import still reports it. The reference outputs and declared differences are recorded separately in `tests/import/json-paths-fixtures.json`.
 
-For legacy text export encodings, OpenRefine replaces unrepresentable characters with `?`. OxRefine rejects them by default before opening the output file; explicitly selecting replacement reproduces that behavior. The additional byte references in `tests/export/encoding-fixtures.json` are outside the 2,473-check total above, as are the JSON Lines cases.
+For legacy text export encodings, OpenRefine replaces unrepresentable characters with `?`. OxRefine rejects them by default before opening the output file; explicitly selecting replacement reproduces that behavior. The additional byte references in `tests/export/encoding-fixtures.json` are outside the 2,475-check total above, as are the JSON Lines cases.
 
 ### Custom export date settings
 
-The additional `tests/export/custom-fixtures.json` cases show OpenRefine 3.10.1 ignoring requested custom date settings in text, HTML and workbook exports. OxRefine applies the supported requested format instead. Default workbook dates remain typed; nondefault date formatting produces text cells. These cases are separate from the 2,473-check total. See [export options](exporting.md#columns-dates-and-reconciliation) for the supported patterns and typed-cell reconciliation behavior.
+The additional `tests/export/custom-fixtures.json` cases show OpenRefine 3.10.1 ignoring requested custom date settings in text, HTML and workbook exports. OxRefine applies the supported requested format instead. Default workbook dates remain typed; nondefault date formatting produces text cells. These cases are separate from the 2,475-check total. See [export options](exporting.md#columns-dates-and-reconciliation) for the supported patterns and typed-cell reconciliation behavior.
 
 The same corpus records OpenRefine's ODS exporter dropping the time of day from a date cell. OxRefine retains its timestamp, including milliseconds. The remaining cells, selected columns and ordering are still compared with the reference.
 
 ### Commons category imports
 
-The separate CommonsExtension v0.1.5 can emit duplicate file rows from overlapping categories and repeats category traversal. OxRefine preserves direct-files-first depth-first ordering, deduplicates by file page ID and tracks visited categories with the remaining depth. It follows empty batches that still have continuation and fails the entire preparation on an API error or a limit, keeping partial data out of the project library. Loading file-page wikitext during preparation is an OxRefine addition. These behaviors and the extension mapping references are outside the 2,473-check total.
+The separate CommonsExtension v0.1.5 can emit duplicate file rows from overlapping categories and repeats category traversal. OxRefine preserves direct-files-first depth-first ordering, deduplicates by file page ID and tracks visited categories with the remaining depth. It follows empty batches that still have continuation and fails the entire preparation on an API error or a limit, keeping partial data out of the project library. Loading file-page wikitext during preparation is an OxRefine addition. These behaviors and the extension mapping references are outside the 2,475-check total.
 
 ### MARC validation and Unicode
 
@@ -64,11 +64,11 @@ OpenRefine runs `jython:` expressions in Jython 2.7 and `clojure:` ones in Cloju
 
 ### RDF import
 
-OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates in that graph's internal hash order, which changes with the file and even between N3 and Turtle for the same text. OxRefine keeps the order of the file. Jena names blank nodes with random ids, different on every import; OxRefine generates stable ones. OpenRefine resolves relative IRIs against its own working folder, OxRefine against the file's folder. `tests/rdf` compares the records, values and columns with OpenRefine 3.10.1, outside the 2,473-check total.
+OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates in that graph's internal hash order, which changes with the file and even between N3 and Turtle for the same text. OxRefine keeps the order of the file. Jena names blank nodes with random ids, different on every import; OxRefine generates stable ones. OpenRefine resolves relative IRIs against its own working folder, OxRefine against the file's folder. `tests/rdf` compares the records, values and columns with OpenRefine 3.10.1, outside the 2,475-check total.
 
 ### Wikibase issues
 
-`wikibaseIssues()` and the schema editor's issue checks report what OpenRefine 3.10.1 reports (`tests/wikibase`, outside the 2,473-check total). The basic checks cover new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The property constraints are fetched from the Wikibase once per property: format, single and multiple values, distinct values, allowed and forbidden values, conflicts, allowed and mandatory qualifiers, property scope, integer values, bounds, units, entity types and inverse statements. Constraints are recognised by Wikidata's constraint items, as OpenRefine's Wikidata manifest names them. Other constraint types (ranges, required statements, contemporaries) are not checked. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
+`wikibaseIssues()` and the schema editor's issue checks report what OpenRefine 3.10.1 reports (`tests/wikibase`, outside the 2,475-check total). The basic checks cover new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The property constraints are fetched from the Wikibase once per property: format, single and multiple values, distinct values, allowed and forbidden values, conflicts, allowed and mandatory qualifiers, property scope, integer values, bounds, units, entity types and inverse statements. Constraints are recognised by Wikidata's constraint items, as OpenRefine's Wikidata manifest names them. Other constraint types (ranges, required statements, contemporaries) are not checked. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
 
 ### Wikibase uploads
 
@@ -81,7 +81,7 @@ Uploads send what OpenRefine 3.10.1 sends: `tests/wikibase/upload.json` records 
 
 ### Wikibase QuickStatements
 
-OxRefine evaluates a Wikibase schema and writes QuickStatements as OpenRefine 3.10.1 does (`tests/wikibase`, outside the 2,473-check total), with three exceptions where OpenRefine's output is wrong. OpenRefine writes a statement in **add** mode with QuickStatements' removal prefix (`- `), so running the file would delete it; OxRefine writes it as an addition. OpenRefine writes year -44 as `+-044`, which QuickStatements rejects; OxRefine writes `-0044`. OpenRefine fails with an internal error on a schema with media info edits, which QuickStatements can't express; OxRefine says so. Language codes are checked against the schema's Wikibase, as in OpenRefine; when it can't be reached, OxRefine accepts any well-formed code.
+OxRefine evaluates a Wikibase schema and writes QuickStatements as OpenRefine 3.10.1 does (`tests/wikibase`, outside the 2,475-check total), with three exceptions where OpenRefine's output is wrong. OpenRefine writes a statement in **add** mode with QuickStatements' removal prefix (`- `), so running the file would delete it; OxRefine writes it as an addition. OpenRefine writes year -44 as `+-044`, which QuickStatements rejects; OxRefine writes `-0044`. OpenRefine fails with an internal error on a schema with media info edits, which QuickStatements can't express; OxRefine says so. Language codes are checked against the schema's Wikibase, as in OpenRefine; when it can't be reached, OxRefine accepts any well-formed code.
 
 ### Scatterplot facets
 

@@ -4,7 +4,7 @@ OxRefine's behaviour is pinned to OpenRefine 3.10.1. Nothing is matched by guess
 
 | Area | Cases matching OpenRefine |
 |---|---|
-| GREL expressions | 561 / 561 |
+| GREL expressions | 563 / 563 |
 | Operations | 83 / 84 |
 | Facets | 39 / 39 |
 | Import options | 43 / 45 |
@@ -29,6 +29,8 @@ Each suite in the repository's `tests/<suite>/` folder has three files:
 The additional customized-facet, JSON-path and export-encoding fixtures record the official 3.10.1 release archive's SHA-256 and the hashes of the relevant JAR files. They also retain the version actually reported by its API: the checksum-verified Windows release reports `3.10-SNAPSHOT [TRUNK]`. Its release identity is verified from the artifact hashes rather than inferred from that string. These extra suites do not change the fixture total in the table above.
 
 `tests/rdf` runs Turtle, N3, N-Triples, RDF/XML and JSON-LD files through OpenRefine's RDF importer. OpenRefine orders those tables by Apache Jena's hash tables and names blank nodes randomly, so the suite compares each subject's values, the columns and the number of rows and records, not their order. It is also outside the total.
+
+`tests/cluster/custom-fixtures.json` records the clusters of 23 custom keying and distance functions in GREL, Python and Clojure, and `tests/facets/scatter-fixtures.json` the rows 24 scatterplot facet selections keep, under each scale and rotation. `tests/wikibase` records schemas, issues, constraint checks and uploads to a mock MediaWiki API, Commons files included. These are outside the total too.
 
 The additional custom-export corpus in `tests/export/custom-fixtures.json` compares ordered columns, headers, reconciliation output and workbook cell values with the official release. Requested date formatting and preserving the time of day in ODS have explicit [documented differences](differences.md#custom-export-date-settings). These fixtures are separate from the totals above.
 

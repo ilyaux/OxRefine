@@ -22,7 +22,7 @@ mkdirSync(OUT, { recursive: true })
 
 // Cases matching OpenRefine per suite: keep in step with the table in README.md.
 const COMPAT = [
-  ["GREL expressions", 561, 561],
+  ["GREL expressions", 563, 563],
   ["Operations", 83, 84],
   ["Facets", 39, 39],
   ["Import options", 43, 45],
