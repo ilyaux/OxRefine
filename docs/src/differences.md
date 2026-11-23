@@ -91,7 +91,7 @@ OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and expor
 
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Extensions:** Wikibase media info uploads and the constraint-based issue checks, Commons-specific GREL functions, OpenRefine's Java extension modules (OxRefine has [its own](extensions.md))
+- **Extensions:** Wikibase media info uploads and the constraint-based issue checks, Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 

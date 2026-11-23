@@ -719,6 +719,17 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         // writes the file at `path`; without a path returns the text of the first `limit` rows (previews)
         "wikibase_schema" => p.overlay("wikibaseSchema").cloned().unwrap_or(Value::Null),
+        // steps OxRefine can't run (OpenRefine's Java extensions) in the OpenRefine installation of
+        // the "openrefine.home" preference; the result is an archive to open as a new project
+        "openrefine_run" => {
+            let folder = a.params["folder"].as_str().map(String::from)
+                .or_else(|| store.map(Store::preferences).and_then(|prefs| prefs.get("openrefine.home").and_then(|v| v.as_str().map(String::from))))
+                .filter(|f| !f.trim().is_empty())
+                .ok_or("Set the OpenRefine folder (preference openrefine.home) to run steps in OpenRefine.")?;
+            let out = import::stage_path(&import::staging_dir(store.map(|s| s.root())), "openrefine-result.openrefine.tar.gz")?;
+            crate::openrefine::run(Path::new(folder.trim()), p, &a.params["ops"], &out)?;
+            json!({ "path": out })
+        }
         // a schema being edited: its edits on the matching rows and their issues, without saving it
         "wikibase_preview" => {
             let schema = crate::wikibase::normalize(&a.params["schema"])?;

@@ -27,6 +27,7 @@ pub mod spill;
 pub mod storage;
 pub mod table;
 mod transform_preview;
+pub mod openrefine;
 pub mod unpack;
 pub mod wikibase;
 

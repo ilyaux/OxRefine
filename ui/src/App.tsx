@@ -346,6 +346,25 @@ export function App() {
     await navigator.clipboard.writeText(JSON.stringify(data, null, 2))
     toast.add({ title: "Recipe copied", description: "Paste it into OpenRefine's Undo/Redo → Apply, or `ox apply`.", type: "success" })
   }
+  // steps from OpenRefine's Java extensions run in the user's OpenRefine; the result opens as a new project
+  const runInOpenRefine = () =>
+    setModal({
+      kind: "ask",
+      title: "Run steps in OpenRefine",
+      label: "OpenRefine operations (JSON). They run in the OpenRefine installation set in Preferences, with its extensions; the result opens as a new project with OpenRefine's history.",
+      multiline: true,
+      fileAccept: ".json,application/json",
+      onSubmit: async (v) => {
+        let ops: unknown
+        try { ops = JSON.parse(v) } catch { return fail(new Error("That is not valid JSON.")) }
+        setModal(null)
+        try {
+          const { data } = await call<{ path: string }>("openrefine_run", { params: { ops } })
+          await importProject(data.path)
+          toast.add({ title: "Ran in OpenRefine", description: "The result is a new project; the original is unchanged.", type: "success" })
+        } catch (e) { fail(e) }
+      },
+    })
   const applyRecipe = () =>
     setModal({
       kind: "ask",
@@ -791,6 +810,7 @@ export function App() {
                   { label: mode === "row-based" ? "Show records" : "Show rows", run: () => setMode(mode === "row-based" ? "record-based" : "row-based") },
                   { label: "Remove all facets", run: () => setFacets([]) },
                   { label: "Apply recipe…", run: applyRecipe },
+                  { label: "Run steps in OpenRefine…", run: runInOpenRefine },
                   { label: "Extract recipe…", run: () => setModal({ kind: "extract" }) },
                   { label: "Copy recipe JSON", run: () => void copyRecipe().catch(fail) },
                   { label: "Export matching rows as CSV…", run: () => exportRows("csv", "csv") },

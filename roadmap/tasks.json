@@ -1464,6 +1464,17 @@
       "ref": "Butterfly modules, ClientSideResourceManager"
     },
     {
+      "id": "ext-java-bridge",
+      "phase": "p13",
+      "milestone": "later",
+      "status": "review",
+      "priority": "P2",
+      "size": "M",
+      "title": "Run OpenRefine Java extension steps in an installed OpenRefine",
+      "detail": "OpenRefine extensions are Java modules OxRefine cannot load. Bridge: the project goes as an OpenRefine archive to a headless OpenRefine from the folder in Preferences (openrefine.home), the steps run there with its extensions, and the result comes back as a new project with OpenRefine history. Command palette: Run steps in OpenRefine…; test against a local OpenRefine 3.10.1 (skipped without one).",
+      "ref": "ox-core/src/openrefine.rs, tools/openrefine.mjs; card ext-plugins"
+    },
+    {
       "id": "ext-mcp",
       "phase": "p13",
       "milestone": "v1.0",

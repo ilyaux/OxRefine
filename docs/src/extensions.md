@@ -1,6 +1,6 @@
 # Extensions
 
-An extension adds GREL functions, importers, exporters and operations to OxRefine without rebuilding it. It is a folder with a `main.py`, written in the same Python that runs `jython:` expressions. OpenRefine's own extensions are Java modules; those don't load in OxRefine, and an OxRefine extension doesn't load in OpenRefine.
+An extension adds GREL functions, importers, exporters and operations to OxRefine without rebuilding it. It is a folder with a `main.py`, written in the same Python that runs `jython:` expressions. OpenRefine's own extensions are Java modules; those don't load in OxRefine, and an OxRefine extension doesn't load in OpenRefine. Steps from OpenRefine's Java extensions can still run, in an OpenRefine you have installed: see [OpenRefine's Java extensions](#openrefines-java-extensions).
 
 [`docs/extensions/text-tools`](https://github.com/ilyaux/OxRefine/tree/main/docs/extensions/text-tools) is a complete example of all four kinds. Copy its folder to try it.
 
@@ -71,3 +71,12 @@ It goes into extracted recipes like any other step. Replaying it needs the same 
 - Code runs in OxRefine's embedded Python 3 (RustPython) with its standard library. Packages from PyPI aren't available, and C extensions can't load.
 - Operations and exporters receive the whole table as Python lists. That is fine for tens of thousands of rows and slow for millions.
 - Two extensions can't register the same id; the second one is listed with the conflict and provides nothing.
+
+## OpenRefine's Java extensions
+
+OpenRefine extensions are Java modules: OxRefine can't load them, but it can hand their steps to OpenRefine itself. Install OpenRefine with the extensions you need, and give its folder (the one with `server` and `webapp`) in **Preferences → Extensions → OpenRefine folder**. Then **Run steps in OpenRefine…** in the command palette takes OpenRefine operations as JSON, such as a recipe extracted from OpenRefine.
+
+OxRefine writes the open project as an OpenRefine project archive, history included. It starts that OpenRefine headless with a scratch workspace on a local port, imports the project, runs the steps and exports the result. The result opens as a new project, with OpenRefine's steps in its history; the original project is unchanged. OpenRefine starts each time, which takes a few seconds. It uses its bundled Java, or the one in `JAVA_HOME`. Nothing is downloaded or installed.
+
+This runs extension *operations*, not their dialogs or menus: build the steps in OpenRefine once, extract them as a recipe, and run that recipe from OxRefine on other data.
+

@@ -58,6 +58,7 @@ export function Preferences({ onClose, onError, onChanged }: { onClose: () => vo
           </TabsContent>
           <TabsContent value="extensions">
             <Extensions onError={onError} />
+            <OpenRefineHome key={String(prefs?.["openrefine.home"] ?? "")} prefs={prefs} set={set} />
           </TabsContent>
           <TabsContent value="all">
             <AllPrefs prefs={prefs} set={set} />
@@ -258,6 +259,27 @@ function AllPrefs({ prefs, set }: { prefs: Prefs | null; set: (name: string, val
 }
 
 /** Installed extensions (crates/ox-core/src/extensions.rs): what each provides, or why it failed. */
+/** Where OpenRefine is installed: steps from its Java extensions run there (Run steps in OpenRefine…). */
+function OpenRefineHome({ prefs, set }: { prefs: Prefs | null; set: (name: string, value: unknown) => Promise<void> }) {
+  const current = String(prefs?.["openrefine.home"] ?? "")
+  const [folder, setFolder] = useState(current)
+  return (
+    <FieldGroup className="mt-6">
+      <Field>
+        <FieldLabel htmlFor="pref-openrefine-home">OpenRefine folder, for its Java extensions</FieldLabel>
+        <FieldDescription>
+          OpenRefine's own extensions are Java modules OxRefine can't load. With an OpenRefine installation here (the folder with <code>server</code> and{" "}
+          <code>webapp</code>, extensions included), <strong>Run steps in OpenRefine…</strong> in the command palette runs steps there and opens the result as a new project.
+        </FieldDescription>
+        <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); void set("openrefine.home", folder.trim() || null) }}>
+          <Input id="pref-openrefine-home" value={folder} placeholder="C:\Tools\openrefine-3.10.1" onChange={(e) => setFolder(e.target.value)} />
+          <Button type="submit" variant="outline" disabled={folder.trim() === current}>Save</Button>
+        </form>
+      </Field>
+    </FieldGroup>
+  )
+}
+
 function Extensions({ onError }: { onError: (e: unknown) => void }) {
   const list = useExtensions()
   const [busy, setBusy] = useState(false)
