@@ -68,7 +68,7 @@ OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates
 
 ### Wikibase issues
 
-`wikibaseIssues()` and the export's issue checks report what OpenRefine 3.10.1 reports for the checks that need no property constraints: new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The checks that depend on property constraints fetched from the Wikibase (format, single value, allowed values, conflicts and the like) are not run yet. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
+`wikibaseIssues()` and the schema editor's issue checks report what OpenRefine 3.10.1 reports (`tests/wikibase`, outside the 2,473-check total). The basic checks cover new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The property constraints are fetched from the Wikibase once per property: format, single and multiple values, distinct values, allowed and forbidden values, conflicts, allowed and mandatory qualifiers, property scope, integer values, bounds, units, entity types and inverse statements. Constraints are recognised by Wikidata's constraint items, as OpenRefine's Wikidata manifest names them. Other constraint types (ranges, required statements, contemporaries) are not checked. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
 
 ### Wikibase uploads
 
@@ -91,7 +91,7 @@ OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and expor
 
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Extensions:** Wikibase media info uploads and the constraint-based issue checks, Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
+- **Extensions:** Wikibase media info uploads, a few Wikibase constraint checks (ranges, required statements), Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 

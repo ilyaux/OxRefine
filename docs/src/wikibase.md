@@ -13,7 +13,7 @@ Add an **item** or **media info** entity. Its subject is a reconciled column or 
 
 Dates are written `2024-01-31`, `2024-01`, `2024` or `1950D` for a decade. A `_Q1985786` suffix gives the Julian calendar. Coordinates are written `51.5,-0.12`, and a quantity is a number with an optional unit item. A value that a row can't supply is left out of that row's edit.
 
-**Preview** shows the edits on the rows matching your facets, as QuickStatements. **Issues** lists what OpenRefine's checks would report. **Save schema** records it as a history step, so undo and redo work, and recipes carry it as `wikidata/save-wikibase-schema`.
+**Preview** shows the edits on the rows matching your facets, as QuickStatements. **Issues** lists what OpenRefine's checks would report, including the property constraints recorded on the Wikibase (format, single value, allowed values, qualifiers, units and others). **Save schema** records it as a history step, so undo and redo work, and recipes carry it as `wikidata/save-wikibase-schema`.
 
 ## Checking and exporting
 

@@ -124,3 +124,29 @@ fn issues_match_openrefine_preview_and_wikibase_issues() {
     }
     assert_eq!(checked, 14);
 }
+
+/// Constraint checks (tests/wikibase/constraints-gen.mjs): made-up properties each carrying one
+/// Wikidata constraint, and a schema that breaks them all.
+#[test]
+fn constraint_checks_match_openrefine() {
+    use std::collections::BTreeSet;
+    let f = fixtures();
+    let c: Value = serde_json::from_str(include_str!("../../../tests/wikibase/constraints.json")).unwrap();
+    let mut p = project(&f);
+    p.apply(serde_json::from_value(json!({ "op": "wikidata/save-wikibase-schema", "schema": c["schema"] })).unwrap()).unwrap();
+    let schema = wikibase::Schema::parse(p.overlay("wikibaseSchema").unwrap()).unwrap();
+    let properties = c["properties"].clone();
+    let constraints = move |pid: &str| wikibase::constraints_of(&json!({ "P2302": properties[pid][1] }));
+    let languages = |code: &str| ["en", "de", "fr", "mul"].contains(&code);
+    let rows: Vec<u32> = (0..p.table().rows as u32).collect();
+    let (_, warnings) = wikibase::inspect_with(&schema, p.table(), &rows, &languages, &constraints);
+    let ours: BTreeSet<String> = warnings.iter().map(|w| format!("{} {} {}", w.aggregation_id(), w.severity, w.count)).collect();
+    let theirs: BTreeSet<String> = c["warnings"].as_array().unwrap().iter().map(|w| format!("{} {} {}", w["aggregationId"].as_str().unwrap(), w["severity"].as_str().unwrap(), w["count"])).collect();
+    assert_eq!(ours, theirs);
+    for (row, expected) in c["issues"].as_array().unwrap().iter().enumerate() {
+        let (edits, warnings) = wikibase::inspect_with(&schema, p.table(), &[row as u32], &languages, &constraints);
+        let ours: BTreeSet<String> = if warnings.is_empty() && !edits.is_empty() { ["no-issue-detected".to_string()].into() } else { warnings.iter().map(|w| w.aggregation_id()).collect() };
+        let theirs: BTreeSet<String> = serde_json::from_str::<Vec<String>>(expected.as_str().unwrap()).unwrap().into_iter().collect();
+        assert_eq!(ours, theirs, "row {row}");
+    }
+}

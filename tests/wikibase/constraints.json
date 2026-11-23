@@ -1,0 +1,1871 @@
+{
+ "openrefine": "3.10-SNAPSHOT",
+ "generator": "tests/wikibase/constraints-gen.mjs",
+ "properties": {
+  "P9001": [
+   "string",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21502404,
+        "id": "Q21502404"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21502404",
+     "qualifiers": {
+      "P1793": [
+       {
+        "snaktype": "value",
+        "property": "P1793",
+        "datavalue": {
+         "value": "[A-Z][a-z]+ [A-Z][a-z]+",
+         "type": "string"
+        },
+        "datatype": "string"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P1793"
+     ]
+    }
+   ]
+  ],
+  "P9002": [
+   "string",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 19474404,
+        "id": "Q19474404"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q19474404",
+     "qualifiers": {},
+     "qualifiers-order": []
+    }
+   ]
+  ],
+  "P9003": [
+   "string",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21502410,
+        "id": "Q21502410"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21502410",
+     "qualifiers": {},
+     "qualifiers-order": []
+    }
+   ]
+  ],
+  "P9004": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21510859,
+        "id": "Q21510859"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21510859",
+     "qualifiers": {
+      "P2305": [
+       {
+        "snaktype": "value",
+        "property": "P2305",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 1,
+          "id": "Q1"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       },
+       {
+        "snaktype": "value",
+        "property": "P2305",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 2,
+          "id": "Q2"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2305"
+     ]
+    }
+   ]
+  ],
+  "P9005": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 52558054,
+        "id": "Q52558054"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q52558054",
+     "qualifiers": {
+      "P2305": [
+       {
+        "snaktype": "value",
+        "property": "P2305",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 145,
+          "id": "Q145"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2305"
+     ]
+    }
+   ]
+  ],
+  "P9006": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21502838,
+        "id": "Q21502838"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21502838",
+     "qualifiers": {
+      "P2306": [
+       {
+        "snaktype": "value",
+        "property": "P2306",
+        "datavalue": {
+         "value": {
+          "entity-type": "property",
+          "numeric-id": 9004,
+          "id": "P9004"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2306"
+     ]
+    }
+   ]
+  ],
+  "P9007": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21510851,
+        "id": "Q21510851"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21510851",
+     "qualifiers": {
+      "P2306": [
+       {
+        "snaktype": "value",
+        "property": "P2306",
+        "datavalue": {
+         "value": {
+          "entity-type": "property",
+          "numeric-id": 580,
+          "id": "P580"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2306"
+     ]
+    },
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21510856,
+        "id": "Q21510856"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21510856",
+     "qualifiers": {
+      "P2306": [
+       {
+        "snaktype": "value",
+        "property": "P2306",
+        "datavalue": {
+         "value": {
+          "entity-type": "property",
+          "numeric-id": 585,
+          "id": "P585"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2306"
+     ]
+    }
+   ]
+  ],
+  "P9008": [
+   "string",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 53869507,
+        "id": "Q53869507"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q53869507",
+     "qualifiers": {
+      "P5314": [
+       {
+        "snaktype": "value",
+        "property": "P5314",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 54828449,
+          "id": "Q54828449"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P5314"
+     ]
+    }
+   ]
+  ],
+  "P9009": [
+   "quantity",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 52848401,
+        "id": "Q52848401"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q52848401",
+     "qualifiers": {},
+     "qualifiers-order": []
+    },
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 51723761,
+        "id": "Q51723761"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q51723761",
+     "qualifiers": {},
+     "qualifiers-order": []
+    },
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21514353,
+        "id": "Q21514353"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21514353",
+     "qualifiers": {
+      "P2305": [
+       {
+        "snaktype": "value",
+        "property": "P2305",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 11573,
+          "id": "Q11573"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2305"
+     ]
+    }
+   ]
+  ],
+  "P9010": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 52004125,
+        "id": "Q52004125"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q52004125",
+     "qualifiers": {
+      "P2305": [
+       {
+        "snaktype": "value",
+        "property": "P2305",
+        "datavalue": {
+         "value": {
+          "entity-type": "item",
+          "numeric-id": 29934218,
+          "id": "Q29934218"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2305"
+     ]
+    }
+   ]
+  ],
+  "P9011": [
+   "string",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21510857,
+        "id": "Q21510857"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21510857",
+     "qualifiers": {},
+     "qualifiers-order": []
+    }
+   ]
+  ],
+  "P9012": [
+   "wikibase-item",
+   [
+    {
+     "mainsnak": {
+      "snaktype": "value",
+      "property": "P2302",
+      "datavalue": {
+       "value": {
+        "entity-type": "item",
+        "numeric-id": 21510855,
+        "id": "Q21510855"
+       },
+       "type": "wikibase-entityid"
+      },
+      "datatype": "wikibase-item"
+     },
+     "type": "statement",
+     "rank": "normal",
+     "id": "P$Q21510855",
+     "qualifiers": {
+      "P2306": [
+       {
+        "snaktype": "value",
+        "property": "P2306",
+        "datavalue": {
+         "value": {
+          "entity-type": "property",
+          "numeric-id": 9012,
+          "id": "P9012"
+         },
+         "type": "wikibase-entityid"
+        },
+        "datatype": "wikibase-item"
+       }
+      ]
+     },
+     "qualifiers-order": [
+      "P2306"
+     ]
+    }
+   ]
+  ],
+  "P580": [
+   "time",
+   []
+  ],
+  "P585": [
+   "time",
+   []
+  ]
+ },
+ "schema": {
+  "siteIri": "http://www.wikidata.org/entity/",
+  "entityTypeSiteIRI": {
+   "item": "http://www.wikidata.org/entity/",
+   "property": "http://www.wikidata.org/entity/"
+  },
+  "mediaWikiApiEndpoint": "{API}",
+  "entityEdits": [
+   {
+    "type": "wbitemeditexpr",
+    "subject": {
+     "type": "wbentityvariable",
+     "columnName": "item"
+    },
+    "nameDescs": [
+     {
+      "name_type": "LABEL_IF_NEW",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringvariable",
+        "columnName": "name"
+       }
+      }
+     },
+     {
+      "name_type": "DESCRIPTION_IF_NEW",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringconstant",
+        "value": "someone"
+       }
+      }
+     }
+    ],
+    "statementGroups": [
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9001",
+       "label": "P9001",
+       "datatype": "string"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbstringvariable",
+         "columnName": "name"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9002",
+       "label": "P9002",
+       "datatype": "string"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbstringvariable",
+         "columnName": "name"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       },
+       {
+        "value": {
+         "type": "wbstringvariable",
+         "columnName": "alias"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9003",
+       "label": "P9003",
+       "datatype": "string"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbstringconstant",
+         "value": "same everywhere"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9004",
+       "label": "P9004",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9005",
+       "label": "P9005",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9006",
+       "label": "P9006",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityidvalueconstant",
+         "id": "Q5",
+         "label": "Q5"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9007",
+       "label": "P9007",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [
+         {
+          "prop": {
+           "type": "wbpropconstant",
+           "pid": "P580",
+           "label": "P580",
+           "datatype": "time"
+          },
+          "value": {
+           "type": "wbdatevariable",
+           "columnName": "born"
+          }
+         },
+         {
+          "prop": {
+           "type": "wbpropconstant",
+           "pid": "P9008",
+           "label": "P9008",
+           "datatype": "string"
+          },
+          "value": {
+           "type": "wbstringconstant",
+           "value": "as qualifier"
+          }
+         }
+        ],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9008",
+       "label": "P9008",
+       "datatype": "string"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbstringconstant",
+         "value": "as main value"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9009",
+       "label": "P9009",
+       "datatype": "quantity"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbquantityexpr",
+         "amount": {
+          "type": "wbstringvariable",
+          "columnName": "population"
+         },
+         "unit": null
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       },
+       {
+        "value": {
+         "type": "wbquantityexpr",
+         "amount": {
+          "type": "wbstringconstant",
+          "value": "1e3"
+         },
+         "unit": {
+          "type": "wbentityidvalueconstant",
+          "id": "Q712226",
+          "label": "Q712226"
+         }
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9010",
+       "label": "P9010",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9011",
+       "label": "P9011",
+       "datatype": "string"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbstringvariable",
+         "columnName": "name"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P9012",
+       "label": "P9012",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringconstant",
+             "value": "https://example.org/source"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "warnings": [
+  {
+   "type": "no-unit-provided",
+   "bucketId": "P9009",
+   "severity": "IMPORTANT",
+   "count": 3,
+   "properties": {
+    "example_item_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9009",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9009",
+     "types": [],
+     "label": "P9009"
+    },
+    "example_value": "1200"
+   },
+   "facetable": true,
+   "aggregationId": "no-unit-provided_P9009"
+  },
+  {
+   "type": "property-found-in-mainsnak",
+   "bucketId": "P9008",
+   "severity": "IMPORTANT",
+   "count": 4,
+   "properties": {
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9008",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9008",
+     "types": [],
+     "label": "P9008"
+    }
+   },
+   "facetable": true,
+   "aggregationId": "property-found-in-mainsnak_P9008"
+  },
+  {
+   "type": "identical-values-for-distinct-valued-property",
+   "bucketId": "P9003",
+   "severity": "IMPORTANT",
+   "count": 3,
+   "properties": {
+    "item2_entity": {
+     "placeholder": true,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q-2312667159328530877",
+     "siteIri": "http://localhost/entity/",
+     "iri": "http://localhost/entity/Q-2312667159328530877",
+     "types": [],
+     "label": "NEW2",
+     "reconInternalId": -2312667159328531000
+    },
+    "item1_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9003",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9003",
+     "types": [],
+     "label": "P9003"
+    }
+   },
+   "facetable": false,
+   "aggregationId": "identical-values-for-distinct-valued-property_P9003"
+  },
+  {
+   "type": "missing-inverse-statements",
+   "bucketId": "P9012",
+   "severity": "IMPORTANT",
+   "count": 4,
+   "properties": {
+    "inverse_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9012",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9012",
+     "types": [],
+     "label": ""
+    },
+    "added_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9012",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9012",
+     "types": [],
+     "label": ""
+    },
+    "target_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q145",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q145",
+     "types": [],
+     "label": "United Kingdom",
+     "reconInternalId": -6277426350726839000
+    },
+    "source_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    }
+   },
+   "facetable": false,
+   "aggregationId": "missing-inverse-statements_P9012"
+  },
+  {
+   "type": "values-should-be-integers",
+   "bucketId": "P9009",
+   "severity": "IMPORTANT",
+   "count": 1,
+   "properties": {
+    "example_item_entity": {
+     "placeholder": true,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q-76195437523791400",
+     "siteIri": "http://localhost/entity/",
+     "iri": "http://localhost/entity/Q-76195437523791400",
+     "types": [],
+     "label": "NEW1",
+     "reconInternalId": -76195437523791400
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9009",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9009",
+     "types": [],
+     "label": "P9009"
+    },
+    "example_value": "42.5"
+   },
+   "facetable": true,
+   "aggregationId": "values-should-be-integers_P9009"
+  },
+  {
+   "type": "add-statements-with-invalid-format",
+   "bucketId": "P9001",
+   "severity": "IMPORTANT",
+   "count": 1,
+   "properties": {
+    "regex": "[A-Z][a-z]+ [A-Z][a-z]+",
+    "example_item_entity": {
+     "placeholder": true,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q-2312667159328530877",
+     "siteIri": "http://localhost/entity/",
+     "iri": "http://localhost/entity/Q-2312667159328530877",
+     "types": [],
+     "label": "NEW2",
+     "reconInternalId": -2312667159328531000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9001",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9001",
+     "types": [],
+     "label": "P9001"
+    },
+    "example_value": "Shared New Again"
+   },
+   "facetable": true,
+   "aggregationId": "add-statements-with-invalid-format_P9001"
+  },
+  {
+   "type": "bounds-disallowed",
+   "bucketId": "P9009",
+   "severity": "IMPORTANT",
+   "count": 4,
+   "properties": {
+    "example_item_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9009",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9009",
+     "types": [],
+     "label": "P9009"
+    },
+    "example_value": "1000"
+   },
+   "facetable": true,
+   "aggregationId": "bounds-disallowed_P9009"
+  },
+  {
+   "type": "invalid-unit",
+   "bucketId": "P9009",
+   "severity": "IMPORTANT",
+   "count": 4,
+   "properties": {
+    "unit_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "placeholder": false,
+     "id": "Q712226",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q712226",
+     "types": [],
+     "label": "Q712226"
+    },
+    "example_item_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9009",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9009",
+     "types": [],
+     "label": "P9009"
+    },
+    "example_value": "1000"
+   },
+   "facetable": true,
+   "aggregationId": "invalid-unit_P9009"
+  },
+  {
+   "type": "forbidden-value",
+   "bucketId": "P9005",
+   "severity": "IMPORTANT",
+   "count": 2,
+   "properties": {
+    "example_value_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q145",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q145",
+     "types": [],
+     "label": "United Kingdom",
+     "reconInternalId": -6277426350726839000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9005",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9005",
+     "types": [],
+     "label": "P9005"
+    },
+    "example_subject_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    }
+   },
+   "facetable": true,
+   "aggregationId": "forbidden-value_P9005"
+  },
+  {
+   "type": "forbidden-value",
+   "bucketId": "P9004",
+   "severity": "IMPORTANT",
+   "count": 4,
+   "properties": {
+    "example_value_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q145",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q145",
+     "types": [],
+     "label": "United Kingdom",
+     "reconInternalId": -6277426350726839000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9004",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9004",
+     "types": [],
+     "label": ""
+    },
+    "example_subject_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    }
+   },
+   "facetable": true,
+   "aggregationId": "forbidden-value_P9004"
+  },
+  {
+   "type": "single-valued-property-added-more-than-once",
+   "bucketId": "P9002",
+   "severity": "WARNING",
+   "count": 3,
+   "properties": {
+    "example_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q42",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q42",
+     "types": [],
+     "label": "Douglas Adams",
+     "reconInternalId": -3929732933019406300
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9002",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9002",
+     "types": [],
+     "label": "P9002"
+    }
+   },
+   "facetable": false,
+   "aggregationId": "single-valued-property-added-more-than-once_P9002"
+  },
+  {
+   "type": "multi-valued-property-is-required-for-new-item",
+   "bucketId": "P9011",
+   "severity": "WARNING",
+   "count": 1,
+   "properties": {
+    "example_entity": {
+     "placeholder": true,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q-76195437523791400",
+     "siteIri": "http://localhost/entity/",
+     "iri": "http://localhost/entity/Q-76195437523791400",
+     "types": [],
+     "label": "NEW1",
+     "reconInternalId": -76195437523791400
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9011",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9011",
+     "types": [],
+     "label": "P9011"
+    }
+   },
+   "facetable": true,
+   "aggregationId": "multi-valued-property-is-required-for-new-item_P9011"
+  },
+  {
+   "type": "new-item-without-instance-of-or-subclass-of",
+   "bucketId": null,
+   "severity": "WARNING",
+   "count": 2,
+   "properties": {
+    "example_entity": {
+     "placeholder": true,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q-76195437523791400",
+     "siteIri": "http://localhost/entity/",
+     "iri": "http://localhost/entity/Q-76195437523791400",
+     "types": [],
+     "label": "NEW1",
+     "reconInternalId": -76195437523791400
+    }
+   },
+   "facetable": true,
+   "aggregationId": "new-item-without-instance-of-or-subclass-of"
+  },
+  {
+   "type": "missing-mandatory-qualifiers",
+   "bucketId": "P9007-P585",
+   "severity": "WARNING",
+   "count": 4,
+   "properties": {
+    "missing_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P585",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P585",
+     "types": [],
+     "label": ""
+    },
+    "statement_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9007",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9007",
+     "types": [],
+     "label": "P9007"
+    },
+    "example_item_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    }
+   },
+   "facetable": true,
+   "aggregationId": "missing-mandatory-qualifiers_P9007-P585"
+  },
+  {
+   "type": "invalid-entity-type",
+   "bucketId": null,
+   "severity": "WARNING",
+   "count": 4,
+   "properties": {
+    "example_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9010",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9010",
+     "types": [],
+     "label": "P9010"
+    }
+   },
+   "facetable": true,
+   "aggregationId": "invalid-entity-type"
+  },
+  {
+   "type": "disallowed-qualifiers",
+   "bucketId": "P9007-P9008",
+   "severity": "WARNING",
+   "count": 4,
+   "properties": {
+    "statement_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9007",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9007",
+     "types": [],
+     "label": "P9007"
+    },
+    "example_item_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "disallowed_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9008",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9008",
+     "types": [],
+     "label": "P9008"
+    }
+   },
+   "facetable": true,
+   "aggregationId": "disallowed-qualifiers_P9007-P9008"
+  },
+  {
+   "type": "ignored-amount",
+   "bucketId": null,
+   "severity": "WARNING",
+   "count": 1,
+   "properties": {
+    "example_value": "ABC"
+   },
+   "facetable": true,
+   "aggregationId": "ignored-amount"
+  },
+  {
+   "type": "having-conflicts-with-statements",
+   "bucketId": "P9006P9004",
+   "severity": "WARNING",
+   "count": 4,
+   "properties": {
+    "added_property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9004",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9004",
+     "types": [],
+     "label": ""
+    },
+    "example_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9006",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9006",
+     "types": [],
+     "label": "P9006"
+    }
+   },
+   "facetable": false,
+   "aggregationId": "having-conflicts-with-statements_P9006P9004"
+  },
+  {
+   "type": "new-item-created",
+   "bucketId": null,
+   "severity": "INFO",
+   "count": 2,
+   "facetable": true,
+   "aggregationId": "new-item-created"
+  },
+  {
+   "type": "multi-valued-property-is-required-for-existing-item",
+   "bucketId": "P9011",
+   "severity": "INFO",
+   "count": 2,
+   "properties": {
+    "example_entity": {
+     "placeholder": false,
+     "entityType": "http://www.wikidata.org/ontology#Item",
+     "id": "Q7259",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/Q7259",
+     "types": [],
+     "label": "Ada Lovelace",
+     "reconInternalId": -8192456230216492000
+    },
+    "property_entity": {
+     "entityType": "http://www.wikidata.org/ontology#Property",
+     "placeholder": false,
+     "id": "P9011",
+     "siteIri": "http://www.wikidata.org/entity/",
+     "iri": "http://www.wikidata.org/entity/P9011",
+     "types": [],
+     "label": "P9011"
+    }
+   },
+   "facetable": true,
+   "aggregationId": "multi-valued-property-is-required-for-existing-item_P9011"
+  }
+ ],
+ "issues": [
+  "[ \"property-found-in-mainsnak_P9008\", \"bounds-disallowed_P9009\", \"missing-inverse-statements_P9012\", \"invalid-unit_P9009\", \"forbidden-value_P9005\", \"forbidden-value_P9004\", \"missing-mandatory-qualifiers_P9007-P585\", \"single-valued-property-added-more-than-once_P9002\", \"invalid-entity-type\", \"disallowed-qualifiers_P9007-P9008\", \"having-conflicts-with-statements_P9006P9004\", \"multi-valued-property-is-required-for-existing-item_P9011\" ]",
+  "[ \"no-unit-provided_P9009\", \"property-found-in-mainsnak_P9008\", \"bounds-disallowed_P9009\", \"missing-inverse-statements_P9012\", \"invalid-unit_P9009\", \"forbidden-value_P9005\", \"forbidden-value_P9004\", \"missing-mandatory-qualifiers_P9007-P585\", \"invalid-entity-type\", \"disallowed-qualifiers_P9007-P9008\", \"having-conflicts-with-statements_P9006P9004\", \"multi-valued-property-is-required-for-existing-item_P9011\" ]",
+  "[ \"no-unit-provided_P9009\", \"property-found-in-mainsnak_P9008\", \"missing-inverse-statements_P9012\", \"values-should-be-integers_P9009\", \"bounds-disallowed_P9009\", \"invalid-unit_P9009\", \"forbidden-value_P9004\", \"single-valued-property-added-more-than-once_P9002\", \"multi-valued-property-is-required-for-new-item_P9011\", \"new-item-without-instance-of-or-subclass-of\", \"missing-mandatory-qualifiers_P9007-P585\", \"invalid-entity-type\", \"disallowed-qualifiers_P9007-P9008\", \"having-conflicts-with-statements_P9006P9004\", \"new-item-created\" ]",
+  "[ \"no-unit-provided_P9009\", \"property-found-in-mainsnak_P9008\", \"missing-inverse-statements_P9012\", \"bounds-disallowed_P9009\", \"invalid-unit_P9009\", \"forbidden-value_P9004\", \"multi-valued-property-is-required-for-new-item_P9011\", \"new-item-without-instance-of-or-subclass-of\", \"missing-mandatory-qualifiers_P9007-P585\", \"invalid-entity-type\", \"disallowed-qualifiers_P9007-P9008\", \"having-conflicts-with-statements_P9006P9004\", \"new-item-created\" ]",
+  "[ \"property-found-in-mainsnak_P9008\", \"bounds-disallowed_P9009\", \"invalid-unit_P9009\", \"add-statements-with-invalid-format_P9001\", \"multi-valued-property-is-required-for-new-item_P9011\", \"ignored-amount\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+  "[ \"no-edit-generated\" ]"
+ ],
+ "api": [
+  {
+   "format": "json",
+   "action": "wbgetentities",
+   "ids": "P9004|P9005|P9006|P9007|P9008|P580|P9009|P9010|P854|P9011|P9001|P9012|P9002|P9003",
+   "props": "info|datatype|labels|aliases|descriptions|claims|sitelinks"
+  },
+  {
+   "format": "json",
+   "action": "wbgetentities",
+   "ids": "P585",
+   "props": "info|datatype|labels|aliases|descriptions|claims|sitelinks"
+  }
+ ]
+}

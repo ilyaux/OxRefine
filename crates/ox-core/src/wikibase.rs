@@ -276,6 +276,10 @@ impl Decimal {
         Some(Decimal { unscaled: if negative { -unscaled } else { unscaled }, scale: frac.len() as i32 - exponent })
     }
 
+    pub fn is_integer(&self) -> bool {
+        self.scale <= 0 || 10i128.checked_pow(self.scale as u32).is_some_and(|p| self.unscaled % p == 0)
+    }
+
     /// BigDecimal.toPlainString
     pub fn plain(&self) -> String {
         let digits = self.unscaled.unsigned_abs().to_string();
@@ -541,19 +545,76 @@ impl Warning {
 }
 
 /// The issues OxRefine checks, in the order it lists them, with OpenRefine's severities.
-/// ponytail: the checks that need no property constraints; constraint checks (format, single
-/// value, allowed values...) need the constraints fetched from the Wikibase.
-const ISSUES: [(&str, &str); 17] = [
+const ISSUES: &[(&str, &str)] = &[
     ("monolingual-text-without-language", "WARNING"), ("ignored-date", "WARNING"), ("ignored-coordinates", "WARNING"), ("ignored-amount", "WARNING"),
     ("missing-file-name-extension", "CRITICAL"), ("invalid-mediainfo-subject", "CRITICAL"),
     ("new-item-without-labels-or-aliases", "CRITICAL"), ("new-item-without-descriptions", "WARNING"), ("new-media-without-file-path", "CRITICAL"),
     ("unsourced-statements", "WARNING"), ("early-gregorian-date", "WARNING"), ("item-description-begin-with-article", "WARNING"),
     ("new-item-with-deleted-statements", "WARNING"), ("new-item-without-instance-of-or-subclass-of", "WARNING"),
     ("new-item-created", "INFO"), ("new-media-created", "INFO"), ("no-edit-generated", "INFO"),
+    // property constraints
+    ("add-statements-with-invalid-format", "IMPORTANT"), ("forbidden-value", "IMPORTANT"), ("identical-values-for-distinct-valued-property", "IMPORTANT"),
+    ("property-found-in-mainsnak", "IMPORTANT"), ("property-found-in-qualifier", "IMPORTANT"), ("property-found-in-reference", "IMPORTANT"),
+    ("values-should-be-integers", "IMPORTANT"), ("bounds-disallowed", "IMPORTANT"), ("no-unit-provided", "IMPORTANT"), ("invalid-unit", "IMPORTANT"),
+    ("missing-inverse-statements", "IMPORTANT"), ("single-valued-property-added-more-than-once", "WARNING"), ("having-conflicts-with-statements", "WARNING"),
+    ("disallowed-qualifiers", "WARNING"), ("missing-mandatory-qualifiers", "WARNING"), ("invalid-entity-type", "WARNING"),
+    ("multi-valued-property-is-required-for-new-item", "WARNING"), ("multi-valued-property-is-required-for-existing-item", "INFO"),
 ];
+
+/// A property constraint (a P2302 statement): the constraint item and its parameters (qualifiers),
+/// with the ids of Wikidata's manifest, which OpenRefine uses for Wikidata.
+#[derive(Clone, Debug, Default)]
+pub struct Constraint { pub kind: String, pub params: Vec<(String, String)> }
+
+impl Constraint {
+    fn values(&self, pid: &str) -> Vec<&str> {
+        self.params.iter().filter(|(p, _)| p == pid).map(|(_, v)| v.as_str()).collect()
+    }
+}
+
+/// The constraints in a property's claims, as wbgetentities gives them.
+pub fn constraints_of(claims: &J) -> Vec<Constraint> {
+    claims["P2302"].as_array().into_iter().flatten().filter_map(|c| {
+        let kind = c["mainsnak"]["datavalue"]["value"]["id"].as_str()?.to_string();
+        let params = c["qualifiers"].as_object().into_iter().flatten().flat_map(|(pid, snaks)| snaks.as_array().into_iter().flatten().filter_map(move |s| {
+            let v = &s["datavalue"]["value"];
+            Some((pid.clone(), v["id"].as_str().or(v.as_str())?.to_string()))
+        })).collect();
+        Some(Constraint { kind, params })
+    }).collect()
+}
+
+/// The constraints of the schema's properties on its Wikibase, fetched once per property; none when
+/// the Wikibase can't be asked.
+pub fn constraint_check(schema: &Schema) -> impl Fn(&str) -> Vec<Constraint> {
+    use std::sync::{Mutex, OnceLock};
+    static CACHE: OnceLock<Mutex<HashMap<(String, String), Vec<Constraint>>>> = OnceLock::new();
+    let cache = CACHE.get_or_init(Default::default);
+    let api = schema.api.clone().unwrap_or_default();
+    let mut pids: Vec<String> = schema.exprs().into_iter().filter_map(|e| e.pid().map(String::from)).collect();
+    pids.sort();
+    pids.dedup();
+    let missing: Vec<String> = { let c = cache.lock().unwrap_or_else(|e| e.into_inner()); pids.into_iter().filter(|p| !c.contains_key(&(api.clone(), p.clone()))).collect() };
+    if url::Url::parse(&api).is_ok_and(|u| matches!(u.scheme(), "http" | "https")) {
+        for chunk in missing.chunks(50) {
+            let ids = chunk.join("|");
+            let reply = ureq::get(&api).query_pairs([("action", "wbgetentities"), ("ids", ids.as_str()), ("props", "claims|datatype"), ("format", "json")]).call().ok()
+                .and_then(|mut r| serde_json::from_reader::<_, J>(r.body_mut().as_reader()).ok());
+            let Some(reply) = reply else { break };
+            let mut c = cache.lock().unwrap_or_else(|e| e.into_inner());
+            for pid in chunk { c.insert((api.clone(), pid.clone()), constraints_of(&reply["entities"][pid]["claims"])); }
+        }
+    }
+    move |pid: &str| cache.lock().unwrap_or_else(|e| e.into_inner()).get(&(api.clone(), pid.to_string())).cloned().unwrap_or_default()
+}
 
 /// The edits of the rows and their issues, as OpenRefine's schema preview reports them.
 pub fn inspect(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool) -> (Vec<Edit>, Vec<Warning>) {
+    inspect_with(schema, t, rows, languages, &constraint_check(schema))
+}
+
+/// inspect with the properties' constraints from `constraints`.
+pub fn inspect_with(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool, constraints: &dyn Fn(&str) -> Vec<Constraint>) -> (Vec<Edit>, Vec<Warning>) {
     let (edits, noted) = evaluate_noting(schema, t, rows, languages);
     let mut found: Vec<Warning> = vec![];
     let mut add = |kind: &'static str, bucket: Option<&str>, example: &str| {
@@ -608,6 +669,85 @@ pub fn inspect(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str
             add("new-item-created", None, "");
         }
         if new && e.media_info { add("new-media-created", None, ""); }
+        // property constraints, per statement and per entity
+        let subject = match &e.subject { EntityId::Existing(id) => Some(id.as_str()), _ => None };
+        let applies = |c: &Constraint| !subject.is_some_and(|id| c.values("P2303").contains(&id));
+        for (pid, statements) in &e.groups {
+            let cs: Vec<Constraint> = constraints(pid).into_iter().filter(applies).collect();
+            let live: Vec<&Statement> = statements.iter().filter(|s| s.mode != "delete" && s.value.is_some()).collect();
+            if live.is_empty() { continue; }
+            for c in &cs {
+                match c.kind.as_str() {
+                    "Q19474404" if live.len() > 1 => add("single-valued-property-added-more-than-once", Some(pid), &shown),
+                    "Q21510857" if live.len() == 1 => add(if new { "multi-valued-property-is-required-for-new-item" } else { "multi-valued-property-is-required-for-existing-item" }, Some(pid), &shown),
+                    "Q21502838" => for other in c.values("P2306") {
+                        if e.groups.iter().any(|(p, s)| p == other && s.iter().any(|s| s.mode != "delete" && s.value.is_some())) { add("having-conflicts-with-statements", Some(&format!("{pid}{other}")), &shown); }
+                    },
+                    "Q52004125" if !c.values("P2305").contains(&if e.media_info { "Q59712033" } else { "Q29934200" }) => add("invalid-entity-type", None, &shown),
+                    _ => {}
+                }
+            }
+            for s in &live {
+                let v = s.value.as_ref().unwrap();
+                for c in &cs {
+                    match (c.kind.as_str(), v) {
+                        ("Q21502404", _) => {
+                            let text = match v { Val::Str(t) | Val::Mono { text: t, .. } => Some(t.as_str()), Val::Entity(EntityId::Existing(id)) => Some(id.as_str()), _ => None };
+                            for pattern in c.values("P1793") {
+                                let whole = regex::Regex::new(&format!("^(?:{pattern})$"));
+                                if let (Some(text), Ok(re)) = (text, whole) { if !re.is_match(text) { add("add-statements-with-invalid-format", Some(pid), text); } }
+                            }
+                        }
+                        ("Q21510859", Val::Entity(EntityId::Existing(id))) if !c.values("P2305").contains(&id.as_str()) => add("forbidden-value", Some(pid), id),
+                        ("Q52558054", Val::Entity(EntityId::Existing(id))) if c.values("P2305").contains(&id.as_str()) => add("forbidden-value", Some(pid), id),
+                        ("Q52848401", Val::Quantity { amount, .. }) if !amount.is_integer() => add("values-should-be-integers", Some(pid), &amount.plain()),
+                        ("Q51723761", Val::Quantity { amount, bounds: Some(_), .. }) => add("bounds-disallowed", Some(pid), &amount.plain()),
+                        ("Q21514353", Val::Quantity { amount, unit, .. }) => match unit {
+                            None => add("no-unit-provided", Some(pid), &amount.plain()),
+                            Some(u) if !c.values("P2305").contains(&u.as_str()) => add("invalid-unit", Some(pid), u),
+                            _ => {}
+                        },
+                        ("Q21510851", _) => for (q, _) in &s.qualifiers {
+                            if !c.values("P2306").contains(&q.as_str()) { add("disallowed-qualifiers", Some(&format!("{pid}-{q}")), &shown); }
+                        },
+                        ("Q21510856", _) => for m in c.values("P2306") {
+                            if !s.qualifiers.iter().any(|(q, _)| q == m) { add("missing-mandatory-qualifiers", Some(&format!("{pid}-{m}")), &shown); }
+                        },
+                        ("Q53869507", _) if !c.values("P5314").contains(&"Q54828448") => add("property-found-in-mainsnak", Some(pid), pid),
+                        _ => {}
+                    }
+                }
+                // where the properties of qualifiers and references may be used
+                for (place, kind, snaks) in [("Q54828449", "property-found-in-qualifier", s.qualifiers.iter().collect::<Vec<_>>()), ("Q54828450", "property-found-in-reference", s.references.iter().flatten().collect())] {
+                    for (q, _) in snaks {
+                        if constraints(q).iter().any(|c| c.kind == "Q53869507" && !c.values("P5314").contains(&place)) { add(kind, Some(q), q); }
+                    }
+                }
+            }
+        }
+    }
+    // across the batch: distinct values, and inverse statements
+    let mut first: HashMap<(String, String), EntityId> = HashMap::new();
+    for e in &edits {
+        for (pid, statements) in &e.groups {
+            let cs = constraints(pid);
+            for s in statements.iter().filter(|s| s.mode != "delete") {
+                let Some(v) = &s.value else { continue };
+                if cs.iter().any(|c| c.kind == "Q21502410") {
+                    match first.get(&(pid.clone(), format!("{v:?}"))) {
+                        Some(other) if *other != e.subject => add("identical-values-for-distinct-valued-property", Some(pid), ""),
+                        Some(_) => {}
+                        None => { first.insert((pid.clone(), format!("{v:?}")), e.subject.clone()); }
+                    }
+                }
+                let Val::Entity(target) = v else { continue };
+                for c in cs.iter().filter(|c| c.kind == "Q21510855" || c.kind == "Q21510862") {
+                    let inverse = if c.kind == "Q21510862" { vec![pid.as_str()] } else { c.values("P2306") };
+                    let back = edits.iter().filter(|t| t.subject == *target).any(|t| t.groups.iter().any(|(p, ss)| inverse.contains(&p.as_str()) && ss.iter().any(|x| x.value == Some(Val::Entity(e.subject.clone())))));
+                    if !back { add("missing-inverse-statements", Some(pid), ""); }
+                }
+            }
+        }
     }
     if edits.is_empty() { add("no-edit-generated", None, ""); }
     found.sort_by_key(|w| ISSUES.iter().position(|(k, _)| *k == w.kind).unwrap_or(usize::MAX));

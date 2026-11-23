@@ -797,7 +797,7 @@ Selects the (unencoded) text of an element and its children, including any new l
 
 function taking no arguments and computing the Wikibase quality issues for the current row
 
-> OxRefine runs the checks that need no property constraints; see [Wikibase issues](differences.md#wikibase-issues).
+> OxRefine runs OpenRefine's checks, property constraints included; see [Wikibase issues](differences.md#wikibase-issues).
 
 ### xmlAttr
 
