@@ -8,7 +8,7 @@ Download the installer for your system from the [latest release](https://github.
 |---|---|
 | Windows | `OxRefine_<version>_x64-setup.exe` installs for your user only and needs no administrator rights; there is also an `.msi` |
 | macOS | `OxRefine_<version>_universal.dmg`, for both Apple silicon and Intel |
-| Linux | `OxRefine_<version>_amd64.AppImage` runs anywhere; there are also `.deb` and `.rpm` packages |
+| Linux | `OxRefine_<version>_amd64.AppImage`, or the `.deb` and `.rpm` packages. They are built on Ubuntu 22.04 and need a system at least that recent; on older ones and on Alpine, use the static `ox` below |
 
 The installers aren't code-signed yet, so your system may warn you the first time:
 
@@ -36,6 +36,8 @@ The release also has an `ox` archive for each system. It contains a single progr
 
 - `ox apply` replays an OpenRefine or OxRefine recipe on a file, with no window;
 - `ox serve` runs the full app in your browser, like OpenRefine does.
+
+On Linux there are two: `x86_64-unknown-linux-gnu` for current distributions, and `x86_64-unknown-linux-musl`, a static program that needs no system libraries. Use the static one on Alpine, on older distributions such as RHEL, Alma or Rocky Linux 8, or when the other says a `GLIBC_2.xx` version is missing. Each release runs it on Alpine and on Alma Linux 8 before publishing.
 
 See [Command line and server](command-line.md).
 

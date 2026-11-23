@@ -146,7 +146,7 @@ Each area is checked against fixtures produced by running the same cases through
 **[Get the latest release](https://github.com/ilyaux/OxRefine/releases/latest).** It includes:
 
 - installers for Windows (`.exe` or `.msi`), macOS (universal `.dmg`) and Linux (`.AppImage`, `.deb`, `.rpm`);
-- the `ox` command line for each of them.
+- the `ox` command line for each of them, plus a static Linux build that also runs on Alpine and older distributions such as RHEL/Alma 8.
 
 The desktop app checks for updates when it starts and offers to install them.
 

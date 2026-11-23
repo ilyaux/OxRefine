@@ -98,6 +98,9 @@ jobs:
             target: x86_64-apple-darwin
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+          # static: runs on Alpine and on older glibc systems such as RHEL/Alma 8
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -114,8 +117,14 @@ jobs:
       - name: Build the UI
         working-directory: ui
         run: npm ci && npm run build
+      - name: musl C toolchain
+        if: endsWith(matrix.target, '-musl')
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
       - name: Build ox
         run: cargo build --release --locked -p ox-cli --target ${{ matrix.target }}
+      - name: Run the static build on Alpine and Alma Linux 8
+        if: endsWith(matrix.target, '-musl')
+        run: bash tools/smoke-static.sh target/${{ matrix.target }}/release/ox
       - name: Package and attach to the release
         shell: bash
         env:

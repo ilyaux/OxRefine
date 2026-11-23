@@ -44,6 +44,23 @@ jobs:
         run: node --test tests/*.test.mjs ../benchmarks/*.test.mjs ../tests/release/*.test.mjs ../tools/*.test.mjs
       - run: npm run build
 
+  static:
+    # one self-contained ox for Linux systems the glibc build can't start on (Alpine, RHEL/Alma 8)
+    name: Static Linux build (Alpine, Alma Linux 8)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+      - uses: Swatinem/rust-cache@v2
+      - name: musl C toolchain
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - name: Build ox
+        run: cargo build --release --locked -p ox-cli --target x86_64-unknown-linux-musl
+      - name: Run it on Alpine and Alma Linux 8
+        run: bash tools/smoke-static.sh target/x86_64-unknown-linux-musl/release/ox
+
   bench:
     name: Performance against the base build
     # the same runner builds both, so the comparison holds whatever the machine; a branch's first
