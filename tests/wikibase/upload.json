@@ -1,0 +1,976 @@
+{
+ "openrefine": "3.10-SNAPSHOT",
+ "generator": "tests/wikibase/upload-gen.mjs",
+ "schema": {
+  "siteIri": "http://www.wikidata.org/entity/",
+  "entityTypeSiteIRI": {
+   "item": "http://www.wikidata.org/entity/",
+   "property": "http://www.wikidata.org/entity/"
+  },
+  "mediaWikiApiEndpoint": "{API}",
+  "entityEdits": [
+   {
+    "type": "wbitemeditexpr",
+    "subject": {
+     "type": "wbentityvariable",
+     "columnName": "item"
+    },
+    "nameDescs": [
+     {
+      "name_type": "LABEL_IF_NEW",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringvariable",
+        "columnName": "name"
+       }
+      }
+     },
+     {
+      "name_type": "DESCRIPTION",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringconstant",
+        "value": "test person"
+       }
+      }
+     },
+     {
+      "name_type": "ALIAS",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringvariable",
+        "columnName": "alias"
+       }
+      }
+     }
+    ],
+    "statementGroups": [
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P27",
+       "label": "country of citizenship",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "country"
+        },
+        "qualifiers": [],
+        "references": [
+         {
+          "snaks": [
+           {
+            "prop": {
+             "type": "wbpropconstant",
+             "pid": "P854",
+             "label": "reference URL",
+             "datatype": "url"
+            },
+            "value": {
+             "type": "wbstringvariable",
+             "columnName": "website"
+            }
+           }
+          ]
+         }
+        ],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P31",
+       "label": "instance of",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityidvalueconstant",
+         "id": "Q5",
+         "label": "human"
+        },
+        "qualifiers": [],
+        "references": [],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P569",
+       "label": "date of birth",
+       "datatype": "time"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbdatevariable",
+         "columnName": "born"
+        },
+        "qualifiers": [
+         {
+          "prop": {
+           "type": "wbpropconstant",
+           "pid": "P580",
+           "label": "start time",
+           "datatype": "time"
+          },
+          "value": {
+           "type": "wbdateconstant",
+           "value": "2000"
+          }
+         }
+        ],
+        "references": [],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     },
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P106",
+       "label": "occupation",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": null,
+        "qualifiers": [],
+        "references": [],
+        "mode": "delete",
+        "mergingStrategy": {
+         "type": "property"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "existing": {
+  "Q42": {
+   "labels": {
+    "en": {
+     "language": "en",
+     "value": "Douglas Adams"
+    }
+   },
+   "descriptions": {},
+   "aliases": {},
+   "claims": {
+    "P27": [
+     {
+      "mainsnak": {
+       "snaktype": "value",
+       "property": "P27",
+       "datavalue": {
+        "value": {
+         "entity-type": "item",
+         "numeric-id": 145,
+         "id": "Q145"
+        },
+        "type": "wikibase-entityid"
+       },
+       "datatype": "wikibase-item"
+      },
+      "type": "statement",
+      "id": "Q42$11111111-1111-1111-1111-111111111111",
+      "rank": "normal"
+     }
+    ]
+   }
+  },
+  "Q7259": {
+   "labels": {},
+   "descriptions": {},
+   "aliases": {},
+   "claims": {}
+  }
+ },
+ "datatypes": {
+  "P27": "wikibase-item",
+  "P31": "wikibase-item",
+  "P569": "time",
+  "P580": "time",
+  "P854": "url",
+  "P813": "time",
+  "P106": "wikibase-item"
+ },
+ "upload": {
+  "summary": "test batch",
+  "maxlag": "5",
+  "editGroupsUrlSchema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])",
+  "tag": "openrefine-${version}",
+  "maxEditsPerMinute": "600",
+  "resultsColumnName": "Wikibase editing results"
+ },
+ "performed": {
+  "code": "pending"
+ },
+ "operation": {
+  "description": "Perform Wikibase edits",
+  "operation": {
+   "op": "wikidata/perform-wikibase-edits",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "summary": "test batch",
+   "maxlag": 5,
+   "editGroupsUrlSchema": "([[:toollabs:editgroups/b/OR/${batch_id}|details]])",
+   "maxEditsPerMinute": 600,
+   "tag": "openrefine-${version}",
+   "resultsColumnName": "Wikibase editing results",
+   "description": "Perform Wikibase edits"
+  }
+ },
+ "columns": [
+  "name",
+  "item",
+  "country",
+  "born",
+  "population",
+  "coords",
+  "title",
+  "lang",
+  "website",
+  "alias",
+  "Wikibase editing results"
+ ],
+ "rows": [
+  [
+   {
+    "v": "Douglas Adams"
+   },
+   {
+    "v": "Q42",
+    "r": {
+     "j": "matched",
+     "m": "Q42"
+    }
+   },
+   {
+    "v": "Q145",
+    "r": {
+     "j": "matched",
+     "m": "Q145"
+    }
+   },
+   {
+    "v": "1952-03-11"
+   },
+   null,
+   {
+    "v": "51.5/-0.1"
+   },
+   {
+    "v": "The Hitchhiker's Guide"
+   },
+   {
+    "v": "en"
+   },
+   {
+    "v": "https://douglasadams.com"
+   },
+   {
+    "v": "DNA"
+   },
+   {
+    "v": "{HOST}/w/index.php?diff=prev&oldid=1604"
+   }
+  ],
+  [
+   {
+    "v": "Ada Lovelace"
+   },
+   {
+    "v": "Q7259",
+    "r": {
+     "j": "matched",
+     "m": "Q7259"
+    }
+   },
+   {
+    "v": "Q145",
+    "r": {
+     "j": "matched",
+     "m": "Q145"
+    }
+   },
+   {
+    "v": "1815"
+   },
+   {
+    "v": "1200"
+   },
+   {
+    "v": "51.5074/-0.1278"
+   },
+   {
+    "v": "Notes"
+   },
+   {
+    "v": "en"
+   },
+   null,
+   null,
+   {
+    "v": "{HOST}/w/index.php?diff=prev&oldid=1605"
+   }
+  ],
+  [
+   {
+    "v": "New Person"
+   },
+   {
+    "v": "NEW1",
+    "r": {
+     "j": "matched",
+     "m": "Q1000"
+    }
+   },
+   {
+    "v": "Q30",
+    "r": {
+     "j": "matched",
+     "m": "Q30"
+    }
+   },
+   {
+    "v": "1990-05"
+   },
+   {
+    "v": "42.5"
+   },
+   null,
+   {
+    "v": "Ein Titel"
+   },
+   {
+    "v": "de"
+   },
+   {
+    "v": "http://example.org"
+   },
+   {
+    "v": "Neu"
+   },
+   {
+    "v": "http://www.wikidata.org/entity/Q1000"
+   }
+  ],
+  [
+   {
+    "v": "Shared New"
+   },
+   {
+    "v": "NEW2",
+    "r": {
+     "j": "matched",
+     "m": "Q1002"
+    }
+   },
+   {
+    "v": "Q142",
+    "r": {
+     "j": "matched",
+     "m": "Q142"
+    }
+   },
+   {
+    "v": "1999-12-31T10:20"
+   },
+   {
+    "v": "7"
+   },
+   {
+    "v": "48.85/2.35"
+   },
+   null,
+   {
+    "v": "fr"
+   },
+   null,
+   null,
+   {
+    "v": "http://www.wikidata.org/entity/Q1002"
+   }
+  ],
+  [
+   {
+    "v": "Shared New Again"
+   },
+   {
+    "v": "NEW2",
+    "r": {
+     "j": "matched",
+     "m": "Q1002"
+    }
+   },
+   null,
+   {
+    "v": "not a date"
+   },
+   {
+    "v": "abc"
+   },
+   {
+    "v": "bad"
+   },
+   {
+    "v": "  spaced  "
+   },
+   null,
+   null,
+   null,
+   null
+  ],
+  [
+   {
+    "v": "Blank Item"
+   },
+   null,
+   {
+    "v": "Q30",
+    "r": {
+     "j": "matched",
+     "m": "Q30"
+    }
+   },
+   {
+    "v": "2001"
+   },
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null
+  ]
+ ],
+ "login": [
+  {
+   "method": "POST",
+   "params": {
+    "meta": "tokens",
+    "format": "json",
+    "action": "query",
+    "type": "login"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "tokens": {
+      "logintoken": "logintoken+\\"
+     }
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "lgtoken": "logintoken+\\",
+    "lgpassword": "test-bot-password",
+    "format": "json",
+    "action": "login",
+    "lgname": "Tester"
+   },
+   "reply": {
+    "login": {
+     "result": "Success",
+     "lguserid": 7,
+     "lgusername": "Tester"
+    }
+   }
+  }
+ ],
+ "requests": [
+  {
+   "method": "POST",
+   "params": {
+    "assert": "user",
+    "format": "json",
+    "action": "wbgetentities",
+    "ids": "Q42|Q7259",
+    "props": "info|datatype|labels|aliases|descriptions|claims|sitelinks"
+   },
+   "reply": {
+    "entities": {
+     "Q42": {
+      "id": "Q42",
+      "pageid": 1,
+      "ns": 0,
+      "title": "Q42",
+      "lastrevid": 500,
+      "modified": "2024-01-01T00:00:00Z",
+      "type": "item",
+      "sitelinks": {},
+      "labels": {
+       "en": {
+        "language": "en",
+        "value": "Douglas Adams"
+       }
+      },
+      "descriptions": {},
+      "aliases": {},
+      "claims": {
+       "P27": [
+        {
+         "mainsnak": {
+          "snaktype": "value",
+          "property": "P27",
+          "datavalue": {
+           "value": {
+            "entity-type": "item",
+            "numeric-id": 145,
+            "id": "Q145"
+           },
+           "type": "wikibase-entityid"
+          },
+          "datatype": "wikibase-item"
+         },
+         "type": "statement",
+         "id": "Q42$11111111-1111-1111-1111-111111111111",
+         "rank": "normal"
+        }
+       ]
+      }
+     },
+     "Q7259": {
+      "id": "Q7259",
+      "pageid": 1,
+      "ns": 0,
+      "title": "Q7259",
+      "lastrevid": 500,
+      "modified": "2024-01-01T00:00:00Z",
+      "type": "item",
+      "sitelinks": {},
+      "labels": {},
+      "descriptions": {},
+      "aliases": {},
+      "claims": {}
+     }
+    },
+    "success": 1
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "meta": "tokens",
+    "assert": "user",
+    "format": "json",
+    "action": "query",
+    "type": "csrf"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "tokens": {
+      "csrftoken": "csrftoken+\\"
+     }
+    }
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "summary": "test batch ([[:toollabs:editgroups/b/OR/{BATCH}|details]])",
+    "new": "item",
+    "maxlag": "5",
+    "data": "{\"type\":\"item\",\"labels\":{\"en\":{\"language\":\"en\",\"value\":\"New Person\"}},\"descriptions\":{\"en\":{\"language\":\"en\",\"value\":\"test person\"}},\"aliases\":{\"en\":[{\"language\":\"en\",\"value\":\"Neu\"}]},\"claims\":{\"P27\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P27\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q30\",\"numeric-id\":30,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"references\":[{\"snaks\":{\"P854\":[{\"property\":\"P854\",\"datavalue\":{\"value\":\"http://example.org\",\"type\":\"string\"},\"snaktype\":\"value\"}]},\"snaks-order\":[\"P854\"]}],\"type\":\"statement\"}],\"P569\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P569\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+1990-05-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":10,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"},\"qualifiers-order\":[\"P580\"],\"type\":\"statement\",\"qualifiers\":{\"P580\":[{\"property\":\"P580\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+2000-00-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":9,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"}]}}],\"P31\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P31\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q5\",\"numeric-id\":5,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}]},\"sitelinks\":{}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "tags": "openrefine-3.10",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "labels": {
+      "en": {
+       "language": "en",
+       "value": "New Person"
+      }
+     },
+     "descriptions": {
+      "en": {
+       "language": "en",
+       "value": "test person"
+      }
+     },
+     "aliases": {
+      "en": [
+       {
+        "language": "en",
+        "value": "Neu"
+       }
+      ]
+     },
+     "sitelinks": {},
+     "type": "item",
+     "claims": {
+      "P27": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P27",
+         "datatype": "wikibase-item",
+         "datavalue": {
+          "value": {
+           "id": "Q30",
+           "numeric-id": 30,
+           "entity-type": "item"
+          },
+          "type": "wikibase-entityid"
+         },
+         "snaktype": "value"
+        },
+        "references": [
+         {
+          "snaks": {
+           "P854": [
+            {
+             "property": "P854",
+             "datavalue": {
+              "value": "http://example.org",
+              "type": "string"
+             },
+             "snaktype": "value"
+            }
+           ]
+          },
+          "snaks-order": [
+           "P854"
+          ]
+         }
+        ],
+        "type": "statement"
+       }
+      ],
+      "P569": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P569",
+         "datatype": "time",
+         "datavalue": {
+          "value": {
+           "time": "+1990-05-00T00:00:00Z",
+           "timezone": 0,
+           "before": 0,
+           "after": 0,
+           "precision": 10,
+           "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+          },
+          "type": "time"
+         },
+         "snaktype": "value"
+        },
+        "qualifiers-order": [
+         "P580"
+        ],
+        "type": "statement",
+        "qualifiers": {
+         "P580": [
+          {
+           "property": "P580",
+           "datatype": "time",
+           "datavalue": {
+            "value": {
+             "time": "+2000-00-00T00:00:00Z",
+             "timezone": 0,
+             "before": 0,
+             "after": 0,
+             "precision": 9,
+             "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+            },
+            "type": "time"
+           },
+           "snaktype": "value"
+          }
+         ]
+        }
+       }
+      ],
+      "P31": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P31",
+         "datatype": "wikibase-item",
+         "datavalue": {
+          "value": {
+           "id": "Q5",
+           "numeric-id": 5,
+           "entity-type": "item"
+          },
+          "type": "wikibase-entityid"
+         },
+         "snaktype": "value"
+        },
+        "type": "statement"
+       }
+      ]
+     },
+     "id": "Q1000",
+     "lastrevid": 1601
+    },
+    "success": 1
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "summary": "test batch ([[:toollabs:editgroups/b/OR/{BATCH}|details]])",
+    "new": "item",
+    "maxlag": "5",
+    "data": "{\"type\":\"item\",\"labels\":{\"en\":{\"language\":\"en\",\"value\":\"Shared New\"}},\"descriptions\":{\"en\":{\"language\":\"en\",\"value\":\"test person\"}},\"aliases\":{},\"claims\":{\"P27\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P27\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q142\",\"numeric-id\":142,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}],\"P569\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P569\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+1999-12-31T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":11,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"},\"qualifiers-order\":[\"P580\"],\"type\":\"statement\",\"qualifiers\":{\"P580\":[{\"property\":\"P580\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+2000-00-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":9,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"}]}}],\"P31\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P31\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q5\",\"numeric-id\":5,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}]},\"sitelinks\":{}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "tags": "openrefine-3.10",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "labels": {
+      "en": {
+       "language": "en",
+       "value": "Shared New"
+      }
+     },
+     "descriptions": {
+      "en": {
+       "language": "en",
+       "value": "test person"
+      }
+     },
+     "aliases": {},
+     "sitelinks": {},
+     "type": "item",
+     "claims": {
+      "P27": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P27",
+         "datatype": "wikibase-item",
+         "datavalue": {
+          "value": {
+           "id": "Q142",
+           "numeric-id": 142,
+           "entity-type": "item"
+          },
+          "type": "wikibase-entityid"
+         },
+         "snaktype": "value"
+        },
+        "type": "statement"
+       }
+      ],
+      "P569": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P569",
+         "datatype": "time",
+         "datavalue": {
+          "value": {
+           "time": "+1999-12-31T00:00:00Z",
+           "timezone": 0,
+           "before": 0,
+           "after": 0,
+           "precision": 11,
+           "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+          },
+          "type": "time"
+         },
+         "snaktype": "value"
+        },
+        "qualifiers-order": [
+         "P580"
+        ],
+        "type": "statement",
+        "qualifiers": {
+         "P580": [
+          {
+           "property": "P580",
+           "datatype": "time",
+           "datavalue": {
+            "value": {
+             "time": "+2000-00-00T00:00:00Z",
+             "timezone": 0,
+             "before": 0,
+             "after": 0,
+             "precision": 9,
+             "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+            },
+            "type": "time"
+           },
+           "snaktype": "value"
+          }
+         ]
+        }
+       }
+      ],
+      "P31": [
+       {
+        "rank": "normal",
+        "mainsnak": {
+         "property": "P31",
+         "datatype": "wikibase-item",
+         "datavalue": {
+          "value": {
+           "id": "Q5",
+           "numeric-id": 5,
+           "entity-type": "item"
+          },
+          "type": "wikibase-entityid"
+         },
+         "snaktype": "value"
+        },
+        "type": "statement"
+       }
+      ]
+     },
+     "id": "Q1002",
+     "lastrevid": 1603
+    },
+    "success": 1
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "summary": "test batch ([[:toollabs:editgroups/b/OR/{BATCH}|details]])",
+    "maxlag": "5",
+    "data": "{\"claims\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P569\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+1952-03-11T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":11,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"},\"qualifiers-order\":[\"P580\"],\"type\":\"statement\",\"qualifiers\":{\"P580\":[{\"property\":\"P580\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+2000-00-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":9,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"}]}},{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P31\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q5\",\"numeric-id\":5,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"},{\"rank\":\"normal\",\"id\":\"Q42$11111111-1111-1111-1111-111111111111\",\"mainsnak\":{\"property\":\"P27\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q145\",\"numeric-id\":145,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"references\":[{\"snaks\":{\"P854\":[{\"property\":\"P854\",\"datavalue\":{\"value\":\"https://douglasadams.com\",\"type\":\"string\"},\"snaktype\":\"value\"}]},\"snaks-order\":[\"P854\"]}],\"type\":\"statement\"}],\"aliases\":{\"en\":[{\"language\":\"en\",\"value\":\"DNA\",\"add\":\"\"}]},\"descriptions\":{\"en\":{\"language\":\"en\",\"value\":\"test person\"}}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "id": "Q42",
+    "baserevid": "500",
+    "tags": "openrefine-3.10",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "labels": {},
+     "descriptions": {
+      "en": {
+       "language": "en",
+       "value": "test person"
+      }
+     },
+     "aliases": {
+      "en": [
+       {
+        "language": "en",
+        "value": "DNA",
+        "add": ""
+       }
+      ]
+     },
+     "sitelinks": {},
+     "claims": {},
+     "id": "Q42",
+     "type": "item",
+     "lastrevid": 1604
+    },
+    "success": 1
+   }
+  },
+  {
+   "method": "POST",
+   "params": {
+    "summary": "test batch ([[:toollabs:editgroups/b/OR/{BATCH}|details]])",
+    "maxlag": "5",
+    "data": "{\"claims\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P27\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q145\",\"numeric-id\":145,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"},{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P569\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+1815-00-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":9,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"},\"qualifiers-order\":[\"P580\"],\"type\":\"statement\",\"qualifiers\":{\"P580\":[{\"property\":\"P580\",\"datatype\":\"time\",\"datavalue\":{\"value\":{\"time\":\"+2000-00-00T00:00:00Z\",\"timezone\":0,\"before\":0,\"after\":0,\"precision\":9,\"calendarmodel\":\"http://www.wikidata.org/entity/Q1985727\"},\"type\":\"time\"},\"snaktype\":\"value\"}]}},{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P31\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q5\",\"numeric-id\":5,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}],\"descriptions\":{\"en\":{\"language\":\"en\",\"value\":\"test person\"}},\"labels\":{\"en\":{\"language\":\"en\",\"value\":\"Ada Lovelace\"}}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "id": "Q7259",
+    "baserevid": "500",
+    "tags": "openrefine-3.10",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "labels": {
+      "en": {
+       "language": "en",
+       "value": "Ada Lovelace"
+      }
+     },
+     "descriptions": {
+      "en": {
+       "language": "en",
+       "value": "test person"
+      }
+     },
+     "aliases": {},
+     "sitelinks": {},
+     "claims": {},
+     "id": "Q7259",
+     "type": "item",
+     "lastrevid": 1605
+    },
+    "success": 1
+   }
+  }
+ ]
+}

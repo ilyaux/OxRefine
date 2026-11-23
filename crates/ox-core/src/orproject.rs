@@ -1070,6 +1070,29 @@ impl Archive {
                         *fetched = Some((0..target.rows).map(|r| fetched_cell(target.columns[c].get(r))).collect());
                     }
                 }
+                // an upload is never repeated: the items it made and its results column come along
+                if let OpKind::PerformWikibaseEdits { results_column_name, results, .. } = &mut k {
+                    let prev = self.states[i - 1].table();
+                    let mut created = serde_json::Map::new();
+                    for (c, name) in target.names.iter().enumerate() {
+                        let Ok(p) = prev.col(name) else { continue };
+                        for r in 0..target.rows.min(prev.rows) {
+                            if let (Some(a), Some(b)) = (prev.columns[p].recon(r), target.columns[c].recon(r)) {
+                                if a.judgment == crate::recon::Judgment::New && b.judgment == crate::recon::Judgment::Matched {
+                                    if let Some(m) = &b.matched { created.insert(a.id.to_string(), json!(m.id)); }
+                                }
+                            }
+                        }
+                    }
+                    let cells: Vec<J> = results_column_name.as_deref().and_then(|n| target.col(n).ok()).map_or_else(|| vec![J::Null; target.rows], |c| {
+                        (0..target.rows).map(|r| match target.columns[c].get(r) {
+                            Value::Str(s) => json!(s.to_string()),
+                            Value::Error(e) => json!({ "e": e }),
+                            _ => J::Null,
+                        }).collect()
+                    });
+                    *results = Some(json!({ "created": created, "cells": cells }));
+                }
                 if let OpKind::Recon { column_name, results, .. } = &mut k {
                     if let Ok(c) = target.col(column_name) {
                         let cells: Vec<_> = (0..target.rows).map(|r| target.columns[c].recon(r).cloned()).collect();

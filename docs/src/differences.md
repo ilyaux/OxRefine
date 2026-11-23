@@ -70,6 +70,15 @@ OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates
 
 `wikibaseIssues()` and the export's issue checks report what OpenRefine 3.10.1 reports for the checks that need no property constraints: new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The checks that depend on property constraints fetched from the Wikibase (format, single value, allowed values, conflicts and the like) are not run yet. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
 
+### Wikibase uploads
+
+Uploads send what OpenRefine 3.10.1 sends: `tests/wikibase/upload.json` records OpenRefine logging in to a mock MediaWiki API and uploading a schema, and OxRefine must send the same requests and edit data and leave the same table. The differences:
+
+- **Login.** OxRefine keeps a login only while it runs; it has no option to remember credentials.
+- **Change tag.** It adds no change tag unless the operation names one, because tags must exist on the wiki and OpenRefine's tag names OpenRefine.
+- **Media info.** Commons files are not uploaded yet.
+- **Statement order.** The order of statements within one edit can differ, which the wiki ignores.
+
 ### Wikibase QuickStatements
 
 OxRefine evaluates a Wikibase schema and writes QuickStatements as OpenRefine 3.10.1 does (`tests/wikibase`, outside the 2,473-check total), with three exceptions where OpenRefine's output is wrong. OpenRefine writes a statement in **add** mode with QuickStatements' removal prefix (`- `), so running the file would delete it; OxRefine writes it as an addition. OpenRefine writes year -44 as `+-044`, which QuickStatements rejects; OxRefine writes `-0044`. OpenRefine fails with an internal error on a schema with media info edits, which QuickStatements can't express; OxRefine says so. Language codes are checked against the schema's Wikibase, as in OpenRefine; when it can't be reached, OxRefine accepts any well-formed code.
@@ -82,7 +91,7 @@ OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and expor
 
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Extensions:** Wikibase uploads and the constraint-based issue checks (schemas are edited, kept, replayed and exported), Commons-specific GREL functions, OpenRefine's Java extension modules (OxRefine has [its own](extensions.md))
+- **Extensions:** Wikibase media info uploads and the constraint-based issue checks, Commons-specific GREL functions, OpenRefine's Java extension modules (OxRefine has [its own](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 

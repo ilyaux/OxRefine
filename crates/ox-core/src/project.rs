@@ -460,6 +460,10 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "recon_suggest" => return crate::recon::suggest(&a.url, &a.method, &a.text),
         // properties or items of a Wikibase (its MediaWiki API in `url`), for the schema editor
         "wikibase_search" => return crate::wikibase::search(&a.url, &a.method, &a.text),
+        // logins to a Wikibase (its MediaWiki API in `url`) for uploads, kept in this process only
+        "wikibase_login" => return crate::wikibase::login(a.url.trim(), &a.params),
+        "wikibase_login_status" => return Ok(crate::wikibase::login_status(a.url.trim())),
+        "wikibase_logout" => return Ok(crate::wikibase::logout(a.url.trim())),
         "fetch_url" => {
             let staging = import::staging_dir(store.map(|s| s.root()));
             // a Google Sheets link downloads the spreadsheet (every sheet) rather than its web page

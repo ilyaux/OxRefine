@@ -110,7 +110,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Wikibase extension: schema | A project's schema from an OpenRefine project or a recipe step (`wikidata/save-wikibase-schema`) is kept with its history, undone and redone, and written back to OpenRefine archives |
 | Wikibase → Export to QuickStatements / Export schema | **Export → QuickStatements** / **Wikibase schema**, for a project with a schema |
 | Wikibase → Edit Wikibase schema | **Edit Wikibase schema…** in the command palette (<kbd>Ctrl K</kbd>): items and media info with terms and statements (qualifiers, references, modes) from columns or values, property search on the Wikibase, the edits as QuickStatements and their issues |
-| Wikibase → Upload edits | Not yet |
+| Wikibase → Upload edits to Wikibase | The **Upload** tab of the schema editor: log in with a bot password or an owner-only OAuth consumer, then upload; see [Wikibase and Wikidata](wikibase.md) |
 
 ## Server and API
 

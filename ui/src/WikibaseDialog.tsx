@@ -108,7 +108,7 @@ function PropertyInput({ value, api, onChange }: { value: Expr; api: string; onC
       <select aria-label="Datatype" className={select} value={String(value.datatype ?? "wikibase-item")} onChange={(e) => onChange({ ...value, datatype: e.target.value })}>
         {DATATYPES.map((d) => <option key={d} value={d}>{d}</option>)}
       </select>
-      {value.label && value.label !== value.pid && <span className="text-xs text-muted-foreground">{String(value.label)}</span>}
+      {typeof value.label === "string" && value.label && value.label !== value.pid && <span className="text-xs text-muted-foreground">{value.label}</span>}
       {found.length > 0 && (
         <span role="listbox" aria-label="Properties found" className="absolute top-9 left-24 z-10 flex w-96 flex-col border bg-popover shadow-md">
           {found.map((f) => (
@@ -209,9 +209,80 @@ function EntityEditor({ entity, columns, api, onChange, onRemove }: { entity: En
   )
 }
 
+export type UploadSettings = { summary: string; maxlag: number; editGroupsUrlSchema: string }
+const noCredentials = { username: "", password: "", consumerToken: "", consumerSecret: "", accessToken: "", accessSecret: "" }
+
+/** Log in to the Wikibase (a bot password or an owner-only OAuth consumer, typed here and kept
+ * only by the running OxRefine), then upload the schema's edits on the matching rows. */
+function UploadPanel({ api, preview, onUpload }: { api: string; preview: Preview | null; onUpload: (s: UploadSettings) => Promise<unknown> }) {
+  const [status, setStatus] = useState<{ logged_in: boolean; username?: string } | null>(null)
+  const [mode, setMode] = useState<"password" | "oauth">("password")
+  const [form, setForm] = useState(noCredentials)
+  const [summary, setSummary] = useState("")
+  const [maxlag, setMaxlag] = useState("5")
+  const [error, setError] = useState("")
+  const [busy, setBusy] = useState(false)
+  useEffect(() => {
+    call<{ logged_in: boolean; username?: string }>("wikibase_login_status", { url: api }, { quiet: true }).then(({ data }) => setStatus(data), () => setStatus({ logged_in: false }))
+  }, [api])
+  const field = (key: keyof typeof noCredentials, label: string, secret = false) => (
+    <label className="flex flex-col gap-1 text-xs text-muted-foreground">{label}
+      <Input type={secret ? "password" : "text"} autoComplete="off" className="h-8 w-80 text-sm" value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+    </label>
+  )
+  const login = async () => {
+    setBusy(true)
+    setError("")
+    const params = mode === "password" ? { username: form.username, password: form.password } : { consumerToken: form.consumerToken, consumerSecret: form.consumerSecret, accessToken: form.accessToken, accessSecret: form.accessSecret }
+    try {
+      setStatus((await call<{ logged_in: boolean; username: string }>("wikibase_login", { url: api, params }, { quiet: true })).data)
+      setForm(noCredentials)
+    } catch (e) { setError((e as Error).message) } finally { setBusy(false) }
+  }
+  const critical = preview?.warnings.filter((w) => w.severity === "CRITICAL") ?? []
+  const upload = async () => {
+    setBusy(true)
+    setError("")
+    // EditGroups (Wikidata) groups OpenRefine-style batches, so they can be reviewed and undone together
+    const groups = api.includes("wikidata.org") ? "([[:toollabs:editgroups/b/OR/${batch_id}|details]])" : ""
+    try { await onUpload({ summary, maxlag: Number(maxlag) || 5, editGroupsUrlSchema: groups }) } catch (e) { setError((e as Error).message) } finally { setBusy(false) }
+  }
+  if (!status) return <p className="px-5 py-4 text-sm text-muted-foreground">…</p>
+  return (
+    <div className="flex flex-col gap-4 px-5 py-4">
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {!status.logged_in ? (
+        <form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); void login() }}>
+          <p className="text-sm">Log in to <span className="font-mono">{api}</span> to upload. Use a <a className="underline" href="https://www.mediawiki.org/wiki/Manual:Bot_passwords" target="_blank" rel="noreferrer">bot password</a> or an owner-only OAuth consumer; OxRefine keeps it only while it runs.</p>
+          <select aria-label="Login method" className={select + " w-80"} value={mode} onChange={(e) => setMode(e.target.value as typeof mode)}>
+            <option value="password">Bot password</option>
+            <option value="oauth">Owner-only OAuth consumer</option>
+          </select>
+          {mode === "password" ? <>{field("username", "User name (Name@BotName)")}{field("password", "Bot password", true)}</>
+            : <>{field("consumerToken", "Consumer token")}{field("consumerSecret", "Consumer secret", true)}{field("accessToken", "Access token")}{field("accessSecret", "Access secret", true)}</>}
+          <Button type="submit" className="self-start" disabled={busy}>{busy && <Spinner />}Log in</Button>
+        </form>
+      ) : (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm">Logged in as <span className="font-medium">{status.username}</span>. <button type="button" className="underline" onClick={() => call("wikibase_logout", { url: api }).then(() => setStatus({ logged_in: false }))}>Log out</button></p>
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">Edit summary
+            <Input className="h-8 w-[32rem] text-sm" placeholder="what these edits do" value={summary} onChange={(e) => setSummary(e.target.value)} />
+          </label>
+          <label className="flex flex-col gap-1 text-xs text-muted-foreground">Maxlag (seconds the wiki may lag before edits pause)
+            <Input className="h-8 w-24 text-sm" inputMode="numeric" value={maxlag} onChange={(e) => setMaxlag(e.target.value.replace(/\D/g, ""))} />
+          </label>
+          {critical.length > 0 && <p role="alert" className="text-sm text-destructive">{critical.length} critical issue{critical.length > 1 ? "s" : ""}: check the Issues tab first; the wiki may reject these edits.</p>}
+          {preview && <p className="text-sm text-muted-foreground">{preview.edits.toLocaleString()} entities will be edited, {preview.newEntities.toLocaleString()} of them created. New items' cells become matched to them, and each row's result goes in a new column.</p>}
+          <Button className="self-start" disabled={busy || !summary.trim() || !preview?.edits} onClick={upload}>{busy && <Spinner />}Save schema and upload edits</Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 /** OpenRefine's Wikibase → Edit Wikibase schema: entities, terms and statements from columns, the edits
  * they make on the matching rows (as QuickStatements) and their issues. Saving records a history step. */
-export function WikibaseDialog({ columns, engine, onSave, onClose }: { columns: string[]; engine: Engine; onSave: (schema: Schema) => Promise<unknown>; onClose: () => void }) {
+export function WikibaseDialog({ columns, engine, onSave, onUpload, onClose }: { columns: string[]; engine: Engine; onSave: (schema: Schema) => Promise<unknown>; onUpload: (schema: Schema, settings: UploadSettings) => Promise<unknown>; onClose: () => void }) {
   const [schema, setSchema] = useState<Schema | null>(null)
   const [preview, setPreview] = useState<Preview | null>(null)
   const [error, setError] = useState("")
@@ -275,6 +346,7 @@ export function WikibaseDialog({ columns, engine, onSave, onClose }: { columns: 
             <TabsTrigger value="schema">Schema</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="issues">Issues{preview && issues > 0 ? ` (${issues})` : ""}</TabsTrigger>
+            <TabsTrigger value="upload">Upload</TabsTrigger>
           </TabsList>
           <TabsContent value="schema" className="min-h-0 overflow-y-auto">
             {schema.entityEdits.length === 0 && <p className="px-5 py-4 text-sm text-muted-foreground">Add an item or media info on the left, then fill its terms and statements from your columns.</p>}
@@ -298,6 +370,9 @@ export function WikibaseDialog({ columns, engine, onSave, onClose }: { columns: 
               </div>
             ))}
             {preview && preview.warnings.length === 0 && <p className="px-5 py-4 text-sm text-muted-foreground">No issues found.</p>}
+          </TabsContent>
+          <TabsContent value="upload" className="min-h-0 overflow-y-auto">
+            <UploadPanel api={api} preview={preview} onUpload={async (settings) => { await onUpload(schema, settings); onClose() }} />
           </TabsContent>
         </Tabs>
       </div>

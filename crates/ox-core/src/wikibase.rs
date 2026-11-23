@@ -5,6 +5,9 @@ use crate::{grel::Value, recon::Judgment, table::Table, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as J};
 use std::{cell::RefCell, collections::{HashMap, HashSet}};
+#[path = "wikibase_upload.rs"]
+mod upload;
+pub use upload::{login, login_status, logout, upload, Settings, Uploaded};
 
 // ------------------------------------------------------------ the schema, in OpenRefine's key order
 
@@ -628,6 +631,11 @@ impl Drop for SchemaGuard {
         let previous = self.0.take();
         SCHEMA.with(|s| *s.borrow_mut() = previous);
     }
+}
+
+/// The schema of the project being worked on (see SchemaGuard).
+pub fn current_schema() -> Option<J> {
+    SCHEMA.with(|s| s.borrow().clone())
 }
 
 /// GREL's wikibaseIssues(): the issues of this row's edits alone, as aggregation ids.

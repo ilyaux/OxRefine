@@ -906,7 +906,11 @@ export function App() {
           />
         )}
         {modal?.kind === "wikibase" && summary && (
-          <WikibaseDialog columns={summary.columns} engine={engine} onClose={() => setModal(null)} onSave={(schema) => apply({ op: "wikidata/save-wikibase-schema", schema })} />
+          <WikibaseDialog columns={summary.columns} engine={engine} onClose={() => setModal(null)} onSave={(schema) => apply({ op: "wikidata/save-wikibase-schema", schema })}
+            onUpload={async (schema, s) => {
+              await apply({ op: "wikidata/save-wikibase-schema", schema })
+              await apply({ op: "wikidata/perform-wikibase-edits", engineConfig: engine, summary: s.summary, maxlag: s.maxlag, editGroupsUrlSchema: s.editGroupsUrlSchema, maxEditsPerMinute: 60, tag: "", resultsColumnName: "Wikibase editing results" })
+            }} />
         )}
         {modal?.kind === "export" && summary && (
           <ExportDialog

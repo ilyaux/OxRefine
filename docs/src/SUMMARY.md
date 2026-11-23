@@ -20,6 +20,7 @@
 - [Transforming cells and columns](transforming.md)
 - [Clustering](clustering.md)
 - [Reconciliation](reconciliation.md)
+- [Wikibase and Wikidata](wikibase.md)
 - [Exporting](exporting.md)
 - [Command line and server](command-line.md)
 - [Connecting an assistant with MCP](mcp.md)

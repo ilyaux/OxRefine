@@ -32,6 +32,10 @@ pub fn parse_recipe(value: serde_json::Value) -> Result<Vec<Op>> {
     }).collect()
 }
 
+fn default_maxlag() -> u64 {
+    5
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "op")]
 pub enum OpKind {
@@ -353,6 +357,28 @@ pub enum OpKind {
     /// overlay model) becomes `schema`. The table is unchanged; undo restores the previous schema.
     #[serde(rename = "wikidata/save-wikibase-schema")]
     SaveWikibaseSchema { schema: serde_json::Value },
+    /// perform-wikibase-edits: upload the schema's edits on the matching rows as the logged-in
+    /// user; new items' cells become matched to the items made, and each row's result goes in a
+    /// new column. What the upload did is kept (ox:results), so replaying never edits again.
+    #[serde(rename = "wikidata/perform-wikibase-edits", rename_all = "camelCase")]
+    PerformWikibaseEdits {
+        #[serde(default)]
+        engine_config: EngineConfig,
+        #[serde(default)]
+        summary: String,
+        #[serde(default = "default_maxlag")]
+        maxlag: u64,
+        #[serde(default)]
+        edit_groups_url_schema: Option<String>,
+        #[serde(default)]
+        max_edits_per_minute: Option<u64>,
+        #[serde(default)]
+        tag: Option<String>,
+        #[serde(default)]
+        results_column_name: Option<String>,
+        #[serde(rename = "ox:results", default, skip_serializing_if = "Option::is_none")]
+        results: Option<serde_json::Value>,
+    },
 
     // ------------------------------------------------------------ extensions
     /// An operation an installed extension provides (docs/src/extensions.md). It is part of recipes;
@@ -757,6 +783,58 @@ impl Op {
         j
     }
 
+    /// The upload of perform-wikibase-edits, or (replaying) what it did, applied to the table.
+    fn perform_wikibase_edits(&mut self, t: &Table) -> Result<Table> {
+        let OpKind::PerformWikibaseEdits { engine_config, summary, maxlag, edit_groups_url_schema, max_edits_per_minute, tag, results_column_name, results } = &mut self.kind else { unreachable!() };
+        if results.is_none() {
+            let schema = crate::wikibase::current_schema().ok_or("No Wikibase schema in this project: save one first.")?;
+            let schema = crate::wikibase::Schema::parse(&schema)?;
+            let sel = engine::mask(t, engine_config)?;
+            let rows: Vec<u32> = (0..t.rows as u32).filter(|&r| sel.as_ref().is_none_or(|s| s[r as usize])).collect();
+            let settings = crate::wikibase::Settings {
+                summary, maxlag: *maxlag, edit_groups: edit_groups_url_schema.as_deref().unwrap_or(""), tag: tag.as_deref().unwrap_or(""),
+                max_edits_per_minute: max_edits_per_minute.unwrap_or(0),
+            };
+            let done = crate::wikibase::upload(&schema, t, &rows, &settings)?;
+            let created: serde_json::Map<String, serde_json::Value> = done.created.into_iter().map(|(n, id)| (n.to_string(), serde_json::json!(id))).collect();
+            *results = Some(serde_json::json!({ "created": created, "cells": done.cells }));
+        }
+        let saved = results.as_ref().unwrap();
+        let created: std::collections::HashMap<i64, String> = saved["created"].as_object().into_iter().flatten()
+            .filter_map(|(k, v)| Some((k.parse().ok()?, v.as_str()?.to_string()))).collect();
+        let mut out = t.clone();
+        // new items' cells become matched to the items made
+        for c in 0..out.columns.len() {
+            let column = &out.columns[c];
+            let Some(rc) = column.recon.as_ref() else { continue };
+            if !rc.cells.iter().flatten().any(|r| r.judgment == crate::recon::Judgment::New && created.contains_key(&r.id)) { continue; }
+            let cells: Vec<Option<Arc<crate::recon::Recon>>> = rc.cells.iter().enumerate().map(|(row, cell)| match cell {
+                Some(r) if r.judgment == crate::recon::Judgment::New && created.contains_key(&r.id) => {
+                    let mut r = (**r).clone();
+                    r.judgment = crate::recon::Judgment::Matched;
+                    r.matched = Some(crate::recon::Candidate { id: created[&r.id].clone(), name: column.get(row).to_java_string(), types: vec![], score: 100.0 });
+                    Some(Arc::new(r))
+                }
+                other => other.clone(),
+            }).collect();
+            let mut changed = Column { dict: column.dict.clone(), codes: column.codes.clone(), recon: None };
+            let mut recon = crate::recon::ReconCol { cells, config: rc.config.clone(), stats: None };
+            recon.stats = Some(recon.count(&changed));
+            changed.recon = Some(Arc::new(recon));
+            out.columns[c] = Arc::new(changed);
+        }
+        if let Some(name) = results_column_name.as_deref().filter(|n| !n.is_empty()) {
+            let values = (0..t.rows).map(|r| match &saved["cells"][r] {
+                serde_json::Value::String(s) => Value::Str(s.as_str().into()),
+                serde_json::Value::Object(o) => Value::err(o.get("e").and_then(|e| e.as_str()).unwrap_or("error")),
+                _ => Value::Null,
+            });
+            out.columns.push(Arc::new(Column::try_from_values(values, &crate::storage::current_budget())?));
+            out.names.push(name.to_string());
+        }
+        Ok(out)
+    }
+
     /// OpenRefine's ReconOperation: the selected cells of the column get Recons from the service
     /// (asked once per distinct query, in batches, as a job with progress and cancel); the column
     /// keeps the config. The Recons are kept in the operation, so replaying reuses them.
@@ -1032,6 +1110,7 @@ impl Op {
             TextTransform { column_name, expression, .. } => format!("Text transform on cells in column {column_name} using expression {expression}"),
             Extension { operation, .. } => format!("Run extension operation {operation}"),
             SaveWikibaseSchema { .. } => "Save Wikibase schema".into(),
+            PerformWikibaseEdits { .. } => "Perform Wikibase edits".into(),
             OpKind::Recon { column_name, config, .. } => {
                 let ty = config.get("type").and_then(|t| t.get("id")).and_then(|t| t.as_str()).unwrap_or("null");
                 format!("Reconcile cells in column {column_name} to type {ty}")
@@ -1130,6 +1209,9 @@ impl Op {
             return crate::extensions::operation(operation, t, params);
         }
         // only the project's overlay changes (Project::apply); stored as OpenRefine saves it
+        if matches!(self.kind, PerformWikibaseEdits { .. }) {
+            return self.perform_wikibase_edits(t);
+        }
         if let SaveWikibaseSchema { schema } = &mut self.kind {
             *schema = crate::wikibase::normalize(schema)?;
             return Ok(t.clone());
@@ -1163,7 +1245,8 @@ impl Op {
             | ReconJudgeOneCell { .. }
             | ReconClearOneCell { .. }
             | Extension { .. }
-            | SaveWikibaseSchema { .. } => unreachable!(),
+            | SaveWikibaseSchema { .. }
+            | PerformWikibaseEdits { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;
