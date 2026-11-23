@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Toaster, toast } from "@/components/ui/toast"
 import { checkForUpdates } from "@/updates"
+import { WikibaseDialog } from "@/WikibaseDialog"
 import { GoogleSheetsDialog } from "@/GoogleSheetsDialog"
 import { items as extensionItems, useExtensions, type ExtItem } from "@/extensions"
 import { cn } from "@/lib/utils"
@@ -44,6 +45,7 @@ type Modal =
   | { kind: "reconcile" | "recon-values"; column: string }
   | { kind: "extend"; column: string }
   | { kind: "export"; format: ExportKind }
+  | { kind: "wikibase" }
   | { kind: "extract" }
   | { kind: "ask"; title: string; label: string; initial?: string; multiline?: boolean; fileAccept?: string; onUpload?: (f: File) => Promise<void>; onSubmit: (v: string) => Promise<void> }
   | null
@@ -795,6 +797,7 @@ export function App() {
                   { label: "Export matching rows as Excel…", run: () => exportRows("xlsx", "xlsx") },
                   { label: "Export matching rows as OpenDocument…", run: () => exportRows("ods", "ods") },
                   { label: "Export as an OpenRefine project…", run: exportProject },
+                  { label: "Edit Wikibase schema…", run: () => setModal({ kind: "wikibase" }) },
                   { label: "Back to projects", run: goHome },
                   ...extensionItems(extensions, "operation").map((op) => ({ label: `${op.label ?? op.id}… (${op.owner})`, run: () => runExtension(op) })),
                 ]
@@ -901,6 +904,9 @@ export function App() {
             onFacet={(expression) => setFacets((f) => [...f, modal.kind === "facet-range" ? rangeFacet(modal.column, expression) : listFacet(modal.column, expression)])}
             onClose={() => setModal(null)}
           />
+        )}
+        {modal?.kind === "wikibase" && summary && (
+          <WikibaseDialog columns={summary.columns} engine={engine} onClose={() => setModal(null)} onSave={(schema) => apply({ op: "wikidata/save-wikibase-schema", schema })} />
         )}
         {modal?.kind === "export" && summary && (
           <ExportDialog

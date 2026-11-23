@@ -458,6 +458,8 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         }
         // `method`: entity, type or property; `text`: what was typed
         "recon_suggest" => return crate::recon::suggest(&a.url, &a.method, &a.text),
+        // properties or items of a Wikibase (its MediaWiki API in `url`), for the schema editor
+        "wikibase_search" => return crate::wikibase::search(&a.url, &a.method, &a.text),
         "fetch_url" => {
             let staging = import::staging_dir(store.map(|s| s.root()));
             // a Google Sheets link downloads the spreadsheet (every sheet) rather than its web page
@@ -712,6 +714,14 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             json!(pairs.collect::<Vec<_>>())
         }
         // writes the file at `path`; without a path returns the text of the first `limit` rows (previews)
+        "wikibase_schema" => p.overlay("wikibaseSchema").cloned().unwrap_or(Value::Null),
+        // a schema being edited: its edits on the matching rows and their issues, without saving it
+        "wikibase_preview" => {
+            let schema = crate::wikibase::normalize(&a.params["schema"])?;
+            let parsed = crate::wikibase::Schema::parse(&schema)?;
+            let rows = p.rows(&a.engine)?;
+            crate::wikibase::preview(&parsed, p.table(), &rows)?
+        }
         "export" => {
             let rows = p.rows(&a.engine)?;
             let format = a.format.as_deref().unwrap_or_else(|| crate::export::format_for(&a.path));

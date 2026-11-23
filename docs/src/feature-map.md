@@ -109,7 +109,8 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Database, Google Data, Jython, phonetic and PC-Axis extensions | Built in: the import sources above, the expression language switch, the clustering keyers and the PC-Axis importer |
 | Wikibase extension: schema | A project's schema from an OpenRefine project or a recipe step (`wikidata/save-wikibase-schema`) is kept with its history, undone and redone, and written back to OpenRefine archives |
 | Wikibase → Export to QuickStatements / Export schema | **Export → QuickStatements** / **Wikibase schema**, for a project with a schema |
-| Wikibase → Edit schema, issues, Upload edits | Not yet |
+| Wikibase → Edit Wikibase schema | **Edit Wikibase schema…** in the command palette (<kbd>Ctrl K</kbd>): items and media info with terms and statements (qualifiers, references, modes) from columns or values, property search on the Wikibase, the edits as QuickStatements and their issues |
+| Wikibase → Upload edits | Not yet |
 
 ## Server and API
 

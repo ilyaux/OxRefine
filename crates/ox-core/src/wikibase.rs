@@ -639,6 +639,35 @@ pub fn row_issues(t: &Table, row: usize) -> Value {
     Value::Array(ids.into())
 }
 
+/// What the schema editor shows for a schema: the edits as QuickStatements (or why they can't
+/// be), how many entities change and are created, and the issues.
+pub fn preview(schema: &Schema, t: &Table, rows: &[u32]) -> Result<J> {
+    let languages = language_check(schema);
+    let (edits, warnings) = inspect(schema, t, rows, &languages);
+    let quickstatements = quickstatements(schema, t, rows, &languages);
+    Ok(json!({
+        "edits": edits.len(),
+        "newEntities": edits.iter().filter(|e| matches!(e.subject, EntityId::New(_))).count(),
+        "quickstatements": quickstatements.as_ref().ok(),
+        "quickstatementsError": quickstatements.err(),
+        "warnings": warnings.iter().map(|w| json!({ "type": w.kind, "aggregationId": w.aggregation_id(), "severity": w.severity, "count": w.count, "example": w.example })).collect::<Vec<_>>(),
+    }))
+}
+
+/// wbsearchentities on a Wikibase: properties (with their datatype) or items matching `text`.
+pub fn search(api: &str, kind: &str, text: &str) -> Result<J> {
+    let url = url::Url::parse(api.trim()).map_err(|e| format!("{api}: {e}"))?;
+    if !matches!(url.scheme(), "http" | "https") { return Err(format!("{api}: not a web address")); }
+    let kind = if kind == "property" { "property" } else { "item" };
+    let mut res = ureq::get(url.as_str())
+        .query_pairs([("action", "wbsearchentities"), ("format", "json"), ("language", "en"), ("uselang", "en"), ("type", kind), ("limit", "10"), ("search", text)])
+        .call().map_err(|e| format!("{api}: {e}"))?;
+    let body: J = serde_json::from_reader(res.body_mut().as_reader()).map_err(|e| format!("{api}: {e}"))?;
+    Ok(J::Array(body["search"].as_array().map(|items| items.iter().map(|i| json!({
+        "id": i["id"], "label": i["label"], "description": i["description"], "datatype": i["datatype"],
+    })).collect()).unwrap_or_default()))
+}
+
 // ------------------------------------------------------------ QuickStatements
 
 fn qs_date(d: &Date) -> String {
