@@ -311,24 +311,12 @@
     "edits_preview": []
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -860,7 +848,7 @@
         "iri": "http://www.wikidata.org/entity/Q7259",
         "types": [],
         "label": "Ada Lovelace",
-        "reconInternalId": 7145736831826473000
+        "reconInternalId": 7689309601597991000
        },
        "description": "a person",
        "lang": "en",
@@ -878,12 +866,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-3077735143000899078",
+        "id": "Q-1016691643622785004",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-3077735143000899078",
+        "iri": "http://localhost/entity/Q-1016691643622785004",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": -3077735143000899000
+        "reconInternalId": -1016691643622785000
        }
       },
       "facetable": true,
@@ -956,12 +944,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-4335701035547545482",
+       "id": "Q-2604738207003790740",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-4335701035547545482",
+       "iri": "http://localhost/entity/Q-2604738207003790740",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -4335701035547545600
+       "reconInternalId": -2604738207003791000
       },
       "new": true
      },
@@ -1004,12 +992,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-3077735143000899078",
+       "id": "Q-1016691643622785004",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-3077735143000899078",
+       "iri": "http://localhost/entity/Q-1016691643622785004",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -3077735143000899000
+       "reconInternalId": -1016691643622785000
       },
       "new": true
      },
@@ -1064,7 +1052,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -5423529644114796000
+       "reconInternalId": -845880604258625900
       },
       "new": false
      },
@@ -1111,31 +1099,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 7145736831826473000
+       "reconInternalId": 7689309601597991000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"item-description-begin-with-article\" ]",
+    "[ \"item-description-begin-with-article\" ]",
+    "[ \"item-description-begin-with-article\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"item-description-begin-with-article\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"monolingual-text-without-language\", \"item-description-begin-with-article\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -1583,12 +1559,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q5690816294948286746",
+        "id": "Q2770496249598569443",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q5690816294948286746",
+        "iri": "http://localhost/entity/Q2770496249598569443",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": 5690816294948286000
+        "reconInternalId": 2770496249598569500
        }
       },
       "facetable": true,
@@ -1603,12 +1579,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q5690816294948286746",
+        "id": "Q2770496249598569443",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q5690816294948286746",
+        "iri": "http://localhost/entity/Q2770496249598569443",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": 5690816294948286000
+        "reconInternalId": 2770496249598569500
        }
       },
       "facetable": true,
@@ -1670,7 +1646,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": 302060187670968800
+             "reconInternalId": 2788865787606762000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -1751,12 +1727,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q7724750074926446905",
+       "id": "Q-1607727199537308510",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q7724750074926446905",
+       "iri": "http://localhost/entity/Q-1607727199537308510",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": 7724750074926447000
+       "reconInternalId": -1607727199537308400
       },
       "new": true
      },
@@ -1796,7 +1772,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": 2851599093572777000
+             "reconInternalId": 7459030889808836000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -1877,12 +1853,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q5690816294948286746",
+       "id": "Q2770496249598569443",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q5690816294948286746",
+       "iri": "http://localhost/entity/Q2770496249598569443",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 5690816294948286000
+       "reconInternalId": 2770496249598569500
       },
       "new": true
      },
@@ -1921,7 +1897,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": 6360493666888254000
+             "reconInternalId": 2783458052253954000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -2007,7 +1983,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -1035197551582250800
+       "reconInternalId": 274332896809652200
       },
       "new": false
      },
@@ -2046,7 +2022,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": 6360493666888254000
+             "reconInternalId": 2783458052253954000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -2132,31 +2108,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 5818818249614124000
+       "reconInternalId": -7382662131603950000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -2523,12 +2487,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-5829434820661217846",
+        "id": "Q8210006236951901621",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-5829434820661217846",
+        "iri": "http://localhost/entity/Q8210006236951901621",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -5829434820661218000
+        "reconInternalId": 8210006236951901000
        }
       },
       "facetable": true,
@@ -2543,12 +2507,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-5829434820661217846",
+        "id": "Q8210006236951901621",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-5829434820661217846",
+        "iri": "http://localhost/entity/Q8210006236951901621",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -5829434820661218000
+        "reconInternalId": 8210006236951901000
        }
       },
       "facetable": true,
@@ -2582,12 +2546,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-5829434820661217846",
+        "id": "Q8210006236951901621",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-5829434820661217846",
+        "iri": "http://localhost/entity/Q8210006236951901621",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -5829434820661218000
+        "reconInternalId": 8210006236951901000
        }
       },
       "facetable": true,
@@ -2673,12 +2637,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-5829434820661217846",
+       "id": "Q8210006236951901621",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-5829434820661217846",
+       "iri": "http://localhost/entity/Q8210006236951901621",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -5829434820661218000
+       "reconInternalId": 8210006236951901000
       },
       "new": true
      },
@@ -2750,12 +2714,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q6758213758378406418",
+       "id": "Q-4179347177945087019",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q6758213758378406418",
+       "iri": "http://localhost/entity/Q-4179347177945087019",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 6758213758378407000
+       "reconInternalId": -4179347177945087000
       },
       "new": true
      },
@@ -2831,7 +2795,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": 5165437639918318000
+       "reconInternalId": 727727661860429300
       },
       "new": false
      },
@@ -2907,31 +2871,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": -7633113569684385000
+       "reconInternalId": 8097665012781433000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"ignored-date\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -3490,12 +3442,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q1004947381422162022",
+        "id": "Q-3091739128579186898",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q1004947381422162022",
+        "iri": "http://localhost/entity/Q-3091739128579186898",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": 1004947381422162000
+        "label": "NEW1",
+        "reconInternalId": -3091739128579186700
        }
       },
       "facetable": true,
@@ -3521,12 +3473,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q1004947381422162022",
+        "id": "Q-3091739128579186898",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q1004947381422162022",
+        "iri": "http://localhost/entity/Q-3091739128579186898",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": 1004947381422162000
+        "label": "NEW1",
+        "reconInternalId": -3091739128579186700
        }
       },
       "facetable": true,
@@ -3560,12 +3512,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q1004947381422162022",
+        "id": "Q-3091739128579186898",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q1004947381422162022",
+        "iri": "http://localhost/entity/Q-3091739128579186898",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": 1004947381422162000
+        "label": "NEW1",
+        "reconInternalId": -3091739128579186700
        }
       },
       "facetable": true,
@@ -3695,12 +3647,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-3744071354843867188",
+       "id": "Q-3091739128579186898",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-3744071354843867188",
+       "iri": "http://localhost/entity/Q-3091739128579186898",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -3744071354843867000
+       "reconInternalId": -3091739128579186700
       },
       "new": true
      },
@@ -3866,12 +3818,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q1004947381422162022",
+       "id": "Q1855660233913994606",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q1004947381422162022",
+       "iri": "http://localhost/entity/Q1855660233913994606",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 1004947381422162000
+       "reconInternalId": 1855660233913994500
       },
       "new": true
      },
@@ -3945,7 +3897,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -2022975446717232000
+       "reconInternalId": -8424012187904940000
       },
       "new": false
      },
@@ -4115,31 +4067,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 3035500917762444300
+       "reconInternalId": 5527491636639527000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"ignored-coordinates\", \"new-item-without-descriptions\", \"ignored-amount\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -4731,12 +4671,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q5137380972339703584",
+        "id": "Q-6822775609237845462",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q5137380972339703584",
+        "iri": "http://localhost/entity/Q-6822775609237845462",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 5137380972339704000
+        "label": "NEW2",
+        "reconInternalId": -6822775609237845000
        }
       },
       "facetable": true,
@@ -4751,12 +4691,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q5137380972339703584",
+        "id": "Q-6822775609237845462",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q5137380972339703584",
+        "iri": "http://localhost/entity/Q-6822775609237845462",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 5137380972339704000
+        "label": "NEW2",
+        "reconInternalId": -6822775609237845000
        }
       },
       "facetable": true,
@@ -4790,12 +4730,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q5137380972339703584",
+        "id": "Q-6822775609237845462",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q5137380972339703584",
+        "iri": "http://localhost/entity/Q-6822775609237845462",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 5137380972339704000
+        "label": "NEW2",
+        "reconInternalId": -6822775609237845000
        }
       },
       "facetable": true,
@@ -4996,12 +4936,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q5137380972339703584",
+       "id": "Q3666428690304217977",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q5137380972339703584",
+       "iri": "http://localhost/entity/Q3666428690304217977",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": 5137380972339704000
+       "reconInternalId": 3666428690304218000
       },
       "new": true
      },
@@ -5065,12 +5005,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-8236979286190473376",
+       "id": "Q-6822775609237845462",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-8236979286190473376",
+       "iri": "http://localhost/entity/Q-6822775609237845462",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -8236979286190473000
+       "reconInternalId": -6822775609237845000
       },
       "new": true
      },
@@ -5261,7 +5201,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": 2166634786714796500
+       "reconInternalId": 2236861830544734000
       },
       "new": false
      },
@@ -5377,31 +5317,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": -6764652861985391000
+       "reconInternalId": -6931833576369909000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"monolingual-text-without-language\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -5894,12 +5822,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q2409745874850531390",
+        "id": "Q-3179703247928346822",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q2409745874850531390",
+        "iri": "http://localhost/entity/Q-3179703247928346822",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 2409745874850531300
+        "label": "NEW2",
+        "reconInternalId": -3179703247928346600
        }
       },
       "facetable": true,
@@ -5914,12 +5842,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q2409745874850531390",
+        "id": "Q-3179703247928346822",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q2409745874850531390",
+        "iri": "http://localhost/entity/Q-3179703247928346822",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 2409745874850531300
+        "label": "NEW2",
+        "reconInternalId": -3179703247928346600
        }
       },
       "facetable": true,
@@ -5934,12 +5862,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q2409745874850531390",
+        "id": "Q-3179703247928346822",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q2409745874850531390",
+        "iri": "http://localhost/entity/Q-3179703247928346822",
         "types": [],
-        "label": "NEW1",
-        "reconInternalId": 2409745874850531300
+        "label": "NEW2",
+        "reconInternalId": -3179703247928346600
        }
       },
       "facetable": true,
@@ -5993,7 +5921,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": -6903860394471412000
+             "reconInternalId": -3957986167518030000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -6112,12 +6040,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q2409745874850531390",
+       "id": "Q-1942906303971609733",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q2409745874850531390",
+       "iri": "http://localhost/entity/Q-1942906303971609733",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": 2409745874850531300
+       "reconInternalId": -1942906303971609900
       },
       "new": true
      },
@@ -6157,7 +6085,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": 2422934960255248000
+             "reconInternalId": -7286182036719249000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -6256,12 +6184,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q8664191032845537388",
+       "id": "Q-3179703247928346822",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q8664191032845537388",
+       "iri": "http://localhost/entity/Q-3179703247928346822",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 8664191032845537000
+       "reconInternalId": -3179703247928346600
       },
       "new": true
      },
@@ -6300,7 +6228,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -4879589266645792000
+             "reconInternalId": 5118461457348889000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -6424,7 +6352,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": 3223796137688395300
+       "reconInternalId": 6137230621141784000
       },
       "new": false
      },
@@ -6463,7 +6391,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -4879589266645792000
+             "reconInternalId": 5118461457348889000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -6567,31 +6495,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": -5602760824754531000
+       "reconInternalId": -4501409605788255700
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"no-issue-detected\" ]",
+    "[ \"no-issue-detected\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -7096,12 +7012,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-2812903593610529556",
+        "id": "Q2609095107668778899",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-2812903593610529556",
+        "iri": "http://localhost/entity/Q2609095107668778899",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": -2812903593610530000
+        "label": "NEW1",
+        "reconInternalId": 2609095107668779000
        }
       },
       "facetable": true,
@@ -7116,12 +7032,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-2812903593610529556",
+        "id": "Q2609095107668778899",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-2812903593610529556",
+        "iri": "http://localhost/entity/Q2609095107668778899",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": -2812903593610530000
+        "label": "NEW1",
+        "reconInternalId": 2609095107668779000
        }
       },
       "facetable": true,
@@ -7144,12 +7060,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-2812903593610529556",
+        "id": "Q2609095107668778899",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-2812903593610529556",
+        "iri": "http://localhost/entity/Q2609095107668778899",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": -2812903593610530000
+        "label": "NEW1",
+        "reconInternalId": 2609095107668779000
        }
       },
       "facetable": true,
@@ -7164,12 +7080,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-2812903593610529556",
+        "id": "Q2609095107668778899",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-2812903593610529556",
+        "iri": "http://localhost/entity/Q2609095107668778899",
         "types": [],
-        "label": "NEW2",
-        "reconInternalId": -2812903593610530000
+        "label": "NEW1",
+        "reconInternalId": 2609095107668779000
        }
       },
       "facetable": true,
@@ -7249,7 +7165,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": -7775138815065552000
+             "reconInternalId": -2495253072150216000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -7330,12 +7246,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q4868358881866513138",
+       "id": "Q2609095107668778899",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q4868358881866513138",
+       "iri": "http://localhost/entity/Q2609095107668778899",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": 4868358881866513000
+       "reconInternalId": 2609095107668779000
       },
       "new": true
      },
@@ -7401,7 +7317,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": 2113361429444984600
+             "reconInternalId": -4211095481753948000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -7482,12 +7398,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-2812903593610529556",
+       "id": "Q-9089732868220656360",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-2812903593610529556",
+       "iri": "http://localhost/entity/Q-9089732868220656360",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -2812903593610530000
+       "reconInternalId": -9089732868220657000
       },
       "new": true
      },
@@ -7552,7 +7468,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -1464132643340083200
+             "reconInternalId": 5997871655712579000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -7638,7 +7554,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -4714110064399082000
+       "reconInternalId": -4221335690156703000
       },
       "new": false
      },
@@ -7703,7 +7619,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -1464132643340083200
+             "reconInternalId": 5997871655712579000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -7789,31 +7705,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": -4517372366611974000
+       "reconInternalId": -2688424803116375000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-with-deleted-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-with-deleted-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-with-deleted-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -8276,12 +8180,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-384571914823796494",
+        "id": "Q5597734030597468626",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-384571914823796494",
+        "iri": "http://localhost/entity/Q5597734030597468626",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -384571914823796500
+        "reconInternalId": 5597734030597468000
        }
       },
       "facetable": true,
@@ -8296,12 +8200,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-384571914823796494",
+        "id": "Q5597734030597468626",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-384571914823796494",
+        "iri": "http://localhost/entity/Q5597734030597468626",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -384571914823796500
+        "reconInternalId": 5597734030597468000
        }
       },
       "facetable": true,
@@ -8324,12 +8228,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-384571914823796494",
+        "id": "Q5597734030597468626",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-384571914823796494",
+        "iri": "http://localhost/entity/Q5597734030597468626",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -384571914823796500
+        "reconInternalId": 5597734030597468000
        }
       },
       "facetable": true,
@@ -8469,12 +8373,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-384571914823796494",
+       "id": "Q5597734030597468626",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-384571914823796494",
+       "iri": "http://localhost/entity/Q5597734030597468626",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -384571914823796500
+       "reconInternalId": 5597734030597468000
       },
       "new": true
      },
@@ -8600,12 +8504,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q1937664040893481897",
+       "id": "Q8053898827479955895",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q1937664040893481897",
+       "iri": "http://localhost/entity/Q8053898827479955895",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 1937664040893482000
+       "reconInternalId": 8053898827479955000
       },
       "new": true
      },
@@ -8735,7 +8639,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": 3346529229755006000
+       "reconInternalId": -3968121675592722000
       },
       "new": false
      },
@@ -8865,31 +8769,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 4732536353519267000
+       "reconInternalId": -326323588409091100
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -9820,12 +9712,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-8512031798060830962",
+        "id": "Q-7710179798405083443",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-8512031798060830962",
+        "iri": "http://localhost/entity/Q-7710179798405083443",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -8512031798060831000
+        "reconInternalId": -7710179798405083000
        }
       },
       "facetable": true,
@@ -9840,12 +9732,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-8512031798060830962",
+        "id": "Q-7710179798405083443",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-8512031798060830962",
+        "iri": "http://localhost/entity/Q-7710179798405083443",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -8512031798060831000
+        "reconInternalId": -7710179798405083000
        }
       },
       "facetable": true,
@@ -9879,12 +9771,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-8512031798060830962",
+        "id": "Q-7710179798405083443",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-8512031798060830962",
+        "iri": "http://localhost/entity/Q-7710179798405083443",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -8512031798060831000
+        "reconInternalId": -7710179798405083000
        }
       },
       "facetable": true,
@@ -10376,12 +10268,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-8512031798060830962",
+       "id": "Q-7710179798405083443",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-8512031798060830962",
+       "iri": "http://localhost/entity/Q-7710179798405083443",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -8512031798060831000
+       "reconInternalId": -7710179798405083000
       },
       "new": true
      },
@@ -10859,12 +10751,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-3538656530779041947",
+       "id": "Q-4878319065346162367",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-3538656530779041947",
+       "iri": "http://localhost/entity/Q-4878319065346162367",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -3538656530779042000
+       "reconInternalId": -4878319065346163000
       },
       "new": true
      },
@@ -11346,7 +11238,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -7630778651872817000
+       "reconInternalId": 1795695991228287200
       },
       "new": false
      },
@@ -11828,31 +11720,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 3255930231005576000
+       "reconInternalId": 7075092587679423000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\", \"early-gregorian-date\" ]",
+    "[ \"unsourced-statements\", \"early-gregorian-date\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"early-gregorian-date\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"early-gregorian-date\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"unsourced-statements\", \"early-gregorian-date\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -12776,12 +12656,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-7716658742501770519",
+        "id": "Q-9081951679838955017",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-7716658742501770519",
+        "iri": "http://localhost/entity/Q-9081951679838955017",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": -7716658742501770000
+        "reconInternalId": -9081951679838956000
        }
       },
       "facetable": true,
@@ -12796,12 +12676,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-7716658742501770519",
+        "id": "Q-9081951679838955017",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-7716658742501770519",
+        "iri": "http://localhost/entity/Q-9081951679838955017",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": -7716658742501770000
+        "reconInternalId": -9081951679838956000
        }
       },
       "facetable": true,
@@ -12816,12 +12696,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-7716658742501770519",
+        "id": "Q-9081951679838955017",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-7716658742501770519",
+        "iri": "http://localhost/entity/Q-9081951679838955017",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": -7716658742501770000
+        "reconInternalId": -9081951679838956000
        }
       },
       "facetable": true,
@@ -12875,7 +12755,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": -3652273540161622000
+             "reconInternalId": 700555597341019400
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -12994,12 +12874,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q2917602432603846274",
+       "id": "Q694658732466508044",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q2917602432603846274",
+       "iri": "http://localhost/entity/Q694658732466508044",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": 2917602432603846000
+       "reconInternalId": 694658732466508000
       },
       "new": true
      },
@@ -13039,7 +12919,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": 8793742542029455000
+             "reconInternalId": -989140153371423900
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -13138,12 +13018,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-7716658742501770519",
+       "id": "Q-9081951679838955017",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-7716658742501770519",
+       "iri": "http://localhost/entity/Q-9081951679838955017",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -7716658742501770000
+       "reconInternalId": -9081951679838956000
       },
       "new": true
      },
@@ -13182,7 +13062,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -4573835769336822000
+             "reconInternalId": 7176309310089367000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -13306,7 +13186,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": -5349416509963613000
+       "reconInternalId": 6912862214917233000
       },
       "new": false
      },
@@ -13345,7 +13225,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": -4573835769336822000
+             "reconInternalId": 7176309310089367000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -13449,31 +13329,19 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": -7597236551859668000
+       "reconInternalId": 7155568040959515000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"no-issue-detected\" ]",
+    "[ \"no-issue-detected\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-labels-or-aliases\", \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -13814,24 +13682,12 @@
     "edits_preview": []
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -14311,12 +14167,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-1565740001840168427",
+        "id": "Q4748694116849195652",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-1565740001840168427",
+        "iri": "http://localhost/entity/Q4748694116849195652",
         "types": [],
         "label": "NEW2",
-        "reconInternalId": -1565740001840168400
+        "reconInternalId": 4748694116849196000
        }
       },
       "facetable": true,
@@ -14387,7 +14243,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": 7184516925642617000
+             "reconInternalId": 1813198644840493600
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -14418,12 +14274,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-2748323375634829627",
+       "id": "Q-8337163286499219778",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-2748323375634829627",
+       "iri": "http://localhost/entity/Q-8337163286499219778",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -2748323375634830000
+       "reconInternalId": -8337163286499219000
       },
       "new": true
      },
@@ -14472,7 +14328,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": -8610092252806928000
+             "reconInternalId": 4520417711981994500
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -14503,36 +14359,24 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-1565740001840168427",
+       "id": "Q4748694116849195652",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-1565740001840168427",
+       "iri": "http://localhost/entity/Q4748694116849195652",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": -1565740001840168400
+       "reconInternalId": 4748694116849196000
       },
       "new": true
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"invalid-mediainfo-subject_\" ]",
+    "[ \"invalid-mediainfo-subject_\" ]",
+    "[ \"missing-file-name-extension\", \"unsourced-statements\", \"new-media-created\" ]",
+    "[ \"missing-file-name-extension\", \"new-media-without-file-path\", \"unsourced-statements\", \"new-media-created\" ]",
+    "[ \"missing-file-name-extension\", \"new-media-without-file-path\", \"new-media-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [
@@ -15068,12 +14912,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-7877477170316556435",
+        "id": "Q7911456715900877803",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-7877477170316556435",
+        "iri": "http://localhost/entity/Q7911456715900877803",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -7877477170316556000
+        "reconInternalId": 7911456715900878000
        }
       },
       "facetable": true,
@@ -15096,12 +14940,12 @@
        "example_entity": {
         "placeholder": true,
         "entityType": "http://www.wikidata.org/ontology#Item",
-        "id": "Q-7877477170316556435",
+        "id": "Q7911456715900877803",
         "siteIri": "http://localhost/entity/",
-        "iri": "http://localhost/entity/Q-7877477170316556435",
+        "iri": "http://localhost/entity/Q7911456715900877803",
         "types": [],
         "label": "NEW1",
-        "reconInternalId": -7877477170316556000
+        "reconInternalId": 7911456715900878000
        }
       },
       "facetable": true,
@@ -15163,7 +15007,7 @@
              "iri": "http://www.wikidata.org/entity/Q30",
              "types": [],
              "label": "United States of America",
-             "reconInternalId": -8060914073889572000
+             "reconInternalId": -6538615827132609000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -15194,12 +15038,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q-7877477170316556435",
+       "id": "Q7911456715900877803",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q-7877477170316556435",
+       "iri": "http://localhost/entity/Q7911456715900877803",
        "types": [],
        "label": "NEW1",
-       "reconInternalId": -7877477170316556000
+       "reconInternalId": 7911456715900878000
       },
       "new": true
      },
@@ -15247,7 +15091,7 @@
              "iri": "http://www.wikidata.org/entity/Q142",
              "types": [],
              "label": "France",
-             "reconInternalId": -4967217900198058000
+             "reconInternalId": -8288489549475150000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -15278,12 +15122,12 @@
       "subject": {
        "placeholder": true,
        "entityType": "http://www.wikidata.org/ontology#Item",
-       "id": "Q4355582081971893744",
+       "id": "Q-5387028971616744297",
        "siteIri": "http://localhost/entity/",
-       "iri": "http://localhost/entity/Q4355582081971893744",
+       "iri": "http://localhost/entity/Q-5387028971616744297",
        "types": [],
        "label": "NEW2",
-       "reconInternalId": 4355582081971894000
+       "reconInternalId": -5387028971616744000
       },
       "new": true
      },
@@ -15330,7 +15174,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": 4363936228286406700
+             "reconInternalId": 3457551681097126000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -15366,7 +15210,7 @@
        "iri": "http://www.wikidata.org/entity/Q42",
        "types": [],
        "label": "Douglas Adams",
-       "reconInternalId": 7011938878218675000
+       "reconInternalId": 2998640690111901000
       },
       "new": false
      },
@@ -15439,7 +15283,7 @@
        "iri": "http://www.wikidata.org/entity/Q145",
        "types": [],
        "label": "United Kingdom",
-       "reconInternalId": 4363936228286406700
+       "reconInternalId": 3457551681097126000
       },
       "new": false
      },
@@ -15486,7 +15330,7 @@
              "iri": "http://www.wikidata.org/entity/Q145",
              "types": [],
              "label": "United Kingdom",
-             "reconInternalId": 4363936228286406700
+             "reconInternalId": 3457551681097126000
             },
             "datatype": "wikibase-item",
             "full_property": {
@@ -15522,7 +15366,7 @@
        "iri": "http://www.wikidata.org/entity/Q7259",
        "types": [],
        "label": "Ada Lovelace",
-       "reconInternalId": 4048504286492145000
+       "reconInternalId": 8131503329379969000
       },
       "new": false
      },
@@ -15595,7 +15439,7 @@
        "iri": "http://www.wikidata.org/entity/Q30",
        "types": [],
        "label": "United States of America",
-       "reconInternalId": -8060914073889572000
+       "reconInternalId": -6538615827132609000
       },
       "new": false
      },
@@ -15667,31 +15511,19 @@
        "iri": "http://www.wikidata.org/entity/Q142",
        "types": [],
        "label": "France",
-       "reconInternalId": -4967217900198058000
+       "reconInternalId": -8288489549475150000
       },
       "new": false
      }
     ]
    },
    "issues": [
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    },
-    {
-     "message": "No Wikibase manifest found for MediaWiki API URL {API}"
-    }
+    "[ \"unsourced-statements\" ]",
+    "[ \"unsourced-statements\" ]",
+    "[ \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-descriptions\", \"unsourced-statements\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"new-item-without-descriptions\", \"new-item-without-instance-of-or-subclass-of\", \"new-item-created\" ]",
+    "[ \"no-edit-generated\" ]"
    ],
    "table": [
     [

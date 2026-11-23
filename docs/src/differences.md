@@ -66,6 +66,10 @@ OpenRefine runs `jython:` expressions in Jython 2.7 and `clojure:` ones in Cloju
 
 OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates in that graph's internal hash order, which changes with the file and even between N3 and Turtle for the same text. OxRefine keeps the order of the file. Jena names blank nodes with random ids, different on every import; OxRefine generates stable ones. OpenRefine resolves relative IRIs against its own working folder, OxRefine against the file's folder. `tests/rdf` compares the records, values and columns with OpenRefine 3.10.1, outside the 2,473-check total.
 
+### Wikibase issues
+
+`wikibaseIssues()` and the export's issue checks report what OpenRefine 3.10.1 reports for the checks that need no property constraints: new items or media without labels, descriptions, a type or a file path, unsourced statements, early Gregorian dates, descriptions starting with an article, and values or languages that couldn't be read. The checks that depend on property constraints fetched from the Wikibase (format, single value, allowed values, conflicts and the like) are not run yet. OpenRefine lists issues in its own internal order; OxRefine lists the same issues in a fixed order. OpenRefine also needs the Wikibase's manifest saved in its preferences; OxRefine needs only the schema.
+
 ### Wikibase QuickStatements
 
 OxRefine evaluates a Wikibase schema and writes QuickStatements as OpenRefine 3.10.1 does (`tests/wikibase`, outside the 2,473-check total), with three exceptions where OpenRefine's output is wrong. OpenRefine writes a statement in **add** mode with QuickStatements' removal prefix (`- `), so running the file would delete it; OxRefine writes it as an addition. OpenRefine writes year -44 as `+-044`, which QuickStatements rejects; OxRefine writes `-0044`. OpenRefine fails with an internal error on a schema with media info edits, which QuickStatements can't express; OxRefine says so. Language codes are checked against the schema's Wikibase, as in OpenRefine; when it can't be reached, OxRefine accepts any well-formed code.
@@ -78,7 +82,6 @@ OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and expor
 
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Expressions:** `wikibaseIssues()` (in progress)
 - **Extensions:** the Wikibase schema editor, issue checks and uploads (schemas themselves are kept, replayed and exported), Commons-specific GREL functions, OpenRefine's Java extension modules (OxRefine has [its own](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use

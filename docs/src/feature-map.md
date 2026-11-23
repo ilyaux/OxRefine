@@ -97,7 +97,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 
 | OpenRefine | OxRefine |
 |---|---|
-| GREL | GREL, every function except `wikibaseIssues`; see the [reference](grel.md) |
+| GREL | GREL, every function; see the [reference](grel.md) |
 | Python / Jython, Clojure | The language switch in the expression editor; see [Python and Clojure](transforming.md#python-and-clojure) |
 | Expression history and starred expressions | History of recent expressions in the editor |
 

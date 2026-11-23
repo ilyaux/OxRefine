@@ -4,7 +4,7 @@
 use crate::{grel::Value, recon::Judgment, table::Table, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as J};
-use std::collections::{HashMap, HashSet};
+use std::{cell::RefCell, collections::{HashMap, HashSet}};
 
 // ------------------------------------------------------------ the schema, in OpenRefine's key order
 
@@ -312,10 +312,18 @@ pub enum EntityId {
     New(i64),
 }
 
-/// What a schema needs from the outside: the language codes its Wikibase accepts.
+/// What a schema needs from the outside: the language codes its Wikibase accepts. Values it had
+/// to leave out are noted, as OpenRefine's evaluation warnings (kind, example).
 pub struct Context<'a> {
     pub site_iri: &'a str,
     pub languages: &'a dyn Fn(&str) -> bool,
+    pub warnings: RefCell<Vec<(&'static str, String)>>,
+}
+
+impl Context<'_> {
+    fn warn(&self, kind: &'static str, example: &str) {
+        self.warnings.borrow_mut().push((kind, example.to_string()));
+    }
 }
 
 fn cell_text(t: &Table, row: usize, column: &str) -> Option<String> {
@@ -348,17 +356,28 @@ impl Expr {
             Expr::LanguageConstant { id, .. } => Val::Str(Some(id.clone()).filter(|l| (cx.languages)(l))?),
             Expr::LanguageVariable { column_name } => Val::Str(cell_text(t, row, column_name).filter(|l| (cx.languages)(l))?),
             Expr::DateConstant { value } => Val::Date(parse_date(value)?),
-            Expr::DateVariable { column_name } => Val::Date(parse_date(&date_text(t, row, column_name)?)?),
+            Expr::DateVariable { column_name } => {
+                let text = date_text(t, row, column_name)?;
+                Val::Date(parse_date(&text).or_else(|| { cx.warn("ignored-date", &text); None })?)
+            }
             Expr::LocationConstant { value } => { let (a, b) = parse_location(value)?; Val::Location(a, b) }
-            Expr::LocationVariable { column_name } => { let (a, b) = parse_location(&cell_text(t, row, column_name)?)?; Val::Location(a, b) }
+            Expr::LocationVariable { column_name } => {
+                let text = cell_text(t, row, column_name)?;
+                let (a, b) = parse_location(&text).or_else(|| { cx.warn("ignored-coordinates", &text); None })?;
+                Val::Location(a, b)
+            }
             Expr::Monolingual { language, value } => {
-                let Val::Str(lang) = language.eval(t, row, cx)? else { return None };
                 let Val::Str(text) = value.eval(t, row, cx)? else { return None };
+                let Some(Val::Str(lang)) = language.eval(t, row, cx) else {
+                    cx.warn("monolingual-text-without-language", &text);
+                    return None;
+                };
                 Val::Mono { text, lang }
             }
             Expr::Quantity { amount, unit } => {
                 let Val::Str(text) = amount.eval(t, row, cx)? else { return None };
-                let amount = Decimal::parse(&text)?;
+                // OpenRefine reads the amount upper-cased (1e3 as 1E3) and shows it so when it can't
+                let Some(amount) = Decimal::parse(&text) else { cx.warn("ignored-amount", &text.to_uppercase()); return None };
                 let unit = match unit {
                     Some(u) => match u.eval(t, row, cx)? { Val::Entity(EntityId::Existing(id)) => Some(id), _ => return None },
                     None => None,
@@ -391,6 +410,9 @@ pub struct Statement { pub value: Option<Val>, pub qualifiers: Vec<(String, Val)
 pub struct Edit {
     pub subject: EntityId,
     pub media_info: bool,
+    /// media info: the file's name and where to upload it from
+    pub file_name: Option<String>,
+    pub file_path: Option<String>,
     /// (term type, language, text) in the schema's order
     pub terms: Vec<(TermType, String, String)>,
     /// (property, statements) in the schema's order
@@ -422,6 +444,8 @@ impl Edit {
             }
         }
         self.rows.extend(other.rows);
+        if self.file_name.is_none() { self.file_name = other.file_name; }
+        if self.file_path.is_none() { self.file_path = other.file_path; }
     }
 }
 
@@ -432,8 +456,13 @@ fn snaks(list: &[SnakExpr], t: &Table, row: usize, cx: &Context) -> Vec<(String,
 /// Every non-empty entity edit of the rows, the same entity's edits merged into the first, as
 /// OpenRefine's schema evaluation groups them.
 pub fn evaluate(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool) -> Vec<Edit> {
+    evaluate_noting(schema, t, rows, languages).0
+}
+
+/// The edits, and the evaluation warnings on the way.
+fn evaluate_noting(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool) -> (Vec<Edit>, Vec<(&'static str, String)>) {
     let site = schema.site_iri.clone().unwrap_or_else(|| "http://www.wikidata.org/entity/".into());
-    let cx = Context { site_iri: &site, languages };
+    let cx = Context { site_iri: &site, languages, warnings: RefCell::new(vec![]) };
     let mut edits: Vec<Edit> = vec![];
     let mut index: HashMap<(bool, EntityId), usize> = HashMap::new();
     for &row in rows {
@@ -444,7 +473,12 @@ pub fn evaluate(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&st
                 EntityExpr::MediaInfo { subject, name_descs, statement_groups, .. } => (subject, name_descs, statement_groups, true),
             };
             let Some(Val::Entity(id)) = subject.eval(t, row, &cx) else { continue };
-            let mut edit = Edit { subject: id.clone(), media_info, terms: vec![], groups: vec![], rows: vec![row] };
+            let text = |e: &Option<Expr>| match e.as_ref().and_then(|e| e.eval(t, row, &cx)) { Some(Val::Str(s)) => Some(s), _ => None };
+            let (file_name, file_path) = match expr {
+                EntityExpr::MediaInfo { file_name, file_path, .. } => (text(file_name), text(file_path)),
+                _ => (None, None),
+            };
+            let mut edit = Edit { subject: id.clone(), media_info, file_name, file_path, terms: vec![], groups: vec![], rows: vec![row] };
             for term in terms {
                 if let Some(Val::Mono { text, lang }) = term.value.eval(t, row, &cx) {
                     edit.terms.push((term.name_type, lang, text));
@@ -469,7 +503,8 @@ pub fn evaluate(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&st
                     }
                 }
             }
-            if edit.is_empty() { continue; }
+            // an edit with nothing in it changes nothing, but a new entity is still created
+            if edit.is_empty() && edit.file_name.is_none() && !matches!(id, EntityId::New(_)) { continue; }
             match index.get(&(media_info, id.clone())) {
                 Some(&at) => edits[at].merge(edit),
                 None => {
@@ -479,7 +514,129 @@ pub fn evaluate(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&st
             }
         }
     }
-    edits
+    let warnings = cx.warnings.into_inner();
+    (edits, warnings)
+}
+
+// ------------------------------------------------------------ issues
+
+/// An issue OpenRefine's edit inspector reports, aggregated over the batch.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Warning {
+    pub kind: &'static str,
+    /// some issues are grouped further (OpenRefine's bucketId); the aggregation id is kind_bucket
+    pub bucket: Option<String>,
+    pub severity: &'static str,
+    pub count: usize,
+    pub example: String,
+}
+
+impl Warning {
+    pub fn aggregation_id(&self) -> String {
+        match &self.bucket { Some(b) => format!("{}_{b}", self.kind), None => self.kind.to_string() }
+    }
+}
+
+/// The issues OxRefine checks, in the order it lists them, with OpenRefine's severities.
+/// ponytail: the checks that need no property constraints; constraint checks (format, single
+/// value, allowed values...) need the constraints fetched from the Wikibase.
+const ISSUES: [(&str, &str); 17] = [
+    ("monolingual-text-without-language", "WARNING"), ("ignored-date", "WARNING"), ("ignored-coordinates", "WARNING"), ("ignored-amount", "WARNING"),
+    ("missing-file-name-extension", "CRITICAL"), ("invalid-mediainfo-subject", "CRITICAL"),
+    ("new-item-without-labels-or-aliases", "CRITICAL"), ("new-item-without-descriptions", "WARNING"), ("new-media-without-file-path", "CRITICAL"),
+    ("unsourced-statements", "WARNING"), ("early-gregorian-date", "WARNING"), ("item-description-begin-with-article", "WARNING"),
+    ("new-item-with-deleted-statements", "WARNING"), ("new-item-without-instance-of-or-subclass-of", "WARNING"),
+    ("new-item-created", "INFO"), ("new-media-created", "INFO"), ("no-edit-generated", "INFO"),
+];
+
+/// The edits of the rows and their issues, as OpenRefine's schema preview reports them.
+pub fn inspect(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool) -> (Vec<Edit>, Vec<Warning>) {
+    let (edits, noted) = evaluate_noting(schema, t, rows, languages);
+    let mut found: Vec<Warning> = vec![];
+    let mut add = |kind: &'static str, bucket: Option<&str>, example: &str| {
+        match found.iter_mut().find(|w| w.kind == kind && w.bucket.as_deref() == bucket) {
+            Some(w) => w.count += 1,
+            None => {
+                let severity = ISSUES.iter().find(|(k, _)| *k == kind).map_or("WARNING", |(_, s)| s);
+                found.push(Warning { kind, bucket: bucket.map(String::from), severity, count: 1, example: example.to_string() });
+            }
+        }
+    };
+    for (kind, example) in &noted { add(kind, None, example); }
+    for e in &edits {
+        let new = matches!(e.subject, EntityId::New(_));
+        let shown = match &e.subject { EntityId::Existing(id) => id.clone(), EntityId::New(n) => n.to_string() };
+        if e.media_info {
+            if let EntityId::Existing(id) = &e.subject {
+                if !id.starts_with('M') { add("invalid-mediainfo-subject", Some(""), id); continue; }
+            }
+            if let Some(name) = &e.file_name {
+                if !name.rsplit_once('.').is_some_and(|(stem, ext)| !stem.is_empty() && !ext.is_empty()) { add("missing-file-name-extension", None, name); }
+            }
+        }
+        let has = |kinds: &[TermType]| e.terms.iter().any(|(k, _, _)| kinds.contains(k));
+        if new && !e.media_info {
+            if !has(&[TermType::Label, TermType::LabelIfNew, TermType::Alias]) { add("new-item-without-labels-or-aliases", None, &shown); }
+            if !has(&[TermType::Description, TermType::DescriptionIfNew]) { add("new-item-without-descriptions", None, &shown); }
+        }
+        if new && e.media_info && e.file_path.is_none() { add("new-media-without-file-path", None, &shown); }
+        for (_, statements) in &e.groups {
+            for s in statements.iter().filter(|s| s.mode != "delete") {
+                if s.value.is_some() && s.references.is_empty() { add("unsourced-statements", None, ""); }
+                let dates = s.value.iter().chain(s.qualifiers.iter().map(|(_, v)| v)).chain(s.references.iter().flatten().map(|(_, v)| v));
+                for v in dates {
+                    // the Gregorian calendar, proleptic before 1582
+                    if let Val::Date(d) = v {
+                        if d.year < 1582 && d.calendar.as_deref().is_none_or(|c| c == "Q1985727") { add("early-gregorian-date", None, &d.year.to_string()); }
+                    }
+                }
+            }
+        }
+        if e.terms.iter().any(|(k, lang, text)| matches!(k, TermType::Description | TermType::DescriptionIfNew) && lang == "en" && {
+            let lower = text.to_lowercase();
+            ["a ", "an ", "the "].iter().any(|article| lower.starts_with(article))
+        }) {
+            add("item-description-begin-with-article", None, &shown);
+        }
+        if new && !e.media_info {
+            if e.groups.iter().any(|(_, s)| s.iter().any(|s| s.mode == "delete")) { add("new-item-with-deleted-statements", None, &shown); }
+            let typed = e.groups.iter().any(|(p, s)| (p == "P31" || p == "P279") && s.iter().any(|s| s.mode != "delete"));
+            if !typed { add("new-item-without-instance-of-or-subclass-of", None, &shown); }
+            add("new-item-created", None, "");
+        }
+        if new && e.media_info { add("new-media-created", None, ""); }
+    }
+    if edits.is_empty() { add("no-edit-generated", None, ""); }
+    found.sort_by_key(|w| ISSUES.iter().position(|(k, _)| *k == w.kind).unwrap_or(usize::MAX));
+    (edits, found)
+}
+
+thread_local! {
+    /// the schema of the project whose expressions are being evaluated (wikibaseIssues())
+    static SCHEMA: RefCell<Option<J>> = const { RefCell::new(None) };
+}
+
+/// Make a project's schema the one wikibaseIssues() sees until the guard is dropped.
+pub struct SchemaGuard(Option<J>);
+impl SchemaGuard {
+    pub fn set(schema: Option<J>) -> SchemaGuard {
+        SchemaGuard(SCHEMA.with(|s| std::mem::replace(&mut *s.borrow_mut(), schema)))
+    }
+}
+impl Drop for SchemaGuard {
+    fn drop(&mut self) {
+        let previous = self.0.take();
+        SCHEMA.with(|s| *s.borrow_mut() = previous);
+    }
+}
+
+/// GREL's wikibaseIssues(): the issues of this row's edits alone, as aggregation ids.
+pub fn row_issues(t: &Table, row: usize) -> Value {
+    let Some(schema) = SCHEMA.with(|s| s.borrow().clone()) else { return Value::err("No wikibase schema associated with this project") };
+    let schema = match Schema::parse(&schema) { Ok(s) => s, Err(e) => return Value::err(e) };
+    let (_, warnings) = inspect(&schema, t, &[row as u32], &language_check(&schema));
+    let ids: Vec<Value> = if warnings.is_empty() { vec![Value::Str("no-issue-detected".into())] } else { warnings.iter().map(|w| Value::Str(w.aggregation_id().into())).collect() };
+    Value::Array(ids.into())
 }
 
 // ------------------------------------------------------------ QuickStatements

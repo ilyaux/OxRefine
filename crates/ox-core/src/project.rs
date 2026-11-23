@@ -98,7 +98,9 @@ impl Project {
     }
 
     pub fn apply(&mut self, mut op: Op) -> Result<()> {
+        let schema = crate::wikibase::SchemaGuard::set(self.overlay("wikibaseSchema").cloned());
         let t = share(self.table(), op.apply(self.table())?);
+        drop(schema);
         let overlays = next_overlays(&self.overlays[self.cursor], &op);
         self.states.truncate(self.cursor + 1);
         self.overlays.truncate(self.cursor + 1);
@@ -592,6 +594,7 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
 
     // ---------------------------------------------------------- the open project
     let p = s.project.as_mut().ok_or("no project open")?;
+    let _schema = crate::wikibase::SchemaGuard::set(p.overlay("wikibaseSchema").cloned());
     Ok(match cmd {
         "open" | "open_project" | "commons_create" | "database_create" | "summary" => p.summary(),
         "rows" => {

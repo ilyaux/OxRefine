@@ -61,6 +61,9 @@ async function wikidata(command, query, fields) {
 }
 
 try {
+  // wikibaseIssues() finds the Wikibase by its API among the saved manifests
+  const pref = await fetch(`${or.url}/command/core/set-preference?${new URLSearchParams({ name: "wikibase.manifests", csrf_token: await csrf() })}`, { method: "POST", body: new URLSearchParams({ value: JSON.stringify([manifest]) }) })
+  if (pref.status !== 200) throw new Error(`set-preference: ${pref.status}`)
   const out = []
   for (const c of CASES) {
     const project = await or.createProject(CSV, { name: "wikibase" })

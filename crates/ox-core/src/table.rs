@@ -373,6 +373,9 @@ impl grel::Row for RowRef<'_> {
     fn index(&self) -> usize {
         self.row
     }
+    fn wikibase_issues(&self) -> Value {
+        crate::wikibase::row_issues(self.table, self.row)
+    }
     fn columns(&self) -> Vec<String> {
         self.table.names.clone()
     }

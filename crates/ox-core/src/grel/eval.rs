@@ -21,6 +21,10 @@ pub trait Row {
     fn facet_count(&self, _choice: &Value, _expression: &str, _column: &str) -> Value {
         Value::err("facetCount needs a project")
     }
+    /// wikibaseIssues(); only rows inside a project with a Wikibase schema can answer it.
+    fn wikibase_issues(&self) -> Value {
+        Value::err("No wikibase schema associated with this project")
+    }
     /// The Recon of this row's cell in `column`.
     fn recon(&self, _column: &str) -> Option<std::sync::Arc<crate::recon::Recon>> {
         None
@@ -205,6 +209,8 @@ pub fn eval(e: &Expr, env: &mut Env) -> Value {
                 _ => Value::err("cross: OxRefine needs both the project name and the column name"),
             }
         }
+        // the wikibase extension's function: this row's issues under the project's schema
+        Expr::Call(name, args) if name == "wikibaseIssues" && args.is_empty() => env.row.wikibase_issues(),
         Expr::Call(name, args) if name == "facetCount" => {
             let vals: Vec<Value> = args.iter().map(|x| eval(x, env)).collect();
             if let Some(err) = vals.iter().find(|v| v.is_error()) {
@@ -414,7 +420,7 @@ pub fn uses_row(e: &Expr) -> bool {
     match e {
         Expr::Var(n) => matches!(n.as_str(), "cells" | "row" | "rowIndex" | "record" | "recon"),
         Expr::Lit(_) | Expr::Regex(_) => false,
-        Expr::Call(n, a) => matches!(n.as_str(), "now" | "random" | "randomNumber" | "cross" | "facetCount") || a.iter().any(uses_row),
+        Expr::Call(n, a) => matches!(n.as_str(), "now" | "random" | "randomNumber" | "cross" | "facetCount" | "wikibaseIssues") || a.iter().any(uses_row),
         Expr::Field(o, _) => uses_row(o),
         Expr::Index(o, i) => uses_row(o) || i.iter().any(uses_row),
         Expr::Op(_, a, b) => uses_row(a) || uses_row(b),

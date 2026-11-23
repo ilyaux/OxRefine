@@ -2,7 +2,7 @@
 
 # GREL functions
 
-GREL, the General Refine Expression Language, is the expression language used in **Transform…**, **Add column based on this…**, custom facets and templates. OxRefine runs it like OpenRefine 3.10.1: the same functions, controls, operators, errors and number formatting. 117 of OpenRefine's 118 functions and all 14 controls are available; not yet: `wikibaseIssues`.
+GREL, the General Refine Expression Language, is the expression language used in **Transform…**, **Add column based on this…**, custom facets and templates. OxRefine runs it like OpenRefine 3.10.1: the same functions, controls, operators, errors and number formatting. All 118 of OpenRefine's functions and all 14 controls are available; `wikibaseIssues` runs the [Wikibase issue checks](differences.md#wikibase-issues) OxRefine has.
 
 The descriptions below are OpenRefine's own, from OpenRefine 3.10.1.
 
@@ -797,7 +797,7 @@ Selects the (unencoded) text of an element and its children, including any new l
 
 function taking no arguments and computing the Wikibase quality issues for the current row
 
-> **Not in OxRefine yet.**
+> OxRefine runs the checks that need no property constraints; see [Wikibase issues](differences.md#wikibase-issues).
 
 ### xmlAttr
 

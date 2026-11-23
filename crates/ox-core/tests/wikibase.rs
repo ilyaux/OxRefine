@@ -9,7 +9,9 @@ fn fixtures() -> Value {
 
 /// The project every case starts from: the CSV, then the same Recon steps OpenRefine ran.
 fn project(f: &Value) -> Project {
-    let path = std::env::temp_dir().join(format!("ox-wikibase-{}.csv", std::process::id()));
+    static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+    let n = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+    let path = std::env::temp_dir().join(format!("ox-wikibase-{}-{n}.csv", std::process::id()));
     std::fs::write(&path, f["csv"].as_str().unwrap()).unwrap();
     let mut p = Project::new("wikibase", import(&path, Some("csv"), &ImportOptions::default()).unwrap());
     let _ = std::fs::remove_file(&path);
@@ -88,6 +90,36 @@ fn schemas_and_exports_match_openrefine() {
         assert_eq!(p.overlay("wikibaseSchema"), None);
         p.goto(p.steps().len()).unwrap();
         assert_eq!(p.overlay("wikibaseSchema"), Some(&case["overlay"]));
+        checked += 1;
+    }
+    assert_eq!(checked, 14);
+}
+
+#[test]
+fn issues_match_openrefine_preview_and_wikibase_issues() {
+    use std::collections::BTreeSet;
+    let f = fixtures();
+    let mut checked = 0;
+    for case in f["cases"].as_array().unwrap() {
+        let name = case["name"].as_str().unwrap();
+        if case["saved"] == "error" { continue; }
+        let mut p = project(&f);
+        p.apply(serde_json::from_value(json!({ "op": "wikidata/save-wikibase-schema", "schema": case["schema"] })).unwrap()).unwrap();
+        // the schema preview's warnings: kind, bucket, severity and count (OpenRefine lists them in hash order)
+        let schema = wikibase::Schema::parse(p.overlay("wikibaseSchema").unwrap()).unwrap();
+        let rows: Vec<u32> = (0..p.table().rows as u32).collect();
+        let (_, warnings) = wikibase::inspect(&schema, p.table(), &rows, &wikibase::language_check(&schema));
+        let ours: BTreeSet<String> = warnings.iter().map(|w| format!("{} {:?} {} {}", w.kind, w.bucket, w.severity, w.count)).collect();
+        let theirs: BTreeSet<String> = case["preview"]["warnings"].as_array().unwrap().iter()
+            .map(|w| format!("{} {:?} {} {}", w["type"].as_str().unwrap(), w["bucketId"].as_str(), w["severity"].as_str().unwrap(), w["count"])).collect();
+        assert_eq!(ours, theirs, "{name}: preview warnings");
+        // wikibaseIssues() on each row, through the expression preview
+        let mut session = ox_core::Session { project: Some(p), store: None };
+        let preview = ox_core::dispatch(&mut session, "preview", json!({ "column": "name", "expression": "wikibaseIssues()", "limit": 6 })).unwrap();
+        for (row, pair) in preview["data"].as_array().unwrap().iter().enumerate() {
+            let parse = |v: &Value| -> BTreeSet<String> { serde_json::from_str::<Vec<String>>(v.as_str().unwrap()).unwrap().into_iter().collect() };
+            assert_eq!(parse(&pair[1]), parse(&case["issues"][row]), "{name}: row {row} issues");
+        }
         checked += 1;
     }
     assert_eq!(checked, 14);
