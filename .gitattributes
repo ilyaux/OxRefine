@@ -8,6 +8,10 @@ tests/**/*.fods -text -whitespace
 tests/**/*.xml -text -whitespace
 tests/**/*.wiki -text -whitespace
 tests/**/*.px -text -whitespace
+tests/**/*.ttl -text -whitespace
+tests/**/*.nt -text -whitespace
+tests/**/*.rdf -text -whitespace
+tests/**/*.jsonld -text -whitespace
 tests/**/*.mrc binary
 tests/**/*.marc binary
 licenses/*.txt -text -whitespace
