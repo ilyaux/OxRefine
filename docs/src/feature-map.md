@@ -9,13 +9,15 @@ OxRefine follows OpenRefine's layout: projects on a home screen, a grid of rows,
 | Create project → This computer | **From a file or folder** on the home screen, or **Import → File…** in a project |
 | Create project → Web addresses (URLs) | **From a web address** on the home screen, or **Import → Web address…** |
 | Create project → Clipboard | **Paste from clipboard** on the home screen, or **Import → Paste data…** |
-| Create project → Database | Not yet |
+| Create project → Database | **From a database** on the home screen: saved connections to SQLite, PostgreSQL, MySQL and MariaDB, the schema, and a SQL query with a preview |
+| Create project → Google Data | **Google Sheets** on the home screen: a shared link, or sheets in your Google Drive after signing in |
+| Wikimedia Commons extension: import a category | **Wikimedia Commons** on the home screen: category files matched to Commons M-ids |
 | Open project | Home screen, the project list |
 | Import project (`.openrefine.tar.gz`) | **Open an OpenRefine project** on the home screen, or **Import → OpenRefine project…**; it opens with its undo history |
 | Export → OpenRefine project archive | **Export → OpenRefine project**; OpenRefine opens it with OxRefine's history |
 | Rename and delete projects | Home screen, the project's buttons |
 | Project tags and metadata | **About** next to the project in the list: tags, description, creator and the rest; click a tag at the top to show only its projects. OpenRefine project archives carry them both ways |
-| Preferences | The gear at the top right: theme, the facet choice limit, reconciliation services, recent expressions, and every preference by name and value |
+| Preferences | The gear at the top right: theme, the facet choice limit, reconciliation services, recent expressions, extensions, and every preference by name and value |
 
 ## Rows and records
 
@@ -89,6 +91,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Excel 97 (.xls) | **Export → Excel 97** |
 | Custom tabular / SQL / Templating | **Custom tabular…** / **SQL…** / **Templating…** |
 | Export project | **OpenRefine project…** |
+| Google Sheets / Google Drive (the Google Data extension) | **Google Sheets** / **Google Drive**: the matching rows as a new sheet, or the project archive in your Drive |
 
 ## Expressions
 
@@ -97,6 +100,14 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | GREL | GREL, every function except `wikibaseIssues`; see the [reference](grel.md) |
 | Python / Jython, Clojure | The language switch in the expression editor; see [Python and Clojure](transforming.md#python-and-clojure) |
 | Expression history and starred expressions | History of recent expressions in the editor |
+
+## Extensions
+
+| OpenRefine | OxRefine |
+|---|---|
+| Extensions (Java modules in the `extensions` folder) | Python extensions in the `extensions` folder of the data folder; **Preferences → Extensions** lists them. OpenRefine's Java modules don't load; see [Extensions](extensions.md) |
+| Database, Google Data, Jython, phonetic and PC-Axis extensions | Built in: the import sources above, the expression language switch, the clustering keyers and the PC-Axis importer |
+| Wikibase extension: schema, issues, upload | Not yet. Schemas in imported OpenRefine projects are kept in the archive |
 
 ## Server and API
 
