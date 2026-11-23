@@ -258,7 +258,13 @@ fn listen(server: tiny_http::Server, listener: Listener) {
         let _ = std::thread::Builder::new().stack_size(16 << 20).spawn(move || {
             let header = |name: &str| req.headers().iter().find(|h| h.field.as_str().as_str().eq_ignore_ascii_case(name)).map(|h| h.value.as_str().to_owned());
             let url = req.url().to_owned();
-            let path = url.split('?').next().unwrap_or("/").to_owned();
+            // repeated slashes count as one: Apache's `ProxyPass /refine http://host:port/` sends //assets/…
+            let mut path = String::new();
+            for c in url.split('?').next().unwrap_or("/").chars() {
+                if !(c == '/' && path.ends_with('/')) {
+                    path.push(c);
+                }
+            }
             let json = |code: u16, v: Value| {
                 let ct = tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap();
                 tiny_http::Response::from_string(v.to_string()).with_status_code(code).with_header(ct).boxed()
@@ -294,14 +300,17 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                     response
                 }
             } else if *req.method() == tiny_http::Method::Get && !path.starts_with("/api/") && path != "/download" {
-                // the web UI; unknown paths get the page itself
-                let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| *p == "/index.html"));
+                // the web UI; other paths get the page itself, but a missing file is a 404: the page
+                // in place of a script leaves the browser a blank screen
+                let file = path.rsplit('/').next().is_some_and(|name| name.contains('.'));
+                let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| !file && *p == "/index.html"));
                 match asset {
                     Some((p, bytes)) => {
                         let ct = tiny_http::Header::from_bytes("Content-Type", mime(p)).unwrap();
                         tiny_http::Response::from_data(*bytes).with_header(ct).boxed()
                     }
-                    None => tiny_http::Response::from_string("OxRefine's web UI is not built into this binary: run `npm run build` in ui/, then build ox again.").boxed(),
+                    None if ui::ASSETS.is_empty() => tiny_http::Response::from_string("OxRefine's web UI is not built into this binary: run `npm run build` in ui/, then build ox again.").boxed(),
+                    None => tiny_http::Response::from_string(format!("not found: {path}")).with_status_code(404).boxed(),
                 }
             } else if !authorized {
                 json(403, json!("forbidden"))

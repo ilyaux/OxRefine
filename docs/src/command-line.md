@@ -68,7 +68,8 @@ location /refine/ {
 }
 ```
 
-- **Trailing slashes:** map `/refine/` to `http://127.0.0.1:3333/`, both with a slash. If someone opens `/refine` without one, the page itself moves to `/refine/`.
+- **Trailing slashes:** map `/refine/` to `http://127.0.0.1:3333/`, both with a slash. If someone opens `/refine` without one, the page itself moves to `/refine/`. A slash on one side only, as in `ProxyPass /refine http://127.0.0.1:3333/`, makes Apache send `//assets/…`; OxRefine releases after 0.7.2 read that as `/assets/…`.
+- **A blank page:** if the page loads but stays blank, look at the proxy's log for the page's scripts under `/refine/assets/`. A 404 there means the proxy sends OxRefine a path it doesn't serve; check the mapping above. OxRefine answers a missing file with a 404, never with the page in its place.
 - **Timeouts:** imports and long operations hold a request open while they run, so give the proxy a timeout of minutes, not seconds. Uploads can be large: don't cap the request body size below your biggest file.
 - **Host header:** without a token, OxRefine only answers requests addressed to `127.0.0.1:PORT` or `localhost:PORT`, to block DNS rebinding. Apache (`ProxyPreserveHost Off`, the default) and nginx (`proxy_pass` sets `Host` to the upstream) already send that. If your proxy keeps the visitor's host name, start OxRefine with `--token <secret>` instead and open `https://intranet.example.com/refine/?token=<secret>`.
 - **Access:** the proxy decides who reaches OxRefine. Anyone who gets through can read and write files as the user OxRefine runs as, so put the proxy's own authentication in front, or use the token.
