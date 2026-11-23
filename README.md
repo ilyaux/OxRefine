@@ -189,7 +189,7 @@ ox apply history.json project.openrefine.tar.gz -o cleaned.openrefine.tar.gz
 
 ### With an AI assistant
 
-`ox mcp` connects Claude Desktop, Claude Code or any MCP client to your running OxRefine: it can look at projects, preview GREL, apply steps you can undo, and export, only within the file paths you grant. [Setup](docs/src/mcp.md).
+`ox mcp` connects Claude Desktop, Claude Code or any MCP client to your OxRefine projects, with or without a running `ox serve`, and `ox serve` answers MCP over HTTP at `/mcp`. The assistant can import files, web addresses and pasted data, look at projects, preview GREL, Python or Clojure, apply steps you can undo, and export, only within the file paths you grant. [Setup](docs/src/mcp.md).
 
 ## How compatibility is checked
 
@@ -210,7 +210,7 @@ A test fails when a new difference appears, and also when a known one starts pas
 
 ```
 crates/ox-core   the engine: tables, import, facets, operations, GREL, clustering, reconciliation, export, history
-crates/ox-cli    `ox apply` (batch), `ox serve` (the browser app and its JSON API, UI built in), `ox mcp` (MCP over stdio)
+crates/ox-cli    `ox apply` (batch), `ox serve` (the browser app and its JSON API, UI built in), `ox mcp` (MCP over stdio; `/mcp` over HTTP)
 ui/              React + shadcn/ui in the "Instrument" design: virtualized grid, facets, and full-window views
 ui/src-tauri     the desktop shell: one command that forwards to the engine
 tests/           OpenRefine conformance suites and their fixtures

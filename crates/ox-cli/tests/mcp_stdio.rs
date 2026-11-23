@@ -62,6 +62,16 @@ impl Mcp {
         let mut command = Command::new(env!("CARGO_BIN_EXE_ox"));
         command.args(["mcp", "--url", &server.url, "--data"]).arg(&server.data).env("OXREFINE_TOKEN", &server.token);
         for grant in grants { command.arg("--allow").arg(grant); }
+        Self::launch(command)
+    }
+    /// `ox mcp` without --url: it finds the host of `data` or becomes it
+    fn standalone(data: &Path, grants: &[&Path]) -> Self {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_ox"));
+        command.args(["mcp", "--data"]).arg(data).env_remove("OXREFINE_TOKEN");
+        for grant in grants { command.arg("--allow").arg(grant); }
+        Self::launch(command)
+    }
+    fn launch(mut command: Command) -> Self {
         let mut child = command.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).spawn().unwrap();
         let stdin = child.stdin.take(); let stdout = child.stdout.take().unwrap();
         let (sender, lines) = mpsc::channel();
@@ -126,7 +136,7 @@ fn lifecycle_newline_framing_negotiation_and_closed_schemas() {
     assert_eq!(negotiated["result"]["protocolVersion"], "2025-11-25");
     assert_eq!(mcp.rpc("tools/list", json!({}))["error"]["code"], -32000);
     mcp.send(json!({"jsonrpc":"2.0","method":"notifications/initialized"}));
-    let list = mcp.rpc("tools/list", json!({})); let tools = list["result"]["tools"].as_array().unwrap(); assert_eq!(tools.len(), 12);
+    let list = mcp.rpc("tools/list", json!({})); let tools = list["result"]["tools"].as_array().unwrap(); assert_eq!(tools.len(), 18);
     assert_eq!(mcp.rpc("tools/list", json!({"_meta":{"progressToken":"list-1"}}))["result"]["tools"],list["result"]["tools"]);
     assert_eq!(mcp.rpc("tools/list", json!({"_meta":true}))["error"]["code"],-32602);
     for tool in tools {
@@ -296,4 +306,115 @@ fn cancellation_and_eof_cancel_only_the_addressed_request() {
     }
     release.send(()).unwrap(); let eof=mcp.receive(); assert_eq!(eof["id"],third); assert_eq!(eof["result"]["isError"],true); mcp.close(); fetcher.join().unwrap();
     let refreshed=server.request(None,"open_project",json!({"id":project})); assert_eq!(refreshed.0,200); assert_eq!(refreshed.1["data"]["cursor"],1); assert_eq!(refreshed.1["data"]["columns"],json!(["name","group","kept"]));
+}
+
+/// `ox serve` of a folder that already has a host: refused, without starting a second cache.
+fn second_server_refused(data: &Path) -> String {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_ox")).args(["serve", "--port", "0", "--data"]).arg(data)
+        .stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::piped()).spawn().unwrap();
+    let until = Instant::now() + Duration::from_secs(20);
+    while child.try_wait().unwrap().is_none() {
+        if Instant::now() > until { let _ = child.kill(); panic!("a second server started on the same data folder"); }
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    let mut error = String::new(); std::io::Read::read_to_string(&mut child.stderr.take().unwrap(), &mut error).unwrap(); error
+}
+
+#[test]
+fn standalone_adapter_hosts_its_folder_and_others_attach() {
+    let root = work("standalone"); let source = fixture(&root); let data = root.join("store"); // created by the adapter
+    let mut host = Mcp::standalone(&data, &[&root]); host.initialize();
+    let created = host.ok("create_project", json!({"path":source,"name":"Hosted"})); let project = created["context"]["project"].clone();
+    // a second adapter of the folder uses that host: the same projects and revisions
+    let mut other = Mcp::standalone(&data, &[]); other.initialize();
+    let listed = other.ok("list_projects", json!({}));
+    assert_eq!(listed["data"]["projects"][0]["id"], project); assert_eq!(listed["data"]["projects"][0]["revision"], created["context"]["revision"]);
+    other.failure("create_project", json!({"path":source}), "outside the MCP grants");
+    // the browser can watch at the advertised address, and a second server is refused
+    let advertised: Value = serde_json::from_slice(&std::fs::read(data.join("host.json")).unwrap()).unwrap();
+    let agent = ureq::Agent::new_with_config(ureq::Agent::config_builder().http_status_as_error(false).build());
+    let mut reply = agent.post(format!("{}/api/projects", advertised["url"].as_str().unwrap())).header("Content-Type", "application/json")
+        .header("Authorization", format!("Bearer {}", advertised["token"].as_str().unwrap())).send("{}").unwrap();
+    assert_eq!(reply.status().as_u16(), 200); assert!(reply.body_mut().read_to_string().unwrap().contains("Hosted"));
+    assert!(second_server_refused(&data).contains("already serves"));
+    other.close(); host.close();
+    // with the host gone the folder is free: the next adapter hosts it again, projects kept
+    let mut again = Mcp::standalone(&data, &[]); again.initialize();
+    assert_eq!(again.ok("list_projects", json!({}))["data"]["total"], 1); again.close();
+}
+
+#[test]
+fn import_previews_project_management_languages_and_references() {
+    let root=work("tools"); let source=fixture(&root); let server=Server::start(&root); let mut mcp=Mcp::start(&server,&[&root]); mcp.initialize();
+    assert!(second_server_refused(&server.data).contains("already serves"));
+    let preview=mcp.ok("preview_import",json!({"path":source,"limit":2}));
+    assert_eq!(preview["data"]["columns"],json!(["name","group"])); assert_eq!(preview["data"]["rows"].as_array().unwrap().len(),2);
+    assert!(preview["data"]["detected"]["format"].is_string());
+    mcp.failure("create_project",json!({"path":source,"text":"a\n1\n"}),"exactly one");
+    let pasted=mcp.ok("create_project",json!({"text":"city,n\nOslo,1\nRome,2\n","name":"Pasted"})); assert_eq!(pasted["data"]["rows"],2);
+    let context=pasted["context"].clone();
+    let python=mcp.ok("preview_expression",scoped(&context,json!({"column":"city","expression":"python:return value.upper()","limit":1})));
+    assert_eq!(python["data"][0],json!(["Oslo","OSLO"]));
+    let clojure=mcp.ok("preview_expression",scoped(&context,json!({"column":"city","expression":"clojure:(str value \"!\")","limit":1})));
+    assert_eq!(clojure["data"][0],json!(["Oslo","Oslo!"]));
+    let renamed=mcp.ok("rename_project",scoped(&context,json!({"name":"Cities"}))); assert_eq!(renamed["data"]["name"],"Cities");
+    mcp.failure("rename_project",scoped(&context,json!({"name":"Stale"})),"stale_project");
+    assert_eq!(mcp.ok("list_projects",json!({}))["data"]["projects"][0]["name"],"Cities");
+    mcp.ok("delete_project",renamed["context"].clone());
+    assert_eq!(mcp.ok("list_projects",json!({}))["data"]["total"],0);
+    assert!(mcp.ok("list_functions",json!({"query":"upper"}))["data"]["functions"]["toUppercase"].is_object());
+    assert!(mcp.ok("list_extensions",json!({}))["data"]["extensions"].is_array());
+    // a web address to import and a reconciliation service, both served here
+    let web=tiny_http::Server::http("127.0.0.1:0").unwrap(); let base=format!("http://{}",web.server_addr());
+    let serving=std::thread::spawn(move || for _ in 0..2 {
+        let request=web.recv_timeout(Duration::from_secs(15)).unwrap().expect("request deadline");
+        let body=if request.url().ends_with(".csv") { "city\nOslo\nBergen\n".to_string() }
+            else { json!({"q0":{"result":[{"id":"Q585","name":"Oslo","score":100,"match":true,"type":[{"id":"Q515","name":"city"}]}]}}).to_string() };
+        request.respond(tiny_http::Response::from_string(body)).unwrap();
+    });
+    let fetched=mcp.ok("create_project",json!({"url":format!("{base}/cities.csv")})); assert_eq!(fetched["data"]["rows"],2);
+    let types=mcp.ok("guess_reconcile_types",scoped(&fetched["context"],json!({"column":"city","service":format!("{base}/reconcile")})));
+    assert_eq!(types["data"][0]["id"],"Q515"); serving.join().unwrap();
+    mcp.close();
+}
+
+/// One POST to /mcp: (status, Mcp-Session-Id, body)
+fn post_mcp(server: &Server, token: &str, session: Option<&str>, message: Value) -> (u16, Option<String>, Value) {
+    let agent = ureq::Agent::new_with_config(ureq::Agent::config_builder().http_status_as_error(false).timeout_global(Some(Duration::from_secs(20))).build());
+    let mut request = agent.post(format!("{}/mcp", server.url)).header("Content-Type", "application/json")
+        .header("Accept", "application/json, text/event-stream").header("Authorization", format!("Bearer {token}"));
+    if let Some(session) = session { request = request.header("Mcp-Session-Id", session).header("MCP-Protocol-Version", "2025-11-25"); }
+    let mut response = request.send(message.to_string().as_bytes()).unwrap();
+    let id = response.headers().get("mcp-session-id").map(|v| v.to_str().unwrap().to_string());
+    let body = response.body_mut().read_to_string().unwrap();
+    (response.status().as_u16(), id, if body.is_empty() { Value::Null } else { serde_json::from_str(&body).unwrap() })
+}
+
+#[test]
+fn streamable_http_endpoint_keeps_sessions_and_the_token() {
+    let root=work("http"); let server=Server::start(&root); let token=server.token.clone();
+    let initialize=json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"http","version":"1"}}});
+    assert_eq!(post_mcp(&server,"wrong",None,initialize.clone()).0,403);
+    let (status,session,reply)=post_mcp(&server,&token,None,initialize); assert_eq!(status,200); assert_eq!(reply["result"]["protocolVersion"],"2025-11-25");
+    let session=session.expect("initialize names the session"); let s=Some(session.as_str());
+    let list=json!({"jsonrpc":"2.0","id":2,"method":"tools/list"});
+    assert_eq!(post_mcp(&server,&token,None,list.clone()).0,400,"a session id is required after initialize");
+    assert_eq!(post_mcp(&server,&token,Some("unknown"),list.clone()).0,404);
+    assert_eq!(post_mcp(&server,&token,s,list.clone()).2["error"]["code"],-32000,"tools wait for notifications/initialized");
+    assert_eq!(post_mcp(&server,&token,s,json!({"jsonrpc":"2.0","method":"notifications/initialized"})).0,202);
+    let tools=post_mcp(&server,&token,s,list).2; assert_eq!(tools["result"]["tools"].as_array().unwrap().len(),18);
+    let call=|id: u64,name: &str,arguments: Value| post_mcp(&server,&token,s,json!({"jsonrpc":"2.0","id":id,"method":"tools/call","params":{"name":name,"arguments":arguments}})).2["result"].clone();
+    let created=call(3,"create_project",json!({"text":"a,b\n1,2\n"})); assert_eq!(created["isError"],false,"{created}");
+    // the same project cache as the browser
+    let project=created["structuredContent"]["context"]["project"].clone();
+    assert_eq!(server.request(None,"open_project",json!({"id":project})).0,200);
+    // files: only the data folder and `ox serve --allow` paths
+    let outside=root.join("outside.csv"); std::fs::write(&outside,"a\n1\n").unwrap();
+    let refused=call(4,"create_project",json!({"path":outside})); assert_eq!(refused["isError"],true);
+    assert!(refused.to_string().contains("outside the MCP grants"),"{refused}");
+    let agent=ureq::Agent::new_with_config(ureq::Agent::config_builder().http_status_as_error(false).build());
+    assert_eq!(agent.get(format!("{}/mcp",server.url)).header("Authorization",format!("Bearer {token}")).call().unwrap().status().as_u16(),405);
+    let deleted=agent.delete(format!("{}/mcp",server.url)).header("Authorization",format!("Bearer {token}")).header("Mcp-Session-Id",&session).call().unwrap();
+    assert_eq!(deleted.status().as_u16(),200);
+    assert_eq!(post_mcp(&server,&token,s,json!({"jsonrpc":"2.0","id":5,"method":"ping"})).0,404,"an ended session is gone");
 }

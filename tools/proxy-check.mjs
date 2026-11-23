@@ -56,7 +56,13 @@ try {
   const api = await fetch(new URL("api/projects", `${base}/refine/`), { method: "POST", headers: { "Content-Type": "application/json", "X-Ox-Session": "proxy-check" }, body: "{}" })
   assert.equal(api.status, 200, await api.clone().text())
   assert.ok(Array.isArray((await api.json()).data), "projects come back as a list")
-  console.log(`ox serve works behind a proxy at /refine/: page, ${refs.length} assets and the API`)
+  // and MCP clients connect at /refine/mcp
+  const initialize = { jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: { name: "proxy-check", version: "1" } } }
+  const mcp = await fetch(`${base}/refine/mcp`, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" }, body: JSON.stringify(initialize) })
+  assert.equal(mcp.status, 200, await mcp.clone().text())
+  assert.ok(mcp.headers.get("mcp-session-id"), "the MCP session id comes through the proxy")
+  assert.equal((await mcp.json()).result.serverInfo.name, "oxrefine")
+  console.log(`ox serve works behind a proxy at /refine/: page, ${refs.length} assets, the API and MCP`)
 } finally {
   server.kill()
   proxy.close()

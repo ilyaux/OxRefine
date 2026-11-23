@@ -1,7 +1,9 @@
 use ox_core::{ops::parse_recipe, store::Store, Project, Session};
 use serde_json::{json, Value};
 use std::{
-    sync::{Arc, Mutex},
+    io::Read,
+    path::{Path, PathBuf},
+    sync::Arc,
     time::Instant,
 };
 mod web;
@@ -10,13 +12,14 @@ mod mcp;
 const USAGE: &str = "usage:
   ox apply <history.json> <input> -o <output>          replay an OpenRefine operation history headlessly
                                                         (input or output may be an .openrefine.tar.gz project)
-  ox serve [file] [--port 3030] [--data DIR] [--host ADDR] [--token T]
+  ox serve [file] [--port 3030] [--data DIR] [--host ADDR] [--token T] [--allow PATH]
                                                         the app in a browser, at http://127.0.0.1:3030/; projects are saved
-                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token
-  ox mcp [--url http://127.0.0.1:3030] [--data DIR] [--allow PATH] [--token T]
-                                                        MCP over stdio; attach to a running local ox serve using the SAME
-                                                        --data DIR. Repeat --allow for additional files/folders; token may
-                                                        also be set in OXREFINE_TOKEN. Logs go to stderr";
+                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token.
+                                                        MCP clients connect to /mcp; repeat --allow for files they may use
+  ox mcp [--data DIR] [--allow PATH] [--url http://127.0.0.1:3030] [--token T]
+                                                        MCP over stdio for the projects in DIR: uses the ox serve of DIR if
+                                                        one runs, else serves DIR itself. Repeat --allow for files/folders;
+                                                        --url/--token (or OXREFINE_TOKEN) name a server. Logs go to stderr";
 
 fn main() {
     // Work on a thread with a stack of known size. The embedded Python measures how much stack it
@@ -151,6 +154,7 @@ fn unescape(s: &str) -> String {
 
 fn serve(args: &[&str]) -> Result<(), String> {
     let (mut file, mut port, mut data, mut host, mut token) = (None, 3030u16, Store::default_root(), "127.0.0.1".to_string(), None);
+    let mut allow = vec![];
     let mut it = args.iter();
     while let Some(&a) = it.next() {
         match a {
@@ -158,6 +162,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
             "--data" => data = it.next().ok_or("--data needs a folder")?.into(),
             "--host" => host = it.next().ok_or("--host needs an address, like 0.0.0.0")?.to_string(),
             "--token" => token = Some(it.next().ok_or("--token needs a value")?.to_string()),
+            "--allow" => allow.push(PathBuf::from(it.next().ok_or("--allow needs a file or folder")?)),
             f => file = Some(f),
         }
     }
@@ -167,29 +172,90 @@ fn serve(args: &[&str]) -> Result<(), String> {
         token = Some(new_token()?);
     }
     let store = Store::open(&data)?;
-    let storage_budget = store.code_budget();
-    let staging = ox_core::import::staging_dir(Some(store.root()));
-    let mut session = Session::with_store(store);
-    // a file named on the command line opens without being added to the project library
-    session.project = ox_core::storage::with_budget(storage_budget.clone(), || file.map(|f| Project::open(f.as_ref())).transpose())?;
-    let slot = Arc::new(Mutex::new(web::Projects::new(session, new_token()?)));
-    eprintln!("projects are saved in {}", data.display());
+    let lock = match web::claim(&data) {
+        web::Claim::Busy => {
+            let at = web::advertised(&data).map(|(url, _)| format!(" at {url}")).unwrap_or_default();
+            return Err(format!("another OxRefine already serves {}{at}; one data folder has one server", data.display()));
+        }
+        web::Claim::Held(lock) => Some(lock),
+        web::Claim::Unsupported => None,
+    };
+    let session = Session::with_store(store);
     let server = tiny_http::Server::http((host.as_str(), port)).map_err(|e| format!("{host}:{port}: {e}"))?;
+    let address = server.server_addr().to_ip().ok_or("not an IP address")?;
+    let port = address.port();
+    let listener = Listener::new(session, file, token, port, &data, &allow)?;
+    eprintln!("projects are saved in {}", data.display());
     let shown = if host == "0.0.0.0" || host == "::" { "<this machine's address>".to_string() } else { host.clone() };
-    match &token {
+    match &listener.token {
         Some(t) => eprintln!("OxRefine on http://{shown}:{port}/?token={t}\n(anyone with this link can read and write files as this user)"),
         None => eprintln!("OxRefine on http://127.0.0.1:{port}/"),
     }
     if ui::ASSETS.is_empty() {
         eprintln!("the web UI is not built into this binary: run `npm run build` in ui/, then build ox again");
     }
-    let host_ok = Arc::new([format!("127.0.0.1:{port}"), format!("localhost:{port}")]);
-    let token = Arc::new(token);
+    // where `ox mcp` finds this server: only an address on this machine
+    let ip = address.ip();
+    if lock.is_some() && (ip.is_loopback() || ip.is_unspecified()) {
+        let loopback = if ip.is_ipv4() { format!("127.0.0.1:{port}") } else { format!("[::1]:{port}") };
+        if let Err(e) = web::advertise(&data, &format!("http://{loopback}"), listener.token.as_deref()) {
+            eprintln!("warning: ox mcp won't find this server by itself ({e}); give it --url");
+        }
+    }
+    listen(server, listener);
+    drop(lock);
+    Ok(())
+}
+
+/// A standalone `ox mcp` (no server for its data folder) hosts the folder itself on a free loopback
+/// port: the browser can watch the projects there, and other `ox mcp` processes attach to it.
+fn embedded(data: &Path, lock: Option<std::fs::File>) -> Result<web::Host, String> {
+    let session = Session::with_store(Store::open(data)?);
+    let server = tiny_http::Server::http("127.0.0.1:0").map_err(|e| e.to_string())?;
+    let port = server.server_addr().to_ip().ok_or("not an IP address")?.port();
+    let token = new_token()?;
+    let listener = Listener::new(session, None, Some(token.clone()), port, data, &[])?;
+    let host = listener.host.clone();
+    if lock.is_some() {
+        if let Err(e) = web::advertise(data, &format!("http://127.0.0.1:{port}"), Some(&token)) {
+            eprintln!("warning: other ox mcp processes won't find this host ({e})");
+        }
+    }
+    eprintln!("OxRefine for this assistant: projects in {}; watch them at http://127.0.0.1:{port}/?token={token}", data.display());
+    std::thread::spawn(move || {
+        listen(server, listener);
+        drop(lock);
+    });
+    Ok(host)
+}
+
+struct Listener {
+    host: web::Host,
+    token: Option<String>,
+    host_ok: [String; 2],
+    staging: PathBuf,
+    mcp: mcp::Http,
+}
+
+impl Listener {
+    fn new(mut session: Session, file: Option<&str>, token: Option<String>, port: u16, data: &Path, allow: &[PathBuf]) -> Result<Self, String> {
+        let store = session.store.as_ref().ok_or("no project store")?;
+        let (budget, staging) = (store.code_budget(), ox_core::import::staging_dir(Some(store.root())));
+        // a file named on the command line opens without being added to the project library
+        session.project = ox_core::storage::with_budget(budget.clone(), || file.map(|f| Project::open(f.as_ref())).transpose())?;
+        let host = web::Host::new(session, budget)?;
+        let mcp = mcp::Http::new(host.clone(), data, allow)?;
+        Ok(Self { host, token, host_ok: [format!("127.0.0.1:{port}"), format!("localhost:{port}")], staging, mcp })
+    }
+}
+
+fn listen(server: tiny_http::Server, listener: Listener) {
+    let listener = Arc::new(listener);
     // a thread per request: `processes` and `cancel_process` answer while a long command holds the session
     for mut req in server.incoming_requests() {
-        let (slot, host_ok, token, staging) = (slot.clone(), host_ok.clone(), token.clone(), staging.clone());
-        let storage_budget = storage_budget.clone();
-        std::thread::spawn(move || {
+        let l = listener.clone();
+        // as large a stack as the main thread's: Python expressions run here
+        let _ = std::thread::Builder::new().stack_size(16 << 20).spawn(move || {
             let header = |name: &str| req.headers().iter().find(|h| h.field.as_str().as_str().eq_ignore_ascii_case(name)).map(|h| h.value.as_str().to_owned());
             let url = req.url().to_owned();
             let path = url.split('?').next().unwrap_or("/").to_owned();
@@ -198,11 +264,36 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 tiny_http::Response::from_string(v.to_string()).with_status_code(code).with_header(ct).boxed()
             };
             // On this machine: refuse other Host headers (DNS rebinding). With a token: it decides.
-            let authorized = match token.as_ref() {
+            let authorized = match l.token.as_ref() {
                 Some(t) => header("Authorization").is_some_and(|h| h == format!("Bearer {t}")) || query(&url, "token").is_some_and(|q| &q == t),
-                None => header("Host").is_some_and(|h| host_ok.contains(&h)),
+                None => header("Host").is_some_and(|h| l.host_ok.contains(&h)),
             };
-            let response = if *req.method() == tiny_http::Method::Get && !path.starts_with("/api/") && path != "/download" {
+            let response = if path == "/mcp" {
+                // MCP over HTTP; without a token a web page may call it only from this server's own origin
+                let origin_ok = l.token.is_some() || header("Origin").is_none_or(|o| l.host_ok.iter().any(|h| o == format!("http://{h}")));
+                if !authorized || !origin_ok {
+                    json(403, json!("forbidden"))
+                } else {
+                    let (session, version) = (header("Mcp-Session-Id"), header("MCP-Protocol-Version"));
+                    let mut body = vec![];
+                    let read = req.as_reader().take(mcp::MAX_INPUT as u64 + 1).read_to_end(&mut body);
+                    let (code, created, value) = match read {
+                        Ok(_) => l.mcp.handle(req.method().as_str(), session.as_deref(), version.as_deref(), &body),
+                        Err(_) => (400, None, None),
+                    };
+                    let mut response = match value {
+                        Some(value) => json(code, value),
+                        None => tiny_http::Response::empty(code).boxed(),
+                    };
+                    if let Some(id) = created {
+                        response.add_header(tiny_http::Header::from_bytes("Mcp-Session-Id", id).unwrap());
+                    }
+                    if code == 405 {
+                        response.add_header(tiny_http::Header::from_bytes("Allow", "POST, DELETE").unwrap());
+                    }
+                    response
+                }
+            } else if *req.method() == tiny_http::Method::Get && !path.starts_with("/api/") && path != "/download" {
                 // the web UI; unknown paths get the page itself
                 let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| *p == "/index.html"));
                 match asset {
@@ -217,7 +308,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
             } else if path == "/upload" {
                 // a file from the browser, staged for the import wizard; the custom header keeps cross-site forms out
                 match header("X-File-Name").map(|n| unescape(&n)) {
-                    Some(name) => match ox_core::import::stage_path(&staging, &name).and_then(|dest| {
+                    Some(name) => match ox_core::import::stage_path(&l.staging, &name).and_then(|dest| {
                         let mut f = std::fs::File::create(&dest).map_err(|e| e.to_string())?;
                         std::io::copy(req.as_reader(), &mut f).map_err(|e| e.to_string())?;
                         Ok(dest)
@@ -230,8 +321,8 @@ fn serve(args: &[&str]) -> Result<(), String> {
             } else if path == "/download" {
                 // a file a command wrote into the staging folder, sent once and then removed
                 // only files inside the staging folder, `..` and links resolved first
-                let inside = |p: &std::path::Path| p.canonicalize().ok().zip(staging.canonicalize().ok()).is_some_and(|(p, s)| p.starts_with(s));
-                let file = query(&url, "path").map(std::path::PathBuf::from).filter(|p| p.is_file() && inside(p));
+                let inside = |p: &Path| p.canonicalize().ok().zip(l.staging.canonicalize().ok()).is_some_and(|(p, s)| p.starts_with(s));
+                let file = query(&url, "path").map(PathBuf::from).filter(|p| p.is_file() && inside(p));
                 match file.and_then(|p| std::fs::read(&p).ok().map(|b| (p, b))) {
                     Some((p, bytes)) => {
                         let name = p.file_name().map(|n| n.to_string_lossy().replace('"', "")).unwrap_or_default();
@@ -250,7 +341,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 let mut body = String::new();
                 req.as_reader().read_to_string(&mut body).ok();
                 let name = serde_json::from_str::<Value>(&body).ok().and_then(|v| v["name"].as_str().map(String::from)).unwrap_or_else(|| "download".into());
-                match ox_core::import::stage_path(&staging, &name) {
+                match ox_core::import::stage_path(&l.staging, &name) {
                     Ok(p) => json(200, json!({ "data": { "path": p }, "ms": 0 })),
                     Err(e) => json(400, json!(e)),
                 }
@@ -262,8 +353,7 @@ fn serve(args: &[&str]) -> Result<(), String> {
                 let args = serde_json::from_str(&body).unwrap_or_else(|_| json!({}));
                 match scope {
                     Ok(scope) => {
-                        let diagnostic = (cmd == "storage_stats").then(|| web::Reply(200, ox_core::storage::with_budget(storage_budget.clone(), || json!({ "data": ox_core::storage::snapshot(), "ms": 0 }))));
-                        let web::Reply(code, value) = ox_core::storage::with_budget(storage_budget.clone(), || diagnostic.or_else(|| web::free(&cmd, &args, &scope)).unwrap_or_else(|| slot.lock().unwrap_or_else(|e| e.into_inner()).call(&cmd, args, &scope)));
+                        let web::Reply(code, value) = l.host.api(&cmd, args, &scope);
                         json(code, value)
                     }
                     Err(error) => json(400, Value::String(error)),
@@ -274,5 +364,4 @@ fn serve(args: &[&str]) -> Result<(), String> {
             ox_core::grel::release_thread();
         });
     }
-    Ok(())
 }

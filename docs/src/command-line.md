@@ -1,6 +1,6 @@
 # Command line and server
 
-The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). The commands below run recipes and host the browser app; [`ox mcp`](mcp.md) connects an assistant to a running local server. `ox --help` lists the commands and `ox --version` prints the version.
+The `ox` program comes in an archive for each system on the [releases page](https://github.com/ilyaux/OxRefine/releases/latest). The commands below run recipes and host the browser app; [`ox mcp`](mcp.md) connects an assistant to a data folder, through its running `ox serve` or on its own, and `ox serve` answers MCP clients at `/mcp`. `ox --help` lists the commands and `ox --version` prints the version.
 
 ## `ox apply`: recipes in scripts
 

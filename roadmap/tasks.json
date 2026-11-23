@@ -1475,6 +1475,17 @@
       "ref": "no counterpart; the protocol is at modelcontextprotocol.io"
     },
     {
+      "id": "ext-mcp-2",
+      "phase": "p13",
+      "milestone": "v1.0",
+      "status": "doing",
+      "priority": "P1",
+      "size": "L",
+      "title": "MCP without ox serve, over HTTP and with more tools",
+      "detail": "`ox mcp` starts its own host when no server runs for its data folder, and finds a running `ox serve` for that folder without --url; one data folder has one host. `ox serve` answers MCP Streamable HTTP at /mcp. New tools: rename and delete projects, import from a web address or pasted text, preview a file import, guess reconciliation types, list GREL functions and installed extensions; Python and Clojure in expression previews.",
+      "ref": "ox-cli/src/mcp.rs, ox-cli/src/main.rs; modelcontextprotocol.io Streamable HTTP"
+    },
+    {
       "id": "model-extension-roundtrip",
       "phase": "p1",
       "milestone": "v1.0",

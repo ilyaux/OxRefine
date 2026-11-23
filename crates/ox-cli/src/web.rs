@@ -1,7 +1,71 @@
 //! Explicit browser project selection and optimistic concurrency over one authoritative project cache.
-use ox_core::{dispatch, dispatch_free, jobs, store::Store, Project, Session};
+use ox_core::{dispatch, dispatch_free, jobs, spill::CodeBudget, store::Store, Project, Session};
 use serde_json::{json, Value};
-use std::collections::HashMap;
+use std::{
+    collections::HashMap,
+    fs::{File, OpenOptions, TryLockError},
+    io::Write,
+    path::Path,
+    sync::{Arc, Mutex},
+};
+
+/// The one project cache of a data folder and what every request goes through: the browser API,
+/// `/mcp` and a standalone `ox mcp` call it here.
+#[derive(Clone)]
+pub struct Host {
+    slot: Arc<Mutex<Projects>>,
+    budget: CodeBudget,
+}
+
+impl Host {
+    pub fn new(session: Session, budget: CodeBudget) -> Result<Self, String> {
+        Ok(Self { slot: Arc::new(Mutex::new(Projects::new(session, crate::new_token()?))), budget })
+    }
+
+    pub fn api(&self, cmd: &str, args: Value, scope: &Scope) -> Reply {
+        ox_core::storage::with_budget(self.budget.clone(), || {
+            if cmd == "storage_stats" {
+                return Reply(200, json!({ "data": ox_core::storage::snapshot(), "ms": 0 }));
+            }
+            free(cmd, &args, scope).unwrap_or_else(|| self.slot.lock().unwrap_or_else(|e| e.into_inner()).call(cmd, args, scope))
+        })
+    }
+}
+
+/// One host per data folder: while `ox serve` or a standalone `ox mcp` serves it, it holds
+/// `<data>/host.lock` and says in `<data>/host.json` where it listens.
+pub enum Claim {
+    Held(File),
+    Busy,
+    /// the filesystem can't lock (some network shares): carry on as before, without the guard
+    Unsupported,
+}
+
+pub fn claim(data: &Path) -> Claim {
+    let Ok(file) = OpenOptions::new().create(true).truncate(false).write(true).open(data.join("host.lock")) else { return Claim::Unsupported };
+    match file.try_lock() {
+        Ok(()) => Claim::Held(file),
+        Err(TryLockError::WouldBlock) => Claim::Busy,
+        Err(TryLockError::Error(_)) => Claim::Unsupported,
+    }
+}
+
+/// Written by the lock holder, so readers trust it only while the lock is held. It carries the
+/// token: on Unix only this user can read it.
+pub fn advertise(data: &Path, url: &str, token: Option<&str>) -> Result<(), String> {
+    let temp = data.join(format!("host.json.{}", std::process::id()));
+    let mut options = OpenOptions::new();
+    options.create(true).truncate(true).write(true);
+    #[cfg(unix)]
+    std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
+    let written = options.open(&temp).and_then(|mut f| f.write_all(json!({ "url": url, "token": token }).to_string().as_bytes()));
+    written.and_then(|_| std::fs::rename(&temp, data.join("host.json"))).map_err(|e| format!("{}: {e}", data.join("host.json").display()))
+}
+
+pub fn advertised(data: &Path) -> Option<(String, Option<String>)> {
+    let value: Value = serde_json::from_slice(&std::fs::read(data.join("host.json")).ok()?).ok()?;
+    Some((value["url"].as_str()?.to_string(), value["token"].as_str().map(String::from)))
+}
 
 const STARTUP: &str = "startup";
 const NONE: &str = "none";
