@@ -1,0 +1,407 @@
+{
+ "openrefine": "3.10-SNAPSHOT",
+ "generator": "tests/wikibase/media-gen.mjs",
+ "csv": "media,file,name,caption,depicts\nNEW1,{FILES}\\sunset.png,Sunset test.png,A sunset,Q145\nM100,,Existing test.pdf,Some notes,Q30\n",
+ "files": {
+  "sunset.png": "PNG\r\n\u001a\n fake image bytes for a test",
+  "notes.pdf": "%PDF-1.4 fake document for a test"
+ },
+ "existing": {
+  "M100": {
+   "labels": {
+    "en": {
+     "language": "en",
+     "value": "Old caption"
+    }
+   },
+   "statements": {}
+  }
+ },
+ "schema": {
+  "siteIri": "https://commons.wikimedia.org/entity/",
+  "entityTypeSiteIRI": {
+   "item": "http://www.wikidata.org/entity/",
+   "property": "http://www.wikidata.org/entity/",
+   "mediainfo": "https://commons.wikimedia.org/entity/"
+  },
+  "mediaWikiApiEndpoint": "{API}",
+  "entityEdits": [
+   {
+    "type": "wbmediainfoeditexpr",
+    "subject": {
+     "type": "wbentityvariable",
+     "columnName": "media"
+    },
+    "filePath": {
+     "type": "wbstringvariable",
+     "columnName": "file"
+    },
+    "fileName": {
+     "type": "wbstringvariable",
+     "columnName": "name"
+    },
+    "wikitext": {
+     "type": "wbstringconstant",
+     "value": "== {{int:filedesc}} ==\n{{Information|description=Test}}"
+    },
+    "overrideWikitext": true,
+    "nameDescs": [
+     {
+      "name_type": "LABEL",
+      "value": {
+       "type": "wbmonolingualexpr",
+       "language": {
+        "type": "wblanguageconstant",
+        "id": "en",
+        "label": "en"
+       },
+       "value": {
+        "type": "wbstringvariable",
+        "columnName": "caption"
+       }
+      }
+     }
+    ],
+    "statementGroups": [
+     {
+      "property": {
+       "type": "wbpropconstant",
+       "pid": "P180",
+       "label": "depicts",
+       "datatype": "wikibase-item"
+      },
+      "statements": [
+       {
+        "value": {
+         "type": "wbentityvariable",
+         "columnName": "depicts"
+        },
+        "qualifiers": [],
+        "references": [],
+        "mode": "add_or_merge",
+        "mergingStrategy": {
+         "type": "qualifiers",
+         "valueMatcher": {
+          "type": "strict"
+         },
+         "pids": []
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "upload": {
+  "summary": "media test",
+  "maxlag": "5",
+  "editGroupsUrlSchema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])",
+  "tag": "",
+  "maxEditsPerMinute": "600",
+  "resultsColumnName": "Wikibase editing results"
+ },
+ "performed": {
+  "code": "pending"
+ },
+ "operation": {
+  "description": "Perform Wikibase edits",
+  "operation": {
+   "op": "wikidata/perform-wikibase-edits",
+   "engineConfig": {
+    "facets": [],
+    "mode": "row-based"
+   },
+   "summary": "media test",
+   "maxlag": 5,
+   "editGroupsUrlSchema": "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])",
+   "maxEditsPerMinute": 600,
+   "tag": "",
+   "resultsColumnName": "Wikibase editing results",
+   "description": "Perform Wikibase edits"
+  }
+ },
+ "columns": [
+  "media",
+  "file",
+  "name",
+  "caption",
+  "depicts",
+  "Wikibase editing results"
+ ],
+ "rows": [
+  [
+   {
+    "v": "NEW1",
+    "r": {
+     "j": "matched",
+     "m": "M2000"
+    }
+   },
+   {
+    "v": "{FILES}\\sunset.png"
+   },
+   {
+    "v": "Sunset test.png"
+   },
+   {
+    "v": "A sunset"
+   },
+   {
+    "v": "Q145",
+    "r": {
+     "j": "matched",
+     "m": "Q145"
+    }
+   },
+   {
+    "v": "https://commons.wikimedia.org/entity/M2000"
+   }
+  ],
+  [
+   {
+    "v": "M100",
+    "r": {
+     "j": "matched",
+     "m": "M100"
+    }
+   },
+   null,
+   {
+    "v": "Existing test.pdf"
+   },
+   {
+    "v": "Some notes"
+   },
+   {
+    "v": "Q30",
+    "r": {
+     "j": "matched",
+     "m": "Q30"
+    }
+   },
+   {
+    "v": "{HOST}/w/index.php?diff=prev&oldid=2903"
+   }
+  ]
+ ],
+ "requests": [
+  {
+   "params": {
+    "assert": "user",
+    "format": "json",
+    "action": "wbgetentities",
+    "ids": "M100",
+    "props": "info|datatype|labels|aliases|descriptions|claims|sitelinks"
+   },
+   "reply": {
+    "entities": {
+     "M100": {
+      "id": "M100",
+      "type": "mediainfo",
+      "pageid": 100,
+      "ns": 6,
+      "title": "File:Existing test.pdf",
+      "lastrevid": 700,
+      "modified": "2024-01-01T00:00:00Z",
+      "descriptions": {},
+      "labels": {
+       "en": {
+        "language": "en",
+        "value": "Old caption"
+       }
+      },
+      "statements": {}
+     }
+    },
+    "success": 1
+   }
+  },
+  {
+   "params": {
+    "meta": "tokens",
+    "assert": "user",
+    "format": "json",
+    "action": "query",
+    "type": "csrf"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "tokens": {
+      "csrftoken": "csrftoken+\\"
+     }
+    }
+   }
+  },
+  {
+   "params": {
+    "filename": "Sunset test.png",
+    "assert": "user",
+    "format": "json",
+    "action": "upload",
+    "comment": "media test ([[:toollabs:editgroups-commons/b/OR/{BATCH}|details]])",
+    "text": "== {{int:filedesc}} ==\n{{Information|description=Test}}\n[[Category:Uploaded with OpenRefine]]",
+    "tags": "",
+    "token": "csrftoken+\\",
+    "file": {
+     "filename": "Sunset test.png",
+     "size": 36,
+     "sha256": "5402dd9e534f412278b89f62d063483b37749a42abf1b9e2fe26d94c7d1c8c4f"
+    }
+   },
+   "reply": {
+    "upload": {
+     "result": "Success",
+     "filename": "Sunset test.png",
+     "pageid": 2000,
+     "imageinfo": {
+      "url": "https://upload.example/Sunset test.png"
+     }
+    }
+   }
+  },
+  {
+   "params": {
+    "assert": "user",
+    "format": "json",
+    "action": "query",
+    "titles": "File:Sunset test.png"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "pages": {
+      "2000": {
+       "pageid": 2000,
+       "ns": 6,
+       "title": "File:Sunset test.png"
+      }
+     }
+    }
+   }
+  },
+  {
+   "params": {
+    "meta": "tokens",
+    "assert": "user",
+    "format": "json",
+    "action": "query",
+    "type": "csrf"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "tokens": {
+      "csrftoken": "csrftoken+\\"
+     }
+    }
+   }
+  },
+  {
+   "params": {
+    "summary": "media test ([[:toollabs:editgroups-commons/b/OR/{BATCH}|details]])",
+    "maxlag": "5",
+    "data": "{\"claims\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P180\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q145\",\"numeric-id\":145,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}],\"labels\":{\"en\":{\"language\":\"en\",\"value\":\"A sunset\"}}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "id": "M2000",
+    "tags": "",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "id": "M2000",
+     "type": "mediainfo",
+     "lastrevid": 2801,
+     "labels": {},
+     "statements": {}
+    },
+    "success": 1
+   }
+  },
+  {
+   "params": {
+    "pageids": "2000",
+    "assert": "user",
+    "format": "json",
+    "action": "purge",
+    "errorformat": "raw"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "purge": [
+     {
+      "ns": 6,
+      "pageid": 2000,
+      "purged": ""
+     }
+    ]
+   }
+  },
+  {
+   "params": {
+    "summary": "media test ([[:toollabs:editgroups-commons/b/OR/{BATCH}|details]])",
+    "maxlag": "5",
+    "data": "{\"claims\":[{\"rank\":\"normal\",\"mainsnak\":{\"property\":\"P180\",\"datatype\":\"wikibase-item\",\"datavalue\":{\"value\":{\"id\":\"Q30\",\"numeric-id\":30,\"entity-type\":\"item\"},\"type\":\"wikibase-entityid\"},\"snaktype\":\"value\"},\"type\":\"statement\"}],\"labels\":{\"en\":{\"language\":\"en\",\"value\":\"Some notes\"}}}",
+    "bot": "",
+    "assert": "user",
+    "format": "json",
+    "action": "wbeditentity",
+    "id": "M100",
+    "baserevid": "700",
+    "tags": "",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "entity": {
+     "id": "M100",
+     "type": "mediainfo",
+     "lastrevid": 2802,
+     "labels": {},
+     "statements": {}
+    },
+    "success": 1
+   }
+  },
+  {
+   "params": {
+    "meta": "tokens",
+    "assert": "user",
+    "format": "json",
+    "action": "query",
+    "type": "csrf"
+   },
+   "reply": {
+    "batchcomplete": "",
+    "query": {
+     "tokens": {
+      "csrftoken": "csrftoken+\\"
+     }
+    }
+   }
+  },
+  {
+   "params": {
+    "summary": "media test ([[:toollabs:editgroups-commons/b/OR/{BATCH}|details]])",
+    "bot": "true",
+    "assert": "user",
+    "format": "json",
+    "action": "edit",
+    "text": "== {{int:filedesc}} ==\n{{Information|description=Test}}",
+    "pageid": "100",
+    "tags": "",
+    "token": "csrftoken+\\"
+   },
+   "reply": {
+    "edit": {
+     "result": "Success",
+     "pageid": 100,
+     "newrevid": 2903
+    }
+   }
+  }
+ ]
+}

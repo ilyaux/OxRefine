@@ -323,6 +323,8 @@ pub enum EntityId {
 /// to leave out are noted, as OpenRefine's evaluation warnings (kind, example).
 pub struct Context<'a> {
     pub site_iri: &'a str,
+    /// the IRI of each entity type (entityTypeSiteIRI): items can live on another Wikibase than media info
+    pub entity_types: Option<&'a J>,
     pub languages: &'a dyn Fn(&str) -> bool,
     pub warnings: RefCell<Vec<(&'static str, String)>>,
 }
@@ -348,10 +350,21 @@ impl Expr {
             Expr::EntityVariable { column_name } => {
                 let c = t.col(column_name).ok()?;
                 let r = t.columns[c].recon(row)?;
-                if r.identifier_space.as_deref() != Some(cx.site_iri) { return None; }
+                // a cell reconciled against the Wikibase of its entity type (an item on Wikidata in a Commons schema)
+                let space = r.identifier_space.as_deref()?;
+                let iri = |kind: &str| cx.entity_types.and_then(|t| t[kind].as_str());
                 match r.judgment {
-                    Judgment::Matched => Val::Entity(EntityId::Existing(r.matched.as_ref()?.id.clone())),
-                    Judgment::New => Val::Entity(EntityId::New(r.id)),
+                    Judgment::Matched => {
+                        let id = &r.matched.as_ref()?.id;
+                        let kind = match id.chars().next() { Some('P') => "property", Some('M') => "mediainfo", Some('L') => "lexeme", _ => "item" };
+                        if space != cx.site_iri && iri(kind) != Some(space) { return None; }
+                        Val::Entity(EntityId::Existing(id.clone()))
+                    }
+                    Judgment::New => {
+                        let known = cx.entity_types.and_then(J::as_object).is_some_and(|t| t.values().any(|v| v.as_str() == Some(space)));
+                        if space != cx.site_iri && !known { return None; }
+                        Val::Entity(EntityId::New(r.id))
+                    }
                     _ => return None,
                 }
             }
@@ -420,6 +433,9 @@ pub struct Edit {
     /// media info: the file's name and where to upload it from
     pub file_name: Option<String>,
     pub file_path: Option<String>,
+    /// media info: the file page's wikitext, and whether it replaces an existing file's
+    pub wikitext: Option<String>,
+    pub override_wikitext: bool,
     /// (term type, language, text) in the schema's order
     pub terms: Vec<(TermType, String, String)>,
     /// (property, statements) in the schema's order
@@ -453,6 +469,7 @@ impl Edit {
         self.rows.extend(other.rows);
         if self.file_name.is_none() { self.file_name = other.file_name; }
         if self.file_path.is_none() { self.file_path = other.file_path; }
+        if self.wikitext.is_none() { self.wikitext = other.wikitext; }
     }
 }
 
@@ -469,7 +486,7 @@ pub fn evaluate(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&st
 /// The edits, and the evaluation warnings on the way.
 fn evaluate_noting(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(&str) -> bool) -> (Vec<Edit>, Vec<(&'static str, String)>) {
     let site = schema.site_iri.clone().unwrap_or_else(|| "http://www.wikidata.org/entity/".into());
-    let cx = Context { site_iri: &site, languages, warnings: RefCell::new(vec![]) };
+    let cx = Context { site_iri: &site, entity_types: schema.entity_type_site_iri.as_ref(), languages, warnings: RefCell::new(vec![]) };
     let mut edits: Vec<Edit> = vec![];
     let mut index: HashMap<(bool, EntityId), usize> = HashMap::new();
     for &row in rows {
@@ -481,11 +498,11 @@ fn evaluate_noting(schema: &Schema, t: &Table, rows: &[u32], languages: &dyn Fn(
             };
             let Some(Val::Entity(id)) = subject.eval(t, row, &cx) else { continue };
             let text = |e: &Option<Expr>| match e.as_ref().and_then(|e| e.eval(t, row, &cx)) { Some(Val::Str(s)) => Some(s), _ => None };
-            let (file_name, file_path) = match expr {
-                EntityExpr::MediaInfo { file_name, file_path, .. } => (text(file_name), text(file_path)),
-                _ => (None, None),
+            let (file_name, file_path, wikitext, override_wikitext) = match expr {
+                EntityExpr::MediaInfo { file_name, file_path, wikitext, override_wikitext, .. } => (text(file_name), text(file_path), text(wikitext), *override_wikitext),
+                _ => (None, None, None, false),
             };
-            let mut edit = Edit { subject: id.clone(), media_info, file_name, file_path, terms: vec![], groups: vec![], rows: vec![row] };
+            let mut edit = Edit { subject: id.clone(), media_info, file_name, file_path, wikitext, override_wikitext, terms: vec![], groups: vec![], rows: vec![row] };
             for term in terms {
                 if let Some(Val::Mono { text, lang }) = term.value.eval(t, row, &cx) {
                     edit.terms.push((term.name_type, lang, text));

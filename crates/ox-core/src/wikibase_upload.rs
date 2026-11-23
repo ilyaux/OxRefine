@@ -58,12 +58,32 @@ fn oauth_header(url: &str, params: &[(String, String)], o: &OAuth) -> String {
 
 /// One MediaWiki API request (a POST form), as the logged-in user when there is a session.
 fn call(api: &str, session: Option<&mut Session>, params: &[(&str, &str)]) -> Result<J> {
+    send(api, session, params, None)
+}
+
+/// A request carrying a file (multipart/form-data): name and contents.
+fn send(api: &str, session: Option<&mut Session>, params: &[(&str, &str)], file: Option<(&str, &[u8])>) -> Result<J> {
     let params: Vec<(String, String)> = params.iter().map(|(k, v)| (k.to_string(), v.to_string())).collect();
     let mut request = ureq::post(api).header("User-Agent", concat!("OxRefine/", env!("CARGO_PKG_VERSION"), " (https://github.com/ilyaux/OxRefine)"));
     let cookies = session.as_ref().map(|s| s.cookies.iter().map(|(k, v)| format!("{k}={v}")).collect::<Vec<_>>().join("; ")).unwrap_or_default();
     if !cookies.is_empty() { request = request.header("Cookie", cookies); }
-    if let Some(o) = session.as_ref().and_then(|s| s.oauth.as_ref()) { request = request.header("Authorization", oauth_header(api, &params, o)); }
-    let mut res = request.send_form(params.iter().map(|(k, v)| (k.as_str(), v.as_str()))).map_err(|e| format!("{api}: {e}"))?;
+    // OAuth signs the form fields, none of a multipart body
+    if let Some(o) = session.as_ref().and_then(|s| s.oauth.as_ref()) { request = request.header("Authorization", oauth_header(api, if file.is_some() { &[] } else { &params }, o)); }
+    let sent = match file {
+        None => request.send_form(params.iter().map(|(k, v)| (k.as_str(), v.as_str()))),
+        Some((name, bytes)) => {
+            let boundary = format!("oxrefine{:x}", crate::recon::new_id());
+            let mut body = vec![];
+            for (k, v) in &params {
+                body.extend_from_slice(format!("--{boundary}\r\nContent-Disposition: form-data; name=\"{k}\"\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n{v}\r\n").as_bytes());
+            }
+            body.extend_from_slice(format!("--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{}\"\r\nContent-Type: application/octet-stream\r\n\r\n", name.replace('"', "")).as_bytes());
+            body.extend_from_slice(bytes);
+            body.extend_from_slice(format!("\r\n--{boundary}--\r\n").as_bytes());
+            request.header("Content-Type", format!("multipart/form-data; boundary={boundary}")).send(&body[..])
+        }
+    };
+    let mut res = sent.map_err(|e| format!("{api}: {e}"))?;
     if let Some(s) = session {
         for header in res.headers().get_all("set-cookie") {
             let Some((name, value)) = header.to_str().ok().and_then(|h| h.split(';').next()).and_then(|kv| kv.split_once('=')) else { continue };
@@ -248,7 +268,7 @@ fn edit_data(e: &super::Edit, current: Option<&J>, dt: &HashMap<String, String>,
     };
     // an existing entity: only what changes
     let (mut added, mut updated, mut removed) = (vec![], vec![], vec![]);
-    let existing = |pid: &str| current["claims"][pid].as_array().cloned().unwrap_or_default();
+    let existing = |pid: &str| current["claims"][pid].as_array().or(current["statements"][pid].as_array()).cloned().unwrap_or_default();
     for (pid, statements) in &e.groups {
         for s in statements {
             if s.mode == "delete" {
@@ -299,6 +319,43 @@ fn edit_data(e: &super::Edit, current: Option<&J>, dt: &HashMap<String, String>,
     (!data.is_empty()).then_some(J::Object(data))
 }
 
+// ------------------------------------------------------------ media files
+
+/// Upload a new file (from a local path, or a web address the wiki fetches) with its page
+/// wikitext; its page id and media info id (M + page id).
+fn upload_file(api: &str, s: &mut Session, e: &super::Edit, summary: &str, tag: &str, token: &str) -> Result<(u64, String)> {
+    let name = e.file_name.as_deref().ok_or("A new file needs a file name")?;
+    let path = e.file_path.as_deref().ok_or("A new file needs a file path")?;
+    let text = e.wikitext.clone().unwrap_or_default();
+    let mut params = vec![("action", "upload"), ("format", "json"), ("assert", "user"), ("filename", name), ("comment", summary), ("text", text.as_str()), ("tags", tag), ("token", token)];
+    let reply = if path.starts_with("http://") || path.starts_with("https://") {
+        params.push(("url", path));
+        call(api, Some(s), &params)?
+    } else {
+        let bytes = std::fs::read(path).map_err(|e| format!("{path}: {e}"))?;
+        send(api, Some(s), &params, Some((name, &bytes)))?
+    };
+    if reply["upload"]["result"] != "Success" {
+        return Err(format!("The wiki did not take the file: {}", reply["upload"]["warnings"]));
+    }
+    let title = format!("File:{}", reply["upload"]["filename"].as_str().unwrap_or(name));
+    let found = call(api, Some(s), &[("action", "query"), ("titles", &title), ("format", "json"), ("assert", "user")])?;
+    let pageid = found["query"]["pages"].as_object().into_iter().flatten().find_map(|(_, p)| p["pageid"].as_u64()).ok_or_else(|| format!("{title}: no page after the upload"))?;
+    Ok((pageid, format!("M{pageid}")))
+}
+
+/// An existing file's page gets the schema's wikitext when the schema says to replace it.
+#[allow(clippy::too_many_arguments)]
+fn replace_wikitext(api: &str, s: &mut Session, e: &super::Edit, mid: &str, current: &HashMap<String, J>, summary: &str, tag: &str, token: &str, index: &str, cells: &mut [J]) {
+    let (Some(text), true) = (&e.wikitext, e.override_wikitext) else { return };
+    let Some(pageid) = current.get(mid).and_then(|d| d["pageid"].as_u64()).or_else(|| mid.trim_start_matches('M').parse().ok()) else { return };
+    let row = e.rows[0];
+    match call(api, Some(s), &[("action", "edit"), ("pageid", &pageid.to_string()), ("text", text), ("summary", summary), ("bot", "true"), ("format", "json"), ("assert", "user"), ("tags", tag), ("token", token)]) {
+        Ok(r) => cells[row] = json!(format!("{index}?diff=prev&oldid={}", r["edit"]["newrevid"].as_u64().unwrap_or(0))),
+        Err(m) => cells[row] = json!({ "e": m }),
+    }
+}
+
 // ------------------------------------------------------------ the upload
 
 /// OpenRefine's perform-wikibase-edits settings.
@@ -314,7 +371,6 @@ pub fn upload(schema: &Schema, t: &crate::table::Table, rows: &[u32], settings: 
     let mut s = session(&api).ok_or_else(|| format!("Log in to {api} before uploading edits."))?;
     let site = schema.site_iri.clone().unwrap_or_else(|| CALENDAR.into());
     let edits = evaluate(schema, t, rows, &language_check(schema));
-    if edits.iter().any(|e| e.media_info) { return Err("Uploading media info (Commons files) is not supported yet.".into()); }
     let dt = datatypes(schema);
     // the entities as they are now
     let ids: Vec<String> = edits.iter().filter_map(|e| match &e.subject { EntityId::Existing(id) => Some(id.clone()), _ => None }).collect();
@@ -342,19 +398,36 @@ pub fn upload(schema: &Schema, t: &crate::table::Table, rows: &[u32], settings: 
     for (done, e) in order.iter().enumerate() {
         crate::jobs::progress(&format!("Uploading edit {} of {}", done + 1, order.len()), 0);
         crate::jobs::tick(0)?;
-        let doc = match &e.subject { EntityId::Existing(id) => Some(current.get(id).cloned().unwrap_or(J::Null)), EntityId::New(_) => None };
-        let Some(data) = edit_data(e, doc.as_ref(), &dt, &site, &created) else { continue };
+        let row = e.rows[0];
+        // a new file is uploaded first; its media info then gets the captions and statements
+        let mut page = None;
+        if let (EntityId::New(n), true) = (&e.subject, e.media_info) {
+            match upload_file(&api, &mut s, e, &summary, &tag, &token) {
+                Ok((pageid, mid)) => { created.insert(*n, mid.clone()); cells[row] = json!(format!("{site}{mid}")); page = Some(pageid); }
+                Err(m) => { cells[row] = json!({ "e": m }); continue; }
+            }
+        }
+        let doc = match (&e.subject, e.media_info) {
+            (EntityId::Existing(id), _) => Some(current.get(id).cloned().unwrap_or(J::Null)),
+            // the media info of the file just uploaded: there, but empty
+            (EntityId::New(_), true) => Some(json!({})),
+            (EntityId::New(_), false) => None,
+        };
+        let target = match &e.subject { EntityId::New(n) if e.media_info => created.get(n).cloned(), EntityId::Existing(id) => Some(id.clone()), _ => None };
+        let Some(data) = edit_data(e, doc.as_ref(), &dt, &site, &created) else {
+            if let (Some(t), true) = (&target, e.media_info) { replace_wikitext(&api, &mut s, e, t, &current, &summary, &tag, &token, &index, &mut cells); }
+            continue;
+        };
         if !first { if let Some(p) = pause { std::thread::sleep(p); } }
         first = false;
         let data = data.to_string();
         let maxlag = settings.maxlag.to_string();
-        let mut params: Vec<(&str, &str)> = vec![("action", "wbeditentity"), ("format", "json"), ("summary", &summary), ("maxlag", &maxlag), ("bot", ""), ("assert", "user"), ("token", &token), ("data", &data)];
-        if !tag.is_empty() { params.push(("tags", &tag)); }
+        let mut params: Vec<(&str, &str)> = vec![("action", "wbeditentity"), ("format", "json"), ("summary", &summary), ("maxlag", &maxlag), ("bot", ""), ("assert", "user"), ("token", &token), ("data", &data), ("tags", &tag)];
         let base = doc.as_ref().and_then(|d| d["lastrevid"].as_u64()).map(|r| r.to_string());
-        match (&e.subject, &base) {
-            (EntityId::New(_), _) => params.push(("new", "item")),
-            (EntityId::Existing(id), Some(rev)) => { params.push(("id", id)); params.push(("baserevid", rev)); }
-            (EntityId::Existing(id), None) => params.push(("id", id)),
+        match (&target, &base) {
+            (None, _) => params.push(("new", "item")),
+            (Some(id), Some(rev)) => { params.push(("id", id)); params.push(("baserevid", rev)); }
+            (Some(id), None) => params.push(("id", id)),
         }
         // the wiki asks to wait while it is lagging
         let mut reply = call(&api, Some(&mut s), &params);
@@ -363,8 +436,16 @@ pub fn upload(schema: &Schema, t: &crate::table::Table, rows: &[u32], settings: 
             std::thread::sleep(std::time::Duration::from_secs(5));
             reply = call(&api, Some(&mut s), &params);
         }
-        let row = e.rows[0];
         match reply {
+            Ok(r) if e.media_info => {
+                // the new file's page shows its structured data once purged; an existing file may get new wikitext
+                if let Some(pageid) = page {
+                    let _ = call(&api, Some(&mut s), &[("action", "purge"), ("pageids", &pageid.to_string()), ("format", "json"), ("assert", "user"), ("errorformat", "raw")]);
+                } else if let Some(t) = &target {
+                    cells[row] = json!(format!("{index}?diff=prev&oldid={}", r["entity"]["lastrevid"].as_u64().unwrap_or(0)));
+                    replace_wikitext(&api, &mut s, e, t, &current, &summary, &tag, &token, &index, &mut cells);
+                }
+            }
             Ok(r) => {
                 let id = r["entity"]["id"].as_str().unwrap_or("").to_string();
                 if let EntityId::New(n) = e.subject {

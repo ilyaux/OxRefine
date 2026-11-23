@@ -27,4 +27,10 @@ Give an edit summary and upload. OxRefine fetches the current entities and creat
 
 Afterwards, the cells of new items are matched to the items made. A **Wikibase editing results** column holds each row's result: the new item, the edit's diff, or the error. The upload is one history step. Undoing it changes the project, not the wiki, and replaying the history never uploads again.
 
-Media info (Commons files) can be edited in the schema and checked, but not uploaded yet. See [Differences](differences.md#wikibase-uploads) for what else differs from OpenRefine.
+## Wikimedia Commons
+
+Pick **Wikimedia Commons** as the Wikibase. On Commons, files depict Wikidata items, so reconcile item columns against Wikidata and files against Commons (M ids), as in OpenRefine. A **media info** entity is a file. A cell marked as new uploads one: give its **file name** and **file path**, a file on this computer or a web address. A web address needs the wiki's upload-by-URL right. Its **wikitext** becomes the new file page. Captions are the labels, and statements are the file's structured data, such as "depicts".
+
+For a file that is already there, its captions and statements change as for an item. Its page wikitext is replaced only when **also replace the wikitext of existing files** is ticked. A new file's cell becomes matched to its M id.
+
+See [Differences](differences.md#wikibase-uploads) for what differs from OpenRefine.

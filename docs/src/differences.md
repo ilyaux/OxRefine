@@ -72,11 +72,11 @@ OpenRefine reads RDF into an Apache Jena graph and lists subjects and predicates
 
 ### Wikibase uploads
 
-Uploads send what OpenRefine 3.10.1 sends: `tests/wikibase/upload.json` records OpenRefine logging in to a mock MediaWiki API and uploading a schema, and OxRefine must send the same requests and edit data and leave the same table. The differences:
+Uploads send what OpenRefine 3.10.1 sends: `tests/wikibase/upload.json` records OpenRefine logging in to a mock MediaWiki API and uploading a schema, and `tests/wikibase/media.json` uploading a file to a mock Commons, and OxRefine must send the same requests and edit data and leave the same table. The differences:
 
 - **Login.** OxRefine keeps a login only while it runs; it has no option to remember credentials.
 - **Change tag.** It adds no change tag unless the operation names one, because tags must exist on the wiki and OpenRefine's tag names OpenRefine.
-- **Media info.** Commons files are not uploaded yet.
+- **Tracking category.** OpenRefine adds `[[Category:Uploaded with OpenRefine]]` to the page of each file it uploads to Commons. OxRefine adds no category, so files it uploads aren't credited to OpenRefine.
 - **Statement order.** The order of statements within one edit can differ, which the wiki ignores.
 
 ### Wikibase QuickStatements
@@ -91,7 +91,7 @@ OpenRefine 3.10.1 doesn't bundle the gdata extension. OxRefine imports and expor
 
 - **Facets:** the scatterplot facet
 - **Clustering:** custom clustering functions
-- **Extensions:** Wikibase media info uploads, a few Wikibase constraint checks (ranges, required statements), Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
+- **Extensions:** a few Wikibase constraint checks (ranges, required statements), Commons-specific GREL functions, OpenRefine's Java extension modules inside OxRefine (their steps run in an installed OpenRefine through [the bridge](extensions.md#openrefines-java-extensions); OxRefine has [its own extensions](extensions.md))
 - **Interface:** translations (the interface is in English)
 - **Server:** OpenRefine's HTTP API, which some client libraries use; OxRefine has its own JSON API, and `ox apply` covers batch use
 

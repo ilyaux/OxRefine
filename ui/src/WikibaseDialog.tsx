@@ -20,14 +20,17 @@ export type Schema = { entityEdits: Entity[]; siteIri?: string; entityTypeSiteIR
 type Warning = { type: string; aggregationId: string; severity: "CRITICAL" | "WARNING" | "INFO"; count: number; example: string }
 type Preview = { edits: number; newEntities: number; quickstatements: string | null; quickstatementsError: string | null; warnings: Warning[] }
 
+// as OpenRefine's Wikidata and Commons manifests: Commons files depict Wikidata items
+const WIKIDATA_IRI = "http://www.wikidata.org/entity/"
+const COMMONS_IRI = "https://commons.wikimedia.org/entity/"
 const SITES = {
-  wikidata: { label: "Wikidata", siteIri: "http://www.wikidata.org/entity/", mediaWikiApiEndpoint: "https://www.wikidata.org/w/api.php" },
-  commons: { label: "Wikimedia Commons", siteIri: "http://www.wikidata.org/entity/", mediaWikiApiEndpoint: "https://commons.wikimedia.org/w/api.php" },
+  wikidata: { label: "Wikidata", siteIri: WIKIDATA_IRI, mediaWikiApiEndpoint: "https://www.wikidata.org/w/api.php", types: { item: WIKIDATA_IRI, property: WIKIDATA_IRI, mediainfo: COMMONS_IRI } },
+  commons: { label: "Wikimedia Commons", siteIri: COMMONS_IRI, mediaWikiApiEndpoint: "https://commons.wikimedia.org/w/api.php", types: { item: WIKIDATA_IRI, property: WIKIDATA_IRI, mediainfo: COMMONS_IRI } },
 }
 const fresh = (): Schema => ({
   entityEdits: [],
   siteIri: SITES.wikidata.siteIri,
-  entityTypeSiteIRI: { item: SITES.wikidata.siteIri, property: SITES.wikidata.siteIri, mediainfo: "https://commons.wikimedia.org/entity/" },
+  entityTypeSiteIRI: { ...SITES.wikidata.types },
   mediaWikiApiEndpoint: SITES.wikidata.mediaWikiApiEndpoint,
 })
 const STRICT = { type: "qualifiers", valueMatcher: { type: "strict" }, pids: [] }
@@ -150,12 +153,23 @@ function EntityEditor({ entity, columns, api, onChange, onRemove }: { entity: En
         <Button variant="ghost" size="sm" onClick={onRemove}><Trash2Icon data-icon="inline-start" />Remove</Button>
       </div>
       {media && (
+        <>
         <div className="flex flex-wrap items-center gap-2 pl-4">
           <span className="w-20 text-xs text-muted-foreground">File name</span>
           <ValueInput kind="string" label="File name" value={entity.fileName ?? null} columns={columns} onChange={(fileName) => onChange({ ...entity, fileName })} />
           <span className="w-20 text-xs text-muted-foreground">File path</span>
           <ValueInput kind="string" label="File path" value={entity.filePath ?? null} columns={columns} onChange={(filePath) => onChange({ ...entity, filePath })} />
+          <span className="text-xs text-muted-foreground">a local file, or a web address</span>
         </div>
+        <div className="flex flex-wrap items-center gap-2 pl-4">
+          <span className="w-20 text-xs text-muted-foreground">Wikitext</span>
+          <ValueInput kind="string" label="Wikitext" value={entity.wikitext ?? null} columns={columns} onChange={(wikitext) => onChange({ ...entity, wikitext })} />
+          <label className="flex items-center gap-1.5 text-xs">
+            <input type="checkbox" className="accent-foreground" checked={!!entity.overrideWikitext} onChange={(e) => onChange({ ...entity, overrideWikitext: e.target.checked })} />
+            also replace the wikitext of existing files
+          </label>
+        </div>
+        </>
       )}
       <div className="flex flex-col gap-1.5 pl-4">
         <span className="text-xs text-muted-foreground">Terms</span>
@@ -244,7 +258,8 @@ function UploadPanel({ api, preview, onUpload }: { api: string; preview: Preview
     setBusy(true)
     setError("")
     // EditGroups (Wikidata) groups OpenRefine-style batches, so they can be reviewed and undone together
-    const groups = api.includes("wikidata.org") ? "([[:toollabs:editgroups/b/OR/${batch_id}|details]])" : ""
+    const groups = api.includes("wikidata.org") ? "([[:toollabs:editgroups/b/OR/${batch_id}|details]])"
+      : api.includes("commons.wikimedia.org") ? "([[:toollabs:editgroups-commons/b/OR/${batch_id}|details]])" : ""
     try { await onUpload({ summary, maxlag: Number(maxlag) || 5, editGroupsUrlSchema: groups }) } catch (e) { setError((e as Error).message) } finally { setBusy(false) }
   }
   if (!status) return <p className="px-5 py-4 text-sm text-muted-foreground">…</p>
@@ -323,7 +338,7 @@ export function WikibaseDialog({ columns, engine, onSave, onUpload, onClose }: {
           <div className="flex flex-col gap-2 px-3.5">
             <select aria-label="Wikibase" className={select} value={site} onChange={(e) => {
               const s = SITES[e.target.value as keyof typeof SITES]
-              if (s) setSchema({ ...schema, siteIri: s.siteIri, mediaWikiApiEndpoint: s.mediaWikiApiEndpoint, entityTypeSiteIRI: { ...schema.entityTypeSiteIRI, item: s.siteIri, property: s.siteIri } })
+              if (s) setSchema({ ...schema, siteIri: s.siteIri, mediaWikiApiEndpoint: s.mediaWikiApiEndpoint, entityTypeSiteIRI: { ...s.types } })
             }}>
               {Object.entries(SITES).map(([k, s]) => <option key={k} value={k}>{s.label}</option>)}
               <option value="custom">Another Wikibase</option>
