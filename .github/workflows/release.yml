@@ -121,6 +121,10 @@ jobs:
         if: endsWith(matrix.target, '-musl')
         run: sudo apt-get update && sudo apt-get install -y musl-tools
       - name: Build ox
+        env:
+          # link with musl's own libraries; the host cc would pull in glibc's static libm
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: musl-gcc
+          CC_x86_64_unknown_linux_musl: musl-gcc
         run: cargo build --release --locked -p ox-cli --target ${{ matrix.target }}
       - name: Run the static build on Alpine and Alma Linux 8
         if: endsWith(matrix.target, '-musl')
