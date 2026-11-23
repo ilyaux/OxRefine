@@ -77,6 +77,9 @@ pub struct History {
     pub cursor: usize,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub original: Option<crate::orproject::OriginalArchive>,
+    /// The original table's overlay models (an imported OpenRefine project's Wikibase schema)
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub overlays: std::collections::BTreeMap<String, serde_json::Value>,
 }
 
 #[derive(Clone)]

@@ -95,7 +95,7 @@ fn recipe_file_reply_is_small_and_legacy_array_reply_stays_compatible() {
 fn preserved_original_archive_is_included_in_size() {
     let home = home();
     let store = Store::open(&home).unwrap();
-    let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/orproject/extensions/wikibase.openrefine.tar.gz");
+    let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/orproject/extensions/opaque.openrefine.tar.gz");
     let mut session = Session::with_store(store.clone());
     let imported = call(&mut session, "import_project", json!({"path":fixture}));
     let dir = store.root().join(imported["id"].as_str().unwrap());

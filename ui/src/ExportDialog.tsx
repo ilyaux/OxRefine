@@ -29,7 +29,7 @@ export type ExportFormat = "*sv" | "template" | "sql"
 export const EXTENSION: Record<ExportFormat, string> = { "*sv": "csv", template: "txt", sql: "sql" }
 
 /** Everything the Export view offers: the engine's row formats, then the whole project and its recipe. */
-export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe" | "google-sheet" | "google-drive" | `ext:${string}`
+export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe" | "google-sheet" | "google-drive" | "quickstatements" | "wikibase-schema" | `ext:${string}`
 const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] = [
   { id: "csv", label: "CSV", ext: "csv", text: true },
   { id: "tsv", label: "TSV", ext: "tsv", text: true },
@@ -44,6 +44,11 @@ const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] =
   { id: "recipe", label: "Recipe JSON", ext: "json", text: false },
   { id: "google-sheet", label: "Google Sheets", ext: "gsheet", text: false },
   { id: "google-drive", label: "Google Drive", ext: "tar.gz", text: false },
+]
+/** the wikibase extension's exporters, for a project with a Wikibase schema */
+const WIKIBASE: { id: ExportKind; label: string; ext: string; text: boolean }[] = [
+  { id: "quickstatements", label: "QuickStatements", ext: "txt", text: true },
+  { id: "wikibase-schema", label: "Wikibase schema", ext: "json", text: true },
 ]
 const ENCODINGS = ["UTF-8", "UTF-16LE", "UTF-16BE", "windows-1251", "windows-1252", "ISO-8859-1", "US-ASCII"]
 
@@ -61,6 +66,8 @@ const HINTS: Partial<Record<ExportKind, string>> = {
   recipe: "The steps so far as OpenRefine-compatible JSON, for Undo/Redo → Apply in OpenRefine or for ox apply. History → Extract picks steps.",
   "google-sheet": "The matching rows as a new Google Sheet in your Drive; it opens when the upload is done. Sign in from New project → Google Sheets first.",
   "google-drive": "The whole project as an OpenRefine archive, uploaded to your Google Drive. Sign in from New project → Google Sheets first.",
+  quickstatements: "The project's Wikibase schema applied to the matching rows, as QuickStatements commands to paste into the QuickStatements tool.",
+  "wikibase-schema": "The project's Wikibase schema as JSON, for OpenRefine's Wikibase → Import schema.",
 }
 
 /** OpenRefine's default template: one JSON object per row. */
@@ -101,6 +108,7 @@ export function ExportDialog({
   engine,
   rows,
   allRows,
+  wikibase = false,
   onExport,
   onClose,
 }: {
@@ -112,6 +120,8 @@ export function ExportDialog({
   /** rows matching the facets, and all rows */
   rows: number
   allRows: number
+  /** the project has a Wikibase schema */
+  wikibase?: boolean
   /** save in this format: the engine's export with these parameters, or the project or its recipe */
   onExport: (format: ExportKind, ext: string, params: object) => void
   onClose: () => void
@@ -147,7 +157,7 @@ export function ExportDialog({
   // exporters from installed extensions follow the built-in formats
   const extensions = useExtensions()
   const exporters = items(extensions, "exporter")
-  const formats = [...FORMATS, ...exporters.map((e) => ({ id: `ext:${e.id}` as ExportKind, label: e.label ?? e.id, ext: e.extension ?? "txt", text: (e.mime ?? "text/plain").startsWith("text/") }))]
+  const formats = [...FORMATS, ...(wikibase ? WIKIBASE : []), ...exporters.map((e) => ({ id: `ext:${e.id}` as ExportKind, label: e.label ?? e.id, ext: e.extension ?? "txt", text: (e.mime ?? "text/plain").startsWith("text/") }))]
   const hint = (f: ExportKind) => HINTS[f] ?? (f.startsWith("ext:") ? `From the ${exporters.find((e) => `ext:${e.id}` === f)?.owner ?? ""} extension.` : undefined)
   const spec = formats.find((f) => f.id === format) ?? FORMATS[0]
   const tabular = format === "csv" || format === "tsv" || format === "*sv"

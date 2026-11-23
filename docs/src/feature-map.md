@@ -107,7 +107,9 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 |---|---|
 | Extensions (Java modules in the `extensions` folder) | Python extensions in the `extensions` folder of the data folder; **Preferences → Extensions** lists them. OpenRefine's Java modules don't load; see [Extensions](extensions.md) |
 | Database, Google Data, Jython, phonetic and PC-Axis extensions | Built in: the import sources above, the expression language switch, the clustering keyers and the PC-Axis importer |
-| Wikibase extension: schema, issues, upload | Not yet. Schemas in imported OpenRefine projects are kept in the archive |
+| Wikibase extension: schema | A project's schema from an OpenRefine project or a recipe step (`wikidata/save-wikibase-schema`) is kept with its history, undone and redone, and written back to OpenRefine archives |
+| Wikibase → Export to QuickStatements / Export schema | **Export → QuickStatements** / **Wikibase schema**, for a project with a schema |
+| Wikibase → Edit schema, issues, Upload edits | Not yet |
 
 ## Server and API
 

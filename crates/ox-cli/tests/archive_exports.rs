@@ -4,7 +4,7 @@ fn files(label: &str) -> (PathBuf, PathBuf, PathBuf) {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let dir = root.join(format!("target/cli-extension-{label}-{}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
-    (dir.join("recipe.json"), root.join("tests/orproject/extensions/wikibase.openrefine.tar.gz"), dir.join("new.openrefine.tar.gz"))
+    (dir.join("recipe.json"), root.join("tests/orproject/extensions/opaque.openrefine.tar.gz"), dir.join("new.openrefine.tar.gz"))
 }
 
 #[test]

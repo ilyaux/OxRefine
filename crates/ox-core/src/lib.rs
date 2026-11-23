@@ -28,6 +28,7 @@ pub mod storage;
 pub mod table;
 mod transform_preview;
 pub mod unpack;
+pub mod wikibase;
 
 pub use project::{dispatch, dispatch_free, Project, Session};
 

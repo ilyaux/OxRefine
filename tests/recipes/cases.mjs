@@ -33,8 +33,8 @@ export const CASES = [
   { name: "portal unknown extension function", csv: species, ops: [scientificNames[0], transform("species", "value.portalExtension()")], failureStep: 2 },
   // A Jython step, as OpenRefine's bundled Jython extension runs it.
   { name: "portal Jython dependency", csv: species, ops: [scientificNames[0], { ...transform("species", "value"), expression: "jython:return value.upper()" }] },
-  // A real operation shape emitted by OpenRefine's bundled Wikibase extension. Its runtime is not ported.
+  // A real operation shape emitted by OpenRefine's bundled Wikibase extension: it saves a schema, the table is unchanged.
   { name: "portal Wikibase dependency", csv: species, ops: [scientificNames[0], { op: "wikidata/save-wikibase-schema", schema: {
     entityEdits: [], siteIri: "http://www.wikidata.org/entity/", entityTypeSiteIRI: { item: "http://www.wikidata.org/entity/" }, mediaWikiApiEndpoint: "https://www.wikidata.org/w/api.php",
-  } }], oxPreflightError: "wikidata/save-wikibase-schema" },
+  } }] },
 ]

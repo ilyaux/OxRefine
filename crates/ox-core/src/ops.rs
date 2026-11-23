@@ -348,6 +348,12 @@ pub enum OpKind {
         apply_to_judged_cells: bool,
     },
 
+    // ------------------------------------------------------------ Wikibase
+    /// The wikibase extension's save-wikibase-schema: the project's schema (its `wikibaseSchema`
+    /// overlay model) becomes `schema`. The table is unchanged; undo restores the previous schema.
+    #[serde(rename = "wikidata/save-wikibase-schema")]
+    SaveWikibaseSchema { schema: serde_json::Value },
+
     // ------------------------------------------------------------ extensions
     /// An operation an installed extension provides (docs/src/extensions.md). It is part of recipes;
     /// replaying one needs the same extension installed.
@@ -988,6 +994,14 @@ impl Op {
         &self.description
     }
 
+    /// The overlay model this step sets (name, new value), like OpenRefine's WikibaseSchemaChange.
+    pub fn overlay(&self) -> Option<(&'static str, &serde_json::Value)> {
+        match &self.kind {
+            OpKind::SaveWikibaseSchema { schema } => Some(("wikibaseSchema", schema)),
+            _ => None,
+        }
+    }
+
     /// Whether OpenRefine would list this step in an extracted operation history.
     /// The column a step on Recons works on, written as OpenRefine's ReconChange in project archives.
     pub fn recon_column(&self) -> Option<&str> {
@@ -1017,6 +1031,7 @@ impl Op {
         match &self.kind {
             TextTransform { column_name, expression, .. } => format!("Text transform on cells in column {column_name} using expression {expression}"),
             Extension { operation, .. } => format!("Run extension operation {operation}"),
+            SaveWikibaseSchema { .. } => "Save Wikibase schema".into(),
             OpKind::Recon { column_name, config, .. } => {
                 let ty = config.get("type").and_then(|t| t.get("id")).and_then(|t| t.as_str()).unwrap_or("null");
                 format!("Reconcile cells in column {column_name} to type {ty}")
@@ -1114,6 +1129,11 @@ impl Op {
         if let Extension { operation, params } = &self.kind {
             return crate::extensions::operation(operation, t, params);
         }
+        // only the project's overlay changes (Project::apply); stored as OpenRefine saves it
+        if let SaveWikibaseSchema { schema } = &mut self.kind {
+            *schema = crate::wikibase::normalize(schema)?;
+            return Ok(t.clone());
+        }
         if let Some(out) = self.recon_action(t) {
             return out;
         }
@@ -1142,7 +1162,8 @@ impl Op {
             | ReconCopyAcrossColumns { .. }
             | ReconJudgeOneCell { .. }
             | ReconClearOneCell { .. }
-            | Extension { .. } => unreachable!(),
+            | Extension { .. }
+            | SaveWikibaseSchema { .. } => unreachable!(),
             TextTransform { engine_config, column_name, expression, on_error, repeat, repeat_count } => {
                 let p = grel::compile(expression)?;
                 let ci = t.col(column_name)?;

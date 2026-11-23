@@ -4,6 +4,8 @@ use std::{io::{Cursor, Read, Write}, path::{Path, PathBuf}};
 
 fn root() -> PathBuf { Path::new(env!("CARGO_MANIFEST_DIR")).join("../..") }
 fn fixture() -> PathBuf { root().join("tests/orproject/extensions/wikibase.openrefine.tar.gz") }
+/// The same archive with an overlay model OxRefine doesn't know (opaque.py): kept whole
+fn opaque() -> PathBuf { root().join("tests/orproject/extensions/opaque.openrefine.tar.gz") }
 fn output(name: &str) -> PathBuf {
     let dir = root().join("target/extension-export");
     std::fs::create_dir_all(&dir).unwrap();
@@ -12,22 +14,27 @@ fn output(name: &str) -> PathBuf {
 fn op(v: Value) -> Op { serde_json::from_value(v).unwrap() }
 
 #[test]
-fn wikibase_schema_and_unsupported_history_are_preserved() {
-    let bytes = std::fs::read(fixture()).unwrap();
+fn wikibase_schema_and_its_history_are_understood() {
     let expected: Value = serde_json::from_slice(&std::fs::read(root().join("tests/orproject/extensions/fixtures.json")).unwrap()).unwrap();
     let source = orproject::read(&fixture()).unwrap();
     assert_eq!(json!(source.history), expected["history"]);
-    let (p, report) = source.into_project();
-    assert!(report.merged > 0, "the unsupported Wikibase history must be reported");
-    assert!(!report.warnings.is_empty());
-    assert!(p.archive_warning().is_some());
+    let (mut p, report) = source.into_project();
+    assert_eq!(report.merged, 0, "the schema step replays: {:?}", report.reason);
+    assert!(p.archive_warning().is_none(), "nothing left to keep opaque");
+    assert_eq!(p.steps().len(), 3);
+    assert_eq!(p.overlay("wikibaseSchema"), Some(&expected["schema"]));
+    p.goto(1).unwrap();
+    assert_eq!(p.overlay("wikibaseSchema"), None, "undo before the save step removes the schema");
+    p.goto(3).unwrap();
     let path = output("wikibase.openrefine.tar.gz");
-    let sibling = path.with_extension("tmp");
-    std::fs::write(&sibling, b"keep sibling file").unwrap();
     orproject::write(&p, &path).unwrap();
-    assert_eq!(std::fs::read(&sibling).unwrap(), b"keep sibling file");
-    assert_eq!(std::fs::read(&path).unwrap(), bytes, "the whole archive, not only its table, must survive");
-    assert_eq!(json!(orproject::read(&path).unwrap().history), expected["history"]);
+    let back = orproject::read(&path).unwrap();
+    assert_eq!(json!(back.history), expected["history"]);
+    let (mut again, report) = back.into_project();
+    assert_eq!(report.merged, 0);
+    assert_eq!(again.overlay("wikibaseSchema"), Some(&expected["schema"]));
+    again.goto(1).unwrap();
+    assert_eq!(again.overlay("wikibaseSchema"), None, "the written change file undoes to no schema");
 }
 
 // Unknown overlays and files are synthetic additions to a real OpenRefine archive: preserve them
@@ -97,7 +104,8 @@ fn unknown_overlays_files_and_metadata_are_preserved() {
 #[test]
 fn edits_metadata_and_undo_cannot_export_stale_extension_data() {
     for kind in ["rename", "metadata", "name", "noop", "undo"] {
-        let mut p = Project::open(&fixture()).unwrap();
+        let mut p = Project::open(&opaque()).unwrap();
+        let steps = p.steps().len();
         match kind {
             "rename" => p.apply(op(json!({"op":"core/column-rename","oldColumnName":"name","newColumnName":"renamed"}))).unwrap(),
             "metadata" => p.info.description = "changed".into(),
@@ -109,13 +117,13 @@ fn edits_metadata_and_undo_cannot_export_stale_extension_data() {
         std::fs::write(&path, b"keep destination").unwrap();
         assert!(orproject::write(&p, &path).unwrap_err().contains("additional OpenRefine data"), "not refused: {kind}");
         assert_eq!(std::fs::read(&path).unwrap(), b"keep destination");
-        if kind == "undo" { p.goto(1).unwrap(); orproject::write(&p, &path).unwrap(); }
+        if kind == "undo" { p.goto(steps).unwrap(); orproject::write(&p, &path).unwrap(); }
         else if kind == "rename" {
-            p.goto(1).unwrap();
+            p.goto(steps).unwrap();
             assert!(orproject::write(&p, &path).is_err(), "undone new steps must not be silently dropped");
         }
         orproject::write_original(&p, &output(&format!("original-{kind}.openrefine.tar.gz"))).unwrap();
-        assert_eq!(std::fs::read(output(&format!("original-{kind}.openrefine.tar.gz"))).unwrap(), std::fs::read(fixture()).unwrap());
+        assert_eq!(std::fs::read(output(&format!("original-{kind}.openrefine.tar.gz"))).unwrap(), std::fs::read(opaque()).unwrap());
     }
 }
 
@@ -124,7 +132,7 @@ fn restart_keeps_original_and_rejects_missing_or_corrupt_payload() {
     let home = output(&format!("store-{}", std::process::id()));
     let store = Store::open(&home).unwrap();
     let input = home.join("input.openrefine.tar.gz");
-    let original = std::fs::read(fixture()).unwrap();
+    let original = std::fs::read(opaque()).unwrap();
     std::fs::write(&input, &original).unwrap();
     let mut s = Session::with_store(store.clone());
     let imported = dispatch(&mut s, "import_project", json!({"path":input})).unwrap();

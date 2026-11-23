@@ -260,7 +260,7 @@ fn failed_save_cannot_be_evicted_or_replaced_by_opening_the_same_project() {
 #[test]
 fn scoped_archive_import_and_exports_keep_preserved_extension_data_after_restart() {
     let root = work("extensions"); let data = root.join("store"); let mut server = Server::start(&data, None);
-    let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/orproject/extensions/wikibase.openrefine.tar.gz");
+    let source = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/orproject/extensions/opaque.openrefine.tar.gz");
     let mut a = Client::new("browser-a"); let mut b = Client::new("browser-b");
     let id = a.call(&server, "import_project", json!({ "path": source }))["id"].as_str().unwrap().to_owned();
     b.call(&server, "open_project", json!({ "id": id }));

@@ -16,6 +16,8 @@
 | **Recipe JSON** | The project's steps as an OpenRefine recipe; **Recipe** in the top bar picks steps and copies the JSON |
 | **Google Sheets** | The matching rows as a new spreadsheet in your Google Drive, which opens when it's ready ([sign-in](importing.md#google-sheets-and-drive)) |
 | **Google Drive** | The project as an OpenRefine archive in your Google Drive |
+| **QuickStatements** | For a project with a Wikibase schema: the schema applied to the matching rows, as commands for the QuickStatements tool, as OpenRefine's Wikibase extension writes them |
+| **Wikibase schema** | The project's Wikibase schema as JSON, which OpenRefine's **Wikibase → Import schema** reads |
 
 Formats from installed [extensions](extensions.md) follow these in the list.
 

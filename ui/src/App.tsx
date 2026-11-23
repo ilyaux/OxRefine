@@ -910,6 +910,7 @@ export function App() {
             engine={engine}
             rows={total}
             allRows={summary.rows}
+            wikibase={!!summary.wikibaseSchema}
             onExport={(format, ext, params) => {
               setModal(null)
               if (format === "project") exportProject()

@@ -18,6 +18,8 @@ use std::{path::Path, sync::Arc, time::Instant};
 pub struct Project {
     pub name: String,
     states: Vec<Table>,
+    /// OpenRefine's overlay models (the Wikibase schema) after each step, like `states`
+    overlays: Vec<Overlays>,
     ops: Vec<Op>,
     cursor: usize,
     gen: u64,
@@ -32,7 +34,7 @@ pub struct Project {
 
 impl Project {
     pub fn new(name: impl Into<String>, table: Table) -> Project {
-        Project { name: name.into(), states: vec![table], ops: vec![], cursor: 0, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
+        Project { name: name.into(), states: vec![table], overlays: vec![Overlays::default()], ops: vec![], cursor: 0, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Import a file with OpenRefine's default options (CSV/TSV, Excel, ODS or JSON by extension),
@@ -49,6 +51,7 @@ impl Project {
         let budget = original.columns.iter().find_map(|column| column.codes.budget()).unwrap_or_else(crate::storage::current_budget);
         crate::storage::with_budget(budget, || {
         let mut p = Project::new(meta.name.clone(), original);
+        p.overlays[0] = Arc::new(history.overlays);
         for (i, op) in history.ops.into_iter().enumerate() {
             p.apply(op).map_err(|e| format!("replaying step {}: {e}", i + 1))?;
         }
@@ -64,9 +67,11 @@ impl Project {
     }
 
     /// A project from tables already worked out: `tables[i]` is the table after `ops[..i]`.
-    pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>) -> Project {
+    pub(crate) fn from_steps(name: String, tables: Vec<Table>, ops: Vec<Op>, base: Overlays) -> Project {
         let cursor = ops.len();
-        Project { name, states: tables, ops, cursor, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
+        let mut overlays = vec![base];
+        for op in &ops { overlays.push(next_overlays(overlays.last().unwrap(), op)); }
+        Project { name, states: tables, overlays, ops, cursor, gen: 0, cache: None, cluster_cache: None, meta: None, info: Info::default(), original: None }
     }
 
     /// Every table, every step and the cursor (for writing the whole history out).
@@ -78,15 +83,28 @@ impl Project {
         &self.states[self.cursor]
     }
 
+    /// An overlay model at the current step, e.g. "wikibaseSchema".
+    pub fn overlay(&self, name: &str) -> Option<&Value> {
+        self.overlays[self.cursor].get(name)
+    }
+
+    /// The overlay models after each step (for writing the whole history out).
+    pub(crate) fn overlays(&self) -> &[Overlays] {
+        &self.overlays
+    }
+
     pub fn archive_warning(&self) -> Option<&'static str> {
         self.original.as_ref().map(|_| crate::orproject::ARCHIVE_WARNING)
     }
 
     pub fn apply(&mut self, mut op: Op) -> Result<()> {
         let t = share(self.table(), op.apply(self.table())?);
+        let overlays = next_overlays(&self.overlays[self.cursor], &op);
         self.states.truncate(self.cursor + 1);
+        self.overlays.truncate(self.cursor + 1);
         self.ops.truncate(self.cursor);
         self.states.push(t);
+        self.overlays.push(overlays);
         self.ops.push(op);
         self.cursor += 1;
         self.gen += 1;
@@ -149,6 +167,7 @@ impl Project {
             "recipe": self.ops.iter().map(Op::in_recipe).collect::<Vec<_>>(),
             "cursor": self.cursor,
             "archiveWarning": self.archive_warning(),
+            "wikibaseSchema": self.overlay("wikibaseSchema").is_some(),
             // reconciled columns: the service and how far along judging is
             "recon": t.names.iter().zip(&t.columns).filter_map(|(n, c)| {
                 let rc = c.recon.as_ref()?;
@@ -163,9 +182,23 @@ impl Project {
     fn save(&mut self, store: Option<&Store>) -> Result<()> {
         let (Some(store), Some(meta)) = (store, self.meta.as_mut()) else { return Ok(()) };
         meta.info = self.info.clone();
-        let history = History { ops: self.ops.clone(), cursor: self.cursor, original: self.original.clone() };
+        let history = History { ops: self.ops.clone(), cursor: self.cursor, original: self.original.clone(), overlays: (*self.overlays[0]).clone() };
         let t = &self.states[self.cursor];
         store.touch(meta, t, &history)
+    }
+}
+
+/// Overlay models by name, as OpenRefine keeps them beside the table.
+pub type Overlays = Arc<std::collections::BTreeMap<String, Value>>;
+
+fn next_overlays(before: &Overlays, op: &Op) -> Overlays {
+    match op.overlay() {
+        Some((name, value)) => {
+            let mut next = (**before).clone();
+            next.insert(name.to_string(), value.clone());
+            Arc::new(next)
+        }
+        None => before.clone(),
     }
 }
 
@@ -679,6 +712,17 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
         "export" => {
             let rows = p.rows(&a.engine)?;
             let format = a.format.as_deref().unwrap_or_else(|| crate::export::format_for(&a.path));
+            // the wikibase extension's exporters, from the project's schema
+            if matches!(format, "quickstatements" | "wikibase-schema") {
+                let schema = p.overlay("wikibaseSchema").ok_or("No schema was provided. You need to align your project with Wikibase first.")?;
+                let text = if format == "wikibase-schema" { schema.to_string() } else {
+                    let parsed = crate::wikibase::Schema::parse(schema)?;
+                    crate::wikibase::quickstatements(&parsed, p.table(), &rows, &crate::wikibase::language_check(&parsed))?
+                };
+                if a.path.is_empty() { return Ok(json!(text)); }
+                std::fs::write(&a.path, text).map_err(|e| format!("{}: {e}", a.path))?;
+                return Ok(json!(rows.len()));
+            }
             let mut params = a.params;
             if let Some(services) = store.map(Store::preferences).and_then(|prefs| prefs.get("reconciliation.standardServices").cloned()) {
                 if params.is_null() { params = json!({}); }

@@ -15,7 +15,7 @@ A step that OxRefine can't redo, such as an operation from an extension it doesn
 
 ### Projects with additional extension data
 
-When an archive contains data OxRefine cannot interpret, such as a Wikibase schema, unknown overlay models or extra files, OxRefine keeps an untouched copy of the entire source archive with the saved project. This also preserves unsupported history and survives an app restart. A warning stays visible while the project is open.
+A Wikibase schema is not extra data: OxRefine reads it, keeps it with each step of the history and writes it back, so such a project exports normally. When an archive contains data OxRefine cannot interpret, such as other extensions' overlay models or extra files, OxRefine keeps an untouched copy of the entire source archive with the saved project. This also preserves unsupported history and survives an app restart. A warning stays visible while the project is open.
 
 If its table, history and project metadata remain unchanged, **Export → OpenRefine project** returns that original archive. After changes, this export is refused before touching the destination file: unknown extension data may refer to rows or columns that have changed. You can still export the edited table as CSV or Excel, and use **Export preserved original** in the warning bar to retrieve the untouched archive separately. That original does not include changes made in OxRefine.
 

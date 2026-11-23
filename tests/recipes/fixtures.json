@@ -5671,7 +5671,6 @@
           }
         }
       ],
-      "oxPreflightError": "wikidata/save-wikibase-schema",
       "batch": {
         "result": {
           "code": "ok"

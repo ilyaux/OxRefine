@@ -11,6 +11,8 @@ export type Summary = {
   recipe: boolean[]
   cursor: number
   archiveWarning?: string | null
+  /** the project has a Wikibase schema (OpenRefine's wikibase extension) */
+  wikibaseSchema?: boolean
   recon?: Record<string, unknown>
 }
 

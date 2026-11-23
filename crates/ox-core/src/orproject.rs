@@ -403,6 +403,8 @@ enum Change {
     Extend { at: usize, first: usize, names: Vec<String>, new: Vec<Row>, old: Vec<Row> },
     RemoveRows { at: Vec<usize>, rows: Vec<Row> },
     Order(Vec<usize>),
+    /// the wikibase extension's WikibaseSchemaChange: an overlay model before and after; the table is unchanged
+    Overlay { name: String, old: Option<J>, new: Option<J> },
 }
 
 struct Lines<'a>(std::str::Lines<'a>, Pool);
@@ -549,6 +551,10 @@ fn parse(p: &mut Lines) -> Result<Change> {
         },
         "RowRemovalChange" => Change::RemoveRows { at: ints, rows: rows_a },
         "RowReorderChange" => Change::Order(ints),
+        "SaveWikibaseSchemaOperation$WikibaseSchemaChange" => {
+            let schema = |k: &str| f.get(k).filter(|v| !v.is_empty()).map(|v| serde_json::from_str::<J>(v).map_err(err)).transpose();
+            Change::Overlay { name: "wikibaseSchema".into(), old: schema("oldSchema")?, new: schema("newSchema")? }
+        }
         _ => return Err(format!("OxRefine can't read OpenRefine's {kind} yet")),
     })
 }
@@ -710,6 +716,7 @@ impl Change {
                     s.pick(&order)?.put_rows(&at.iter().copied().zip(rows.iter()).collect::<Vec<_>>())?
                 }
             }
+            Change::Overlay { .. } => s.clone(),
             Change::Order(ix) => {
                 if forward {
                     s.pick(&ix.iter().map(|&r| Some(r as u32)).collect::<Vec<_>>())?
@@ -800,6 +807,8 @@ pub struct Archive {
     entries: Vec<Entry>,
     changes: Vec<Option<Change>>,
     states: Vec<State>,
+    /// the overlay models beside each state
+    overlays: Vec<BTreeMap<String, J>>,
     source: Arc<Vec<u8>>,
     opaque: bool,
 }
@@ -869,6 +878,7 @@ fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
     let mut lines = BufReader::new(z.by_name("data.txt").map_err(err)?).lines();
     let mut next = || -> Result<String> { lines.next().ok_or("data.txt ends too early")?.map_err(err) };
     let (mut cols, mut key_at, mut entries, mut past, mut b) = (vec![], 0, vec![], 0, Builder::default());
+    let mut overlays = BTreeMap::new();
     next()?;
     loop {
         let l = next()?;
@@ -907,6 +917,10 @@ fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
                 break;
             }
             "columnModel" | "history" | "maxCellIndex" | "/e/" | "" => {}
+            // the Wikibase schema is understood; other extensions' overlay models are kept opaque
+            "overlayModel:wikibaseSchema" => {
+                overlays.insert("wikibaseSchema".to_string(), serde_json::from_str::<J>(v).map_err(err)?);
+            }
             _ => opaque = true,
         }
     }
@@ -936,9 +950,24 @@ fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
     // undo back to the start, then redo the undone steps
     let mut stopped = None;
     let mut back = vec![now];
+    // the overlay models of each state, beside it (only a WikibaseSchemaChange changes them)
+    let step = |before: &BTreeMap<String, J>, change: Option<&Change>, forward: bool| {
+        let mut out = before.clone();
+        if let Some(Change::Overlay { name, old, new }) = change {
+            match if forward { new } else { old } {
+                Some(v) => { out.insert(name.clone(), v.clone()); }
+                None => { out.remove(name); }
+            }
+        }
+        out
+    };
+    let mut back_overlays = vec![overlays];
     for i in (0..past).rev() {
         match changes[i].as_ref().map(|c| c.run(back.last().unwrap(), false)) {
-            Some(Ok(s)) => back.push(s),
+            Some(Ok(s)) => {
+                back.push(s);
+                back_overlays.push(step(back_overlays.last().unwrap(), changes[i].as_ref(), false));
+            }
             _ => {
                 stopped = Some(why(i, &entries[i]));
                 break;
@@ -947,10 +976,15 @@ fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
     }
     let first = past + 1 - back.len();
     back.reverse();
+    back_overlays.reverse();
     let mut states = back;
+    let mut state_overlays = back_overlays;
     for i in past..entries.len() {
         match changes[i].as_ref().map(|c| c.run(states.last().unwrap(), true)) {
-            Some(Ok(s)) => states.push(s),
+            Some(Ok(s)) => {
+                states.push(s);
+                state_overlays.push(step(state_overlays.last().unwrap(), changes[i].as_ref(), true));
+            }
             _ => {
                 stopped = stopped.or_else(|| Some(why(i, &entries[i])));
                 break;
@@ -968,6 +1002,7 @@ fn read_bytes(source: Arc<Vec<u8>>, fallback_name: &str) -> Result<Archive> {
         entries,
         changes,
         states,
+        overlays: state_overlays,
         source,
         opaque,
     })
@@ -1080,7 +1115,7 @@ impl Archive {
         report.dropped = self.entries.len() - report.merged - ops.len();
         let cursor = self.cursor - report.merged;
         let n = tables.len();
-        let mut p = Project::from_steps(self.name, tables, ops);
+        let mut p = Project::from_steps(self.name, tables, ops, Arc::new(self.overlays[0].clone()));
         p.info = self.info;
         // the history ends early when a redo couldn't be read; the cursor stays inside it
         p.goto(cursor.min(n - 1)).expect("cursor within the steps");
@@ -1349,7 +1384,11 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
     ops[..cursor].iter().enumerate().for_each(|(k, o)| d += &(entry(k, o) + "\n"));
     d += &format!("futureEntryCount={}\n", ops.len() - cursor);
     ops[cursor..].iter().enumerate().for_each(|(k, o)| d += &(entry(cursor + k, o) + "\n"));
-    d += &format!("/e/\nrowCount={}\n", t.rows);
+    d += "/e/\n";
+    for (name, value) in p.overlays()[cursor].iter() {
+        d += &format!("overlayModel:{name}={value}\n");
+    }
+    d += &format!("rowCount={}\n", t.rows);
     let mut data_pool = PoolOut::default();
     for r in 0..t.rows {
         d += &row_json(t, r, &mut data_pool);
@@ -1378,7 +1417,14 @@ pub fn write(p: &Project, path: &Path) -> Result<()> {
     add("data.zip", &zip_files(&[("data.txt", d.as_bytes()), ("pool.txt", data_pool.text().as_bytes())])?)?;
     crate::jobs::tick(1)?;
     for k in 0..ops.len() {
-        let (c, pool) = change_file(&tables[k], &tables[k + 1], &ops[k]);
+        let (c, pool) = match ops[k].overlay() {
+            Some((name, new)) => {
+                let old = p.overlays()[k].get(name).map(J::to_string).unwrap_or_default();
+                let class = "org.openrefine.wikibase.operations.SaveWikibaseSchemaOperation$WikibaseSchemaChange";
+                (format!("{VERSION}\n{class}\nnewSchema={new}\noldSchema={old}\n/ec/\n"), PoolOut::default().text())
+            }
+            None => change_file(&tables[k], &tables[k + 1], &ops[k]),
+        };
         add(&format!("history/{}.change.zip", id0 + k as i64), &zip_files(&[("change.txt", c.as_bytes()), ("pool.txt", pool.as_bytes())])?)?;
         crate::jobs::tick(1)?;
     }
