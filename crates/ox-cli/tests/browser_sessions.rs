@@ -280,3 +280,30 @@ fn scoped_archive_import_and_exports_keep_preserved_extension_data_after_restart
     assert!(std::fs::read_to_string(edited).unwrap().starts_with("person,qty"));
     assert_eq!(b.request(&server, "export_project", json!({ "path": root.join("unsafe.openrefine.tar.gz") })).0, 400);
 }
+
+/// A GET of `path`: the status and the body.
+fn get(server: &Server, path: &str) -> (u16, String) {
+    let mut stream = TcpStream::connect_timeout(&server.addr, Duration::from_secs(3)).unwrap();
+    stream.set_read_timeout(Some(Duration::from_secs(20))).unwrap();
+    write!(stream, "GET {path} HTTP/1.1\r\nHost: {}\r\nConnection: close\r\n\r\n", server.addr).unwrap();
+    let mut reply = vec![];
+    stream.read_to_end(&mut reply).unwrap();
+    let reply = String::from_utf8_lossy(&reply);
+    let (headers, body) = reply.split_once("\r\n\r\n").unwrap();
+    (headers.split_whitespace().nth(1).unwrap().parse().unwrap(), body.to_owned())
+}
+
+#[test]
+fn with_a_token_the_page_needs_it_too() {
+    // #5: opening the address without the token showed the whole app, only without projects
+    let root = work("page-token");
+    let server = Server::start(&root.join("store"), Some("page-token"));
+    let token = server.token.clone().unwrap();
+    for path in ["/", "/index.html", "/some/route"] {
+        let (status, body) = get(&server, path);
+        assert_eq!(status, 403, "{path}");
+        assert!(body.contains("?token="), "{path} says how to get in: {body}");
+    }
+    assert_eq!(get(&server, &format!("/?token={token}")).0, 200);
+    assert_eq!(get(&server, "/?token=wrong").0, 403);
+}

@@ -103,6 +103,11 @@ mod ui {
     include!(concat!(env!("OUT_DIR"), "/assets.rs"));
 }
 
+/// What a server with a token shows to a browser that came without it.
+const LINK_NEEDED: &str = "<!doctype html><meta charset=utf-8><meta name=viewport content=\"width=device-width\"><title>OxRefine</title>\
+<p style=\"font:16px system-ui,sans-serif;margin:3em auto;max-width:32em;padding:0 1em\">This OxRefine needs its access link, \
+the address with <code>?token=…</code> at the end. Ask whoever runs it for the link.</p>";
+
 fn mime(path: &str) -> &'static str {
     match path.rsplit('.').next().unwrap_or("") {
         "html" => "text/html; charset=utf-8",
@@ -304,7 +309,14 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                 // in place of a script leaves the browser a blank screen
                 let file = path.rsplit('/').next().is_some_and(|name| name.contains('.'));
                 let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| !file && *p == "/index.html"));
+                // with a token the page itself needs it, so nobody without the link sees the app; its
+                // scripts and styles are the same published build for everyone and stay open
+                let page = asset.map_or(!file, |(p, _)| *p == "/index.html");
                 match asset {
+                    _ if page && l.token.is_some() && !authorized => {
+                        let ct = tiny_http::Header::from_bytes("Content-Type", "text/html; charset=utf-8").unwrap();
+                        tiny_http::Response::from_string(LINK_NEEDED).with_status_code(403).with_header(ct).boxed()
+                    }
                     Some((p, bytes)) => {
                         let ct = tiny_http::Header::from_bytes("Content-Type", mime(p)).unwrap();
                         tiny_http::Response::from_data(*bytes).with_header(ct).boxed()

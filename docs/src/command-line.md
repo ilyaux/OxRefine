@@ -37,7 +37,7 @@ The status bar and Jobs show the OxRefine process's current resident memory and 
 ox serve --host 0.0.0.0 --data /srv/oxrefine
 ```
 
-- **Access token:** when OxRefine listens beyond your own machine, it requires one. It prints a link that includes the token; share the link with the people who should have access. Add `--token <secret>` to choose the token yourself.
+- **Access token:** when OxRefine listens beyond your own machine, it requires one. It prints a link that includes the token; share the link with the people who should have access. Add `--token <secret>` to choose the token yourself. With a token, the app itself needs it too: the address without `?token=…` shows only a note asking for the link, and every request without the token is refused. The app's scripts and styles stay open; they are the same published build for everyone and hold no data.
 - **Files from your computer:** in the browser, files are uploaded to the server, and exports download back to you.
 - **Security:** anyone with the link can read and write files as the user OxRefine runs as. Keep the token private and run OxRefine under a user with limited rights.
 
