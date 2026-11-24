@@ -1,17 +1,16 @@
-// `ox serve` behind a reverse proxy at a sub-path, as Apache's `ProxyPass /refine/ http://localhost:PORT/`
-// or nginx's `location /refine/ { proxy_pass http://localhost:PORT/; }` would put it:
+// `ox serve` behind a reverse proxy at a sub-path, with no proxy to install:
 //   node tools/proxy-check.mjs path/to/ox
-// Starts ox on a free port and two proxies in front of it: one that strips /refine, and one that
-// adds a slash as Apache's `ProxyPass /refine http://localhost:PORT/` (a slash on one side only)
-// does, sending //assets/…. Through each it checks that the page's scripts and styles load, that a
-// missing file is a 404 rather than the page, and that the API and MCP answer there. Then the same
-// through a server started with --token: without the token not even the page is shown.
+// Starts ox and small proxies in front of it: one that strips /refine and rewrites Host (Apache's
+// `ProxyPass /refine/ http://localhost:PORT/`), one that sends //assets (a slash on one side only,
+// `ProxyPass /refine http://localhost:PORT/`) and one that keeps the visitor's host name (Caddy,
+// Traefik, Pound), which ox refuses with a note until it's started with --allow-host. Then a server
+// with --token. tools/proxies/matrix.mjs runs the real proxies.
 import { spawn } from "node:child_process"
 import { mkdtempSync, rmSync } from "node:fs"
 import http from "node:http"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import assert from "node:assert/strict"
+import { refused, works } from "./serve-check.mjs"
 
 const ox = process.argv[2]
 if (!ox) throw new Error("usage: node tools/proxy-check.mjs path/to/ox")
@@ -19,15 +18,14 @@ const folders = []
 const servers = []
 const proxies = []
 
-async function serve(token) {
+async function serve(...extra) {
   const data = mkdtempSync(join(tmpdir(), "ox-proxy-"))
   folders.push(data)
   const port = 20000 + Math.floor(Math.random() * 20000)
-  const args = ["serve", "--host", "127.0.0.1", "--port", String(port), "--data", data, ...(token ? ["--token", token] : [])]
-  servers.push(spawn(ox, args, { stdio: ["ignore", "inherit", "inherit"] }))
+  servers.push(spawn(ox, ["serve", "--host", "127.0.0.1", "--port", String(port), "--data", data, ...extra], { stdio: ["ignore", "ignore", "inherit"] }))
   for (let i = 0; ; i++) {
     try {
-      await fetch(`http://127.0.0.1:${port}/api/projects`, { method: "POST" })
+      await fetch(`http://127.0.0.1:${port}/healthz`)
       return port
     } catch (e) {
       if (i > 100) throw e
@@ -36,12 +34,11 @@ async function serve(token) {
   }
 }
 
-// a proxy that keeps Apache's default: it rewrites Host to the backend (ProxyPreserveHost Off);
-// `map` turns the path after /refine into the backend's path
-async function proxy(port, map) {
+// `map` turns the path after /refine into the backend's path; `host` is the Host header it sends on
+async function proxy(port, map, host = `localhost:${port}`) {
   const p = http.createServer((req, res) => {
     if (!req.url.startsWith("/refine")) return res.writeHead(404).end("outside the proxied path")
-    const upstream = http.request({ host: "127.0.0.1", port, path: map(req.url.slice("/refine".length)), method: req.method, headers: { ...req.headers, host: `localhost:${port}` } }, (up) => {
+    const upstream = http.request({ host: "127.0.0.1", port, path: map(req.url.slice("/refine".length)), method: req.method, headers: { ...req.headers, host } }, (up) => {
       res.writeHead(up.statusCode, up.headers)
       up.pipe(res)
     })
@@ -50,56 +47,19 @@ async function proxy(port, map) {
   })
   await new Promise((ok) => p.listen(0, "127.0.0.1", ok))
   proxies.push(p)
-  return `http://127.0.0.1:${p.address().port}`
+  return `http://127.0.0.1:${p.address().port}/refine/`
 }
 
-async function check(name, base, token) {
-  // the browser opens the link with the token; the page then sends it with every request
-  const auth = token ? { Authorization: `Bearer ${token}` } : {}
-  if (token) {
-    const page = await fetch(`${base}/refine/`)
-    assert.equal(page.status, 403, `${name}: the page without the token`)
-    assert.doesNotMatch(await page.text(), /<div id="root">/, `${name}: no app without the token`)
-    const api = await fetch(`${base}/refine/api/projects`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
-    assert.equal(api.status, 403, `${name}: the API without the token`)
-  }
-  const page = await (await fetch(`${base}/refine/${token ? `?token=${token}` : ""}`)).text()
-  assert.match(page, /<div id="root">/, `${name}: the page comes through the proxy`)
-  // without the trailing slash the page sends the browser to /refine/ before anything else loads
-  assert.match(page, /pathname \+ "\/"/, `${name}: the page adds the trailing slash`)
-  const refs = [...page.matchAll(/(?:src|href)="([^"]+)"/g)].map((m) => m[1])
-  assert.ok(refs.length >= 2, `${name}: scripts and styles referenced: ${refs}`)
-  for (const ref of refs) {
-    assert.ok(!ref.startsWith("/"), `${ref} would bypass the proxy's sub-path`)
-    const r = await fetch(new URL(ref, `${base}/refine/`))
-    assert.equal(r.status, 200, `${name}: ${ref}`)
-    const type = r.headers.get("content-type")
-    if (ref.endsWith(".js")) assert.match(type, /javascript/, `${name}: ${ref} is ${type}, not the script`)
-    if (ref.endsWith(".css")) assert.match(type, /css/, `${name}: ${ref} is ${type}, not the styles`)
-  }
-  // a file that isn't there is a 404: the page in its place would leave the browser a blank screen
-  const missing = await fetch(`${base}/refine/assets/index-missing.js`)
-  assert.equal(missing.status, 404, `${name}: a missing script`)
-  // the API resolves relative to the page too
-  const api = await fetch(new URL("api/projects", `${base}/refine/`), { method: "POST", headers: { ...auth, "Content-Type": "application/json", "X-Ox-Session": "proxy-check" }, body: "{}" })
-  assert.equal(api.status, 200, `${name}: ${await api.clone().text()}`)
-  assert.ok(Array.isArray((await api.json()).data), `${name}: projects come back as a list`)
-  // and MCP clients connect at /refine/mcp
-  const initialize = { jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-11-25", capabilities: {}, clientInfo: { name: "proxy-check", version: "1" } } }
-  const mcp = await fetch(`${base}/refine/mcp`, { method: "POST", headers: { ...auth, "Content-Type": "application/json", Accept: "application/json, text/event-stream" }, body: JSON.stringify(initialize) })
-  assert.equal(mcp.status, 200, `${name}: ${await mcp.clone().text()}`)
-  assert.ok(mcp.headers.get("mcp-session-id"), `${name}: the MCP session id comes through the proxy`)
-  assert.equal((await mcp.json()).result.serverInfo.name, "oxrefine")
-  console.log(`ox serve works behind ${name} at /refine/: page, ${refs.length} assets, a 404, the API and MCP`)
-}
-
+const strip = (rest) => rest || "/"
+const run = async (name, check) => console.log(`${name}: ${await check}`)
 try {
-  const strip = (rest) => rest || "/"
   const open = await serve()
-  await check("a proxy that strips /refine", await proxy(open, strip))
-  await check("a proxy that sends //assets (ProxyPass /refine http://host:port/)", await proxy(open, (rest) => "/" + rest))
+  await run("a proxy that strips /refine", works(await proxy(open, strip)))
+  await run("a proxy that sends //assets", works(await proxy(open, (rest) => "/" + rest)))
+  await run("a proxy that keeps the visitor's host", refused(await proxy(open, strip, "intranet.test"), { says: "--allow-host intranet.test" }))
+  await run("the same, ox started with --allow-host", works(await proxy(await serve("--allow-host", "intranet.test"), strip, "intranet.test")))
   const token = "proxy-check-token"
-  await check("a proxy in front of ox serve --token", await proxy(await serve(token), strip), token)
+  await run("a proxy in front of ox serve --token", works(await proxy(await serve("--token", token), strip, "intranet.test"), { token }))
 } finally {
   for (const s of servers) s.kill()
   for (const p of proxies) p.close()

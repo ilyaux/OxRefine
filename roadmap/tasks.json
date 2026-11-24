@@ -1398,6 +1398,17 @@
       "ref": "Dockerfile"
     },
     {
+      "id": "rel-server-audit",
+      "phase": "p12",
+      "milestone": "v1.0",
+      "status": "doing",
+      "priority": "P1",
+      "size": "L",
+      "title": "ox serve for real deployments",
+      "detail": "Audit of ox serve as a server after issues #3, #5 and #6: one access rule (token, Host names, --allow-host for proxies that keep the visitor host), refusals that say why and what to do (page, API, stderr), HEAD and a health endpoint, the token kept out of Referer and the command line, an optional request log; Apache, nginx, Caddy, Pound and Traefik in CI at the root and a sub-path, with and without a token, uploads and downloads included; the Docker image built and checked there; a deployment guide with the configs CI runs.",
+      "ref": "issues #3, #5, #6"
+    },
+    {
       "id": "ext-db",
       "phase": "p13",
       "milestone": "later",

@@ -5,7 +5,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, "audit/**"]
   pull_request:
 
 jobs:
@@ -76,6 +76,33 @@ jobs:
         run: bash tools/smoke-static.sh target/x86_64-unknown-linux-musl/release/ox
       - name: ox serve behind a reverse proxy at a sub-path
         run: node tools/proxy-check.mjs target/x86_64-unknown-linux-musl/release/ox
+      # the configurations docs/src/deploying.md shows, run as people run them
+      - name: Install Apache, nginx, Caddy, Pound and Traefik
+        run: |
+          sudo apt-get install -y nginx apache2 caddy pound
+          sudo systemctl stop nginx apache2 caddy pound || true
+          docker pull -q traefik:v3.1
+          echo "127.0.0.1 intranet.test" | sudo tee -a /etc/hosts
+          nginx -v; apache2 -v | head -1; caddy version; pound -V 2>&1 | head -1
+      - name: ox serve behind each of them, at the root and a sub-path, with and without a token
+        run: node tools/proxies/matrix.mjs target/x86_64-unknown-linux-musl/release/ox
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the image
+        run: docker build -t oxrefine .
+      - name: Run it and use it with its token
+        run: |
+          docker run -d --name ox -p 3300:3030 -e OXREFINE_TOKEN=docker-token oxrefine
+          for i in $(seq 1 60); do curl -fs http://127.0.0.1:3300/healthz && break; sleep 1; done
+          node -e 'import("./tools/serve-check.mjs").then(async (m) => console.log(await m.works("http://127.0.0.1:3300/", { token: "docker-token" })))'
+          docker logs ox
 
   bench:
     name: Performance against the base build

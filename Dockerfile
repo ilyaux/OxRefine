@@ -1,8 +1,8 @@
 # OxRefine in a container: the app in a browser, for servers (like running OpenRefine remotely).
 #   docker build -t oxrefine .
 #   docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
-# The log prints the link with its access token; pass `--token <secret>` after the image name to
-# choose one. Projects live in /data.
+# The log prints the link with its access token; to choose it, pass `-e OXREFINE_TOKEN=<secret>`
+# (or `--token <secret>` after the image name). Projects live in /data; /healthz answers health checks.
 
 FROM node:22-slim AS ui
 WORKDIR /src/ui

@@ -1,9 +1,10 @@
 use ox_core::{ops::parse_recipe, store::Store, Project, Session};
 use serde_json::{json, Value};
 use std::{
+    collections::HashSet,
     io::Read,
     path::{Path, PathBuf},
-    sync::Arc,
+    sync::{Arc, Mutex},
     time::Instant,
 };
 mod web;
@@ -12,10 +13,13 @@ mod mcp;
 const USAGE: &str = "usage:
   ox apply <history.json> <input> -o <output>          replay an OpenRefine operation history headlessly
                                                         (input or output may be an .openrefine.tar.gz project)
-  ox serve [file] [--port 3030] [--data DIR] [--host ADDR] [--token T] [--allow PATH]
+  ox serve [file] [--port 3030] [--data DIR] [--host ADDR] [--token T] [--allow-host NAME] [--allow PATH] [--log]
                                                         the app in a browser, at http://127.0.0.1:3030/; projects are saved
-                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token.
-                                                        MCP clients connect to /mcp; repeat --allow for files they may use
+                                                        in DIR. --host 0.0.0.0 serves other machines too, behind a token
+                                                        (--token, or OXREFINE_TOKEN). Without one, only requests addressed
+                                                        to 127.0.0.1 or localhost are answered; --allow-host adds a name a
+                                                        reverse proxy passes on. MCP clients connect to /mcp; repeat --allow
+                                                        for files they may use. --log prints each request to stderr
   ox mcp [--data DIR] [--allow PATH] [--url http://127.0.0.1:3030] [--token T]
                                                         MCP over stdio for the projects in DIR: uses the ox serve of DIR if
                                                         one runs, else serves DIR itself. Repeat --allow for files/folders;
@@ -103,10 +107,54 @@ mod ui {
     include!(concat!(env!("OUT_DIR"), "/assets.rs"));
 }
 
-/// What a server with a token shows to a browser that came without it.
-const LINK_NEEDED: &str = "<!doctype html><meta charset=utf-8><meta name=viewport content=\"width=device-width\"><title>OxRefine</title>\
-<p style=\"font:16px system-ui,sans-serif;margin:3em auto;max-width:32em;padding:0 1em\">This OxRefine needs its access link, \
-the address with <code>?token=…</code> at the end. Ask whoever runs it for the link.</p>";
+/// A short page in place of the app: why it isn't shown, and what to do.
+fn note(text: &str) -> String {
+    let text = text.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;");
+    format!("<!doctype html><meta charset=utf-8><meta name=viewport content=\"width=device-width\"><title>OxRefine</title>\
+<p style=\"font:16px system-ui,sans-serif;margin:3em auto;max-width:34em;padding:0 1em\">{text}</p>")
+}
+
+/// The host name in a Host header or an Origin, lowercased and without its port.
+fn host_name(h: &str) -> String {
+    let h = h.trim().trim_start_matches("http://").trim_start_matches("https://").to_ascii_lowercase();
+    if let Some(v6) = h.strip_prefix('[') {
+        return v6.split(']').next().unwrap_or_default().to_string();
+    }
+    match h.rsplit_once(':') {
+        Some((name, port)) if port.chars().all(|c| c.is_ascii_digit()) => name.to_string(),
+        _ => h,
+    }
+}
+
+/// Why a request is refused. Each says what to do about it: the browser and API clients get the
+/// first text, whoever runs `ox serve` the second, once, on stderr.
+enum Refusal {
+    /// a server with a token, and a request without it
+    Token,
+    /// a server without a token, and a request addressed to another host name (DNS rebinding)
+    Host(String),
+}
+
+impl Refusal {
+    fn text(&self) -> String {
+        match self {
+            Refusal::Token => "This OxRefine needs its access link, the address with ?token=… at the end. Ask whoever runs it for the link.".into(),
+            Refusal::Host(name) => format!(
+                "This OxRefine answers only requests addressed to 127.0.0.1 or localhost, and this one was addressed to {name}. \
+Behind a reverse proxy that passes on the visitor's host name, whoever runs it can add --allow-host {name}, or start it with --token."
+            ),
+        }
+    }
+    fn log(&self) -> String {
+        match self {
+            Refusal::Token => "refused a request without the access token: open the link with ?token=… printed above".into(),
+            Refusal::Host(name) => format!(
+                "refused requests addressed to {name}: without a token ox serve answers only 127.0.0.1 and localhost; \
+behind a reverse proxy that passes on the visitor's host name, add --allow-host {name}, or use --token"
+            ),
+        }
+    }
+}
 
 fn mime(path: &str) -> &'static str {
     match path.rsplit('.').next().unwrap_or("") {
@@ -159,10 +207,12 @@ fn unescape(s: &str) -> String {
 
 fn serve(args: &[&str]) -> Result<(), String> {
     let (mut file, mut port, mut data, mut host, mut token) = (None, 3030u16, Store::default_root(), "127.0.0.1".to_string(), None);
-    let mut allow = vec![];
+    let (mut allow, mut hosts, mut log) = (vec![], vec![], false);
     let mut it = args.iter();
     while let Some(&a) = it.next() {
         match a {
+            "--allow-host" => hosts.push(host_name(it.next().ok_or("--allow-host needs a host name, like intranet.example.com")?)),
+            "--log" => log = true,
             "--port" => port = it.next().and_then(|p| p.parse().ok()).ok_or("--port needs a number")?,
             "--data" => data = it.next().ok_or("--data needs a folder")?.into(),
             "--host" => host = it.next().ok_or("--host needs an address, like 0.0.0.0")?.to_string(),
@@ -171,6 +221,8 @@ fn serve(args: &[&str]) -> Result<(), String> {
             f => file = Some(f),
         }
     }
+    // the token may come from the environment, out of other users' sight in the process list
+    token = token.or_else(|| std::env::var("OXREFINE_TOKEN").ok().filter(|t| !t.trim().is_empty()));
     let local = matches!(host.as_str(), "127.0.0.1" | "localhost" | "::1");
     // beyond this machine every request needs the token
     if !local && token.is_none() {
@@ -189,12 +241,16 @@ fn serve(args: &[&str]) -> Result<(), String> {
     let server = tiny_http::Server::http((host.as_str(), port)).map_err(|e| format!("{host}:{port}: {e}"))?;
     let address = server.server_addr().to_ip().ok_or("not an IP address")?;
     let port = address.port();
-    let listener = Listener::new(session, file, token, port, &data, &allow)?;
+    let mut listener = Listener::new(session, file, token, &data, &allow)?;
+    (listener.hosts, listener.log) = (hosts, log);
     eprintln!("projects are saved in {}", data.display());
     let shown = if host == "0.0.0.0" || host == "::" { "<this machine's address>".to_string() } else { host.clone() };
     match &listener.token {
         Some(t) => eprintln!("OxRefine on http://{shown}:{port}/?token={t}\n(anyone with this link can read and write files as this user)"),
         None => eprintln!("OxRefine on http://127.0.0.1:{port}/"),
+    }
+    if listener.token.is_none() && !listener.hosts.is_empty() {
+        eprintln!("also answering requests addressed to {}, as a reverse proxy passes them on", listener.hosts.join(", "));
     }
     if ui::ASSETS.is_empty() {
         eprintln!("the web UI is not built into this binary: run `npm run build` in ui/, then build ox again");
@@ -219,7 +275,7 @@ fn embedded(data: &Path, lock: Option<std::fs::File>) -> Result<web::Host, Strin
     let server = tiny_http::Server::http("127.0.0.1:0").map_err(|e| e.to_string())?;
     let port = server.server_addr().to_ip().ok_or("not an IP address")?.port();
     let token = new_token()?;
-    let listener = Listener::new(session, None, Some(token.clone()), port, data, &[])?;
+    let listener = Listener::new(session, None, Some(token.clone()), data, &[])?;
     let host = listener.host.clone();
     if lock.is_some() {
         if let Err(e) = web::advertise(data, &format!("http://127.0.0.1:{port}"), Some(&token)) {
@@ -237,20 +293,53 @@ fn embedded(data: &Path, lock: Option<std::fs::File>) -> Result<web::Host, Strin
 struct Listener {
     host: web::Host,
     token: Option<String>,
-    host_ok: [String; 2],
+    /// host names answered without a token besides this machine's (--allow-host)
+    hosts: Vec<String>,
+    /// print each request to stderr (--log)
+    log: bool,
+    /// refusals already reported on stderr
+    warned: Mutex<HashSet<String>>,
     staging: PathBuf,
     mcp: mcp::Http,
 }
 
 impl Listener {
-    fn new(mut session: Session, file: Option<&str>, token: Option<String>, port: u16, data: &Path, allow: &[PathBuf]) -> Result<Self, String> {
+    fn new(mut session: Session, file: Option<&str>, token: Option<String>, data: &Path, allow: &[PathBuf]) -> Result<Self, String> {
         let store = session.store.as_ref().ok_or("no project store")?;
         let (budget, staging) = (store.code_budget(), ox_core::import::staging_dir(Some(store.root())));
         // a file named on the command line opens without being added to the project library
         session.project = ox_core::storage::with_budget(budget.clone(), || file.map(|f| Project::open(f.as_ref())).transpose())?;
         let host = web::Host::new(session, budget)?;
         let mcp = mcp::Http::new(host.clone(), data, allow)?;
-        Ok(Self { host, token, host_ok: [format!("127.0.0.1:{port}"), format!("localhost:{port}")], staging, mcp })
+        Ok(Self { host, token, hosts: vec![], log: false, warned: Mutex::default(), staging, mcp })
+    }
+
+    /// A host name answered without a token: this machine's, or one named with --allow-host.
+    fn answers(&self, name: &str) -> bool {
+        matches!(name, "127.0.0.1" | "localhost" | "::1") || self.hosts.iter().any(|h| h == name)
+    }
+
+    /// The one access rule. With a token, the token decides: an Authorization header or ?token=.
+    /// Without one, the Host header must name this machine or an --allow-host name, so a web page
+    /// can't reach this server through a DNS name it controls.
+    fn access(&self, host: Option<&str>, authorization: Option<&str>, url: &str) -> Result<(), Refusal> {
+        match &self.token {
+            Some(t) if authorization == Some(&format!("Bearer {t}")) || query(url, "token").as_ref() == Some(t) => Ok(()),
+            Some(_) => Err(Refusal::Token),
+            None => {
+                let name = host.map(host_name).unwrap_or_default();
+                if self.answers(&name) { Ok(()) } else { Err(Refusal::Host(name)) }
+            }
+        }
+    }
+
+    /// Tell whoever runs the server about a kind of refusal, once.
+    fn warn(&self, r: &Refusal) {
+        let mut warned = self.warned.lock().unwrap_or_else(|e| e.into_inner());
+        // ponytail: Host names come from clients, so only the first few distinct ones are reported
+        if warned.len() < 16 && warned.insert(r.log()) {
+            eprintln!("{}", r.log());
+        }
     }
 }
 
@@ -274,16 +363,23 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                 let ct = tiny_http::Header::from_bytes("Content-Type", "application/json").unwrap();
                 tiny_http::Response::from_string(v.to_string()).with_status_code(code).with_header(ct).boxed()
             };
-            // On this machine: refuse other Host headers (DNS rebinding). With a token: it decides.
-            let authorized = match l.token.as_ref() {
-                Some(t) => header("Authorization").is_some_and(|h| h == format!("Bearer {t}")) || query(&url, "token").is_some_and(|q| &q == t),
-                None => header("Host").is_some_and(|h| l.host_ok.contains(&h)),
+            let started = Instant::now();
+            let access = l.access(header("Host").as_deref(), header("Authorization").as_deref(), &url);
+            let refuse = |r: &Refusal| {
+                l.warn(r);
+                json(403, json!(r.text()))
             };
-            let response = if path == "/mcp" {
-                // MCP over HTTP; without a token a web page may call it only from this server's own origin
-                let origin_ok = l.token.is_some() || header("Origin").is_none_or(|o| l.host_ok.iter().any(|h| o == format!("http://{h}")));
-                if !authorized || !origin_ok {
-                    json(403, json!("forbidden"))
+            let read = matches!(req.method(), tiny_http::Method::Get | tiny_http::Method::Head);
+            let mut response = if path == "/healthz" {
+                // for load balancers and container health checks: it says nothing but that the server runs
+                tiny_http::Response::from_string("ok").boxed()
+            } else if path == "/mcp" {
+                // MCP over HTTP; without a token a web page may call it only from an address this server answers
+                let origin_ok = l.token.is_some() || header("Origin").is_none_or(|o| l.answers(&host_name(&o)));
+                if let Err(r) = &access {
+                    refuse(r)
+                } else if !origin_ok {
+                    json(403, json!("MCP from a web page is answered only from an address this server answers (127.0.0.1, localhost or --allow-host)"))
                 } else {
                     let (session, version) = (header("Mcp-Session-Id"), header("MCP-Protocol-Version"));
                     let mut body = vec![];
@@ -304,28 +400,29 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                     }
                     response
                 }
-            } else if *req.method() == tiny_http::Method::Get && !path.starts_with("/api/") && path != "/download" {
+            } else if read && !path.starts_with("/api/") && path != "/download" {
                 // the web UI; other paths get the page itself, but a missing file is a 404: the page
                 // in place of a script leaves the browser a blank screen
                 let file = path.rsplit('/').next().is_some_and(|name| name.contains('.'));
                 let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| !file && *p == "/index.html"));
-                // with a token the page itself needs it, so nobody without the link sees the app; its
-                // scripts and styles are the same published build for everyone and stay open
+                // the page itself follows the access rule, so nobody refused sees the app, and learns
+                // why instead; its scripts and styles are the same published build for everyone and stay open
                 let page = path == "/index.html" || asset.map_or(!file, |(p, _)| *p == "/index.html");
-                match asset {
-                    _ if page && l.token.is_some() && !authorized => {
+                match (asset, &access) {
+                    (_, Err(r)) if page => {
+                        l.warn(r);
                         let ct = tiny_http::Header::from_bytes("Content-Type", "text/html; charset=utf-8").unwrap();
-                        tiny_http::Response::from_string(LINK_NEEDED).with_status_code(403).with_header(ct).boxed()
+                        tiny_http::Response::from_string(note(&r.text())).with_status_code(403).with_header(ct).boxed()
                     }
-                    Some((p, bytes)) => {
+                    (Some((p, bytes)), _) => {
                         let ct = tiny_http::Header::from_bytes("Content-Type", mime(p)).unwrap();
                         tiny_http::Response::from_data(*bytes).with_header(ct).boxed()
                     }
-                    None if ui::ASSETS.is_empty() => tiny_http::Response::from_string("OxRefine's web UI is not built into this binary: run `npm run build` in ui/, then build ox again.").boxed(),
-                    None => tiny_http::Response::from_string(format!("not found: {path}")).with_status_code(404).boxed(),
+                    (None, _) if ui::ASSETS.is_empty() => tiny_http::Response::from_string("OxRefine's web UI is not built into this binary: run `npm run build` in ui/, then build ox again.").boxed(),
+                    (None, _) => tiny_http::Response::from_string(format!("not found: {path}")).with_status_code(404).boxed(),
                 }
-            } else if !authorized {
-                json(403, json!("forbidden"))
+            } else if let Err(r) = &access {
+                refuse(r)
             } else if path == "/upload" {
                 // a file from the browser, staged for the import wizard; the custom header keeps cross-site forms out
                 match header("X-File-Name").map(|n| unescape(&n)) {
@@ -337,7 +434,7 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                         Ok(dest) => json(200, json!({ "data": { "path": dest, "name": name }, "ms": 0 })),
                         Err(e) => json(400, json!(e)),
                     },
-                    None => json(403, json!("forbidden")),
+                    None => json(403, json!("an upload needs its X-File-Name header")),
                 }
             } else if path == "/download" {
                 // a file a command wrote into the staging folder, sent once and then removed
@@ -356,7 +453,7 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                 }
             } else if !header("Content-Type").is_some_and(|c| c.starts_with("application/json")) {
                 // cross-site form posts can't send JSON without a preflight we never answer
-                json(403, json!("forbidden"))
+                json(403, json!("API requests send JSON: Content-Type: application/json"))
             } else if path == "/stage" {
                 // where a command should write a file the browser then downloads
                 let mut body = String::new();
@@ -380,6 +477,12 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                     Err(error) => json(400, Value::String(error)),
                 }
             };
+            // addresses carry the token: never pass them on to other sites, or into a proxy's log as the referrer
+            response.add_header(tiny_http::Header::from_bytes("Referrer-Policy", "no-referrer").unwrap());
+            if l.log {
+                // the path only: the query may hold the token
+                eprintln!("{} {path} {} {:.1} ms", req.method(), response.status_code().0, started.elapsed().as_secs_f64() * 1000.0);
+            }
             req.respond(response).ok();
             // this thread ends here: free its Python interpreter while RustPython can still be torn down
             ox_core::grel::release_thread();
