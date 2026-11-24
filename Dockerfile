@@ -12,6 +12,8 @@ COPY ui/ ./
 RUN npm run build
 
 FROM rust:1-slim-bookworm AS ox
+# the embedded Python links libffi
+RUN apt-get update && apt-get install -y --no-install-recommends libffi-dev pkg-config && rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY Cargo.toml Cargo.lock ./
 COPY crates crates
@@ -23,7 +25,7 @@ COPY ui/src/grel-docs.json ui/src/grel-docs.json
 RUN cargo build --release -p ox-cli
 
 FROM debian:bookworm-slim
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libffi8 && rm -rf /var/lib/apt/lists/*
 COPY --from=ox /src/target/release/ox /usr/local/bin/ox
 VOLUME /data
 EXPOSE 3030

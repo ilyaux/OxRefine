@@ -129,8 +129,9 @@ ${hosts}
       writeFileSync(join(dir, "Caddyfile"), `{
   admin off
   auto_https off
-  persist_config off
-  storage file_system ${dir}/caddy
+  storage file_system {
+    root ${dir}/caddy
+  }
 }
 ${sites}
 `)
