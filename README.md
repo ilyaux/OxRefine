@@ -174,8 +174,10 @@ cargo run --release -p ox-cli -- serve           # open http://127.0.0.1:3030/
 ox serve --host 0.0.0.0 --data /srv/oxrefine
 
 docker build -t oxrefine .
-docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
+docker run -p 3030:3030 -v oxrefine-data:/data -e OXREFINE_TOKEN=<secret> oxrefine
 ```
+
+Behind nginx, Apache, Caddy, Traefik or Pound, as a system service and with health checks: [Running OxRefine on a server](docs/src/deploying.md). CI checks each of those proxies on every change.
 
 ### Headless
 

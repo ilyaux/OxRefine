@@ -79,11 +79,15 @@ jobs:
       # the configurations docs/src/deploying.md shows, run as people run them
       - name: Install Apache, nginx, Caddy, Pound and Traefik
         run: |
-          sudo apt-get install -y nginx apache2 caddy pound
-          sudo systemctl stop nginx apache2 caddy pound || true
+          sudo apt-get install -y nginx apache2 caddy libssl-dev libpcre2-dev
+          sudo systemctl stop nginx apache2 caddy || true
+          # Ubuntu 24.04 has no Pound package: its own release, built
+          curl -fsSL https://github.com/graygnuorg/pound/releases/download/v4.24/pound-4.24.tar.gz | tar xz -C "$RUNNER_TEMP"
+          (cd "$RUNNER_TEMP/pound-4.24" && ./configure --quiet --prefix="$HOME/pound" && make -s -j4 && make -s install)
+          echo "$HOME/pound/sbin" >> "$GITHUB_PATH"
           docker pull -q traefik:v3.1
           echo "127.0.0.1 intranet.test" | sudo tee -a /etc/hosts
-          nginx -v; apache2 -v | head -1; caddy version; pound -V 2>&1 | head -1
+          nginx -v; apache2 -v | head -1; caddy version; "$HOME/pound/sbin/pound" -V 2>&1 | head -1
       - name: ox serve behind each of them, at the root and a sub-path, with and without a token
         run: node tools/proxies/matrix.mjs target/x86_64-unknown-linux-musl/release/ox
 

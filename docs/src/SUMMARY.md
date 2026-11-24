@@ -23,6 +23,7 @@
 - [Wikibase and Wikidata](wikibase.md)
 - [Exporting](exporting.md)
 - [Command line and server](command-line.md)
+- [Running on a server](deploying.md)
 - [Connecting an assistant with MCP](mcp.md)
 - [Extensions](extensions.md)
 

@@ -18,6 +18,8 @@ COPY crates crates
 # a workspace member; only its manifest and sources are needed to resolve the workspace
 COPY ui/src-tauri ui/src-tauri
 COPY --from=ui /src/ui/dist ui/dist
+# the GREL reference ox mcp's list_functions answers with
+COPY ui/src/grel-docs.json ui/src/grel-docs.json
 RUN cargo build --release -p ox-cli
 
 FROM debian:bookworm-slim

@@ -159,8 +159,9 @@ ListenHTTP
     End
   End
 End`).join("")
-      writeFileSync(join(dir, "pound.cfg"), `Daemon 0\nLogLevel 1\n${listeners}\n`)
-      start("pound", ["-f", join(dir, "pound.cfg"), "-p", join(dir, "pound.pid")], "pound")
+      writeFileSync(join(dir, "pound.cfg"), `${listeners}\n`)
+      // -e: in the foreground, logging to stderr
+      start("pound", ["-e", "-f", join(dir, "pound.cfg"), "-p", join(dir, "pound.pid")], "pound")
       return ports(8400)
     },
   },

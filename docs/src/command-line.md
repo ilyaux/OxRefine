@@ -37,42 +37,11 @@ The status bar and Jobs show the OxRefine process's current resident memory and 
 ox serve --host 0.0.0.0 --data /srv/oxrefine
 ```
 
-- **Access token:** when OxRefine listens beyond your own machine, it requires one. It prints a link that includes the token; share the link with the people who should have access. Add `--token <secret>` to choose the token yourself. With a token, the app itself needs it too: the address without `?token=…` shows only a note asking for the link, and every request without the token is refused. The app's scripts and styles stay open; they are the same published build for everyone and hold no data.
-- **Files from your computer:** in the browser, files are uploaded to the server, and exports download back to you.
-- **Security:** anyone with the link can read and write files as the user OxRefine runs as. Keep the token private and run OxRefine under a user with limited rights.
+Beyond your own machine OxRefine requires an access token and prints a link that includes it. In the browser, files are uploaded to the server and exports download back to you. [Running OxRefine on a server](deploying.md) covers the token, reverse proxies (nginx, Apache, Caddy, Traefik, Pound), a system service, Docker, health checks and what to do when something goes wrong.
 
 ### Behind a reverse proxy
 
-To serve OxRefine over HTTPS, or under a path of an existing site such as `https://intranet.example.com/refine/`, let OxRefine listen on this machine only and put a reverse proxy in front. The app uses relative addresses, so any path works.
-
-```bash
-ox serve --host 127.0.0.1 --port 3333 --data /srv/oxrefine
-```
-
-Apache httpd:
-
-```apache
-RedirectMatch ^/refine$ /refine/
-ProxyPass        /refine/ http://127.0.0.1:3333/ timeout=600
-ProxyPassReverse /refine/ http://127.0.0.1:3333/
-```
-
-nginx:
-
-```nginx
-location = /refine { return 301 /refine/; }
-location /refine/ {
-    proxy_pass http://127.0.0.1:3333/;
-    proxy_read_timeout 600s;
-    client_max_body_size 0;
-}
-```
-
-- **Trailing slashes:** map `/refine/` to `http://127.0.0.1:3333/`, both with a slash. If someone opens `/refine` without one, the page itself moves to `/refine/`. A slash on one side only, as in `ProxyPass /refine http://127.0.0.1:3333/`, makes Apache send `//assets/…`; OxRefine 0.8.0 and later read that as `/assets/…`.
-- **A blank page:** if the page loads but stays blank, look at the proxy's log for the page's scripts under `/refine/assets/`. A 404 there means the proxy sends OxRefine a path it doesn't serve; check the mapping above. OxRefine answers a missing file with a 404, never with the page in its place.
-- **Timeouts:** imports and long operations hold a request open while they run, so give the proxy a timeout of minutes, not seconds. Uploads can be large: don't cap the request body size below your biggest file.
-- **Host header:** without a token, OxRefine only answers requests addressed to `127.0.0.1:PORT` or `localhost:PORT`, to block DNS rebinding. Apache (`ProxyPreserveHost Off`, the default) and nginx (`proxy_pass` sets `Host` to the upstream) already send that. If your proxy keeps the visitor's host name, start OxRefine with `--token <secret>` instead and open `https://intranet.example.com/refine/?token=<secret>`.
-- **Access:** the proxy decides who reaches OxRefine. Anyone who gets through can read and write files as the user OxRefine runs as, so put the proxy's own authentication in front, or use the token.
+nginx, Apache, Caddy, Traefik and Pound, at a site root or a path such as `/ox/`: see [Running OxRefine on a server](deploying.md#behind-a-reverse-proxy).
 
 ### Browser sessions and handing work over
 
@@ -88,12 +57,7 @@ Run only one server against a project data folder. The shared token grants the s
 
 ### Docker
 
-```bash
-docker build -t oxrefine .
-docker run -p 3030:3030 -v oxrefine-data:/data oxrefine
-```
-
-The container runs `ox serve --host 0.0.0.0` and keeps projects in `/data`. The log prints the link with the token. Pass `--token <secret>` after the image name to set your own.
+See [Running OxRefine on a server](deploying.md#docker).
 
 ## The JSON API
 
