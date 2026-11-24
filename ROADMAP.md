@@ -2,7 +2,7 @@
 
 Full OpenRefine parity, in Rust.
 
-Current release: [**v0.8.1**](https://github.com/ilyaux/OxRefine/releases/tag/v0.8.1), published 2026-11-24.
+Current release: [**v0.8.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0.8.2), published 2026-11-24.
 
 <img src="docs/readme/roadmap.svg" width="100%" alt="Progress by phase: tasks done, in review, in progress and planned.">
 
