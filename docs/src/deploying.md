@@ -1,6 +1,6 @@
 # Running OxRefine on a server
 
-`ox serve` puts the whole app in a browser. This page covers serving it to other people: on a network, behind a reverse proxy for HTTPS or an intranet address, as a system service and in Docker. Every proxy configuration below is the one CI runs on each change (`tools/proxies/matrix.mjs`), at the site root and at a sub-path, with and without a token.
+`ox serve` puts the whole app in a browser. This page covers serving it to other people: on a network, behind a reverse proxy for HTTPS or an intranet address, as a system service and in Docker. CI runs each proxy below with these settings on every change (`tools/proxies/matrix.mjs`): at the site root and at a sub-path, with and without a token, uploads, downloads and MCP included.
 
 ## Who gets in: one rule
 
