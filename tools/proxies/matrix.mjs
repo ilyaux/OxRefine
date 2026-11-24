@@ -39,6 +39,17 @@ async function ready(ports, what) {
   }
   throw new Error(`${what} didn't listen on ${ports}`)
 }
+// a proxy can listen before it has read its routes (Traefik answers 404 for a while): ready when
+// ox's /healthz, open to every request, comes back through each port
+async function routed(ports, paths, what) {
+  const urls = ports.flatMap((p) => paths.map((path) => `http://intranet.test:${p}/${path}healthz`))
+  const ok = (url) => fetch(url).then((r) => r.ok, () => false)
+  for (let i = 0; i < 150; i++) {
+    if ((await Promise.all(urls.map(ok))).every(Boolean)) return
+    await new Promise((done) => setTimeout(done, 200))
+  }
+  throw new Error(`${what} didn't route to ox: ${(await Promise.all(urls.map(async (u) => `${u} ${await ok(u)}`))).join(", ")}`)
+}
 function start(cmd, args, what) {
   const child = spawn(cmd, args, { stdio: ["ignore", "inherit", "inherit"] })
   child.on("exit", (code) => code && console.error(`${what} exited with ${code}`))
@@ -201,6 +212,7 @@ try {
     try {
       listen = await proxy.start(dir)
       await ready(listen, name)
+      await routed(listen, proxy.paths, name)
     } catch (e) {
       failed++
       results.push([name, "start", "", `FAILED ${e.message}`])
