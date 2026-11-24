@@ -12,10 +12,10 @@ Current release: [**v0.8.1**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 |---|---|---|---|---|---|
 | v0.1 | 10 | 10 | 0 | 0 | 0 |
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
-| v0.5 | 50 | 46 | 1 | 1 | 2 |
-| v1.0 | 14 | 12 | 1 | 1 | 0 |
+| v0.5 | 50 | 46 | 2 | 1 | 1 |
+| v1.0 | 14 | 12 | 2 | 0 | 0 |
 | later | 16 | 6 | 8 | 1 | 1 |
-| **Total** | **136** | **119** | **10** | **4** | **3** |
+| **Total** | **136** | **119** | **12** | **3** | **2** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -255,8 +255,8 @@ Installers, docs and a public launch. **5 of 10 done.**
 - [ ] **Installers and auto-update** *(in progress)* — Tauri bundles: msi, dmg, AppImage/deb; code signing; updater. <sub>v0.5 · P1 · M · OpenRefine: tauri bundle</sub>
 - [ ] **OpenRefine HTTP API compatibility** *(in progress)* — Serve OpenRefine's /command/core/* (create-project-from-upload, apply-operations, export-rows, get-models, get-rows, CSRF token, …) so existing clients (openrefine-client, refine-python, R and Ruby wrappers) work unchanged. <sub>later · P2 · L · OpenRefine: openrefine-client, CommandServlet</sub>
 - [ ] **Launch** (review) — README demo GIF, benchmark chart, Show HN / Reddit r/datacleaning / OpenRefine forum post. <sub>v0.5 · P1 · S · OpenRefine: new</sub>
-- [ ] **Check the Docker image** — The Dockerfile from rel-server was never built (Docker Desktop wasn't running). Build and run it, check the token link, uploads and downloads, then build it in CI. <sub>v0.5 · P2 · S · OpenRefine: Dockerfile</sub>
-- [ ] **ox serve for real deployments** *(in progress)* — Audit of ox serve as a server after issues #3, #5 and #6: one access rule (token, Host names, --allow-host for proxies that keep the visitor host), refusals that say why and what to do (page, API, stderr), HEAD and a health endpoint, the token kept out of Referer and the command line, an optional request log; Apache, nginx, Caddy, Pound and Traefik in CI at the root and a sub-path, with and without a token, uploads and downloads included; the Docker image built and checked there; a deployment guide with the configs CI runs. <sub>v1.0 · P1 · L · OpenRefine: issues #3, #5, #6</sub>
+- [ ] **Check the Docker image** (review) — The Dockerfile from rel-server was never built (Docker Desktop wasn't running). Build and run it, check the token link, uploads and downloads, then build it in CI. <sub>v0.5 · P2 · S · OpenRefine: Dockerfile</sub>
+- [ ] **ox serve for real deployments** (review) — Audit of ox serve as a server after issues #3, #5 and #6: one access rule (token, Host names, --allow-host for proxies that keep the visitor host), refusals that say why and what to do (page, API, stderr), HEAD and a health endpoint, the token kept out of Referer and the command line, an optional request log; Apache, nginx, Caddy, Pound and Traefik in CI at the root and a sub-path, with and without a token, uploads and downloads included; the Docker image built and checked there; a deployment guide with the configs CI runs. <sub>v1.0 · P1 · L · OpenRefine: issues #3, #5, #6</sub>
 
 <details><summary>5 done</summary>
 
