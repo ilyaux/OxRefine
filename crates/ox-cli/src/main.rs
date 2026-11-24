@@ -311,7 +311,7 @@ fn listen(server: tiny_http::Server, listener: Listener) {
                 let asset = ui::ASSETS.iter().find(|(p, _)| *p == path).or_else(|| ui::ASSETS.iter().find(|(p, _)| !file && *p == "/index.html"));
                 // with a token the page itself needs it, so nobody without the link sees the app; its
                 // scripts and styles are the same published build for everyone and stay open
-                let page = asset.map_or(!file, |(p, _)| *p == "/index.html");
+                let page = path == "/index.html" || asset.map_or(!file, |(p, _)| *p == "/index.html");
                 match asset {
                     _ if page && l.token.is_some() && !authorized => {
                         let ct = tiny_http::Header::from_bytes("Content-Type", "text/html; charset=utf-8").unwrap();
