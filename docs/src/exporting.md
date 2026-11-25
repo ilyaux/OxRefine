@@ -12,6 +12,7 @@
 | **OpenDocument** (`.ods`) | The same as an OpenDocument spreadsheet |
 | **Templating** | Any text format from a prefix, a row template, a separator and a suffix, for example JSON |
 | **SQL** | `CREATE TABLE` and `INSERT` statements |
+| **PostgreSQL table** | A new table in a PostgreSQL database: the matching rows, or only what changed since the import, for a correlated `UPDATE`; see [below](#postgresql-table) |
 | **OpenRefine project** | The whole project with its history, which OpenRefine opens; see [Moving projects and recipes](moving-over.md) |
 | **Recipe JSON** | The project's steps as an OpenRefine recipe; **Recipe** in the top bar picks steps and copies the JSON |
 | **Google Sheets** | The matching rows as a new spreadsheet in your Google Drive, which opens when it's ready ([sign-in](importing.md#google-sheets-and-drive)) |
@@ -24,6 +25,39 @@ Formats from installed [extensions](extensions.md) follow these in the list.
 The SQL exporter differs from OpenRefine 3.10 on purpose. OpenRefine leaves numbers and nulls out of `INSERT` rows, which shifts the columns, while OxRefine writes them so the dump loads. See [compatibility checks](compatibility.md) for format coverage, and the encoding policy below for another deliberate difference.
 
 CSV and TSV skip rows containing only null cells by default. Empty text and whitespace still count as values. Custom tabular's **Blank rows** option lets you retain null-only rows. A single selected column that renders as an empty physical line is suppressed, as in OpenRefine; **Quote every cell** can preserve it as quoted empty text. In the API, omitting `options` skips null-only rows; providing an options object defaults `outputBlankRows` to true unless explicitly set.
+
+## PostgreSQL table
+
+**PostgreSQL table** writes into a new table in a PostgreSQL database, over a connection saved in **New project → Database** (see [database queries](importing.md#database-queries)). Enter the password there; it's used for this export only and never saved.
+
+- **Only `_ox` tables.** OxRefine writes only tables whose name ends in `_ox`: lowercase letters, digits and `_`, optionally after a schema (`staging.people_ox`). It never changes any other table. An existing `_ox` table of that name is replaced only when **Replace the table if it exists** is ticked.
+- **One transaction.** If anything fails, the database is left as it was.
+- **A preview first.** The preview shows the `CREATE TABLE` and the first rows before anything is written.
+
+There are two shapes:
+
+- **Changes only.** Pick the key column: one that came with the import and identifies each row. The table gets the key, the columns that differ from the imported values in some matching row, and only those rows. That's what a correlated `UPDATE` needs:
+
+  ```sql
+  UPDATE people SET name = c.name
+  FROM people_ox c
+  WHERE people.id = c.id;
+  ```
+
+  The key must keep its imported values, and each key can be on only one row; otherwise nothing is written and the message says which row.
+- **Whole table.** Every column of the rows that pass your facets.
+
+Each column gets one type:
+
+| Values in the column | PostgreSQL type |
+|---|---|
+| Whole numbers | `bigint` |
+| Other numbers | `double precision` |
+| Booleans | `boolean` |
+| Dates | `timestamptz` |
+| Anything else, or a mix | `text` |
+
+Null stays `NULL`, and empty text stays empty text, as on import. MySQL, MariaDB and SQLite can come later; tell us in the [issue](https://github.com/ilyaux/OxRefine/issues/7) if you need one.
 
 ## Columns, dates and reconciliation
 

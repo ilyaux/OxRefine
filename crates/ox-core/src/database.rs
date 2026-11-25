@@ -126,6 +126,68 @@ pub fn prepare(params:J)->Result<J>{
     let snapshot=cache().lock().unwrap_or_else(|e|e.into_inner()).insert(snapshot)?;view(&snapshot,0,20)
 }
 
+/// Export → Database table: rows into a new PostgreSQL table whose name ends in `_ox`, the only
+/// tables OxRefine writes. With `key`, only what changed since the import: that column, the columns
+/// that differ from the imported values in some row, and those rows, ready for a correlated UPDATE.
+/// `dryRun` describes the table without connecting.
+pub fn export(params:J,table:&Table,rows:&[u32],original:&Table)->Result<J>{
+    #[derive(Deserialize)]
+    #[serde(rename_all="camelCase")]
+    struct Target{table:String,#[serde(default)]replace:bool,#[serde(default)]key:Option<String>,#[serde(default)]dry_run:bool}
+    let target:Target=serde_json::from_value(params.clone()).map_err(|_|"Database export needs a table name")?;
+    let upload=Upload::plan(&target.table,target.replace,target.key.as_deref().filter(|k|!k.is_empty()),table,rows,original)?;
+    if target.dry_run{return Ok(upload.describe());}
+    let mut shared=params;if let Some(o)=shared.as_object_mut(){for k in["table","replace","key","dryRun"]{o.remove(k);}}
+    let(request,profile)=Request::parse(shared)?;
+    if profile.driver!="postgres"{return Err("Writing a table is available for PostgreSQL connections".into());}
+    driver::run(&request,&profile,driver::Mode::Write(&upload))?;
+    Ok(upload.describe())
+}
+pub(crate) struct Upload<'a>{name:String,target:String,replace:bool,table:&'a Table,rows:Vec<u32>,cols:Vec<usize>,kinds:Vec<&'static str>}
+impl<'a> Upload<'a>{
+    fn plan(name:&str,replace:bool,key:Option<&str>,table:&'a Table,rows:&[u32],original:&Table)->Result<Self>{
+        let parts:Vec<&str>=name.split('.').collect();
+        let word=|p:&&str|!p.is_empty()&&p.len()<=63&&p.bytes().next().is_some_and(|b|b.is_ascii_lowercase()||b==b'_')&&p.bytes().all(|b|b.is_ascii_lowercase()||b.is_ascii_digit()||b==b'_');
+        let last=parts.last().copied().unwrap_or_default();
+        if parts.len()>2||!parts.iter().all(word)||!last.ends_with("_ox")||last=="_ox"{return Err("The table name must end in _ox and use lowercase letters, digits and _, optionally after a schema (schema.name_ox). OxRefine writes no other tables.".into());}
+        let target=parts.iter().map(|p|format!("\"{p}\"")).collect::<Vec<_>>().join(".");
+        let(rows,cols)=match key{
+            None=>{if rows.is_empty(){return Err("No rows match the facets, so no table was written.".into());}(rows.to_vec(),(0..table.names.len()).collect::<Vec<_>>())},
+            Some(key)=>{
+                let k=table.col(key)?;let ok=original.col(key).map_err(|_|format!("The key column {key} wasn't in the imported data; choose a column that came with it"))?;
+                let id=|v:&Value|format!("{v:?}");
+                let mut imported=std::collections::HashMap::new();
+                for r in 0..original.rows{let v=original.columns[ok].get(r);if v.is_blank(){continue;}if imported.insert(id(v),r).is_some(){return Err(format!("The key {} appears more than once in the imported data; choose a column that identifies each row",v.display()));}}
+                let compare:Vec<(usize,Option<usize>)>=(0..table.names.len()).filter(|&c|c!=k).map(|c|(c,original.col(&table.names[c]).ok())).collect();
+                let(null,mut changed,mut keep,mut seen)=(Value::Null,vec![false;compare.len()],vec![],std::collections::HashSet::new());
+                for &r in rows{
+                    let v=table.columns[k].get(r as usize);
+                    let o=*imported.get(&id(v)).ok_or_else(||format!("Row {} has the key {}, which isn't in the imported data; the key column must keep its imported values",r+1,v.display()))?;
+                    if !seen.insert(o){return Err(format!("The key {} is on more than one row; the key column must identify each row",v.display()));}
+                    let mut any=false;
+                    for(i,&(c,oc))in compare.iter().enumerate(){if table.columns[c].get(r as usize)!=oc.map_or(&null,|oc|original.columns[oc].get(o)){changed[i]=true;any=true;}}
+                    if any{keep.push(r);}
+                }
+                if keep.is_empty(){return Err("Nothing changed since the import in the rows matching the facets, so no table was written.".into());}
+                (keep,std::iter::once(k).chain(compare.iter().zip(&changed).filter(|(_,changed)|**changed).map(|(&(c,_),_)|c)).collect())
+            },
+        };
+        for &c in &cols{if table.names[c].len()>63||table.names[c].contains('\0'){return Err(format!("The column name {} is longer than PostgreSQL's 63 bytes; rename the column first",table.names[c]));}}
+        // one type a column: whole numbers bigint, numbers double precision, booleans, dates, the rest text
+        let kinds=cols.iter().map(|&c|rows.iter().map(|&r|table.columns[c].get(r as usize)).fold(None,|kind,v|{
+            let this=match v{Value::Null=>return kind,Value::Int(_)=>"bigint",Value::Num(_)=>"double precision",Value::Bool(_)=>"boolean",Value::Date(_)=>"timestamptz",_=>"text"};
+            Some(match kind{None=>this,Some(k)if k==this=>k,Some("bigint"|"double precision")if matches!(this,"bigint"|"double precision")=>"double precision",_=>"text"})
+        }).unwrap_or("text")).collect();
+        Ok(Upload{name:name.into(),target,replace,table,rows,cols,kinds})
+    }
+    fn describe(&self)->J{
+        let cell=|v:&Value|match v{Value::Null=>J::Null,Value::Int(n)=>json!(n),Value::Num(n)=>json!(n),Value::Bool(b)=>json!(b),v=>json!(v.display())};
+        json!({"table":self.name,"rows":self.rows.len(),
+            "columns":self.cols.iter().zip(&self.kinds).map(|(&c,k)|json!({"name":self.table.names[c],"type":k})).collect::<Vec<_>>(),
+            "sample":self.rows.iter().take(10).map(|&r|self.cols.iter().map(|&c|cell(self.table.columns[c].get(r as usize))).collect::<Vec<_>>()).collect::<Vec<_>>()})
+    }
+}
+
 struct Rows {
     names:Vec<String>,types:Vec<String>,columns:Vec<(Interner,crate::spill::CodeBuilder)>,rows:usize,bytes:usize,max_rows:usize,binary:bool,
 }
@@ -175,6 +237,31 @@ mod tests {
         for query in ["SELECT 1", "SELECT '; DELETE' AS literal; -- harmless", "WITH x AS (SELECT 1) SELECT * FROM x", "SELECT * FROM \"update\"", "SELECT * FROM `create`"]{assert!(read_query(query,"sqlite").is_ok(),"{query}");}
         for query in ["SELECT 1; DELETE FROM x","WITH x AS (DELETE FROM x RETURNING *) SELECT * FROM x","SELECT 1 INTO OUTFILE 'x'","SELECT 1--x INTO OUTFILE 'x'","SELECT 1 /*!50000 INTO OUTFILE 'x' */","SELECT 1 /*M! INTO OUTFILE 'x' */","SELECT 1 /*M!100100 INTO OUTFILE 'x' */","SELECT 1 /* outer /* inner */ INTO OUTFILE 'x' -- */","SELECT \"pg_cancel_backend\"(1)","SELECT `get_lock`('name',1)","SELECT @x:=1","SELECT $$text$$","SELECT ARRAY[pg_cancel_backend(123)]","SELECT ARRAY[ARRAY[\"lo_export\"(1,'x')]]"]{assert!(read_query(query,"postgres").is_err(),"{query}");}
         assert!(read_query("SELECT ARRAY[1,2,3]","postgres").is_ok());assert!(read_query("SELECT [update] FROM [table]","sqlite").is_ok());
+    }
+    fn table(names:&[&str],rows:Vec<Vec<Value>>)->Table{let mut t=Rows::new(names.iter().map(|n|(n.to_string(),String::new())).collect(),100).unwrap();for r in rows{t.push(r).unwrap();}t.finish().unwrap().table}
+    #[test]
+    fn database_export_writes_only_ox_tables_and_with_a_key_only_the_changes(){
+        use Value::*;let s=|v:&str|Str(v.into());
+        let original=table(&["id","name","city"],vec![vec![Int(1),s("Ann"),s("Rome")],vec![Int(2),s("Bob"),s("Oslo")],vec![Int(3),s("Cy"),Null]]);
+        let plan=|name:&str,key:Option<&str>,t:&Table,rows:&[u32]|Upload::plan(name,false,key,t,rows,&original).map(|u|u.describe());
+        for bad in["people","People_ox","_ox","a.b.c_ox","x_ox\"; DROP TABLE people; --","x_OX","1x_ox"]{assert!(plan(bad,None,&original,&[0]).is_err(),"{bad}");}
+        let whole=plan("public.people_ox",None,&original,&[0,2]).unwrap();
+        assert_eq!(whole["rows"],2);assert_eq!(whole["columns"],json!([{"name":"id","type":"bigint"},{"name":"name","type":"text"},{"name":"city","type":"text"}]));assert_eq!(whole["sample"][1],json!([3,"Cy",null]));
+        assert!(plan("people_ox",None,&original,&[]).unwrap_err().contains("No rows"));
+        // Bob renamed, a new column filled for Cy: the key, those two columns and those two rows
+        let now=table(&["id","name","city","score"],vec![vec![Int(1),s("Ann"),s("Rome"),Null],vec![Int(2),s("Robert"),s("Oslo"),Null],vec![Int(3),s("Cy"),Null,Num(0.5)]]);
+        let changes=plan("people_ox",Some("id"),&now,&[0,1,2]).unwrap();
+        assert_eq!(changes["columns"],json!([{"name":"id","type":"bigint"},{"name":"name","type":"text"},{"name":"score","type":"double precision"}]));
+        assert_eq!(changes["sample"],json!([[2,"Robert",null],[3,"Cy",0.5]]));
+        assert!(plan("people_ox",Some("id"),&now,&[0]).unwrap_err().contains("Nothing changed"),"facets narrow the changes");
+        assert!(plan("people_ox",Some("score"),&now,&[0]).unwrap_err().contains("wasn't in the imported data"));
+        let moved=table(&["id","name"],vec![vec![Int(9),s("Ann")]]);assert!(plan("people_ox",Some("id"),&moved,&[0]).unwrap_err().contains("must keep its imported values"));
+        let twice=table(&["id","name"],vec![vec![Int(1),s("A")],vec![Int(1),s("B")]]);assert!(plan("people_ox",Some("id"),&twice,&[0,1]).unwrap_err().contains("more than one row"));
+        // a value that is now text, and blank text, keep the column text; Int and "1" are different keys
+        let mixed=table(&["id","name","city"],vec![vec![Int(1),s("Ann"),Int(5)],vec![Int(2),s("Bob"),s("")]]);
+        assert_eq!(plan("people_ox",Some("id"),&mixed,&[0,1]).unwrap()["columns"][1],json!({"name":"city","type":"text"}));
+        let text_keys=table(&["id","name"],vec![vec![s("1"),s("Ann")]]);assert!(plan("people_ox",Some("id"),&text_keys,&[0]).is_err());
+        assert!(export(json!({"table":"people_ox","profile":{"name":"x","driver":"sqlite","sqlitePath":"x.sqlite"},"requestId":"r"}),&original,&[0],&original).unwrap_err().contains("PostgreSQL"));
     }
     #[test]
     fn local_staging_expires_and_clips_only_the_preview(){

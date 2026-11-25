@@ -23,6 +23,15 @@ jobs:
       # the desktop crate (ui/src-tauri) is not a default member; it needs the UI build and system WebView libraries
       - name: Build
         run: cargo build --release --locked
+      # a real PostgreSQL for the live database tests: import, cancellation and Export → PostgreSQL table
+      - name: PostgreSQL with the synthetic fixture
+        if: runner.os == 'Linux'
+        run: |
+          docker run -d --name pg -p 5432:5432 -e POSTGRES_PASSWORD=ci-only -e POSTGRES_DB=synthetic postgres:16
+          for i in $(seq 60); do docker exec pg pg_isready -h 127.0.0.1 -U postgres && break; sleep 1; done
+          docker exec -i pg psql -h 127.0.0.1 -U postgres -d synthetic -v ON_ERROR_STOP=1 < tests/database/reference-postgres.sql
+          echo '{"connections":[{"driver":"postgres","host":"127.0.0.1","port":5432,"database":"synthetic","username":"postgres","password":"ci-only","tls":"disable"}]}' > "$RUNNER_TEMP/databases.json"
+          echo "OXREFINE_DATABASE_TEST_CONFIG=$RUNNER_TEMP/databases.json" >> "$GITHUB_ENV"
       - name: Tests and OpenRefine conformance
         run: cargo test --profile ci --locked
 

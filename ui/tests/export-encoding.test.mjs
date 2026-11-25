@@ -5,9 +5,9 @@ import vm from "node:vm"
 import ts from "typescript"
 
 function dialog(format = "csv", initialPreferences = {}, columns = ["name", "city"]) {
-  const hooks = [], requests = [], saved = [], exports = {}, preferenceWrites = []
+  const hooks = [], requests = [], saved = [], exports = {}, preferenceWrites = [], toasts = []
   const preferences = plain(initialPreferences)
-  let cursor = 0, dirty = true, effects = [], view, debounced, requested
+  let cursor = 0, dirty = true, effects = [], view, debounced, requested, closed = 0
   let engine = { mode: "row-based", facets: [] }
   const jsx = (type, props, key) => ({ type, props, key })
   const react = {
@@ -38,13 +38,16 @@ function dialog(format = "csv", initialPreferences = {}, columns = ["name", "cit
       if (name === "@/extensions") return { useExtensions: () => null, items: () => [], listenExtensions() {}, loadExtensions: async () => ({ folders: [], extensions: [] }) }
       if (name === "@/components/ui/input") return { Input: "input" }
       if (name === "@/components/ui/textarea") return { Textarea: "textarea" }
+      if (name === "@/components/ui/toast") return { toast: { add: (t) => toasts.push(t) } }
+      if (name === "@/databaseImport") return { databaseProfile: (p) => ({ ...p }), databaseRequestId: () => "request-1", databaseError: (e, password) => String(e.message).replaceAll(password || "\u0000", "[password]") }
       if (name === "@/components/instrument") return { FullView: "full-view", Metric: "metric", Spacer: "spacer", StripAction: "strip-action", SummaryStrip: "summary-strip" }
       if (name === "@/api") return {
         call(command, args, options) {
           if(command==="preferences") { assert.equal(options.quiet,true);return Promise.resolve({data:preferences}) }
           if(command==="set_preference") { assert.equal(options.quiet,true);assert.equal(args.name,"oxrefine.export.presets");preferences[args.name]=plain(args.value);preferenceWrites.push(plain(args));return Promise.resolve({data:preferences}) }
-          assert.equal(command, "export")
-          return new Promise((resolve, reject) => requests.push({ args, reply: (data) => resolve({ data }), fail: (message) => reject(new Error(message)) }))
+          if(command==="database_profiles") { assert.equal(options.quiet,true);return Promise.resolve({data:{drivers:[],profiles:[{id:"file",name:"A file",driver:"sqlite"},{id:"pg",name:"Warehouse",driver:"postgres",host:"db"}]}}) }
+          assert.ok(command === "export" || command === "database_export", command)
+          return new Promise((resolve, reject) => requests.push({ command, args, options, reply: (data) => resolve({ data }), fail: (message) => reject(new Error(message)) }))
         },
       }
       throw new Error(`Unexpected ExportDialog dependency ${name}`)
@@ -55,13 +58,15 @@ function dialog(format = "csv", initialPreferences = {}, columns = ["name", "cit
     while (dirty) {
       assert.ok(++turns < 20); dirty = false; cursor = 0
       view = exports.ExportDialog({ format, name: "people.csv", columns, engine, rows: 2, allRows: 8,
-        onExport: (format, ext, params) => saved.push(JSON.parse(JSON.stringify({ format, ext, params }))), onClose() {} })
+        onExport: (format, ext, params) => saved.push(JSON.parse(JSON.stringify({ format, ext, params }))), onClose() { closed++ } })
       const queued = effects; effects = []; queued.forEach((effect) => effect())
     }
   }
   render()
   return {
-    requests, saved, preferences, preferenceWrites,
+    requests, saved, preferences, preferenceWrites, toasts,
+    get closed() { return closed },
+    type(label, value) { this.change(nodes(view).find((node) => node.props?.["aria-label"] === label), value) },
     get view() { return view },
     get save() { return nodes(view).find((node) => node.type === "strip-action") },
     change(node, value) { node.props.onChange({ target: { value, checked: value } }); render() },
@@ -182,5 +187,30 @@ test("format-specific blank-row defaults and explicit choices survive format swi
   d.check("Keep blank rows",true);d.advanceDebounce()
   choose("Custom tabular.csv");d.advanceDebounce();assert.equal(d.requests.at(-1).args.params.options.outputBlankRows,false)
   choose("TSV.tsv");d.advanceDebounce();assert.equal(d.requests.at(-1).args.params.options.outputBlankRows,true)
+  d.unmount()
+})
+
+test("a PostgreSQL table previews a dry run without credentials and writes with the chosen connection", async () => {
+  const plan = { table: "people_ox", rows: 1, columns: [{ name: "name", type: "text" }, { name: "city", type: "text" }], sample: [["Bob", null]] }
+  const d = dialog("database"); await d.flush()
+  assert.equal(nodes(d.view).find((n) => n.props?.["aria-label"] === "Database connection").props.value, "pg", "only PostgreSQL connections, the first chosen")
+  assert.equal(text(nodes(d.view).find((n) => n.props?.["aria-label"] === "Database connection")), "Warehouse")
+  const dry = d.requests.at(-1); assert.equal(dry.command, "database_export")
+  assert.deepEqual(plain(dry.args.params), { table: "people_ox", replace: false, key: "name", dryRun: true }, "the preview sends no profile or password")
+  assert.equal(d.save.props.disabled, true, "nothing to write before the plan")
+  dry.reply(plan); await d.flush()
+  assert.match(text(d.view), /CREATE TABLE people_ox \(\n  "name" text,\n  "city" text\n\)/); assert.match(text(d.view), /Bob→\tNULL/)
+  d.segment("Rows and columns", "all"); d.type("Table name", "people"); d.advanceDebounce()
+  assert.deepEqual(plain(d.requests.at(-1).args.params), { table: "people", replace: false, dryRun: true }, "whole table: no key")
+  d.requests.at(-1).fail("The table name must end in _ox"); await d.flush(); assert.equal(d.save.props.disabled, true)
+  d.type("Table name", "people_ox"); d.check("Replace the table if it exists", true); d.type("Database password", "s3cret"); d.advanceDebounce()
+  d.requests.at(-1).reply(plan); await d.flush(); assert.equal(d.save.props.disabled, false)
+  d.click(d.save)
+  const write = d.requests.at(-1); assert.equal(write.command, "database_export"); assert.equal(d.saved.length, 0, "not a file")
+  assert.deepEqual(plain(write.args.params), { table: "people_ox", replace: true, profile: { id: "pg", name: "Warehouse", driver: "postgres", host: "db" }, credentials: { password: "s3cret" }, requestId: "request-1", timeoutSeconds: 120 })
+  write.fail("FATAL: password s3cret rejected"); await d.flush()
+  assert.match(text(d.view), /password \[password\] rejected/); assert.doesNotMatch(text(d.view), /s3cret/); assert.equal(d.closed, 0)
+  d.click(d.save); d.requests.at(-1).reply(plan); await d.flush()
+  assert.equal(d.closed, 1); assert.equal(d.toasts[0].title, "Wrote people_ox")
   d.unmount()
 })

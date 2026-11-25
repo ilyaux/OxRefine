@@ -91,6 +91,7 @@ In a list facet, click a choice to include it, and hover a choice and click the 
 | Excel 97 (.xls) | **Export → Excel 97** |
 | Custom tabular / SQL / Templating | **Custom tabular…** / **SQL…** / **Templating…** |
 | Export project | **OpenRefine project…** |
+| — (OpenRefine writes no database tables) | **PostgreSQL table**: the matching rows, or only the changes since the import, into a new `*_ox` table; see [Exporting](exporting.md#postgresql-table) |
 | Google Sheets / Google Drive (the Google Data extension) | **Google Sheets** / **Google Drive**: the matching rows as a new sheet, or the project archive in your Drive |
 
 ## Expressions

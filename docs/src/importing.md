@@ -83,6 +83,8 @@ The default result limit is 100,000 rows; the maximum is 1,000,000. An estimated
 
 SQL integers retain their exact values. Decimal values, dates, times and boolean representations remain text; SQL `NULL` and empty text remain distinct. Binary values use `base64:` followed by Base64 so their bytes survive. Long text is shortened only in the labelled preview. Some representations differ from OpenRefine's JDBC import, including lossless binary data and canonical decimal/time formatting; see [differences](differences.md).
 
+To write the cleaned rows back next to the source, see [Export → PostgreSQL table](exporting.md#postgresql-table).
+
 Changing profile settings, SQL or query limits requires a new load. Renaming a project does not rerun a prepared query. Editing a saved profile uses its revision, so an older dialog cannot silently overwrite a newer edit.
 
 ## Wikimedia Commons

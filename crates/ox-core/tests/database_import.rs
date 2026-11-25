@@ -148,3 +148,33 @@ fn staged_database_create_saves_without_a_second_query_and_supports_spilled_code
     let source=serde_json::to_string(&meta.source).unwrap();assert!(!source.contains("SELECT"));assert!(!source.contains("password"));assert!(!source.contains("synthetic.sqlite"));
     let before=store.list().len();assert!(dispatch(&mut session,"database_create",json!({"id":"expired"})).is_err());assert_eq!(store.list().len(),before);assert_eq!(session.project.as_ref().unwrap().name,"Saved database snapshot");
 }
+
+#[test]
+fn real_postgres_export_writes_new_ox_tables_with_the_changes_or_all_rows(){
+    use ox_core::{dispatch,Session,store::Store};
+    let _guard=SERIAL.lock().unwrap_or_else(|e|e.into_inner());let Some(path)=std::env::var_os("OXREFINE_DATABASE_TEST_CONFIG")else{eprintln!("PostgreSQL export test not configured; no server validation claimed");return;};
+    let config:J=serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();let mut checked=0;
+    for c in config["connections"].as_array().unwrap().iter().filter(|c|c["driver"]=="postgres"){
+        let mut profile=json!({"name":"Synthetic export","id":"export-fixture","revision":"one"});for key in["driver","host","port","database","username","tls"]{if let Some(v)=c.get(key){profile[key]=v.clone();}}
+        let request=|sql:&str|json!({"profile":profile,"credentials":{"password":c["password"]},"requestId":"database-export-fixture","sql":sql});
+        let read=|sql:&str|{let view=database::prepare(request(sql)).unwrap_or_else(|e|panic!("{sql}: {e}"));database::prepared(view["id"].as_str().unwrap()).unwrap().table};
+        let dir=tempfile::tempdir().unwrap();let mut session=Session::with_store(Store::open(dir.path()).unwrap());
+        let view=dispatch(&mut session,"database_prepare",json!({"params":request("SELECT id,textv,intv FROM typed_fixture ORDER BY id")})).unwrap();
+        dispatch(&mut session,"database_create",json!({"id":view["data"]["id"],"name":"Export fixture"})).unwrap();
+        dispatch(&mut session,"apply",json!({"op":{"op":"core/text-transform","engineConfig":{"facets":[],"mode":"row-based"},"columnName":"textv","expression":"grel:if(value==\"synthetic only\",\"changed\",value)","onError":"keep-original","repeat":false,"repeatCount":10}})).unwrap();
+        let mut export=|table:&str,key:Option<&str>,replace:bool|{let mut params=request("");params["table"]=json!(table);params["replace"]=json!(replace);if let Some(k)=key{params["key"]=json!(k);}dispatch(&mut session,"database_export",json!({"params":params}))};
+        // only the changed row and column, next to the key, typed as they were
+        let written=export("oxrefine_changes_ox",Some("id"),true).unwrap();assert_eq!(written["data"]["rows"],1);
+        let t=read("SELECT * FROM oxrefine_changes_ox ORDER BY id");assert_eq!(t.names,vec!["id","textv"]);assert_eq!(t.rows,1);assert_eq!(t.columns[0].get(0),&Value::Int(2));assert_eq!(t.columns[1].get(0).as_str(),Some("changed"));
+        assert!(export("oxrefine_changes_ox",Some("id"),false).unwrap_err().contains("already exists"),"an existing table is replaced only when asked");
+        // the whole table: every row, NULL stays NULL and numbers stay numbers
+        export("oxrefine_whole_ox",None,true).unwrap();
+        let t=read("SELECT * FROM oxrefine_whole_ox ORDER BY id");assert_eq!(t.names,vec!["id","textv","intv"]);assert_eq!(t.rows,3);
+        assert_eq!(t.columns[1].get(0).as_str(),Some("Zażółć Привет 東京"));assert_eq!(t.columns[2].get(1),&Value::Int(-7));assert!(t.columns[1].get(2).is_null());assert!(t.columns[2].get(2).is_null());
+        let types=read("SELECT data_type FROM information_schema.columns WHERE table_name='oxrefine_whole_ox' ORDER BY ordinal_position");assert_eq!((0..3).map(|r|types.columns[0].get(r).as_str().unwrap().to_string()).collect::<Vec<_>>(),vec!["bigint","text","bigint"]);
+        // never another table
+        assert!(export("typed_fixture",None,true).is_err());assert_eq!(read("SELECT COUNT(*) AS n FROM typed_fixture").columns[0].get(0),&Value::Int(3));
+        checked+=1;
+    }
+    if checked==0{eprintln!("No PostgreSQL connection configured; no export validation claimed");}
+}

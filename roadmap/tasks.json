@@ -1552,6 +1552,17 @@
       "ref": "extensions/database; Carlo's forum feedback"
     },
     {
+      "id": "ext-db-export",
+      "phase": "p13",
+      "milestone": "later",
+      "status": "review",
+      "priority": "P2",
+      "size": "M",
+      "title": "Export → PostgreSQL table",
+      "detail": "Write a project into a new PostgreSQL table whose name ends in _ox, the only tables OxRefine writes, in one transaction, replacing an existing _ox table only when asked. Two shapes: the matching rows, or only the changes since the import (the key column, the changed columns and the changed rows) for a correlated UPDATE. Typed columns (bigint, double precision, boolean, timestamptz, text), NULL kept apart from empty text, a dry-run preview in the Export view, and a live PostgreSQL in CI.",
+      "ref": "issue #7"
+    },
+    {
       "id": "perf-cardinality-history",
       "phase": "p11",
       "milestone": "v1.0",

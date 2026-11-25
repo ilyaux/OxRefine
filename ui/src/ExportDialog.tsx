@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { items, useExtensions } from "@/extensions"
+import { databaseError, databaseProfile, databaseRequestId, type DatabaseProfile, type DatabaseProfiles } from "@/databaseImport"
+import { toast } from "@/components/ui/toast"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 type ColumnOptions = { name: string; dateSettings: { format: string; custom: string; omitTime: boolean; useLocalTimeZone: boolean }; reconSettings: { output: string; blankUnmatchedCells: boolean; linkToEntityPages: boolean } }
@@ -29,7 +31,7 @@ export type ExportFormat = "*sv" | "template" | "sql"
 export const EXTENSION: Record<ExportFormat, string> = { "*sv": "csv", template: "txt", sql: "sql" }
 
 /** Everything the Export view offers: the engine's row formats, then the whole project and its recipe. */
-export type ExportKind = "csv" | "tsv" | ExportFormat | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe" | "google-sheet" | "google-drive" | "quickstatements" | "wikibase-schema" | `ext:${string}`
+export type ExportKind = "csv" | "tsv" | ExportFormat | "database" | "xlsx" | "xls" | "ods" | "html" | "project" | "recipe" | "google-sheet" | "google-drive" | "quickstatements" | "wikibase-schema" | `ext:${string}`
 const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] = [
   { id: "csv", label: "CSV", ext: "csv", text: true },
   { id: "tsv", label: "TSV", ext: "tsv", text: true },
@@ -40,6 +42,7 @@ const FORMATS: { id: ExportKind; label: string; ext: string; text: boolean }[] =
   { id: "html", label: "HTML table", ext: "html", text: true },
   { id: "template", label: "Templating", ext: "txt", text: true },
   { id: "sql", label: "SQL", ext: "sql", text: true },
+  { id: "database", label: "PostgreSQL table", ext: "", text: true },
   { id: "project", label: "OpenRefine project", ext: "tar.gz", text: false },
   { id: "recipe", label: "Recipe JSON", ext: "json", text: false },
   { id: "google-sheet", label: "Google Sheets", ext: "gsheet", text: false },
@@ -62,6 +65,7 @@ const HINTS: Partial<Record<ExportKind, string>> = {
   html: "An HTML table.",
   template: "Each row renders the template; {{ … }} holds a GREL expression such as cells[\"name\"].value.",
   sql: "CREATE TABLE and INSERT statements for the matching rows. Blank cells become NULL.",
+  database: "A new table in a PostgreSQL database, over a connection saved in New project → Database. OxRefine writes only tables whose name ends in _ox. Changes only writes the key column, the columns changed since the import and those rows, ready for a correlated UPDATE.",
   project: "The whole project with its undo history, as an OpenRefine archive; OpenRefine opens it with OxRefine's steps.",
   recipe: "The steps so far as OpenRefine-compatible JSON, for Undo/Redo → Apply in OpenRefine or for ox apply. History → Extract picks steps.",
   "google-sheet": "The matching rows as a new Google Sheet in your Drive; it opens when the upload is done. Sign in from New project → Google Sheets first.",
@@ -69,6 +73,13 @@ const HINTS: Partial<Record<ExportKind, string>> = {
   quickstatements: "The project's Wikibase schema applied to the matching rows, as QuickStatements commands to paste into the QuickStatements tool.",
   "wikibase-schema": "The project's Wikibase schema as JSON, for OpenRefine's Wikibase → Import schema.",
 }
+
+/** What Export → PostgreSQL table writes, from a dry run of database_export. */
+type DatabasePlan = { table: string; rows: number; columns: { name: string; type: string }[]; sample: (string | number | boolean | null)[][] }
+const planText = (p: DatabasePlan) =>
+  `CREATE TABLE ${p.table} (\n${p.columns.map((c) => `  ${JSON.stringify(c.name)} ${c.type}`).join(",\n")}\n)\n\n${p.rows.toLocaleString()} ${p.rows === 1 ? "row" : "rows"}\n\n` +
+  [p.columns.map((c) => c.name), ...p.sample.map((r) => r.map((v) => (v === null ? "NULL" : String(v))))].map((r) => r.join("\t")).join("\n")
+const tableName = (name: string) => `${name.toLowerCase().replace(/\.[^.]+$/, "").replace(/[^a-z0-9_]+/g, "_").replace(/^[^a-z_]+|_+$/g, "").slice(0, 60) || "data"}_ox`
 
 /** OpenRefine's default template: one JSON object per row. */
 const defaultTemplate = (columns: string[]) => ({
@@ -138,6 +149,18 @@ export function ExportDialog({
   const outputBlankRows = blankRows[format] ?? (format !== "csv" && format !== "tsv")
   const [columnOptions, setColumnOptions] = useState<Record<string, ColumnOptions>>(() => Object.fromEntries(columns.map((name) => [name, columnDefaults(name)])))
   const [editing, setEditing] = useState(columns[0] ?? "")
+  const [db, setDb] = useState({ profile: "", password: "", table: tableName(name), changes: true, key: columns[0] ?? "", replace: false })
+  const [profiles, setProfiles] = useState<DatabaseProfile[] | null>(null)
+  const [writing, setWriting] = useState(false)
+  const [writeError, setWriteError] = useState("")
+  useEffect(() => {
+    if (format !== "database" || profiles) return
+    call<DatabaseProfiles>("database_profiles", {}, { quiet: true }).then(({ data }) => {
+      const postgres = data.profiles.filter((p) => p.driver === "postgres")
+      setProfiles(postgres)
+      setDb((d) => (d.profile ? d : { ...d, profile: postgres[0]?.id ?? "" }))
+    }, (e) => setWriteError(String((e as Error).message ?? e)))
+  }, [format, profiles])
   const [presets, setPresets] = useState<Preset[] | null>(null)
   const [presetName, setPresetName] = useState("")
   const [presetError, setPresetError] = useState("")
@@ -176,6 +199,8 @@ export function ExportDialog({
       ? tpl
       : format === "sql"
         ? { options: { ...sql, includeIfExistWithDropStatement: sql.includeDropStatement, columns: ordered.map((n) => ({ name: n, type: "VARCHAR", size: 255, allowNull: true })) } }
+        : format === "database"
+          ? { table: db.table.trim(), replace: db.replace, ...(db.changes ? { key: db.key } : {}) }
         : custom
           ? { ...(tabular ? charset : {}), options: { ...(format === "*sv" ? { ...sv, outputBlankRows } : { outputColumnHeaders: sv.outputColumnHeaders, outputBlankRows }), columns: selectedOptions } }
           : {}
@@ -187,8 +212,11 @@ export function ExportDialog({
     const [f, p] = JSON.parse(key) as [ExportKind, object]
     if (!formats.find((x) => x.id === f)?.text) return
     let live = true
-    call<string>("export", { format: f, params: p, engine, limit: 10 }).then(
-      ({ data }) => live && setPreview({ key, engine, text: data }),
+    const text = f === "database"
+      ? call<DatabasePlan>("database_export", { params: { ...p, dryRun: true }, engine }, { quiet: true }).then(({ data }) => planText(data))
+      : call<string>("export", { format: f, params: p, engine, limit: 10 }).then(({ data }) => data)
+    text.then(
+      (data) => live && setPreview({ key, engine, text: data }),
       (e) => live && setPreview({ key, engine, error: String((e as Error).message ?? e) }),
     )
     return () => {
@@ -198,9 +226,20 @@ export function ExportDialog({
   }, [key, engine, exporters.length])
   const shown = preview.key === requested && preview.engine === engine ? preview : {}
 
-  const blocked = ((custom || format === "sql") && !ordered.length) || ((tabular || format === "html") && (shown.text === undefined || !!shown.error))
+  const connection = profiles?.find((p) => p.id === db.profile)
+  const blocked = ((custom || format === "sql") && !ordered.length) || ((tabular || format === "html" || format === "database") && (shown.text === undefined || !!shown.error)) || (format === "database" && (!connection || writing))
   const file = format.startsWith("google-") ? `to ${spec.label}` : `${name.replace(/\.[^.]+$/, "")}.${format === "project" ? "openrefine.tar.gz" : spec.ext}`
-  const save = () => !blocked && onExport(format, spec.ext, params)
+  const writeTable = async () => {
+    if (!connection) return
+    setWriting(true); setWriteError("")
+    try {
+      const { data } = await call<DatabasePlan>("database_export", { params: { ...params, profile: databaseProfile(connection), credentials: { password: db.password }, requestId: databaseRequestId(), timeoutSeconds: 120 }, engine }, { quiet: true })
+      toast.add({ title: `Wrote ${data.table}`, description: `${data.rows.toLocaleString()} ${data.rows === 1 ? "row" : "rows"}, ${data.columns.length} columns, in ${connection.name}.` })
+      onClose()
+    } catch (e) { setWriteError(databaseError(e, db.password)) }
+    finally { setWriting(false) }
+  }
+  const save = () => !blocked && (format === "database" ? void writeTable() : onExport(format, spec.ext, params))
   const check = (label: string, on: boolean, set: (v: boolean) => void) => (
     <label key={label} className="flex cursor-pointer items-center gap-2.5 py-1">
       <input type="checkbox" checked={on} onChange={(e) => set(e.target.checked)} className="accent-foreground" />
@@ -243,7 +282,7 @@ export function ExportDialog({
           </Metric>
           <Spacer />
           <StripAction ink keys="Ctrl S" disabled={blocked} onClick={save}>
-            Save {file}
+            {format === "database" ? (writing ? "Writing…" : `Write ${db.table.trim()}`) : `Save ${file}`}
           </StripAction>
         </SummaryStrip>
         <div className="flex min-h-0 flex-1">
@@ -260,7 +299,7 @@ export function ExportDialog({
                     )}
                   >
                     <span className="flex-1">{f.label}</span>
-                    <span className={cn("font-mono text-[11px]", format === f.id ? "text-background/70" : "text-muted-foreground")}>.{f.ext}</span>
+                    <span className={cn("font-mono text-[11px]", format === f.id ? "text-background/70" : "text-muted-foreground")}>{f.ext && `.${f.ext}`}</span>
                   </button>
                 </li>
               ))}
@@ -341,6 +380,41 @@ export function ExportDialog({
                 </div>
               </>
             )}
+            {format === "database" && (
+              <>
+                <label className="flex flex-col gap-1.5">
+                  {label("Connection")}
+                  <select aria-label="Database connection" value={db.profile} disabled={!profiles?.length} onChange={(e) => setDb({ ...db, profile: e.target.value, password: "" })} className="h-8 w-full rounded-[3px] border border-input bg-background px-2 text-xs">
+                    {profiles?.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  {profiles && !profiles.length && <span className="text-[11.5px] text-muted-foreground">Save a PostgreSQL connection in New project → Database first.</span>}
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  {label("Password")}
+                  <Input aria-label="Database password" type="password" autoComplete="off" value={db.password} onChange={(e) => setDb({ ...db, password: e.target.value })} className="h-8" />
+                  <span className="text-[11.5px] text-muted-foreground">Used for this export only; never saved.</span>
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  {label("Table name, ending in _ox")}
+                  <Input aria-label="Table name" value={db.table} onChange={(e) => setDb({ ...db, table: e.target.value })} className="h-8 font-mono" />
+                </label>
+                <div className="flex flex-col gap-1.5">
+                  {label("Rows and columns")}
+                  <Segmented label="Rows and columns" value={db.changes ? "changes" : "all"} options={[["changes", "Changes only"], ["all", "Whole table"]]} onChange={(v) => setDb({ ...db, changes: v === "changes" })} />
+                </div>
+                {db.changes && (
+                  <label className="flex flex-col gap-1.5">
+                    {label("Key column")}
+                    <select aria-label="Key column" value={db.key} onChange={(e) => setDb({ ...db, key: e.target.value })} className="h-8 w-full rounded-[3px] border border-input bg-background px-2 text-xs">
+                      {columns.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <span className="text-[11.5px] text-muted-foreground">It identifies each row and keeps its imported values, so an UPDATE can join on it.</span>
+                  </label>
+                )}
+                <div>{check("Replace the table if it exists", db.replace, (v) => setDb({ ...db, replace: v }))}</div>
+                {writeError && <p role="alert" className="text-xs text-destructive">{writeError}</p>}
+              </>
+            )}
             {format === "template" &&
               (["prefix", "template", "separator", "suffix"] as const).map((k) => (
                 <label key={k} className="flex flex-col gap-1.5">
@@ -388,7 +462,7 @@ export function ExportDialog({
           <div className="flex min-w-0 flex-1 flex-col bg-muted">
             <div className="flex h-10 shrink-0 items-center gap-3 border-b px-5">
               <span className="font-semibold">Preview</span>
-              <span className="font-mono text-xs text-muted-foreground">{spec.text ? tabular ? "first 10 matching rows · decoded text, BOM hidden" : "first 10 matching rows · as written" : "no text preview"}</span>
+              <span className="font-mono text-xs text-muted-foreground">{format === "database" ? "the table to write · first 10 rows" : spec.text ? tabular ? "first 10 matching rows · decoded text, BOM hidden" : "first 10 matching rows · as written" : "no text preview"}</span>
             </div>
             <div className="min-h-0 flex-1 overflow-auto p-5">
               {!spec.text ? (

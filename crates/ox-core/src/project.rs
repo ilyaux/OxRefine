@@ -748,6 +748,10 @@ fn run(s: &mut Session, cmd: &str, a: Args) -> Result<Value> {
             let rows = p.rows(&a.engine)?;
             crate::wikibase::preview(&parsed, p.table(), &rows)?
         }
+        "database_export" => {
+            let rows = p.rows(&a.engine)?;
+            crate::jobs::run_result("Database export", || crate::database::export(a.params.clone(), p.table(), &rows, &p.history_parts().0[0]))?
+        }
         "export" => {
             let rows = p.rows(&a.engine)?;
             let format = a.format.as_deref().unwrap_or_else(|| crate::export::format_for(&a.path));

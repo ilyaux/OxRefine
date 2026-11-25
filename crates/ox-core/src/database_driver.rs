@@ -3,8 +3,8 @@ use futures_util::TryStreamExt;
 use sqlx::{Column as _, ConnectOptions, Connection, Executor, Row, TypeInfo, ValueRef};
 use std::sync::atomic::{AtomicU64,AtomicUsize};
 
-pub(super) enum Mode<'a>{Test,Schema,Query(&'a str)}
-pub(super) enum Output{Test,Schema(J),Rows(ResultRows)}
+pub(super) enum Mode<'a>{Test,Schema,Query(&'a str),Write(&'a Upload<'a>)}
+pub(super) enum Output{Test,Schema(J),Rows(ResultRows),Written}
 struct Control {stop:Arc<AtomicBool>,deadline:Instant,connection_id:Arc<AtomicU64>}
 static ACTIVE:AtomicUsize=AtomicUsize::new(0);
 struct Permit;
@@ -37,7 +37,7 @@ pub(super) fn run(request:&Request,profile:&Profile,mode:Mode<'_>)->Result<Outpu
     let runtime=tokio::runtime::Builder::new_current_thread().enable_all().build().map_err(|_|"Could not start the database I/O runtime")?;
     let control=Control{stop:Arc::new(AtomicBool::new(false)),deadline:Instant::now()+Duration::from_secs(request.timeout_seconds),connection_id:Arc::new(AtomicU64::new(0))};
     let result=runtime.block_on(async {
-        let operation=async {match profile.driver.as_str(){"sqlite"=>sqlite(request,profile,&control,mode).await,"postgres"=>postgres(request,profile,&control,mode).await,_=>mysql(request,profile,&control,mode).await}};
+        let operation=async {match(profile.driver.as_str(),mode){(_,Mode::Write(upload))=>postgres_write(request,profile,&control,upload).await,("sqlite",mode)=>sqlite(request,profile,&control,mode).await,("postgres",mode)=>postgres(request,profile,&control,mode).await,(_,mode)=>mysql(request,profile,&control,mode).await}};
         let mut operation=Box::pin(operation);
         loop {
             match tokio::time::timeout(Duration::from_millis(50),operation.as_mut()).await {Ok(result)=>{jobs::tick(0)?;if Instant::now()>=control.deadline{return Err("Database request timed out; no snapshot was kept".into());}return result;},Err(_)=>{}}
@@ -81,6 +81,7 @@ async fn sqlite(request:&Request,profile:&Profile,control:&Control,mode:Mode<'_>
     connection.execute("BEGIN").await.map_err(sql_error)?;
     let result:Result<Output>=async {match mode {
         Mode::Test=>{connection.ping().await.map_err(sql_error)?;Ok(Output::Test)},
+        Mode::Write(_)=>unreachable!("writes go to postgres_write"),
         Mode::Schema=>{
             let tables=sqlx::query("SELECT name FROM sqlite_schema WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%' ORDER BY name LIMIT 501").fetch_all(&mut connection).await.map_err(sql_error)?;
             if tables.len()>500{return Err("Database schema exceeds 500 tables; choose a smaller database".into());}
@@ -121,6 +122,7 @@ async fn postgres(request:&Request,profile:&Profile,control:&Control,mode:Mode<'
     connection.execute("SET LOCAL lock_timeout = 3000").await.map_err(sql_error)?;
     let result:Result<Output>=async {match mode{
         Mode::Test=>{connection.ping().await.map_err(sql_error)?;Ok(Output::Test)},
+        Mode::Write(_)=>unreachable!("writes go to postgres_write"),
         Mode::Schema=>{
             let records=sqlx::query("SELECT table_schema,table_name,column_name,data_type,is_nullable FROM information_schema.columns WHERE table_schema NOT IN ('pg_catalog','information_schema') ORDER BY table_schema,table_name,ordinal_position LIMIT 10001").fetch_all(&mut connection).await.map_err(sql_error)?;
             let rows=records.into_iter().map(|r|Ok((r.try_get::<String,_>(0)?,r.try_get::<String,_>(1)?,r.try_get::<String,_>(2)?,r.try_get::<String,_>(3)?,r.try_get::<String,_>(4)?=="YES"))).collect::<std::result::Result<Vec<_>,sqlx::Error>>().map_err(sql_error)?;
@@ -136,6 +138,44 @@ async fn postgres(request:&Request,profile:&Profile,control:&Control,mode:Mode<'
     }}.await;
     let rollback=connection.execute("ROLLBACK").await;control.connection_id.store(0,Ordering::Relaxed);let closed=connection.close().await;
     let output=result?;rollback.map_err(sql_error)?;closed.map_err(sql_error)?;Ok(output)
+}
+/// Export → Database table, in one transaction: an existing table of that name only with `replace`
+/// (its name ends in _ox, as Upload::plan checks), then the rows in batches under the bind limit.
+async fn postgres_write(request:&Request,profile:&Profile,control:&Control,u:&Upload<'_>)->Result<Output>{
+    let mut connection=pg_options(profile,&request.credentials.password).application_name("OxRefine database export").connect().await.map_err(sql_error)?;
+    connection.execute("BEGIN").await.map_err(sql_error)?;
+    let id:i32=sqlx::query_scalar("SELECT pg_backend_pid()").fetch_one(&mut connection).await.map_err(sql_error)?;control.connection_id.store(id as u64,Ordering::Relaxed);
+    let result:Result<()>=async {
+        connection.execute(format!("SET LOCAL statement_timeout = {}",request.timeout_seconds*1000).as_str()).await.map_err(sql_error)?;
+        connection.execute("SET LOCAL lock_timeout = 3000").await.map_err(sql_error)?;
+        let exists:bool=sqlx::query_scalar("SELECT to_regclass($1) IS NOT NULL").bind(&u.target).fetch_one(&mut connection).await.map_err(sql_error)?;
+        if exists&&!u.replace{return Err(format!("The table {} already exists. Choose Replace to overwrite it.",u.name));}
+        if exists{connection.execute(format!("DROP TABLE {}",u.target).as_str()).await.map_err(sql_error)?;}
+        let ident=|c:usize|format!("\"{}\"",u.table.names[c].replace('"',"\"\""));
+        let columns=u.cols.iter().zip(&u.kinds).map(|(&c,k)|format!("{} {k}",ident(c))).collect::<Vec<_>>().join(", ");
+        connection.execute(format!("CREATE TABLE {} ({columns})",u.target).as_str()).await.map_err(sql_error)?;
+        let names=u.cols.iter().map(|&c|ident(c)).collect::<Vec<_>>().join(", ");
+        // PostgreSQL takes at most 65535 parameters a statement
+        for chunk in u.rows.chunks((30_000/u.cols.len()).max(1)){
+            check(control)?;
+            let mut insert=sqlx::QueryBuilder::<sqlx::Postgres>::new(format!("INSERT INTO {} ({names}) ",u.target));
+            insert.push_values(chunk,|mut row,&r|for(&c,&kind)in u.cols.iter().zip(&u.kinds){
+                let v=u.table.columns[c].get(r as usize);
+                match kind{
+                    "bigint"=>{row.push_bind(match v{Value::Int(n)=>Some(*n),_=>None});},
+                    "double precision"=>{row.push_bind(match v{Value::Int(n)=>Some(*n as f64),Value::Num(n)=>Some(*n),_=>None});},
+                    "boolean"=>{row.push_bind(match v{Value::Bool(b)=>Some(*b),_=>None});},
+                    "timestamptz"=>{row.push_bind(match v{Value::Date(d)=>Some(d.and_utc()),_=>None});},
+                    _=>{row.push_bind((!v.is_null()).then(||v.display()));},
+                }
+            });
+            insert.build().execute(&mut connection).await.map_err(sql_error)?;
+            jobs::tick(chunk.len() as u64)?;
+        }
+        Ok(())
+    }.await;
+    let end=connection.execute(if result.is_ok(){"COMMIT"}else{"ROLLBACK"}).await;control.connection_id.store(0,Ordering::Relaxed);let closed=connection.close().await;
+    result?;end.map_err(sql_error)?;closed.map_err(sql_error)?;Ok(Output::Written)
 }
 fn pg_value(row:&sqlx::postgres::PgRow,i:usize)->Result<Value>{
     let raw=row.try_get_raw(i).map_err(sql_error)?;if raw.is_null(){return Ok(Value::Null);}
@@ -161,6 +201,7 @@ async fn mysql(request:&Request,profile:&Profile,control:&Control,mode:Mode<'_>)
     connection.execute("SET SESSION innodb_lock_wait_timeout = 3").await.map_err(sql_error)?;
     let result:Result<Output>=async {match mode{
         Mode::Test=>{connection.ping().await.map_err(sql_error)?;Ok(Output::Test)},
+        Mode::Write(_)=>unreachable!("writes go to postgres_write"),
         Mode::Schema=>{
             let records=sqlx::query("SELECT TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,COLUMN_TYPE,IS_NULLABLE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() ORDER BY TABLE_NAME,ORDINAL_POSITION LIMIT 10001").fetch_all(&mut connection).await.map_err(sql_error)?;
             // MySQL 8 marks some information_schema text fields as binary metadata; these five

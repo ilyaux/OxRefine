@@ -6,7 +6,7 @@ Current release: [**v0.8.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 
 <img src="docs/readme/roadmap.svg" width="100%" alt="Progress by phase: tasks done, in review, in progress and planned.">
 
-**119 of 136 tasks done.** Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`; statuses follow the Kanzo board. **Done** is closed by the owner, **review** waits for the owner and doesn't count as done, **planned** is todo and backlog together. Shipped features may still be in review.
+**119 of 137 tasks done.** Generated from `roadmap/tasks.json` by `node roadmap/build.mjs`; statuses follow the Kanzo board. **Done** is closed by the owner, **review** waits for the owner and doesn't count as done, **planned** is todo and backlog together. Shipped features may still be in review.
 
 | Milestone | Tasks | Done | Review | In progress | Planned |
 |---|---|---|---|---|---|
@@ -14,8 +14,8 @@ Current release: [**v0.8.2**](https://github.com/ilyaux/OxRefine/releases/tag/v0
 | v0.2 | 46 | 45 | 0 | 1 | 0 |
 | v0.5 | 50 | 46 | 2 | 1 | 1 |
 | v1.0 | 14 | 12 | 2 | 0 | 0 |
-| later | 16 | 6 | 8 | 1 | 1 |
-| **Total** | **136** | **119** | **12** | **3** | **2** |
+| later | 17 | 6 | 9 | 1 | 1 |
+| **Total** | **137** | **119** | **13** | **3** | **2** |
 
 Milestones are planning groups, not release checklists: **v0.2** the core cleaning workflow, **v0.5** formats, clustering, exporters and distribution, **v1.0** reconciliation and UI parity, **later** specialised workflows. Features can ship before their group; the release notes say what each version has.
 
@@ -270,7 +270,7 @@ Installers, docs and a public launch. **5 of 10 done.**
 
 ## Extensions
 
-OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 10 done.**
+OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 11 done.**
 
 - [ ] **Wikibase schema and upload** (review) — Wikidata/Wikibase extension: manifests, schema editor (items, statements, qualifiers, references, terms), issues panel, preview, upload edits with OAuth or bot password, export to QuickStatements, schema saved in the project. Needs reconciliation. <sub>later · P2 · L · OpenRefine: extensions/wikibase</sub>
 - [ ] **Google Sheets and Drive** (review) — OpenRefine's gdata extension (no longer bundled with 3.10.1): import from Google Sheets (by URL or from the signed-in Drive), export to a new Google Sheet, upload the project archive to Drive; OAuth sign-in with a client the user registers (Google issues clients per app). <sub>later · P2 · L · OpenRefine: extensions/gdata</sub>
@@ -278,6 +278,7 @@ OpenRefine's bundled extensions: database, Wikibase, scripting. **4 of 10 done.*
 - [ ] **Run OpenRefine Java extension steps in an installed OpenRefine** (review) — OpenRefine extensions are Java modules OxRefine cannot load. Bridge: the project goes as an OpenRefine archive to a headless OpenRefine from the folder in Preferences (openrefine.home), the steps run there with its extensions, and the result comes back as a new project with OpenRefine history. Command palette: Run steps in OpenRefine…; test against a local OpenRefine 3.10.1 (skipped without one). <sub>later · P2 · M · OpenRefine: ox-core/src/openrefine.rs, tools/openrefine.mjs; card ext-plugins</sub>
 - [ ] **MCP without ox serve, over HTTP and with more tools** (review) — `ox mcp` starts its own host when no server runs for its data folder, and finds a running `ox serve` for that folder without --url; one data folder has one host. `ox serve` answers MCP Streamable HTTP at /mcp. New tools: rename and delete projects, import from a web address or pasted text, preview a file import, guess reconciliation types, list GREL functions and installed extensions; Python and Clojure in expression previews. <sub>v1.0 · P1 · L · OpenRefine: ox-cli/src/mcp.rs, ox-cli/src/main.rs; modelcontextprotocol.io Streamable HTTP</sub>
 - [ ] **Investigate database working tables shared with SQL tools** — Study Carlo's proposal for a separate database working table used by OxRefine and SQL tools while leaving source tables untouched. Define external-edit detection, transactions, conflict handling and the effect on undo/redo; produce a design and a bounded feasibility experiment before committing to implementation. <sub>later · P2 · M · OpenRefine: extensions/database; Carlo's forum feedback</sub>
+- [ ] **Export → PostgreSQL table** (review) — Write a project into a new PostgreSQL table whose name ends in _ox, the only tables OxRefine writes, in one transaction, replacing an existing _ox table only when asked. Two shapes: the matching rows, or only the changes since the import (the key column, the changed columns and the changed rows) for a correlated UPDATE. Typed columns (bigint, double precision, boolean, timestamptz, text), NULL kept apart from empty text, a dry-run preview in the Export view, and a live PostgreSQL in CI. <sub>later · P2 · M · OpenRefine: issue #7</sub>
 
 <details><summary>4 done</summary>
 
